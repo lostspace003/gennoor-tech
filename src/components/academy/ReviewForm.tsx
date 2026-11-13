@@ -36,14 +36,14 @@ export default function ReviewForm({
       <textarea
         value={text} onChange={e => setText(e.target.value)} rows={3} maxLength={2000} aria-label="Your review"
         placeholder="What did you like, or what could be better? (optional)"
-        className="w-full border border-[#d2d2d7] rounded-xl px-3.5 py-2.5 text-[14px] text-gray-900 focus:outline-none focus:border-primary-600"
+        className="w-full border border-gray-300 rounded-xl px-3.5 py-2.5 text-[14px] text-gray-900 focus:outline-none focus:border-primary-600"
       />
       {error && <p className="text-[13px] text-red-600">{error}</p>}
       <div className="flex items-center gap-3">
         <button type="submit" disabled={busy} className="pill-primary inline-flex items-center gap-2 disabled:opacity-60">
           {busy && <Loader2 className="w-4 h-4 animate-spin" />} {submitLabel}
         </button>
-        {onCancel && <button type="button" onClick={onCancel} className="text-[14px] text-[#6e6e73] hover:text-gray-900">{cancelLabel}</button>}
+        {onCancel && <button type="button" onClick={onCancel} className="text-[14px] text-gray-500 hover:text-gray-900">{cancelLabel}</button>}
       </div>
     </form>
   )

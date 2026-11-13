@@ -48,22 +48,22 @@ export default function CourseCarousel({ cards, label }: { cards: CatalogueCard[
             <Link
               href={c.href}
               onClick={e => { if (c.video && !(e.metaKey || e.ctrlKey || e.shiftKey || e.button === 1)) { e.preventDefault(); setOpen(c) } }}
-              className="group block h-full rounded-[18px] border border-[#e8e8ed] bg-white p-4 hover:border-primary-600 transition-colors"
+              className="group block h-full rounded-[18px] border border-gray-200 bg-raised p-4 hover:border-primary-600 transition-colors"
             >
               {c.image ? (
                 // eslint-disable-next-line @next/next/no-img-element
-                <img src={c.image} alt={`${c.title} thumbnail`} width={1280} height={720} loading="lazy" decoding="async" className="w-full aspect-video object-cover rounded-xl border border-[#e8e8ed]" />
+                <img src={c.image} alt={`${c.title} thumbnail`} width={1280} height={720} loading="lazy" decoding="async" className="w-full aspect-video object-cover rounded-xl border border-gray-200" />
               ) : (
                 <div className="w-full aspect-video rounded-xl bg-[#0f1824]" aria-hidden />
               )}
               <h3 className="font-heading text-[16.5px] font-bold text-gray-900 leading-snug mt-4 group-hover:text-primary-600 transition-colors">{c.title}</h3>
-              <p className="text-[13.5px] text-[#86868b] mt-1.5 tabular-nums">{c.meta}</p>
+              <p className="text-[13.5px] text-gray-400 mt-1.5 tabular-nums">{c.meta}</p>
             </Link>
           </li>
         ))}
       </ul>
-      <button type="button" onClick={() => go(-1)} aria-label="Previous courses" className="hidden md:flex absolute -left-4 top-[34%] w-10 h-10 items-center justify-center rounded-full bg-white border border-[#e2e5ec] shadow-sm hover:border-primary-600"><ChevronLeft className="w-5 h-5" /></button>
-      <button type="button" onClick={() => go(1)} aria-label="Next courses" className="hidden md:flex absolute -right-4 top-[34%] w-10 h-10 items-center justify-center rounded-full bg-white border border-[#e2e5ec] shadow-sm hover:border-primary-600"><ChevronRight className="w-5 h-5" /></button>
+      <button type="button" onClick={() => go(-1)} aria-label="Previous courses" className="hidden md:flex absolute -left-4 top-[34%] w-10 h-10 items-center justify-center rounded-full bg-raised border border-gray-200 shadow-sm hover:border-primary-600"><ChevronLeft className="w-5 h-5" /></button>
+      <button type="button" onClick={() => go(1)} aria-label="Next courses" className="hidden md:flex absolute -right-4 top-[34%] w-10 h-10 items-center justify-center rounded-full bg-raised border border-gray-200 shadow-sm hover:border-primary-600"><ChevronRight className="w-5 h-5" /></button>
       {open && open.video && <VideoPopup card={open} onClose={() => setOpen(null)} />}
     </div>
   )

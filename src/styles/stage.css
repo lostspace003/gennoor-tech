@@ -1,0 +1,595 @@
+/*
+  The look of the public website, in its two themes.
+
+    .stage   dark: the look of the presentation and the films (scripts/show/css/stage.css).
+             A dark ground lit by coloured glows, glass surfaces, icon tiles whose colour
+             says what kind of thing they are. The site opens in this one.
+    .day     light: the same site on soft grey paper. Never pure white.
+
+  The class sits on <html> for every public page (the small script in app/layout.tsx puts it
+  there before the page is drawn, and ThemeSwitch changes it). A part of a page that must
+  stay dark in both themes (a film panel, a lit hero) carries .stage itself: <Ground> does.
+  The admin centre, the CRM and the lesson players have neither class and use the paper
+  values in globals.css.
+
+    Part 1  the colours of each theme, and what older light-design classes mean in the dark
+    Part 2  primitives: buttons, cards, headings, heroes, long text, scrollbars
+    Part 3  the kit: st-* classes (icon tiles, grounds, chips, windows, ticks, the ring)
+    Part 4  motion: how things arrive, and the few things that keep moving
+
+  docs/DESIGN.md has the rules; this file is where they are carried out.
+*/
+
+/* ═══════════════════════════ Part 1: colours ═══════════════════════════ */
+
+/* ── Dark ─────────────────────────────────────────────────────────────── */
+.stage {
+  color-scheme: dark;
+
+  /* Surfaces */
+  --surface: 6 9 20;           /* #060914  the ground of every page */
+  --raised: 14 22 43;          /* #0e162b  a card lifted off the ground */
+  --inverse: 22 33 63;         /* #16213f  a block that was dark on paper as well */
+
+  /* gray is a ramp of roles: 50/100 panels, 200/300 hairlines, 400-600 quieter text, 900 text */
+  --gray-50: 11 17 36;         /* #0b1124 */
+  --gray-100: 19 28 54;        /* #131c36 */
+  --gray-200: 31 42 72;        /* #1f2a48 */
+  --gray-300: 52 64 95;        /* #34405f */
+  --gray-400: 125 140 171;     /* #7d8cab */
+  --gray-500: 159 176 207;     /* #9fb0cf */
+  --gray-600: 183 196 221;     /* #b7c4dd */
+  --gray-700: 207 217 236;     /* #cfd9ec */
+  --gray-800: 227 234 247;     /* #e3eaf7 */
+  --gray-900: 245 248 255;     /* #f5f8ff */
+  --gray-950: 255 255 255;
+
+  /* primary: 50-200 are tints behind blue text, 400-900 are the blue text itself */
+  --primary-50: 13 27 56;      /* #0d1b38 */
+  --primary-100: 17 37 78;     /* #11254e */
+  --primary-200: 26 56 112;    /* #1a3870 */
+  --primary-300: 38 84 160;    /* #2654a0 */
+  --primary-400: 90 169 243;   /* #5aa9f3 */
+  --primary-500: 92 166 255;   /* #5ca6ff */
+  --primary-600: 111 180 255;  /* #6fb4ff */
+  --primary-700: 140 196 255;  /* #8cc4ff */
+  --primary-800: 169 209 255;  /* #a9d1ff */
+  --primary-900: 207 229 255;  /* #cfe5ff */
+  --primary-950: 232 243 255;
+
+  --green-50: 10 34 27;        /* #0a221b */
+  --green-100: 14 46 36;
+  --green-200: 24 74 58;
+  --green-300: 35 110 85;
+  --green-400: 46 160 120;
+  --green-500: 62 213 152;     /* #3ed598 */
+  --green-600: 62 213 152;
+  --green-700: 110 231 180;    /* #6ee7b4 */
+  --green-800: 163 240 207;
+  --green-900: 207 247 229;
+  --green-950: 233 252 243;
+
+  --amber-50: 36 26 8;         /* #241a08 */
+  --amber-100: 51 37 10;
+  --amber-200: 84 64 15;
+  --amber-300: 130 99 24;
+  --amber-400: 200 150 50;
+  --amber-500: 245 166 35;     /* #f5a623 */
+  --amber-600: 255 194 75;     /* #ffc24b */
+  --amber-700: 255 208 107;    /* #ffd06b */
+  --amber-800: 255 224 160;
+  --amber-900: 255 238 205;
+  --amber-950: 255 247 230;
+
+  --red-50: 42 15 18;          /* #2a0f12 */
+  --red-100: 58 20 24;
+  --red-200: 96 28 36;
+  --red-300: 150 44 54;
+  --red-400: 220 84 94;
+  --red-500: 240 96 110;
+  --red-600: 255 122 134;      /* #ff7a86 */
+  --red-700: 255 154 163;      /* #ff9aa3 */
+  --red-800: 255 188 194;
+  --red-900: 255 217 220;
+  --red-950: 255 236 238;
+
+  /* The named properties the component classes in globals.css read */
+  --canvas: #060914;
+  --panel: #0b1124;
+  --panel-soft: #0e162b;
+  --hairline: rgba(255, 255, 255, 0.11);
+  --hairline-strong: rgba(255, 255, 255, 0.2);
+  --hairline-soft: rgba(255, 255, 255, 0.08);
+  --ink: #f5f8ff;
+  --ink-secondary: #b7c4dd;
+  --ink-tertiary: #7d8cab;
+  --ink-soft: #b7c4dd;
+  --ink-quiet: #7d8cab;
+  --accent: #2f8cff;
+  --accent-hover: #4a9cff;
+  --accent-bright: #4a9cff;
+  --accent-tint: #11254e;
+  --accent-on-dark: #7cc0ff;
+  --ok: #3ed598;
+  --warn: #ffc24b;
+  --err: #ff7a86;
+  --glass-bg: rgba(255, 255, 255, 0.06);
+  --glass-border: rgba(255, 255, 255, 0.11);
+  --surface-elevated: #0e162b;
+
+  /* What the kit (Part 3) reads */
+  --st-card: linear-gradient(180deg, rgba(255, 255, 255, 0.092), rgba(255, 255, 255, 0.032));
+  --st-card-line: rgba(255, 255, 255, 0.11);
+  --st-card-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.16), 0 26px 60px -30px rgba(0, 0, 0, 0.85);
+  --st-card-hover: rgba(125, 190, 255, 0.5);
+  --st-solid: linear-gradient(180deg, #17223f, #0e1730);
+  --st-chip: rgba(255, 255, 255, 0.07);
+  --st-chip-hover: rgba(255, 255, 255, 0.13);
+  --st-link: #7cc0ff;
+  --st-link-hover: #cfe5ff;
+  --st-kicker: #ffc24b;
+  --st-grad: linear-gradient(100deg, #8ccaff 0%, #b3a4ff 52%, #ffc86a 100%);
+  --st-ghost: rgba(255, 255, 255, 0.08);
+  --st-ghost-line: rgba(255, 255, 255, 0.22);
+  --st-faint: rgba(255, 255, 255, 0.1);
+  --st-scroll: #34405f;
+  --st-scroll-hover: #4c5a78;
+  --st-scroll-track: #0a0f1f;
+
+  color: #f5f8ff;
+}
+
+/* ── Light: soft grey paper with the same blue. Never pure white. ──────── */
+.day {
+  color-scheme: light;
+
+  --surface: 236 240 246;      /* #ecf0f6  the ground of every page */
+  --raised: 247 249 252;       /* #f7f9fc  a card lifted off the ground */
+  --inverse: 16 26 48;         /* #101a30 */
+
+  --gray-50: 226 232 241;      /* #e2e8f1  a band */
+  --gray-100: 214 222 234;     /* #d6deea */
+  --gray-200: 198 208 224;     /* #c6d0e0  hairline */
+  --gray-300: 170 183 204;     /* #aab7cc */
+  --gray-400: 104 118 144;     /* #687690 */
+  --gray-500: 82 96 122;       /* #52607a */
+  --gray-600: 60 73 98;        /* #3c4962 */
+  --gray-700: 43 55 80;        /* #2b3750 */
+  --gray-800: 28 39 62;        /* #1c273e */
+  --gray-900: 15 24 44;        /* #0f182c */
+  --gray-950: 6 9 20;
+
+  --primary-50: 222 234 253;   /* #deeafd */
+  --primary-100: 206 224 252;  /* #cee0fc */
+  --primary-200: 174 204 248;
+  --primary-300: 128 174 242;
+  --primary-400: 66 136 238;
+  --primary-500: 26 116 240;
+  --primary-600: 10 98 240;    /* #0a62f0 */
+  --primary-700: 8 78 198;
+  --primary-800: 10 62 156;
+  --primary-900: 12 48 118;
+  --primary-950: 10 34 84;
+
+  --green-50: 221 240 229;
+  --green-100: 204 232 215;
+  --amber-50: 248 238 214;
+  --amber-100: 243 229 194;
+  --red-50: 250 228 226;
+  --red-100: 247 214 211;
+
+  --canvas: #ecf0f6;
+  --panel: #e2e8f1;
+  --panel-soft: #f7f9fc;
+  --hairline: #c6d0e0;
+  --hairline-strong: #aab7cc;
+  --hairline-soft: #d6deea;
+  --ink: #0f182c;
+  --ink-secondary: #3c4962;
+  --ink-tertiary: #687690;
+  --ink-soft: #3c4962;
+  --ink-quiet: #687690;
+  --accent: #0a62f0;
+  --accent-hover: #084ec6;
+  --accent-bright: #1a74f0;
+  --accent-tint: #cee0fc;
+  --glass-bg: #f7f9fc;
+  --glass-border: #c6d0e0;
+  --surface-elevated: #f7f9fc;
+
+  --st-card: linear-gradient(180deg, #fbfcfe, #f1f4f9);
+  --st-card-line: #c6d0e0;
+  --st-card-shadow: inset 0 1px 0 #fff, 0 18px 40px -28px rgba(15, 24, 44, 0.45);
+  --st-card-hover: #0a62f0;
+  --st-solid: linear-gradient(180deg, #17223f, #0e1730);
+  --st-chip: rgba(15, 24, 44, 0.055);
+  --st-chip-hover: rgba(15, 24, 44, 0.1);
+  --st-link: #0a62f0;
+  --st-link-hover: #084ec6;
+  --st-kicker: #9a5b00;
+  --st-grad: linear-gradient(100deg, #0a62f0 0%, #6a4df5 52%, #c27500 100%);
+  --st-ghost: rgba(15, 24, 44, 0.05);
+  --st-ghost-line: rgba(15, 24, 44, 0.2);
+  --st-faint: rgba(15, 24, 44, 0.08);
+  --st-scroll: #aab7cc;
+  --st-scroll-hover: #8695ae;
+  --st-scroll-track: #e2e8f1;
+
+  color: #0f182c;
+}
+
+html.stage, html.stage body { background-color: #060914; }
+html.day, html.day body { background-color: #ecf0f6; }
+
+/* ── What the older light-design classes mean in the dark ────────────────────────────
+   The ramps above settle most of it. These are the cases where one name does two jobs:
+   a fill that carries a white label must stay saturated, and words that sat on a dark
+   block on paper must stay light. */
+
+/* Fills under a white label */
+.stage .bg-primary-600,
+.stage .bg-primary-500,
+.stage .bg-primary-700 { background-color: #1f7cff; }
+.stage .hover\:bg-primary-700:hover,
+.stage .hover\:bg-primary-500:hover,
+.stage .focus\:bg-primary-700:focus { background-color: #3d94ff; }
+.stage .bg-green-600,
+.stage .bg-green-500 { background-color: #178a5c; }
+.stage .hover\:bg-green-700:hover { background-color: #1e9e6c; }
+.stage .bg-red-600 { background-color: #d63a4a; }
+.stage .bg-amber-500,
+.stage .bg-amber-600 { background-color: #e39a1e; }
+
+/* Blocks that were dark on paper stay dark, one step above the ground */
+.stage .bg-gray-950,
+.stage .bg-gray-900,
+.stage .bg-gray-800,
+.stage .bg-gray-700,
+.stage .bg-gray-600 { background-color: rgb(var(--inverse)); }
+.stage .hover\:bg-gray-800:hover { background-color: #1d2a4d; }
+.stage .bg-gray-900\/70 { background-color: rgba(2, 4, 10, 0.72); }
+.stage .bg-gray-900\/25 { background-color: rgba(2, 4, 10, 0.55); }
+.stage .border-gray-900,
+.stage .border-gray-700 { border-color: rgba(255, 255, 255, 0.16); }
+
+/* Words that were light on those blocks stay light */
+.stage .text-gray-100,
+.stage .text-gray-200,
+.stage .text-gray-300 { color: rgba(245, 248, 255, 0.74); }
+.stage .text-primary-100,
+.stage .text-primary-300,
+.stage .text-primary-400 { color: #a9d1ff; }
+.stage .text-amber-300,
+.stage .text-amber-400 { color: #ffd06b; }
+.stage .text-green-300,
+.stage .text-green-400 { color: #6ee7b4; }
+.stage .text-red-300 { color: #ff9aa3; }
+
+/* A card catches a little light along its top edge */
+.stage .bg-raised { background-image: linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0) 55%); }
+
+/* On the light theme the same dark blocks keep their white words; the grey ramp there runs the usual way */
+.day .bg-gray-900,
+.day .bg-gray-800,
+.day .bg-gray-950 { background-color: rgb(var(--inverse)); }
+
+/* ═══════════════════════════ Part 2: primitives ═══════════════════════════ */
+
+.stage ::selection { background: rgba(61, 148, 255, 0.4); color: #fff; }
+
+/* The main action: one blue, lit from above. The same on both themes. */
+:is(.stage, .day) .pill-primary,
+:is(.stage, .day) .pill-primary-sm,
+:is(.stage, .day) .btn-primary {
+  background: linear-gradient(180deg, #2f8cff, #0a62f0);
+  border-color: transparent;
+  color: #fff;
+  font-weight: 600;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35), 0 14px 34px -14px rgba(20, 110, 255, 0.85);
+}
+:is(.stage, .day) .pill-primary:hover,
+:is(.stage, .day) .pill-primary-sm:hover,
+:is(.stage, .day) .btn-primary:hover { background: linear-gradient(180deg, #4a9cff, #1a70f5); color: #fff; }
+
+.stage .pill-secondary,
+.stage .btn-secondary {
+  background: rgba(255, 255, 255, 0.07);
+  border-color: rgba(255, 255, 255, 0.2);
+  color: #f5f8ff;
+}
+.stage .pill-secondary:hover,
+.stage .btn-secondary:hover { background: rgba(255, 255, 255, 0.12); border-color: rgba(255, 255, 255, 0.32); }
+.day .pill-secondary,
+.day .btn-secondary { background: #f7f9fc; border-color: #aab7cc; }
+
+.stage .btn-outline { color: #7cc0ff; border-color: rgba(255, 255, 255, 0.2); }
+.stage .btn-outline:hover { background: rgba(61, 148, 255, 0.14); border-color: #3d94ff; }
+
+.stage .link-arrow { color: #7cc0ff; }
+.stage .link-arrow:hover { color: #a9d1ff; }
+
+/* Glass: cards are lit along the top and sit in their own shadow */
+.stage .card,
+.stage .glass-card {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.085), rgba(255, 255, 255, 0.03));
+  border-color: rgba(255, 255, 255, 0.11);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.14), 0 26px 60px -32px rgba(0, 0, 0, 0.85);
+}
+.stage .card:hover,
+.stage .glass-card:hover { border-color: rgba(255, 255, 255, 0.22); }
+.stage .glass { background: rgba(8, 13, 28, 0.82); border-color: rgba(255, 255, 255, 0.1); }
+.stage .glass-surface { background: #0b1124; }
+.day .card,
+.day .glass-card { background: #f7f9fc; }
+.day .glass { background: rgba(236, 240, 246, 0.9); }
+
+/* The small label above a heading: gold in the dark, as in the films */
+.stage .kicker { color: #ffc24b; letter-spacing: 0.22em; }
+.day .kicker { color: #9a5b00; letter-spacing: 0.22em; }
+
+/* The top of a page: light from the upper corners and a faint grid of dots */
+.stage .hero-backdrop::before {
+  background:
+    radial-gradient(640px 400px at 8% 0%, rgba(34, 110, 255, 0.36), transparent 70%),
+    radial-gradient(660px 420px at 94% 4%, rgba(120, 96, 255, 0.3), transparent 70%),
+    radial-gradient(520px 300px at 58% 112%, rgba(255, 190, 80, 0.1), transparent 70%),
+    radial-gradient(rgba(255, 255, 255, 0.13) 1px, transparent 1.4px) 0 0 / 28px 28px;
+}
+.day .hero-backdrop::before {
+  background:
+    radial-gradient(640px 400px at 8% 0%, rgba(10, 98, 240, 0.2), transparent 70%),
+    radial-gradient(660px 420px at 94% 4%, rgba(106, 77, 245, 0.18), transparent 70%),
+    radial-gradient(520px 300px at 58% 112%, rgba(255, 170, 46, 0.1), transparent 70%),
+    radial-gradient(rgba(15, 24, 44, 0.16) 1px, transparent 1.4px) 0 0 / 28px 28px;
+}
+
+/* Long text (blog posts, guides) */
+.stage .prose {
+  --tw-prose-body: #b7c4dd;
+  --tw-prose-headings: #f5f8ff;
+  --tw-prose-lead: #cfd9ec;
+  --tw-prose-links: #7cc0ff;
+  --tw-prose-bold: #f5f8ff;
+  --tw-prose-counters: #7d8cab;
+  --tw-prose-bullets: #4c5a78;
+  --tw-prose-hr: #1f2a48;
+  --tw-prose-quotes: #e3eaf7;
+  --tw-prose-quote-borders: #34405f;
+  --tw-prose-captions: #7d8cab;
+  --tw-prose-kbd: #f5f8ff;
+  --tw-prose-code: #e3eaf7;
+  --tw-prose-pre-code: #e3eaf7;
+  --tw-prose-pre-bg: #0b1124;
+  --tw-prose-th-borders: #34405f;
+  --tw-prose-td-borders: #1f2a48;
+}
+.day .prose {
+  --tw-prose-body: #2b3750;
+  --tw-prose-headings: #0f182c;
+  --tw-prose-links: #0a62f0;
+  --tw-prose-bold: #0f182c;
+  --tw-prose-quotes: #1c273e;
+  --tw-prose-hr: #c6d0e0;
+  --tw-prose-th-borders: #aab7cc;
+  --tw-prose-td-borders: #c6d0e0;
+}
+.stage .prose .blog-compare .compare-card,
+.stage .prose .blog-flow .flow-step { background: #0e162b; }
+.day .prose .blog-compare .compare-card,
+.day .prose .blog-flow .flow-step { background: #f7f9fc; }
+.stage .rich-body blockquote { border-left-color: #34405f; color: #b7c4dd; }
+.stage .rich-body a { color: #7cc0ff; }
+.stage .rich-body code,
+.stage .rich-body pre { background: #131c36; }
+
+/* ── The scrollbar: always there when a page is longer than the screen, grey, in the theme's own tone ── */
+html:is(.stage, .day) { scrollbar-color: var(--st-scroll) var(--st-scroll-track); scrollbar-width: auto; }
+:is(.stage, .day) * { scrollbar-color: var(--st-scroll) transparent; }
+html:is(.stage, .day)::-webkit-scrollbar { width: 13px; height: 13px; }
+html:is(.stage, .day)::-webkit-scrollbar-track { background: var(--st-scroll-track); }
+html:is(.stage, .day)::-webkit-scrollbar-thumb { background: var(--st-scroll); border-radius: 8px; border: 3px solid var(--st-scroll-track); }
+html:is(.stage, .day)::-webkit-scrollbar-thumb:hover { background: var(--st-scroll-hover); }
+/* Inside the page (long panels, the menu): the same grey, thinner */
+:is(.stage, .day) *::-webkit-scrollbar { width: 9px; height: 9px; }
+:is(.stage, .day) *::-webkit-scrollbar-track { background: transparent; }
+:is(.stage, .day) *::-webkit-scrollbar-thumb { background: var(--st-scroll); border-radius: 8px; border: 2px solid transparent; background-clip: content-box; }
+:is(.stage, .day) *::-webkit-scrollbar-thumb:hover { background: var(--st-scroll-hover); background-clip: content-box; }
+
+/* ═══════════════════════════ Part 3: the kit ═══════════════════════════
+   Icon tiles, windows, ticks and the main button carry their own colours and look the
+   same on both themes. Cards, chips, links and the small label read the theme. */
+
+/* ── Icon tile: glass, lit from the top left, with a two-tone glyph ─────────
+   Size comes from --s (or from the box it is put in, with st-ico-fill).
+   The tone says what kind of thing it is:
+     blue watch or read · violet do or practise · green help or done · gold earned, live,
+     not to be missed · claude anything Claude · rose a check · cyan a connection · ink off or "no" */
+.st-ico {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: var(--s, 64px);
+  height: var(--s, 64px);
+  border-radius: 30%;
+  --a: #7fc0ff; --b: #2a7bff; --c: #12306e; --g: rgba(61, 148, 255, 0.6);
+  background: radial-gradient(120% 120% at 18% 8%, var(--a) 0%, var(--b) 42%, var(--c) 100%);
+  box-shadow: inset 0 1.5px 0 rgba(255, 255, 255, 0.55), inset 0 -10px 18px rgba(0, 0, 20, 0.28), 0 14px 30px -10px var(--g), 0 0 0 1px rgba(255, 255, 255, 0.1);
+}
+.st-ico::before {
+  content: '';
+  position: absolute;
+  left: 12%;
+  top: 7%;
+  width: 56%;
+  height: 34%;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, rgba(255, 255, 255, 0.5), transparent);
+  pointer-events: none;
+}
+.st-ico > svg { position: absolute; left: 23%; top: 23%; width: 54%; height: 54%; overflow: visible; }
+.st-ico > svg + svg { filter: drop-shadow(0 2px 3px rgba(0, 10, 40, 0.45)); }
+.st-ico.st-round { border-radius: 50%; }
+.st-ico.st-ico-fill { width: 100%; height: 100%; }
+.st-ico.t-gold { --a: #ffe29a; --b: #ffab2e; --c: #8a4a00; --g: rgba(255, 170, 46, 0.55); }
+.st-ico.t-green { --a: #9ff3cf; --b: #22b47e; --c: #0a4a36; --g: rgba(34, 180, 126, 0.5); }
+.st-ico.t-violet { --a: #cfc6ff; --b: #7a66ff; --c: #2a1f7a; --g: rgba(122, 102, 255, 0.55); }
+.st-ico.t-claude { --a: #ffc3a3; --b: #e0764a; --c: #7a3215; --g: rgba(224, 118, 74, 0.55); }
+.st-ico.t-rose { --a: #ffc0cf; --b: #f0527a; --c: #7a1436; --g: rgba(240, 82, 122, 0.5); }
+.st-ico.t-cyan { --a: #b4f4f7; --b: #25b8c4; --c: #0a4f5c; --g: rgba(37, 184, 196, 0.5); }
+.st-ico.t-ink { --a: #5a6c94; --b: #2a3654; --c: #131b30; --g: rgba(0, 0, 0, 0.5); }
+
+/* ── A lit ground: dark in both themes. <Ground> puts .stage on it, so everything inside reads the dark values. */
+.st-ground { position: relative; isolation: isolate; overflow: hidden; background-color: #060914; color: #f5f8ff; }
+.st-ground > .st-auras { position: absolute; inset: 0; z-index: -1; pointer-events: none; overflow: hidden; }
+.st-aura { position: absolute; border-radius: 50%; background: radial-gradient(closest-side, var(--c), transparent 72%); }
+.st-dots {
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(rgba(255, 255, 255, 0.13) 1px, transparent 1.3px);
+  background-size: 30px 30px;
+  -webkit-mask-image: radial-gradient(75% 85% at var(--mx, 50%) var(--my, 40%), #000 10%, transparent 75%);
+  mask-image: radial-gradient(75% 85% at var(--mx, 50%) var(--my, 40%), #000 10%, transparent 75%);
+}
+
+/* ── Type helpers ───────────────────────────────────────────────────────── */
+.st-kicker { font-size: 12.5px; font-weight: 650; line-height: 1; letter-spacing: 0.22em; text-transform: uppercase; color: var(--st-kicker, #ffc24b); }
+.st-grad { background: var(--st-grad, linear-gradient(100deg, #8ccaff 0%, #b3a4ff 52%, #ffc86a 100%)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.st-serif { font-family: 'Sitka Display', 'Sitka Banner', 'Iowan Old Style', 'Palatino Linotype', Palatino, Georgia, serif; font-style: italic; font-weight: 500; letter-spacing: -0.02em; }
+/* The large pale number behind a step */
+.st-num { font-size: 44px; font-weight: 700; line-height: 1; letter-spacing: -0.04em; color: var(--st-faint, rgba(255, 255, 255, 0.1)); }
+
+/* ── Surfaces ───────────────────────────────────────────────────────────── */
+.st-card {
+  border-radius: 22px;
+  background: var(--st-card);
+  border: 1px solid var(--st-card-line);
+  box-shadow: var(--st-card-shadow);
+}
+/* A card that is dark in both themes: put .stage on it too, so its words are light */
+.st-card.st-solid { background: var(--st-solid); border-color: rgba(255, 255, 255, 0.12); box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.14), 0 26px 60px -30px rgba(0, 0, 0, 0.7); }
+.st-card.st-lit { border-color: rgba(125, 190, 255, 0.42); box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 0 0 1px rgba(61, 148, 255, 0.25), 0 22px 60px -22px rgba(20, 100, 255, 0.6); }
+.st-card.st-gold { border-color: rgba(255, 194, 75, 0.5); box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.16), 0 0 0 1px rgba(255, 194, 75, 0.18), 0 22px 60px -24px rgba(255, 170, 46, 0.5); }
+a.st-card, button.st-card { transition: border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease; }
+a.st-card:hover, button.st-card:hover { border-color: var(--st-card-hover); transform: translateY(-2px); }
+
+.st-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 34px;
+  padding: 6px 14px;
+  border-radius: 999px;
+  background: var(--st-chip);
+  border: 1px solid var(--st-card-line);
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.2;
+  color: rgb(var(--gray-900));
+}
+.st-chip > i { flex: none; width: 8px; height: 8px; border-radius: 50%; background: var(--dot, #7cc0ff); box-shadow: 0 0 10px var(--dot, #7cc0ff); }
+a.st-chip { transition: background-color 0.15s ease, border-color 0.15s ease; }
+a.st-chip:hover { background: var(--st-chip-hover); }
+
+.st-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 48px;
+  padding: 12px 26px;
+  border-radius: 999px;
+  background: linear-gradient(180deg, #2f8cff, #0a62f0);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35), 0 16px 40px -14px rgba(20, 110, 255, 0.8);
+  font-size: 16px;
+  font-weight: 650;
+  line-height: 1.15;
+  color: #fff;
+  text-align: center;
+  transition: filter 0.15s ease, transform 0.15s ease;
+}
+.st-pill:hover { filter: brightness(1.12); color: #fff; }
+.st-pill:active { transform: translateY(1px); }
+.st-pill.st-ghost { background: var(--st-ghost); border: 1px solid var(--st-ghost-line); box-shadow: none; color: rgb(var(--gray-900)); }
+.st-pill.st-ghost:hover { color: rgb(var(--gray-900)); }
+.st-pill.st-gold { background: linear-gradient(180deg, #ffd06b, #f5a623); color: #2a1a00; box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6), 0 16px 40px -14px rgba(245, 166, 35, 0.75); }
+.st-pill.st-gold:hover { color: #2a1a00; }
+.st-pill.st-sm { min-height: 40px; padding: 9px 20px; font-size: 14.5px; }
+
+.st-link { color: var(--st-link); font-weight: 600; transition: color 0.15s ease; }
+.st-link:hover { color: var(--st-link-hover); }
+
+/* ── Windows drawn in scenes: a lesson, a process, a platform. Dark in both themes. ───── */
+.st-win {
+  border-radius: 18px;
+  overflow: hidden;
+  background: linear-gradient(180deg, #131d38, #0b1329);
+  border: 1px solid rgba(255, 255, 255, 0.13);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.14), 0 40px 90px -36px rgba(0, 0, 0, 0.9), 0 0 80px -34px rgba(61, 148, 255, 0.55);
+  color: #f5f8ff;
+}
+.st-win-bar { display: flex; align-items: center; gap: 8px; padding: 11px 14px; background: rgba(255, 255, 255, 0.045); border-bottom: 1px solid rgba(255, 255, 255, 0.08); font-size: 12.5px; font-weight: 600; line-height: 1.2; color: #b7c4dd; }
+.st-win-bar > b { flex: none; width: 10px; height: 10px; border-radius: 50%; background: #3a4666; }
+.st-win-bar > b:nth-child(1) { background: #ff6b6b; }
+.st-win-bar > b:nth-child(2) { background: #ffc24b; }
+.st-win-bar > b:nth-child(3) { background: #3ed598; }
+.st-win-bar > span { margin-left: 6px; min-width: 0; }
+
+.st-track { height: 6px; border-radius: 99px; background: rgba(255, 255, 255, 0.16); overflow: hidden; }
+.st-track > i { display: block; height: 100%; border-radius: 99px; background: linear-gradient(90deg, #3d94ff, #62e0e8); }
+.st-tick { display: inline-flex; align-items: center; justify-content: center; flex: none; width: 18px; height: 18px; border-radius: 50%; background: #3ed598; }
+.st-tick::after { content: ''; width: 8px; height: 4px; border-left: 2px solid #04281b; border-bottom: 2px solid #04281b; transform: translateY(-1px) rotate(-45deg); }
+.st-tick.st-off { background: rgba(127, 140, 171, 0.3); }
+.st-tick.st-off::after { display: none; }
+.st-tick.st-tick-gold { background: #ffc24b; }
+.st-bubble { border-radius: 18px; padding: 12px 15px; font-size: 15px; line-height: 1.4; }
+.st-bubble.st-q { background: rgba(255, 255, 255, 0.09); border: 1px solid rgba(255, 255, 255, 0.11); border-bottom-left-radius: 6px; color: #f5f8ff; }
+.st-bubble.st-a { background: linear-gradient(180deg, #2a84ff, #0b5fe6); border-bottom-right-radius: 6px; color: #fff; box-shadow: 0 16px 36px -16px rgba(20, 110, 255, 0.85); }
+.st-bubble > .st-who { display: block; margin-bottom: 4px; font-size: 10.5px; font-weight: 650; line-height: 1; letter-spacing: 0.16em; text-transform: uppercase; opacity: 0.7; }
+
+/* A feature row: an icon tile, a few words, and a few more under them */
+.st-feat { display: flex; align-items: center; gap: 16px; padding: 13px 18px 13px 14px; border-radius: 20px; }
+.st-feat b { display: block; font-size: 18px; font-weight: 650; line-height: 1.25; letter-spacing: -0.012em; color: rgb(var(--gray-900)); }
+.st-feat small { display: block; margin-top: 3px; font-size: 14px; font-weight: 400; line-height: 1.4; color: rgb(var(--gray-600)); }
+
+/* The ring of dots from the logo, at the scale of a picture */
+.st-ring { display: block; overflow: visible; }
+
+/* ═══════════════════════════ Part 4: motion ═══════════════════════════
+   Things arrive once, in order, and then stay still. Only the ring and the glows keep
+   moving, slowly. Anyone who asks their device for less motion gets none of it. */
+
+@keyframes st-rise { from { opacity: 0; transform: translateY(22px); } to { opacity: 1; transform: none; } }
+@keyframes st-fade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes st-pop { 0% { opacity: 0; transform: scale(0.82); } 60% { opacity: 1; transform: scale(1.04); } 100% { opacity: 1; transform: none; } }
+@keyframes st-left { from { opacity: 0; transform: translateX(-36px); } to { opacity: 1; transform: none; } }
+@keyframes st-right { from { opacity: 0; transform: translateX(36px); } to { opacity: 1; transform: none; } }
+@keyframes st-spin { to { transform: rotate(360deg); } }
+@keyframes st-drift { 0%, 100% { transform: translate(0, 0); } 50% { transform: translate(34px, 22px); } }
+@keyframes st-pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.08); } }
+@keyframes st-grow { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+@keyframes st-draw { to { stroke-dashoffset: 0; } }
+
+@media (prefers-reduced-motion: no-preference) {
+  /* On page load: add st-rise (or -fade, -pop, -left, -right); style="--i:2" makes it wait its turn */
+  .st-rise { animation: st-rise 0.7s cubic-bezier(0.16, 1, 0.3, 1) both; animation-delay: calc(var(--i, 0) * 110ms); }
+  .st-fade { animation: st-fade 0.9s ease both; animation-delay: calc(var(--i, 0) * 110ms); }
+  .st-pop { animation: st-pop 0.55s cubic-bezier(0.16, 1, 0.3, 1) both; animation-delay: calc(var(--i, 0) * 110ms); }
+  .st-left { animation: st-left 0.7s cubic-bezier(0.16, 1, 0.3, 1) both; animation-delay: calc(var(--i, 0) * 110ms); }
+  .st-right { animation: st-right 0.7s cubic-bezier(0.16, 1, 0.3, 1) both; animation-delay: calc(var(--i, 0) * 110ms); }
+
+  /* Further down the page: inside <Reveal>, the same classes wait until the block is on screen.
+     Only where scripts run, so a page without them shows everything at once. */
+  @media (scripting: enabled) {
+    .st-reveal:not(.st-in) :is(.st-rise, .st-fade, .st-pop, .st-left, .st-right) { animation-play-state: paused; }
+    .st-reveal:not(.st-in) .st-grow > i,
+    .st-reveal:not(.st-in) .st-draw { animation-play-state: paused; }
+  }
+
+  .st-spin { animation: st-spin var(--per, 120s) linear infinite; transform-origin: 50% 50%; }
+  .st-drift { animation: st-drift var(--per, 26s) ease-in-out infinite; }
+  .st-pulse { animation: st-pulse var(--per, 2.4s) ease-in-out infinite; }
+  .st-grow > i { transform-origin: left center; animation: st-grow 1.4s cubic-bezier(0.16, 1, 0.3, 1) both; animation-delay: calc(var(--i, 0) * 110ms + 0.3s); }
+  .st-draw { stroke-dasharray: var(--len, 1000); stroke-dashoffset: var(--len, 1000); animation: st-draw 1.4s cubic-bezier(0.65, 0, 0.35, 1) forwards; animation-delay: calc(var(--i, 0) * 110ms + 0.2s); }
+}

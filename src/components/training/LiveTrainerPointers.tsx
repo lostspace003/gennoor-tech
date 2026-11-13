@@ -11,7 +11,7 @@ export default function LiveTrainerPointers({ days, hours }: { days: number; hou
   return (
     <ul className="flex flex-wrap gap-2.5">
       {items.map(({ icon: Icon, text }) => (
-        <li key={text} className="inline-flex items-center gap-2 rounded-full border border-[#e2e5ec] bg-white px-4 py-2 text-[14px] text-[#3a3a3f]">
+        <li key={text} className="inline-flex items-center gap-2 rounded-full border border-gray-200 bg-raised px-4 py-2 text-[14px] text-gray-700">
           <Icon className="w-4 h-4 text-primary-600" aria-hidden />{text}
         </li>
       ))}

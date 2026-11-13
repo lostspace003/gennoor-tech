@@ -18,7 +18,7 @@ export default function AcademySwitch({ active, dark = false }: { active?: 'stud
   return (
     <div className="flex flex-col items-center gap-4 w-full">
       <p className={`font-heading text-[15px] font-semibold ${dark ? 'text-white' : 'text-gray-900'}`}>Learning Studio</p>
-      <nav aria-label="Learning Studio" className={`inline-flex flex-col sm:flex-row gap-1.5 p-1.5 rounded-2xl ${dark ? 'bg-white/[0.06]' : 'bg-[#e9ebf0]'}`}>
+      <nav aria-label="Learning Studio" className={`inline-flex flex-col sm:flex-row gap-1.5 p-1.5 rounded-2xl ${dark ? 'bg-white/[0.06]' : 'bg-gray-100'}`}>
         {TABS.map(t => {
           const on = t.id === active
           return (
@@ -27,11 +27,11 @@ export default function AcademySwitch({ active, dark = false }: { active?: 'stud
               href={t.href}
               aria-current={on ? 'page' : undefined}
               className={`rounded-xl px-6 py-3 text-center sm:w-[280px] transition-all duration-200 ${
-                on ? 'bg-white shadow-[0_1px_3px_rgba(15,24,36,.12)]' : dark ? 'hover:bg-white/10' : 'hover:bg-white/60'
+                on ? 'bg-raised shadow-[0_1px_3px_rgba(15,24,36,.12)]' : dark ? 'hover:bg-white/10' : 'hover:bg-white/60'
               }`}
             >
               <span className={`block text-[15px] font-semibold ${on ? 'text-gray-900' : dark ? 'text-white' : 'text-gray-800'}`}>{t.name}</span>
-              <span className={`block text-[12.5px] mt-0.5 ${on || !dark ? 'text-[#6e6e73]' : 'text-[#a9b4c4]'}`}>{t.line}</span>
+              <span className={`block text-[12.5px] mt-0.5 ${on || !dark ? 'text-gray-500' : 'text-[#a9b4c4]'}`}>{t.line}</span>
             </Link>
           )
         })}

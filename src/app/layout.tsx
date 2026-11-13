@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import '@/styles/globals.css'
+import '@/styles/stage.css'
 import PortalShell from '@/components/portal/PortalShell'
 import Footer from '@/components/layout/Footer'
 import GoogleAnalytics from '@/components/GoogleAnalytics'
@@ -11,6 +12,7 @@ import RippleProvider from '@/components/RippleProvider'
 import CircleTransition from '@/components/CircleTransition'
 import { OrganizationJsonLd, WebSiteJsonLd } from '@/components/JsonLd'
 import { siteConfig, BLOB_URL } from '@/lib/site-config'
+import { THEME_SCRIPT } from '@/lib/theme'
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.url),
@@ -86,6 +88,8 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
+        {/* The look of the site (dark or light), put on <html> before anything is drawn */}
+        <script dangerouslySetInnerHTML={{ __html: THEME_SCRIPT }} />
         <OrganizationJsonLd />
         <WebSiteJsonLd />
         <script

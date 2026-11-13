@@ -34,8 +34,8 @@ export default function WalkthroughVideo({ className = '' }: { className?: strin
           aria-label="Play the Learning Studio walkthrough"
           className="absolute inset-0 group"
         >
-          <span className="absolute bottom-4 right-4 sm:bottom-6 sm:right-6 flex items-center gap-3 rounded-full bg-white/95 py-2.5 pl-3 pr-5 shadow-xl transition-transform group-hover:scale-105">
-            <span className="flex h-10 w-10 items-center justify-center rounded-full bg-[#0071e3]">
+          <span className="absolute bottom-4 right-4 sm:bottom-6 sm:right-6 flex items-center gap-3 rounded-full bg-surface/95 py-2.5 pl-3 pr-5 shadow-xl transition-transform group-hover:scale-105">
+            <span className="flex h-10 w-10 items-center justify-center rounded-full bg-primary-600">
               <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z" fill="#fff" /></svg>
             </span>
             <span className="text-[15px] font-semibold text-gray-900">Watch · 9 min</span>

@@ -15,7 +15,7 @@ export default function MCTCertificateButton({ pdfUrl }: MCTCertificateButtonPro
     <>
       <button
         onClick={() => setIsOpen(true)}
-        className="inline-flex items-center bg-white border-2 border-primary-600 text-primary-600 rounded-lg px-6 py-3 shadow-lg hover:bg-primary-50 transition-colors"
+        className="inline-flex items-center bg-raised border-2 border-primary-600 text-primary-600 rounded-lg px-6 py-3 shadow-lg hover:bg-primary-50 transition-colors"
       >
         <Award className="w-6 h-6 mr-3" />
         <div className="text-left">

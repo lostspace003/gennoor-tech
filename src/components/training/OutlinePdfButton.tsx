@@ -36,10 +36,10 @@ export default function OutlinePdfButton({ slug, title }: { slug: string; title:
       {open && (
         <div className="fixed inset-0 z-[60] flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-label="Download the course outline">
           <div className="fixed inset-0 bg-black/50" onClick={() => setOpen(false)} />
-          <form onSubmit={submit} className="relative z-10 w-full max-w-md bg-white rounded-2xl p-6">
+          <form onSubmit={submit} className="relative z-10 w-full max-w-md bg-raised rounded-2xl p-6">
             <button type="button" onClick={() => setOpen(false)} aria-label="Close" className="absolute right-4 top-4 p-1.5 rounded-lg hover:bg-gray-100"><X className="w-5 h-5 text-gray-600" /></button>
             <h2 className="font-heading text-xl font-bold text-gray-900 pr-8">Download the course outline</h2>
-            <p className="text-sm text-[#6e6e73] mt-1">{title}</p>
+            <p className="text-sm text-gray-500 mt-1">{title}</p>
             {done ? (
               <p className="mt-6 text-[15px] text-gray-800">Thank you. Your download should start now.{emailed ? ` We have also emailed the PDF to ${email}.` : ''} If the download does not start, send the form again.</p>
             ) : (

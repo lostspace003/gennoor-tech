@@ -192,7 +192,7 @@ export default function LmsPlayer({
   const resources = item.type === 'lecture' ? item.resources.filter(r => /\.pdf$/i.test(r.name) || /(lab files|student files)\.zip$/i.test(r.name)) : []
 
   return (
-    <div className="bg-[#eef0f4] min-h-screen">
+    <div className="bg-gray-100 min-h-screen">
       <ReviewPrompt course={course} progress={progress} />
       <style>{`
         @keyframes lms-fade { from { opacity: 0; transform: translateY(6px) } to { opacity: 1; transform: none } }
@@ -246,16 +246,16 @@ export default function LmsPlayer({
           <CourseChat slug={course.slug} itemId={item.id} courseTitle={course.title} />
         </div>
 
-        {infoOpen && <aside style={{ ['--sw' as string]: `${sideW}px` }} className="relative lg:w-[var(--sw)] lg:shrink-0 bg-white rounded-2xl border border-[#e2e5ec] overflow-hidden flex flex-col max-h-[80vh] lg:max-h-none lg:h-[calc(100vh-8.5rem)] lg:sticky lg:top-[5.5rem]">
+        {infoOpen && <aside style={{ ['--sw' as string]: `${sideW}px` }} className="relative lg:w-[var(--sw)] lg:shrink-0 bg-raised rounded-2xl border border-gray-200 overflow-hidden flex flex-col max-h-[80vh] lg:max-h-none lg:h-[calc(100vh-8.5rem)] lg:sticky lg:top-[5.5rem]">
           <div
             onPointerDown={startResize}
             title="Drag to resize"
             className="hidden lg:block absolute left-0 top-0 bottom-0 w-1.5 z-10 cursor-col-resize hover:bg-primary-400/40 active:bg-primary-500/50 transition-colors"
           />
-          <button type="button" onClick={() => toggleInfo(false)} aria-label="Hide lecture details" title="Hide this panel" className="flex absolute top-2.5 right-2.5 z-10 w-8 h-8 lg:w-7 lg:h-7 items-center justify-center rounded-full text-[#6e6e73] hover:bg-gray-100">
+          <button type="button" onClick={() => toggleInfo(false)} aria-label="Hide lecture details" title="Hide this panel" className="flex absolute top-2.5 right-2.5 z-10 w-8 h-8 lg:w-7 lg:h-7 items-center justify-center rounded-full text-gray-500 hover:bg-gray-100">
             <X className="w-4 h-4" />
           </button>
-          <div className="flex border-b border-[#e8e8ed] text-[14px] font-semibold shrink-0 pr-11" role="tablist">
+          <div className="flex border-b border-gray-200 text-[14px] font-semibold shrink-0 pr-11" role="tablist">
             {([['details', 'Lecture details'], ['content', 'Course content']] as const).map(([k, label]) => (
               <button
                 key={k}
@@ -263,7 +263,7 @@ export default function LmsPlayer({
                 aria-selected={tab === k}
                 type="button"
                 onClick={() => { if (pdf) closePdf(); setTab(k) }}
-                className={`flex-1 py-3.5 transition-colors duration-200 ${tab === k ? 'text-primary-600 shadow-[inset_0_-2px_0_#0071e3]' : 'text-[#6e6e73] hover:text-gray-900'}`}
+                className={`flex-1 py-3.5 transition-colors duration-200 ${tab === k ? 'text-primary-600 shadow-[inset_0_-2px_0_#0071e3]' : 'text-gray-500 hover:text-gray-900'}`}
               >
                 {label}
                 {k === 'details' && resources.length > 0 && (
@@ -281,7 +281,7 @@ export default function LmsPlayer({
               <div key={`d-${item.id}`} className="p-5 space-y-6 lms-fade">
                 <div>
                   <h2 className="font-heading text-[17px] font-bold text-gray-900 leading-snug">{item.title}</h2>
-                  <p className="text-[13px] text-[#6e6e73] mt-1.5 tabular-nums">
+                  <p className="text-[13px] text-gray-500 mt-1.5 tabular-nums">
                     {item.type === 'lecture' && item.durationSec ? `${fmt(item.durationSec)} · ` : ''}
                     {item.type === 'quiz' ? `Quiz, ${item.questionCount} questions` : kindOf(item) === 'lab' ? 'Lab video' : kindOf(item) === 'demo' ? 'Demo' : 'Lecture'}
                   </p>
@@ -290,7 +290,7 @@ export default function LmsPlayer({
                       type="button"
                       onClick={() => mark(item.id, { done: !progress[item.id]?.done })}
                       className={`mt-4 inline-flex items-center gap-2 px-4 py-2 rounded-full text-[13px] font-semibold border transition-colors duration-200 ${
-                        progress[item.id]?.done ? 'bg-emerald-50 border-emerald-200 text-emerald-700' : 'border-[#d2d2d7] text-gray-800 hover:border-gray-900'
+                        progress[item.id]?.done ? 'bg-emerald-50 border-emerald-200 text-emerald-700' : 'border-gray-300 text-gray-800 hover:border-gray-900'
                       }`}
                     >
                       <CheckCircle2 className="w-4 h-4" /> {progress[item.id]?.done ? 'Completed' : 'Mark as complete'}
@@ -298,17 +298,17 @@ export default function LmsPlayer({
                   )}
                   <div className="mt-4 flex flex-wrap gap-2">
                     {next && (
-                      <button type="button" onClick={() => select(next.id)} className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-[13px] font-semibold bg-primary-600 hover:bg-[#0077ed] text-white transition-colors">
+                      <button type="button" onClick={() => select(next.id)} className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-[13px] font-semibold bg-primary-600 hover:bg-primary-500 text-white transition-colors">
                         Next lesson <ChevronRight className="w-4 h-4" />
                       </button>
                     )}
-                    <button type="button" onClick={() => setTab('content')} className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-[13px] font-semibold border border-[#d2d2d7] text-gray-800 hover:border-gray-900 transition-colors">
+                    <button type="button" onClick={() => setTab('content')} className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-[13px] font-semibold border border-gray-300 text-gray-800 hover:border-gray-900 transition-colors">
                       <ListVideo className="w-4 h-4" /> Show in course content
                     </button>
                   </div>
                 </div>
 
-                {item.description && <RichText text={paragraphize(item.description)} className="text-[14px] leading-[1.65] text-[#3a3a3f]" />}
+                {item.description && <RichText text={paragraphize(item.description)} className="text-[14px] leading-[1.65] text-gray-700" />}
 
                 {resources.length > 0 && (
                 <div>
@@ -322,16 +322,16 @@ export default function LmsPlayer({
                             <button
                               type="button"
                               onClick={() => openDoc(r.name)}
-                              className="w-full flex items-center gap-3 text-left px-3.5 py-3 rounded-xl border border-[#e2e5ec] hover:border-primary-400 hover:bg-primary-50/40 active:scale-[.99] transition duration-200"
+                              className="w-full flex items-center gap-3 text-left px-3.5 py-3 rounded-xl border border-gray-200 hover:border-primary-400 hover:bg-primary-50/40 active:scale-[.99] transition duration-200"
                             >
                               <span className={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0 ${zip ? 'bg-amber-50 text-amber-600' : 'bg-red-50 text-red-500'}`}>
                                 {zip ? <Download className="w-[18px] h-[18px]" /> : <FileText className="w-[18px] h-[18px]" />}
                               </span>
                               <span className="min-w-0 flex-1">
                                 <span className="block text-[13.5px] font-medium text-gray-900 leading-snug break-words">{r.name.replace(/\.(pdf|zip)$/i, '')}</span>
-                                <span className="block text-[12px] text-[#86868b] mt-0.5">{zip ? 'Lab starter files, download' : 'PDF, opens here'}</span>
+                                <span className="block text-[12px] text-gray-400 mt-0.5">{zip ? 'Lab starter files, download' : 'PDF, opens here'}</span>
                               </span>
-                              {docBusy === r.name && <Loader2 className="w-4 h-4 animate-spin text-[#86868b]" />}
+                              {docBusy === r.name && <Loader2 className="w-4 h-4 animate-spin text-gray-400" />}
                             </button>
                           </li>
                         )
@@ -343,10 +343,10 @@ export default function LmsPlayer({
               </div>
             ) : (
               <div className="lms-fade">
-                <div className="px-5 py-4 border-b border-[#f0f0f3]">
+                <div className="px-5 py-4 border-b border-gray-100">
                   <div className="flex items-baseline gap-3">
                     <span className="text-2xl font-bold tracking-tight text-gray-900 tabular-nums">{pct}%</span>
-                    <span className="text-xs text-[#6e6e73] tabular-nums">{doneCount} of {items.length} done{totalSec ? `, ${fmtTotal(totalSec)} of video` : ''}</span>
+                    <span className="text-xs text-gray-500 tabular-nums">{doneCount} of {items.length} done{totalSec ? `, ${fmtTotal(totalSec)} of video` : ''}</span>
                   </div>
                   <div className="mt-3"><CourseStrip sections={course.sections} done={doneMap} height={14} /></div>
                   {allDone && <div className="mt-4"><CertificateCard slug={course.slug} /></div>}
@@ -358,16 +358,16 @@ export default function LmsPlayer({
                   const sectionDone = s.items.filter(i => doneMap[i.id]).length
                   const secTime = s.items.reduce((a, i) => a + (i.type === 'lecture' ? i.durationSec || 0 : 0), 0)
                   return (
-                    <div key={si} className="border-b border-[#f0f0f3] lms-sec">
+                    <div key={si} className="border-b border-gray-100 lms-sec">
                       <button
                         type="button"
                         onClick={() => setOpen(o => ({ ...o, [si]: !o[si] }))}
-                        className="w-full flex items-start gap-2 px-5 py-3.5 text-left hover:bg-[#fafafc] transition-colors"
+                        className="w-full flex items-start gap-2 px-5 py-3.5 text-left hover:bg-gray-50 transition-colors"
                       >
-                        {open[si] ? <ChevronDown className="w-4 h-4 mt-0.5 shrink-0 text-[#86868b]" /> : <ChevronRight className="w-4 h-4 mt-0.5 shrink-0 text-[#86868b]" />}
+                        {open[si] ? <ChevronDown className="w-4 h-4 mt-0.5 shrink-0 text-gray-400" /> : <ChevronRight className="w-4 h-4 mt-0.5 shrink-0 text-gray-400" />}
                         <span className="flex-1 min-w-0">
                           <span className="block text-[13.5px] font-semibold text-gray-900 leading-snug">{s.title}</span>
-                          <span className="block text-[12px] text-[#86868b] mt-1 tabular-nums">{sectionDone}/{s.items.length}{secTime ? `, ${fmtTotal(secTime)}` : ''}</span>
+                          <span className="block text-[12px] text-gray-400 mt-1 tabular-nums">{sectionDone}/{s.items.length}{secTime ? `, ${fmtTotal(secTime)}` : ''}</span>
                           <span className="block mt-2 pr-2"><CourseStrip sections={[s]} done={doneMap} height={5} maxSeconds={longestLesson(course.sections)} /></span>
                         </span>
                       </button>
@@ -379,7 +379,7 @@ export default function LmsPlayer({
                                 type="button"
                                 onClick={() => select(i.id)}
                                 className={`w-full flex items-start gap-3 pl-9 pr-5 py-2.5 text-left text-[13px] leading-snug transition-colors duration-150 ${
-                                  i.id === item.id ? 'bg-primary-50 text-primary-700 font-medium' : 'text-[#424245] hover:bg-[#fafafc]'
+                                  i.id === item.id ? 'bg-primary-50 text-primary-700 font-medium' : 'text-gray-700 hover:bg-gray-50'
                                 }`}
                               >
                                 {doneMap[i.id] ? (
@@ -388,7 +388,7 @@ export default function LmsPlayer({
                                   <span className="w-1.5 h-4 mt-px ml-[5px] mr-[5px] rounded-[1px] shrink-0" style={{ background: KIND_COLOR[kindOf(i)] }} />
                                 )}
                                 <span className="flex-1">{i.title}</span>
-                                {i.type === 'lecture' && i.durationSec ? <span className="text-[12px] text-[#86868b] tabular-nums shrink-0 mt-px">{fmt(i.durationSec)}</span> : null}
+                                {i.type === 'lecture' && i.durationSec ? <span className="text-[12px] text-gray-400 tabular-nums shrink-0 mt-px">{fmt(i.durationSec)}</span> : null}
                               </button>
                               {i.id === item.id && (
                                 <div className="mx-5 mb-2 ml-9 lms-fade">
@@ -762,7 +762,7 @@ function LecturePane({
 
         {ended && hasNext && (
           <div className="absolute inset-0 flex items-center justify-center bg-black/70 lms-fade">
-            <button type="button" onClick={onNext} className="px-7 py-3 bg-primary-600 hover:bg-[#0077ed] text-white font-semibold rounded-full transition-colors">Next lesson</button>
+            <button type="button" onClick={onNext} className="px-7 py-3 bg-primary-600 hover:bg-primary-500 text-white font-semibold rounded-full transition-colors">Next lesson</button>
           </div>
         )}
 
@@ -821,13 +821,13 @@ function LecturePane({
       <div className="flex items-start justify-between gap-4 mt-5">
         <div className="min-w-0">
           <h1 className="font-heading text-xl sm:text-2xl font-bold text-gray-900 leading-snug tracking-[-0.01em]">{lecture.title}</h1>
-          <p className="text-[13px] text-[#6e6e73] mt-1.5 tabular-nums">
+          <p className="text-[13px] text-gray-500 mt-1.5 tabular-nums">
             {lecture.durationSec ? `${fmt(lecture.durationSec)} · ` : ''}
             {done ? 'Completed' : 'Space plays or pauses, arrows skip 10 seconds, f opens full screen'}
           </p>
         </div>
         {hasNext && (
-          <button type="button" onClick={onNext} className="shrink-0 px-5 py-2.5 bg-primary-600 hover:bg-[#0077ed] text-white text-sm font-semibold rounded-full transition-colors">
+          <button type="button" onClick={onNext} className="shrink-0 px-5 py-2.5 bg-primary-600 hover:bg-primary-500 text-white text-sm font-semibold rounded-full transition-colors">
             Next lesson
           </button>
         )}
@@ -891,10 +891,10 @@ export function FullScreenInfo() {
       </button>
       <span
         role="status"
-        className={`absolute left-full top-0 ml-3 w-[min(480px,calc(100vw-5rem))] rounded-xl bg-white text-gray-900 shadow-xl border border-[#e2e5ec] px-4 py-3 text-[13px] leading-snug z-50 transition-all duration-300 ${open ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-1 pointer-events-none'}`}
+        className={`absolute left-full top-0 ml-3 w-[min(480px,calc(100vw-5rem))] rounded-xl bg-raised text-gray-900 shadow-xl border border-gray-200 px-4 py-3 text-[13px] leading-snug z-50 transition-all duration-300 ${open ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-1 pointer-events-none'}`}
       >
         <span className="font-semibold">Press F11 for the best view.</span> Full screen shows the video and chat properly.
-        <span className="block text-[#6e6e73] mt-1">Windows and Linux: F11 (Fn+F11 on some laptops). Mac: Ctrl+Cmd+F.</span>
+        <span className="block text-gray-500 mt-1">Windows and Linux: F11 (Fn+F11 on some laptops). Mac: Ctrl+Cmd+F.</span>
       </span>
     </span>
   )
@@ -933,13 +933,13 @@ function CertificateCard({ slug, dark = false }: { slug: string; dark?: boolean 
       <div className="flex items-center gap-2 text-[14px] font-semibold"><Award className="w-[18px] h-[18px]" /> Certificate of completion</div>
       {cert ? (
         <div className="flex flex-wrap gap-x-5 gap-y-1 mt-2 text-[13px] font-semibold">
-          <a href={cert.verifyUrl} target="_blank" rel="noopener" className={dark ? 'text-[#7db8ff] hover:underline' : 'text-primary-600 hover:underline'}>View certificate</a>
-          <a href={cert.pdfUrl} className={dark ? 'text-[#7db8ff] hover:underline' : 'text-primary-600 hover:underline'}>Download PDF</a>
+          <a href={cert.verifyUrl} target="_blank" rel="noopener" className={dark ? 'text-primary-300 hover:underline' : 'text-primary-600 hover:underline'}>View certificate</a>
+          <a href={cert.pdfUrl} className={dark ? 'text-primary-300 hover:underline' : 'text-primary-600 hover:underline'}>Download PDF</a>
         </div>
       ) : (
         <>
-          <p className={`text-[13px] mt-1 ${dark ? 'text-white/70' : 'text-[#6e6e73]'}`}>Issued by Gennoor Tech for finishing this course.</p>
-          <button type="button" onClick={get} disabled={busy} className="mt-3 px-4 py-2 rounded-full bg-primary-600 hover:bg-[#0077ed] text-white text-[13px] font-semibold disabled:opacity-60 transition-colors">
+          <p className={`text-[13px] mt-1 ${dark ? 'text-white/70' : 'text-gray-500'}`}>Issued by Gennoor Tech for finishing this course.</p>
+          <button type="button" onClick={get} disabled={busy} className="mt-3 px-4 py-2 rounded-full bg-primary-600 hover:bg-primary-500 text-white text-[13px] font-semibold disabled:opacity-60 transition-colors">
             {busy ? 'Issuing…' : 'Get my certificate'}
           </button>
           {error && <p className="mt-2 text-[12.5px] text-red-500">{error}</p>}
@@ -958,7 +958,7 @@ function PdfPane({ name, url, max, onMax, onClose, onDownload }: { name: string;
     if (next) setZoom(next)
   }
   const bar = (
-    <div className={`flex items-center gap-1 px-4 py-2.5 shrink-0 ${max ? 'bg-[#0f1824] text-white' : 'bg-[#f5f6f8] text-gray-900 border-b border-[#e8e8ed]'}`}>
+    <div className={`flex items-center gap-1 px-4 py-2.5 shrink-0 ${max ? 'bg-[#0f1824] text-white' : 'bg-gray-50 text-gray-900 border-b border-gray-200'}`}>
       <FileText className="w-4 h-4 shrink-0 opacity-70" />
       <span className="flex-1 truncate text-[13.5px] font-medium px-2">{name.replace(/\.pdf$/i, '')}</span>
       <PdfBtn label="Zoom out" onClick={() => step(-1)} dark={max}><ZoomOut className="w-[18px] h-[18px]" /></PdfBtn>
@@ -1051,12 +1051,12 @@ function QuizPane({
     }
   }
 
-  if (!quiz) return <div className="p-16 flex justify-center"><Loader2 className="w-7 h-7 animate-spin text-[#86868b]" /></div>
+  if (!quiz) return <div className="p-16 flex justify-center"><Loader2 className="w-7 h-7 animate-spin text-gray-400" /></div>
 
   return (
-    <div className="bg-white rounded-2xl border border-[#e2e5ec] px-5 sm:px-10 py-8 lms-fade">
+    <div className="bg-raised rounded-2xl border border-gray-200 px-5 sm:px-10 py-8 lms-fade">
       <h1 className="font-heading text-2xl font-bold text-gray-900 mb-1">{title}</h1>
-      <p className="text-sm text-[#6e6e73] mb-6">{quiz.questions.length} questions. Pass mark {quiz.passPercent}%.</p>
+      <p className="text-sm text-gray-500 mb-6">{quiz.questions.length} questions. Pass mark {quiz.passPercent}%.</p>
 
       {result && (
         <div className={`rounded-xl px-5 py-4 mb-6 text-[15px] lms-fade ${result.passed ? 'bg-emerald-50 text-emerald-800' : 'bg-amber-50 text-amber-800'}`}>
@@ -1080,10 +1080,10 @@ function QuizPane({
                     ? 'border-emerald-500 bg-emerald-50'
                     : chosen
                       ? 'border-red-400 bg-red-50'
-                      : 'border-[#e8e8ed]'
+                      : 'border-gray-200'
                   : chosen
                     ? 'border-primary-600 bg-primary-50'
-                    : 'border-[#e8e8ed] hover:border-primary-300'
+                    : 'border-gray-200 hover:border-primary-300'
                 return (
                   <button
                     key={ai}
@@ -1097,20 +1097,20 @@ function QuizPane({
                 )
               })}
             </div>
-            {result?.results[qi] && <RichText text={result.results[qi].explanation} className="mt-2 text-[13px] text-[#6e6e73]" />}
+            {result?.results[qi] && <RichText text={result.results[qi].explanation} className="mt-2 text-[13px] text-gray-500" />}
           </li>
         ))}
       </ol>
 
       <div className="mt-8 flex gap-3">
         {!result ? (
-          <button type="button" onClick={submit} disabled={busy || picks.filter(p => p !== undefined).length < quiz.questions.length} className="px-6 py-2.5 bg-primary-600 hover:bg-[#0077ed] text-white text-sm font-semibold rounded-full disabled:opacity-50 transition-colors">
+          <button type="button" onClick={submit} disabled={busy || picks.filter(p => p !== undefined).length < quiz.questions.length} className="px-6 py-2.5 bg-primary-600 hover:bg-primary-500 text-white text-sm font-semibold rounded-full disabled:opacity-50 transition-colors">
             {busy ? 'Checking…' : 'Submit answers'}
           </button>
         ) : (
           <>
-            {!result.passed && <button type="button" onClick={() => { setResult(null); setPicks([]) }} className="px-6 py-2.5 bg-white border border-[#d2d2d7] text-sm font-semibold rounded-full">Try again</button>}
-            {next && <button type="button" onClick={onNext} className="px-6 py-2.5 bg-primary-600 hover:bg-[#0077ed] text-white text-sm font-semibold rounded-full transition-colors">Next lesson</button>}
+            {!result.passed && <button type="button" onClick={() => { setResult(null); setPicks([]) }} className="px-6 py-2.5 bg-raised border border-gray-300 text-sm font-semibold rounded-full">Try again</button>}
+            {next && <button type="button" onClick={onNext} className="px-6 py-2.5 bg-primary-600 hover:bg-primary-500 text-white text-sm font-semibold rounded-full transition-colors">Next lesson</button>}
           </>
         )}
       </div>

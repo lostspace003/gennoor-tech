@@ -5,7 +5,7 @@ import { Loader2 } from 'lucide-react'
 
 const LABEL = 'block text-[12.5px] font-semibold text-gray-900 mb-1.5'
 const FIELD =
-  'w-full box-border font-[inherit] text-[14px] px-3.5 py-[11px] border border-[#d2d2d7] rounded-xl bg-white text-gray-900 placeholder:text-[#86868b] focus:outline-none focus:border-primary-600'
+  'w-full box-border font-[inherit] text-[14px] px-3.5 py-[11px] border border-gray-300 rounded-xl bg-raised text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-primary-600'
 
 export default function JoinForm() {
   const [status, setStatus] = useState<'idle' | 'submitting' | 'success'>('idle')
@@ -29,16 +29,16 @@ export default function JoinForm() {
   if (status === 'success') {
     return (
       <div className="text-center py-12">
-        <div className="text-[44px] font-bold text-[#1d8348] mb-3">✓</div>
+        <div className="text-[44px] font-bold text-green-600 mb-3">✓</div>
         <h3 className="text-[22px] font-bold text-gray-900 mb-2">Application sent.</h3>
-        <p className="text-[14.5px] text-[#6e6e73]">We have sent a confirmation to your email. If there is a fit, we will write to you.</p>
+        <p className="text-[14.5px] text-gray-500">We have sent a confirmation to your email. If there is a fit, we will write to you.</p>
       </div>
     )
   }
 
   return (
     <form onSubmit={submit} className="space-y-3.5">
-      {error && <div className="border border-[#eaa59d] bg-[#fdf4f3] rounded-xl px-4 py-3 text-sm text-[#9b2c21]">{error}</div>}
+      {error && <div className="border border-red-300 bg-red-50 rounded-xl px-4 py-3 text-sm text-red-700">{error}</div>}
 
       <div className="grid sm:grid-cols-2 gap-3.5">
         <div><label htmlFor="name" className={LABEL}>Name</label><input id="name" name="name" required className={FIELD} placeholder="Your name" /></div>

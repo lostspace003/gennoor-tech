@@ -92,7 +92,7 @@ export default function ContentModal({ isOpen, onClose, title, htmlFile, program
 
         {/* Modal */}
         <div
-          className={`relative z-10 bg-white rounded-lg shadow-xl flex flex-col overflow-hidden transition-all duration-300 ${
+          className={`relative z-10 bg-raised rounded-lg shadow-xl flex flex-col overflow-hidden transition-all duration-300 ${
             isFullWidth ? 'w-full h-full rounded-none' : 'w-[95vw] max-w-6xl h-[95vh]'
           }`}
         >
@@ -112,7 +112,7 @@ export default function ContentModal({ isOpen, onClose, title, htmlFile, program
               </button>
 
               {/* Zoom Controls */}
-              <div className="flex items-center gap-1 bg-white rounded-lg border px-2 py-1" role="group" aria-label="Zoom controls">
+              <div className="flex items-center gap-1 bg-raised rounded-lg border px-2 py-1" role="group" aria-label="Zoom controls">
                 <button
                   onClick={handleZoomOut}
                   disabled={zoomLevel <= 50}
@@ -161,9 +161,9 @@ export default function ContentModal({ isOpen, onClose, title, htmlFile, program
           </div>
 
           {/* Content - iframe renders the HTML with its own styles */}
-          <div className="flex-1 min-h-0 overflow-hidden bg-white relative">
+          <div className="flex-1 min-h-0 overflow-hidden bg-surface relative">
             {loading && (
-              <div className="absolute inset-0 flex items-center justify-center bg-white z-10">
+              <div className="absolute inset-0 flex items-center justify-center bg-surface z-10">
                 <Loader2 className="w-8 h-8 animate-spin text-primary-600" />
               </div>
             )}

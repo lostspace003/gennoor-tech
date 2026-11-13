@@ -35,10 +35,10 @@ const STAND_FOR = [
 
 export default function AboutPage() {
   return (
-    <main className="bg-white">
+    <main className="bg-surface">
       <section className="hero-backdrop px-6 pt-8 lg:pt-10 pb-8 text-center">
         <h1 className="display-hero max-w-[820px] mx-auto">Gennoor Tech.</h1>
-        <p className="text-[clamp(18px,1.8vw,22px)] leading-[1.5] text-[#6e6e73] max-w-[640px] mx-auto mt-6">
+        <p className="text-[clamp(18px,1.8vw,22px)] leading-[1.5] text-gray-500 max-w-[640px] mx-auto mt-6">
           Practical AI and cloud knowledge, for everyone who wants to build with it.
         </p>
       </section>
@@ -52,30 +52,30 @@ export default function AboutPage() {
         </div>
         <div className="max-w-[1080px] mx-auto grid md:grid-cols-3 gap-6 mt-8">
           {PILLARS.map(p => (
-            <div key={p.title} className="rounded-[18px] border border-[#e8e8ed] p-7 flex flex-col items-center text-center">
+            <div key={p.title} className="rounded-[18px] border border-gray-200 p-7 flex flex-col items-center text-center">
               <p.art className="w-[104px] h-[104px] mb-5" />
               <h3 className="font-heading text-[19px] font-bold tracking-[-0.01em] text-gray-900">{p.title}</h3>
-              <p className="text-[15px] leading-[1.55] text-[#6e6e73] mt-2">{p.body}</p>
+              <p className="text-[15px] leading-[1.55] text-gray-500 mt-2">{p.body}</p>
             </div>
           ))}
         </div>
         <div className="text-center mt-10">
           <Link href="/studio" className="pill-primary">Open the Learning Studio</Link>
         </div>
-        <p className="text-center text-[14px] text-[#6e6e73] mt-6">
+        <p className="text-center text-[14px] text-gray-500 mt-6">
           Taught by Microsoft Certified Trainers. <Link href="/about/certifications" className="text-primary-600 hover:underline">See the credentials ›</Link>
         </p>
       </section>
 
       {/* ===== What we stand for ===== */}
-      <section className="bg-[#f5f5f7] px-6 py-10 lg:py-10">
+      <section className="bg-gray-50 px-6 py-10 lg:py-10">
         <div className="max-w-[1080px] mx-auto">
           <h2 className="display-section text-center mb-10">What we stand for.</h2>
           <div className="grid md:grid-cols-3 gap-5">
             {STAND_FOR.map(s => (
-              <div key={s.title} className="bg-white rounded-[18px] p-6">
+              <div key={s.title} className="bg-raised rounded-[18px] p-6">
                 <h3 className="font-heading text-[17px] font-bold text-gray-900">{s.title}</h3>
-                <p className="text-[14.5px] leading-[1.55] text-[#6e6e73] mt-2">{s.body}</p>
+                <p className="text-[14.5px] leading-[1.55] text-gray-500 mt-2">{s.body}</p>
               </div>
             ))}
           </div>
@@ -93,13 +93,13 @@ export default function AboutPage() {
             <Link href="/training" className="pill-primary">About training</Link>
             <Link href="/webinars" className="link-arrow">Expert sessions ›</Link>
           </div>
-          <p className="text-[15px] text-[#6e6e73] mt-8">
+          <p className="text-[15px] text-gray-500 mt-8">
             Based in Mumbai, India. <Link href="/contact" className="text-primary-600 hover:underline">Contact us</Link>.
           </p>
         </div>
       </section>
 
-      <section className="bg-[#f5f5f7] px-6 py-10 lg:py-10">
+      <section className="bg-gray-50 px-6 py-10 lg:py-10">
         <div className="max-w-[1080px] mx-auto">
           <h2 className="display-section text-center mb-10">Find out more.</h2>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
@@ -110,9 +110,9 @@ export default function AboutPage() {
               { title: 'Credentials', href: '/about/certifications', body: 'Certifications held.' },
               { title: 'Work with us', href: '/join', body: 'Trainers and engineers, freelance or full-time.' },
             ].map(c => (
-              <Link key={c.title} href={c.href} className="bg-white rounded-[18px] p-6 hover:shadow-md transition-shadow">
+              <Link key={c.title} href={c.href} className="bg-raised rounded-[18px] p-6 hover:shadow-md transition-shadow">
                 <h3 className="font-heading text-[17px] font-bold text-gray-900">{c.title}</h3>
-                <p className="text-[14.5px] text-[#6e6e73] mt-1.5">{c.body}</p>
+                <p className="text-[14.5px] text-gray-500 mt-1.5">{c.body}</p>
               </Link>
             ))}
           </div>

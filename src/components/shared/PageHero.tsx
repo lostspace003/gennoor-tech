@@ -113,7 +113,7 @@ export default function PageHero({
                 return (
                   <span
                     key={`${m.label}-${i}`}
-                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/70 backdrop-blur-sm ring-1 ring-gray-200 text-xs font-medium text-gray-700"
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-surface/70 backdrop-blur-sm ring-1 ring-gray-200 text-xs font-medium text-gray-700"
                   >
                     <Icon className="w-3.5 h-3.5 text-primary-500" />
                     {m.label}
@@ -132,7 +132,7 @@ export default function PageHero({
                   className={cn(
                     'inline-flex items-center justify-center gap-2 px-6 py-3 text-sm font-semibold rounded-xl transition-all duration-300',
                     c.variant === 'ghost'
-                      ? 'text-gray-700 bg-white/80 backdrop-blur-sm ring-1 ring-gray-200 hover:ring-primary-300 hover:text-primary-700'
+                      ? 'text-gray-700 bg-surface/80 backdrop-blur-sm ring-1 ring-gray-200 hover:ring-primary-300 hover:text-primary-700'
                       : 'text-white bg-primary-600'
                   )}
                 >

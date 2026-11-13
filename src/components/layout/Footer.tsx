@@ -44,7 +44,7 @@ export default function Footer() {
   if (isChromelessRoute(pathname)) return null
 
   return (
-    <footer className="bg-[#f5f5f7] border-t border-[#e8e8ed]">
+    <footer className="bg-gray-50 border-t border-gray-200">
       <div className="max-w-[1080px] mx-auto px-6 sm:px-8 pt-8 pb-8">
         {/* Link columns */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
@@ -56,7 +56,7 @@ export default function Footer() {
                   <li key={link.name}>
                     <Link
                       href={link.href}
-                      className="text-xs text-[#6e6e73] hover:text-gray-900 hover:underline transition-colors"
+                      className="text-xs text-gray-500 hover:text-gray-900 hover:underline transition-colors"
                     >
                       {link.name}
                     </Link>
@@ -68,15 +68,15 @@ export default function Footer() {
         </div>
 
         {/* Newsletter — kept from the previous footer, restated quietly */}
-        <div className="border-t border-[#d2d2d7] mt-9 pt-6 flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-6">
+        <div className="border-t border-gray-300 mt-9 pt-6 flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-6">
           <div className="flex-1">
             <p className="text-xs font-semibold text-gray-900">Stay in touch</p>
-            <p className="text-xs text-[#86868b] mt-0.5">
+            <p className="text-xs text-gray-400 mt-0.5">
               Occasional notes on AI training and automation.
             </p>
           </div>
           {subscribed ? (
-            <p className="text-xs font-medium text-[#1d8348]">
+            <p className="text-xs font-medium text-green-600">
               ✓ Subscribed — you&rsquo;ll get the next issue.
             </p>
           ) : (
@@ -88,13 +88,13 @@ export default function Footer() {
                 placeholder="Enter your email"
                 aria-label="Email address for newsletter"
                 required
-                className="flex-1 sm:w-[220px] px-3.5 py-2 text-xs rounded-full bg-white border border-[#d2d2d7] text-gray-900 placeholder:text-[#86868b] focus:border-primary-600 focus:ring-0"
+                className="flex-1 sm:w-[220px] px-3.5 py-2 text-xs rounded-full bg-raised border border-gray-300 text-gray-900 placeholder:text-gray-400 focus:border-primary-600 focus:ring-0"
               />
               <EmailOTP email={email} onVerified={() => setEmailVerified(true)} verified={emailVerified} compact />
               <button
                 type="submit"
                 disabled={!emailVerified}
-                className="px-4 py-2 text-xs font-semibold text-white bg-primary-600 hover:bg-[#0077ed] rounded-full transition-colors disabled:opacity-50"
+                className="px-4 py-2 text-xs font-semibold text-white bg-primary-600 hover:bg-primary-500 rounded-full transition-colors disabled:opacity-50"
               >
                 Subscribe
               </button>
@@ -104,29 +104,29 @@ export default function Footer() {
 
         <ClaudePartnerFooterLine />
 
-        <p className="text-[11px] text-[#86868b] text-center mt-8">Gennoor Tech · Mumbai, India</p>
+        <p className="text-[11px] text-gray-400 text-center mt-8">Gennoor Tech · Mumbai, India</p>
 
         {/* Bottom bar */}
-        <div className="border-t border-[#d2d2d7] mt-4 pt-4 flex flex-wrap justify-between gap-3">
-          <p className="text-xs text-[#86868b]">
+        <div className="border-t border-gray-300 mt-4 pt-4 flex flex-wrap justify-between gap-3">
+          <p className="text-xs text-gray-400">
             © {currentYear} Gennoor Tech. Mumbai, India.
           </p>
           <div className="flex flex-wrap items-center gap-4">
-            <Link href="/crm" className="text-xs text-[#6e6e73] hover:underline">
+            <Link href="/crm" className="text-xs text-gray-500 hover:underline">
               CRM
             </Link>
-            <Link href="/admin" className="text-xs text-[#6e6e73] hover:underline">
+            <Link href="/admin" className="text-xs text-gray-500 hover:underline">
               Admin
             </Link>
-            <Link href="/privacy" className="text-xs text-[#6e6e73] hover:underline">
+            <Link href="/privacy" className="text-xs text-gray-500 hover:underline">
               Privacy
             </Link>
-            <Link href="/terms" className="text-xs text-[#6e6e73] hover:underline">
+            <Link href="/terms" className="text-xs text-gray-500 hover:underline">
               Terms
             </Link>
             <a
               href={`mailto:${siteConfig.email}`}
-              className="text-xs text-[#6e6e73] hover:underline"
+              className="text-xs text-gray-500 hover:underline"
             >
               {siteConfig.email}
             </a>
@@ -135,7 +135,7 @@ export default function Footer() {
                 href={siteConfig.social.linkedin}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-xs text-[#6e6e73] hover:underline"
+                className="text-xs text-gray-500 hover:underline"
               >
                 LinkedIn
               </a>
@@ -145,7 +145,7 @@ export default function Footer() {
                 href={siteConfig.social.youtube}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-xs text-[#6e6e73] hover:underline"
+                className="text-xs text-gray-500 hover:underline"
               >
                 YouTube
               </a>
@@ -155,7 +155,7 @@ export default function Footer() {
                 href={siteConfig.social.github}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-xs text-[#6e6e73] hover:underline"
+                className="text-xs text-gray-500 hover:underline"
               >
                 GitHub
               </a>

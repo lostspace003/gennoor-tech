@@ -260,4 +260,4 @@ The email series in the CRM is the written pitch. Calls and presentations follow
 
 ## More documentation
 
-[`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) · [`docs/DESIGN-SYSTEM.md`](docs/DESIGN-SYSTEM.md) · [`docs/lms-course-format.md`](docs/lms-course-format.md) · [`docs/course-index.md`](docs/course-index.md) · [`docs/FOLLOW-UPS.md`](docs/FOLLOW-UPS.md)
+[`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) · [`docs/DESIGN.md`](docs/DESIGN.md) · [`docs/lms-course-format.md`](docs/lms-course-format.md) · [`docs/course-index.md`](docs/course-index.md) · [`docs/FOLLOW-UPS.md`](docs/FOLLOW-UPS.md)

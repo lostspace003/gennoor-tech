@@ -43,10 +43,10 @@ interface LearnerAuthModalProps {
 }
 
 const inputCls =
-  'w-full px-4 py-2.5 bg-white border border-[#d2d2d7] rounded-xl text-[15px] text-gray-900 placeholder:text-[#a1a1a6] focus:outline-none focus:ring-2 focus:ring-primary-600/40 focus:border-primary-600 transition-colors'
+  'w-full px-4 py-2.5 bg-raised border border-gray-300 rounded-xl text-[15px] text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-600/40 focus:border-primary-600 transition-colors'
 const primaryBtnCls =
-  'flex-1 inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-primary-600 hover:bg-[#0077ed] text-white text-[15px] font-medium rounded-full transition-colors disabled:opacity-50'
-const backBtnCls = 'px-4 py-2.5 text-[14px] text-[#6e6e73] hover:text-gray-900 transition-colors'
+  'flex-1 inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-primary-600 hover:bg-primary-500 text-white text-[15px] font-medium rounded-full transition-colors disabled:opacity-50'
+const backBtnCls = 'px-4 py-2.5 text-[14px] text-gray-500 hover:text-gray-900 transition-colors'
 
 export default function LearnerAuthModal({ isOpen, onClose, onLoginSuccess, title, subtitle }: LearnerAuthModalProps) {
   const [step, setStep] = useState<Step>('choose')
@@ -387,7 +387,7 @@ export default function LearnerAuthModal({ isOpen, onClose, onLoginSuccess, titl
           value={digit}
           onChange={e => handleOtpChange(i, e.target.value)}
           onKeyDown={e => handleOtpKeyDown(i, e)}
-          className="w-11 h-12 text-center text-lg font-bold border border-[#d2d2d7] rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-600/40 focus:border-primary-600"
+          className="w-11 h-12 text-center text-lg font-bold border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-600/40 focus:border-primary-600"
           autoFocus={i === 0}
         />
       ))}
@@ -423,14 +423,14 @@ export default function LearnerAuthModal({ isOpen, onClose, onLoginSuccess, titl
         onClick={dismissible ? onClose : undefined}
       />
       <div
-        className={`relative bg-white rounded-[22px] shadow-2xl w-full overflow-hidden animate-fade-in ${
+        className={`relative bg-raised rounded-[22px] shadow-2xl w-full overflow-hidden animate-fade-in ${
           step === 'profile-setup' ? 'max-w-[440px] max-h-[92vh] overflow-y-auto' : 'max-w-[400px]'
         }`}
       >
         {dismissible && (
           <button
             onClick={onClose}
-            className="absolute top-4 right-4 w-8 h-8 inline-flex items-center justify-center rounded-full text-[#86868b] hover:text-gray-900 hover:bg-[#f5f5f7] transition-colors"
+            className="absolute top-4 right-4 w-8 h-8 inline-flex items-center justify-center rounded-full text-gray-400 hover:text-gray-900 hover:bg-gray-50 transition-colors"
             aria-label="Close"
           >
             <X className="w-[18px] h-[18px]" />
@@ -438,9 +438,9 @@ export default function LearnerAuthModal({ isOpen, onClose, onLoginSuccess, titl
         )}
 
         <div className="px-7 pt-8 pb-7">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[#86868b] mb-2">Learning Studio</p>
+          <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-gray-400 mb-2">Learning Studio</p>
           <h2 className="text-[22px] font-bold tracking-[-0.02em] text-gray-900 leading-tight">{heading}</h2>
-          <p className="text-[13.5px] leading-[1.5] text-[#6e6e73] mt-1.5 mb-5">{subheading}</p>
+          <p className="text-[13.5px] leading-[1.5] text-gray-500 mt-1.5 mb-5">{subheading}</p>
 
           {error && (
             <div className="mb-4 px-4 py-2.5 bg-red-50 border border-red-100 text-red-700 text-[13px] rounded-xl">
@@ -448,7 +448,7 @@ export default function LearnerAuthModal({ isOpen, onClose, onLoginSuccess, titl
             </div>
           )}
           {notice && !error && (
-            <div className="mb-4 px-4 py-2.5 bg-[#f0f7ff] border border-[#d6e8ff] text-primary-600 text-[13px] rounded-xl">
+            <div className="mb-4 px-4 py-2.5 bg-primary-50 border border-primary-200 text-primary-600 text-[13px] rounded-xl">
               {notice}
             </div>
           )}
@@ -461,7 +461,7 @@ export default function LearnerAuthModal({ isOpen, onClose, onLoginSuccess, titl
 
               <button
                 onClick={handleMicrosoftLogin}
-                className="w-full flex items-center gap-3 px-4 py-3 border border-[#d2d2d7] rounded-xl hover:bg-[#f5f5f7] transition-colors"
+                className="w-full flex items-center gap-3 px-4 py-3 border border-gray-300 rounded-xl hover:bg-gray-50 transition-colors"
               >
                 <svg className="w-5 h-5" viewBox="0 0 23 23">
                   <path fill="#f35325" d="M1 1h10v10H1z"/>
@@ -473,14 +473,14 @@ export default function LearnerAuthModal({ isOpen, onClose, onLoginSuccess, titl
               </button>
 
               <div className="flex items-center gap-4 py-1.5">
-                <div className="flex-1 h-px bg-[#e8e8ed]" />
-                <span className="text-[11px] text-[#a1a1a6] uppercase tracking-[0.08em]">or use email</span>
-                <div className="flex-1 h-px bg-[#e8e8ed]" />
+                <div className="flex-1 h-px bg-gray-100" />
+                <span className="text-[11px] text-gray-400 uppercase tracking-[0.08em]">or use email</span>
+                <div className="flex-1 h-px bg-gray-100" />
               </div>
 
               <button
                 onClick={() => goTo('otp-email')}
-                className="w-full flex items-center gap-3 px-4 py-3 border border-[#d2d2d7] rounded-xl hover:bg-[#f5f5f7] transition-colors"
+                className="w-full flex items-center gap-3 px-4 py-3 border border-gray-300 rounded-xl hover:bg-gray-50 transition-colors"
               >
                 <Mail className="w-5 h-5 text-primary-600" />
                 <span className="text-[14px] font-medium text-gray-900">Email me a one-time code</span>
@@ -488,7 +488,7 @@ export default function LearnerAuthModal({ isOpen, onClose, onLoginSuccess, titl
 
               <button
                 onClick={() => goTo('password')}
-                className="w-full flex items-center gap-3 px-4 py-3 border border-[#d2d2d7] rounded-xl hover:bg-[#f5f5f7] transition-colors"
+                className="w-full flex items-center gap-3 px-4 py-3 border border-gray-300 rounded-xl hover:bg-gray-50 transition-colors"
               >
                 <KeyRound className="w-5 h-5 text-primary-600" />
                 <span className="text-[14px] font-medium text-gray-900">Sign in with password</span>
@@ -521,7 +521,7 @@ export default function LearnerAuthModal({ isOpen, onClose, onLoginSuccess, titl
                 <button
                   type="button"
                   onClick={() => setShowPassword(v => !v)}
-                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[#a1a1a6] hover:text-gray-900"
+                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-900"
                   aria-label={showPassword ? 'Hide password' : 'Show password'}
                 >
                   {showPassword ? <EyeOff className="w-[18px] h-[18px]" /> : <Eye className="w-[18px] h-[18px]" />}
@@ -537,13 +537,13 @@ export default function LearnerAuthModal({ isOpen, onClose, onLoginSuccess, titl
               <div className="flex items-center justify-between pt-1">
                 <button
                   onClick={() => goTo('forgot-email')}
-                  className="text-[13px] text-primary-600 hover:text-[#0077ed]"
+                  className="text-[13px] text-primary-600 hover:text-primary-500"
                 >
                   Forgot password?
                 </button>
                 <button
                   onClick={() => goTo('otp-email')}
-                  className="text-[13px] text-primary-600 hover:text-[#0077ed]"
+                  className="text-[13px] text-primary-600 hover:text-primary-500"
                 >
                   Email me a code instead
                 </button>
@@ -593,7 +593,7 @@ export default function LearnerAuthModal({ isOpen, onClose, onLoginSuccess, titl
               </div>
               <button
                 onClick={() => sendOtp('otp-verify')}
-                className="w-full text-[13px] text-primary-600 hover:text-[#0077ed]"
+                className="w-full text-[13px] text-primary-600 hover:text-primary-500"
               >
                 Resend code
               </button>
@@ -638,7 +638,7 @@ export default function LearnerAuthModal({ isOpen, onClose, onLoginSuccess, titl
                 <button
                   type="button"
                   onClick={() => setShowPassword(v => !v)}
-                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[#a1a1a6] hover:text-gray-900"
+                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-900"
                   aria-label={showPassword ? 'Hide password' : 'Show password'}
                 >
                   {showPassword ? <EyeOff className="w-[18px] h-[18px]" /> : <Eye className="w-[18px] h-[18px]" />}
@@ -662,7 +662,7 @@ export default function LearnerAuthModal({ isOpen, onClose, onLoginSuccess, titl
               </div>
               <button
                 onClick={sendResetCode}
-                className="w-full text-[13px] text-primary-600 hover:text-[#0077ed]"
+                className="w-full text-[13px] text-primary-600 hover:text-primary-500"
               >
                 Resend code
               </button>

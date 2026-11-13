@@ -67,7 +67,7 @@ function AskBody({ ask, autoFocus, suggestions = SUGGESTIONS }: { ask: Ask; auto
       <div className="flex-1 min-h-0 overflow-y-auto px-4 py-4 space-y-4">
         {ask.msgs.length === 0 && !ask.busy && (
           <div className="space-y-3">
-            <p className="text-[14px] leading-relaxed text-[#6e6e73]">Ask about the lesson you are on or the topics this course teaches.</p>
+            <p className="text-[14px] leading-relaxed text-gray-500">Ask about the lesson you are on or the topics this course teaches.</p>
             <div className="flex flex-wrap gap-2">
               {suggestions.map(s => (
                 <button key={s} type="button" onClick={() => ask.send(s)}
@@ -85,44 +85,44 @@ function AskBody({ ask, autoFocus, suggestions = SUGGESTIONS }: { ask: Ask; auto
             </div>
           ) : (
             <div key={m.id} className="flex">
-              <div className="max-w-full rounded-2xl rounded-bl-md px-3.5 py-2.5 text-[14px] leading-relaxed break-words bg-[#f5f5f7] text-gray-900">
+              <div className="max-w-full rounded-2xl rounded-bl-md px-3.5 py-2.5 text-[14px] leading-relaxed break-words bg-gray-50 text-gray-900">
                 <ChatMarkdown text={m.text} />
                 <div><CopyPairButton msgs={ask.msgs} index={i} /></div>
               </div>
             </div>
           )
         ))}
-        {ask.busy && <p className="text-[13px] text-[#86868b] flex items-center gap-2"><Loader2 className="w-4 h-4 animate-spin" /> Looking that up…</p>}
+        {ask.busy && <p className="text-[13px] text-gray-400 flex items-center gap-2"><Loader2 className="w-4 h-4 animate-spin" /> Looking that up…</p>}
         <div ref={endRef} />
       </div>
 
-      <form onSubmit={submit} className="flex items-end gap-2 p-3 border-t border-[#e8e8ed] shrink-0 bg-white">
+      <form onSubmit={submit} className="flex items-end gap-2 p-3 border-t border-gray-200 shrink-0 bg-surface">
         <textarea
           ref={inputRef} value={text} onChange={e => setText(e.target.value)} rows={1} maxLength={2000}
           onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); submit() } }}
           placeholder="Type your question" aria-label="Your question"
-          className="flex-1 resize-none border border-[#d2d2d7] rounded-xl px-3.5 py-2.5 text-[14px] text-gray-900 focus:outline-none focus:border-primary-600 max-h-28"
+          className="flex-1 resize-none border border-gray-300 rounded-xl px-3.5 py-2.5 text-[14px] text-gray-900 focus:outline-none focus:border-primary-600 max-h-28"
         />
         <button type="submit" disabled={ask.busy || !text.trim()} aria-label="Send"
           className="w-10 h-10 rounded-full bg-primary-600 text-white flex items-center justify-center disabled:opacity-40"><Send className="w-4 h-4" /></button>
       </form>
-      {ask.error && <p className="px-4 pb-3 text-[13px] text-red-600 bg-white">{ask.error}</p>}
+      {ask.error && <p className="px-4 pb-3 text-[13px] text-red-600 bg-surface">{ask.error}</p>}
     </>
   )
 }
 
 function AskHeader({ subtitle, onClose, msgs, courseTitle }: { subtitle: string; onClose?: () => void; msgs: Msg[]; courseTitle: string }) {
   return (
-    <div className="flex items-center gap-2 px-4 py-3 border-b border-[#e8e8ed] shrink-0 bg-white">
+    <div className="flex items-center gap-2 px-4 py-3 border-b border-gray-200 shrink-0 bg-surface">
       <MessageCircle className="w-[18px] h-[18px] text-primary-600" />
       <div className="min-w-0">
         <div className="font-semibold text-[14.5px] text-gray-900 leading-tight">Ask about this course</div>
-        <div className="text-[11.5px] text-[#86868b] truncate">{subtitle}</div>
+        <div className="text-[11.5px] text-gray-400 truncate">{subtitle}</div>
       </div>
       <div className="ml-auto flex items-center gap-0.5">
         <ExportChatMenu msgs={msgs} courseTitle={courseTitle} />
         {onClose && (
-          <button type="button" onClick={onClose} aria-label="Close" title="Close" className="p-1.5 rounded-lg text-[#6e6e73] hover:bg-gray-100"><X className="w-4 h-4" /></button>
+          <button type="button" onClick={onClose} aria-label="Close" title="Close" className="p-1.5 rounded-lg text-gray-500 hover:bg-gray-100"><X className="w-4 h-4" /></button>
         )}
       </div>
     </div>
@@ -144,7 +144,7 @@ export function AskTab({ onClick }: { onClick: () => void }) {
 export function AskDock({ ask, chapterTitle, courseTitle, onClose }: { ask: Ask; chapterTitle: string; courseTitle?: string; onClose: () => void }) {
   return (
     <aside role="dialog" aria-label="Ask about this course"
-      className="z-30 flex flex-col bg-white border-[#e2e5ec] absolute inset-x-0 bottom-0 h-[62%] rounded-t-2xl border-t shadow-[0_-12px_30px_-12px_rgba(0,0,0,.4)] lg:static lg:h-auto lg:w-[360px] lg:shrink-0 lg:rounded-none lg:border-t-0 lg:border-r lg:shadow-none">
+      className="z-30 flex flex-col bg-raised border-gray-200 absolute inset-x-0 bottom-0 h-[62%] rounded-t-2xl border-t shadow-[0_-12px_30px_-12px_rgba(0,0,0,.4)] lg:static lg:h-auto lg:w-[360px] lg:shrink-0 lg:rounded-none lg:border-t-0 lg:border-r lg:shadow-none">
       <AskHeader subtitle={`You are on: ${chapterTitle}`} onClose={onClose} msgs={ask.msgs} courseTitle={courseTitle || chapterTitle} />
       <AskBody ask={ask} autoFocus />
     </aside>
@@ -156,7 +156,7 @@ export function AskCard({ courseId, title }: { courseId: string; title: string }
   const ask = useAcademyAsk(courseId)
   return (
     <section aria-label="Ask about this course"
-      className="flex flex-col rounded-2xl bg-white text-gray-900 shadow-[0_20px_50px_-20px_rgba(0,0,0,.6)] overflow-hidden h-[400px] lg:h-[420px]">
+      className="flex flex-col rounded-2xl bg-raised text-gray-900 shadow-[0_20px_50px_-20px_rgba(0,0,0,.6)] overflow-hidden h-[400px] lg:h-[420px]">
       <AskHeader subtitle={title} msgs={ask.msgs} courseTitle={title} />
       <AskBody ask={ask} suggestions={['What will I learn?', 'Who is this course for?', 'Where should I start?']} />
     </section>

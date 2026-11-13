@@ -28,16 +28,16 @@ export default async function CourseDiscussionPage({ params }: PageProps) {
   const enrolled = await hasFullAccess(learner.email, slug).catch(() => false)
 
   return (
-    <main className="bg-white min-h-screen">
+    <main className="bg-surface min-h-screen">
       <AcademyBar section="Discussion" />
       <div className="max-w-[820px] mx-auto px-6 py-8 lg:py-10">
-        <Link href={`/studio/${slug}`} className="text-sm text-[#6e6e73] hover:text-gray-900">‹ {course.title}</Link>
+        <Link href={`/studio/${slug}`} className="text-sm text-gray-500 hover:text-gray-900">‹ {course.title}</Link>
         <h1 className="font-heading text-[clamp(28px,3.4vw,40px)] font-bold tracking-[-0.03em] text-gray-900 mt-4">Discussion</h1>
-        <p className="text-[#6e6e73] mt-2 mb-8">Ask a question, share what worked, or help another learner. The Gennoor team joins in too.</p>
+        <p className="text-gray-500 mt-2 mb-8">Ask a question, share what worked, or help another learner. The Gennoor team joins in too.</p>
         {enrolled ? (
           <Discussion scope={slug} emptyText="No topics yet. Start the first one." />
         ) : (
-          <div className="rounded-2xl bg-[#f5f6f8] p-6">
+          <div className="rounded-2xl bg-gray-50 p-6">
             <p className="text-[15px] text-gray-900">Get the full course to join its discussion.</p>
             <Link href={`/studio/${slug}`} className="pill-primary inline-block mt-4">Go to the course</Link>
           </div>

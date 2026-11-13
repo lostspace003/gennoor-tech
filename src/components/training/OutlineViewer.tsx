@@ -22,7 +22,7 @@ export default function OutlineViewer({ slug, title }: { slug: string; title: st
       {open && (
         <div className="fixed inset-0 z-[60] flex items-center justify-center p-3 sm:p-6" role="dialog" aria-modal="true" aria-label={`${title} course outline`}>
           <div className="fixed inset-0 bg-black/60" onClick={() => setOpen(false)} />
-          <div className="relative z-10 w-full max-w-5xl h-[90vh] bg-white rounded-2xl overflow-hidden flex flex-col">
+          <div className="relative z-10 w-full max-w-5xl h-[90vh] bg-raised rounded-2xl overflow-hidden flex flex-col">
             <div className="flex items-center justify-between gap-4 px-5 py-3 border-b border-gray-200">
               <p className="font-heading text-[15px] font-semibold text-gray-900 truncate">{title}: course outline</p>
               <button type="button" onClick={() => setOpen(false)} aria-label="Close" className="p-1.5 rounded-lg hover:bg-gray-100"><X className="w-5 h-5 text-gray-600" /></button>

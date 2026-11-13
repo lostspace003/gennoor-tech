@@ -61,7 +61,7 @@ export default function SessionCarousel({ photos }: { photos: SessionPhoto[] }) 
               <div className="relative aspect-[4/3] sm:aspect-[16/10]">
                 <Image src={p.src} alt={p.alt} fill sizes="(min-width: 1024px) 560px, 100vw" className="object-cover" style={{ objectPosition: p.pos || 'center' }} priority={k === 0} />
               </div>
-              <figcaption className="bg-white px-5 py-3.5 text-[14px] text-[#6e6e73]">{p.caption}</figcaption>
+              <figcaption className="bg-surface px-5 py-3.5 text-[14px] text-gray-500">{p.caption}</figcaption>
             </figure>
           ))}
         </div>
@@ -69,17 +69,17 @@ export default function SessionCarousel({ photos }: { photos: SessionPhoto[] }) 
       {n > 1 && (
         <>
           <button type="button" onClick={() => go(i - 1)} aria-label="Previous photo"
-            className="absolute left-3 top-[38%] -translate-y-1/2 w-10 h-10 rounded-full bg-white/90 text-gray-800 shadow-md flex items-center justify-center hover:bg-white transition-colors">
+            className="absolute left-3 top-[38%] -translate-y-1/2 w-10 h-10 rounded-full bg-surface/90 text-gray-800 shadow-md flex items-center justify-center hover:bg-surface transition-colors">
             <ChevronLeft className="w-5 h-5" />
           </button>
           <button type="button" onClick={() => go(i + 1)} aria-label="Next photo"
-            className="absolute right-3 top-[38%] -translate-y-1/2 w-10 h-10 rounded-full bg-white/90 text-gray-800 shadow-md flex items-center justify-center hover:bg-white transition-colors">
+            className="absolute right-3 top-[38%] -translate-y-1/2 w-10 h-10 rounded-full bg-surface/90 text-gray-800 shadow-md flex items-center justify-center hover:bg-surface transition-colors">
             <ChevronRight className="w-5 h-5" />
           </button>
           <div className="flex justify-center gap-2 mt-4">
             {photos.map((p, k) => (
               <button key={p.src} type="button" onClick={() => go(k)} aria-label={`Show photo ${k + 1}`} aria-current={k === i}
-                className={`h-2 rounded-full transition-all ${k === i ? 'w-6 bg-[#0071e3]' : 'w-2 bg-[#d2d2d7] hover:bg-[#b5b5bb]'}`} />
+                className={`h-2 rounded-full transition-all ${k === i ? 'w-6 bg-primary-600' : 'w-2 bg-gray-300 hover:bg-gray-300'}`} />
             ))}
           </div>
         </>

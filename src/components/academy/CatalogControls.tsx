@@ -59,7 +59,7 @@ export function FilterBar({
                 onClick={() => quick.onChange(o.id)}
                 aria-pressed={quick.value === o.id}
                 className={`px-3 py-1.5 text-xs font-semibold rounded-full transition-colors ${
-                  quick.value === o.id ? 'bg-primary-600 text-white shadow-sm' : 'bg-white text-gray-600 ring-1 ring-gray-200 hover:ring-primary-300 hover:text-primary-700'
+                  quick.value === o.id ? 'bg-primary-600 text-white shadow-sm' : 'bg-raised text-gray-600 ring-1 ring-gray-200 hover:ring-primary-300 hover:text-primary-700'
                 }`}
               >
                 {o.label}
@@ -74,7 +74,7 @@ export function FilterBar({
               type="button"
               onClick={() => setOpen(o => !o)}
               aria-expanded={open}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-full bg-white text-gray-700 ring-1 ring-gray-200 hover:ring-primary-300"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-full bg-raised text-gray-700 ring-1 ring-gray-200 hover:ring-primary-300"
             >
               More filters
               {restActive > 0 && <span className="px-1.5 rounded-full bg-primary-600 text-white text-[10px] leading-4">{restActive}</span>}
@@ -86,7 +86,7 @@ export function FilterBar({
             <select
               value={sort}
               onChange={e => onSort(e.target.value as SortKey)}
-              className="text-xs rounded-full px-3 py-1.5 bg-white ring-1 ring-gray-200 text-gray-800 focus:outline-none focus:ring-primary-600 cursor-pointer border-0"
+              className="text-xs rounded-full px-3 py-1.5 bg-raised ring-1 ring-gray-200 text-gray-800 focus:outline-none focus:ring-primary-600 cursor-pointer border-0"
             >
               {sorts.map(s => <option key={s} value={s}>{SORT_LABEL[s]}</option>)}
             </select>
@@ -97,7 +97,7 @@ export function FilterBar({
               onClick={onDirection}
               aria-label={desc ? 'Descending, switch to ascending' : 'Ascending, switch to descending'}
               title={desc ? 'Descending' : 'Ascending'}
-              className="w-8 h-8 inline-flex items-center justify-center rounded-full bg-white ring-1 ring-gray-200 text-gray-700 hover:ring-primary-300 hover:text-primary-700"
+              className="w-8 h-8 inline-flex items-center justify-center rounded-full bg-raised ring-1 ring-gray-200 text-gray-700 hover:ring-primary-300 hover:text-primary-700"
             >
               {desc ? <ArrowDown className="w-4 h-4" /> : <ArrowUp className="w-4 h-4" />}
             </button>
@@ -111,14 +111,14 @@ export function FilterBar({
       </div>
 
       {open && rest.length > 0 && (
-        <div className="mt-3 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 rounded-2xl bg-white ring-1 ring-gray-200 p-4">
+        <div className="mt-3 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 rounded-2xl bg-raised ring-1 ring-gray-200 p-4">
           {rest.map(g => (
             <label key={g.key} className="block">
               <span className="block text-xs font-semibold text-gray-500 mb-1">{g.label}</span>
               <select
                 value={g.value}
                 onChange={e => g.onChange(e.target.value)}
-                className="w-full text-[13px] rounded-full px-3.5 py-2 bg-white border border-[#d2d2d7] text-gray-900 focus:outline-none focus:border-primary-600 cursor-pointer"
+                className="w-full text-[13px] rounded-full px-3.5 py-2 bg-raised border border-gray-300 text-gray-900 focus:outline-none focus:border-primary-600 cursor-pointer"
               >
                 <option value="all">{g.allLabel}</option>
                 {g.options.map(o => <option key={o.id} value={o.id}>{o.label}</option>)}
@@ -147,7 +147,7 @@ function pageList(page: number, pages: number): (number | 'gap')[] {
 export function Pagination({ page, pages, onPage }: { page: number; pages: number; onPage: (p: number) => void }) {
   if (pages <= 1) return null
   const btn = 'min-w-9 h-9 px-2 inline-flex items-center justify-center rounded-full text-sm font-semibold transition-colors'
-  const idle = 'bg-white text-gray-700 ring-1 ring-gray-200 hover:ring-primary-300 hover:text-primary-700'
+  const idle = 'bg-surface text-gray-700 ring-1 ring-gray-200 hover:ring-primary-300 hover:text-primary-700'
   const off = 'opacity-40 pointer-events-none'
   return (
     <nav aria-label="Pages" className="flex flex-wrap items-center justify-center gap-1.5 mt-10">

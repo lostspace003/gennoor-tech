@@ -60,8 +60,10 @@ export interface PortalNavChild {
 
 export interface PortalNavSection {
   name: string
+  /** Every section is a page of its own: there is nothing in the menu that only opens another menu. */
   href?: string
   icon: LucideIcon
+  /** Further pages of the section. They are always shown under it, never folded away. */
   children?: PortalNavChild[]
   /** A small blue tag beside the name, for the one thing we want noticed. */
   badge?: string
@@ -70,28 +72,31 @@ export interface PortalNavSection {
 }
 
 /**
- * The primary left-rail tree, in the order a visitor reads it:
- * learn on your own, then what we do for teams, then talks and posts,
- * then the company.
+ * The menu, in the order a visitor reads it: learn on your own, then what we do for teams,
+ * then talks and posts, then the company.
+ *
+ * It has one level. A section that has more than one page is itself the link to its main
+ * page, and its other pages are listed under it, always visible. There is no row that only
+ * opens a list, and no list inside a list: keep it that way when adding a page.
  */
 export const portalNav: PortalNavSection[] = [
   { name: 'Home', href: '/', icon: Home },
   { name: 'AI Weekend', href: '/ai-weekend', icon: Zap, badge: 'Live' },
   {
     name: 'Learning Studio',
+    href: '/studio',
     icon: BookOpen,
     children: [
-      { name: 'Courses', href: '/studio' },
       { name: 'Community', href: '/community' },
     ],
   },
   { name: 'Exam Prep', href: '/services/certifications', icon: BadgeCheck },
   {
     name: 'Claude',
+    href: '/claude',
     icon: Sparkles,
     startsGroup: true,
     children: [
-      { name: 'Overview', href: '/claude' },
       { name: 'Certification Prep', href: '/claude/certifications', badge: 'New' },
     ],
   },

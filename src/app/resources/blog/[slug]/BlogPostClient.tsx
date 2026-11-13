@@ -56,16 +56,16 @@ function SummaryModal({ post, onClose }: { post: BlogPost; onClose: () => void }
       {/* Modal */}
       <div
         className="relative w-full h-full sm:w-[90vw] sm:h-[90vh] sm:max-w-3xl sm:rounded-2xl shadow-2xl overflow-hidden flex flex-col animate-slideUp"
-        style={{ backgroundColor: '#ffffff' }}
+        style={{ backgroundColor: 'rgb(var(--raised))' }}
         onClick={e => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="shrink-0 px-6 sm:px-8 py-5 flex items-start justify-between gap-4" style={{ borderBottom: '1px solid #e5e7eb', backgroundColor: '#fafafa' }}>
+        <div className="shrink-0 px-6 sm:px-8 py-5 flex items-start justify-between gap-4" style={{ borderBottom: '1px solid rgb(var(--gray-200))', backgroundColor: 'rgb(var(--gray-50))' }}>
           <div className="min-w-0">
-            <p className="text-xs font-bold uppercase tracking-wider mb-1" style={{ color: '#2563eb' }}>Quick Summary</p>
-            <h2 className="text-lg sm:text-xl font-bold leading-snug" style={{ color: '#111827' }}>{post.title}</h2>
+            <p className="text-xs font-bold uppercase tracking-wider mb-1" style={{ color: 'rgb(var(--primary-600))' }}>Quick Summary</p>
+            <h2 className="text-lg sm:text-xl font-bold leading-snug" style={{ color: 'rgb(var(--gray-900))' }}>{post.title}</h2>
           </div>
-          <button onClick={onClose} className="shrink-0 w-9 h-9 flex items-center justify-center rounded-full transition-colors hover:bg-gray-200" style={{ color: '#6b7280' }}>
+          <button onClick={onClose} className="shrink-0 w-9 h-9 flex items-center justify-center rounded-full transition-colors hover:bg-gray-200" style={{ color: 'rgb(var(--gray-500))' }}>
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
           </button>
         </div>
@@ -73,30 +73,30 @@ function SummaryModal({ post, onClose }: { post: BlogPost; onClose: () => void }
         {/* Scrollable Content */}
         <div className="flex-1 overflow-y-auto px-6 sm:px-8 py-6 space-y-6">
           {/* Excerpt */}
-          <div className="p-4 rounded-xl" style={{ backgroundColor: '#f8fafc', border: '1px solid #e2e8f0' }}>
-            <p className="text-sm font-medium leading-relaxed" style={{ color: '#374151' }}>{post.excerpt}</p>
+          <div className="p-4 rounded-xl" style={{ backgroundColor: 'rgb(var(--gray-50))', border: '1px solid rgb(var(--gray-200))' }}>
+            <p className="text-sm font-medium leading-relaxed" style={{ color: 'rgb(var(--gray-700))' }}>{post.excerpt}</p>
           </div>
 
           {/* Key Takeaway */}
           {post.tldr && (
-            <div className="p-4 rounded-xl border-l-4" style={{ backgroundColor: '#f0fdf9', borderColor: '#0d9488' }}>
-              <p className="text-xs font-bold uppercase tracking-wider mb-1.5" style={{ color: '#0d9488' }}>Key Takeaway</p>
-              <p className="text-sm leading-relaxed" style={{ color: '#374151' }}>{post.tldr}</p>
+            <div className="p-4 rounded-xl border-l-4" style={{ backgroundColor: 'rgb(var(--green-50))', borderColor: 'rgb(var(--green-600))' }}>
+              <p className="text-xs font-bold uppercase tracking-wider mb-1.5" style={{ color: 'rgb(var(--green-600))' }}>Key Takeaway</p>
+              <p className="text-sm leading-relaxed" style={{ color: 'rgb(var(--gray-700))' }}>{post.tldr}</p>
             </div>
           )}
 
           {/* Sections outline */}
           {sections.length > 0 && (
             <div>
-              <p className="text-xs font-bold uppercase tracking-wider mb-3" style={{ color: '#6b7280' }}>What this article covers</p>
+              <p className="text-xs font-bold uppercase tracking-wider mb-3" style={{ color: 'rgb(var(--gray-500))' }}>What this article covers</p>
               <div className="space-y-3">
                 {sections.map((sec, i) => (
                   <div key={i} className="flex gap-3">
                     <span className="shrink-0 w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold"
-                      style={{ backgroundColor: '#eff6ff', color: '#2563eb' }}>{i + 1}</span>
+                      style={{ backgroundColor: 'rgb(var(--primary-50))', color: 'rgb(var(--primary-600))' }}>{i + 1}</span>
                     <div className="min-w-0">
-                      <p className="text-sm font-semibold" style={{ color: '#111827' }}>{sec.heading}</p>
-                      {sec.snippet && <p className="text-xs mt-0.5 leading-relaxed" style={{ color: '#6b7280' }}>{sec.snippet}</p>}
+                      <p className="text-sm font-semibold" style={{ color: 'rgb(var(--gray-900))' }}>{sec.heading}</p>
+                      {sec.snippet && <p className="text-xs mt-0.5 leading-relaxed" style={{ color: 'rgb(var(--gray-500))' }}>{sec.snippet}</p>}
                     </div>
                   </div>
                 ))}
@@ -105,19 +105,19 @@ function SummaryModal({ post, onClose }: { post: BlogPost; onClose: () => void }
           )}
 
           {/* Meta */}
-          <div className="flex flex-wrap gap-3 pt-2" style={{ borderTop: '1px solid #f3f4f6' }}>
-            <span className="px-3 py-1 text-xs font-medium rounded-full" style={{ backgroundColor: '#f3f4f6', color: '#374151' }}>{post.readTime}</span>
-            <span className="px-3 py-1 text-xs font-medium rounded-full" style={{ backgroundColor: '#f3f4f6', color: '#374151' }}>{post.category}</span>
+          <div className="flex flex-wrap gap-3 pt-2" style={{ borderTop: '1px solid rgb(var(--gray-100))' }}>
+            <span className="px-3 py-1 text-xs font-medium rounded-full" style={{ backgroundColor: 'rgb(var(--gray-100))', color: 'rgb(var(--gray-700))' }}>{post.readTime}</span>
+            <span className="px-3 py-1 text-xs font-medium rounded-full" style={{ backgroundColor: 'rgb(var(--gray-100))', color: 'rgb(var(--gray-700))' }}>{post.category}</span>
             {post.tags.map(t => (
-              <span key={t} className="px-3 py-1 text-xs font-medium rounded-full" style={{ backgroundColor: '#f0fdf9', color: '#0d9488' }}>{t}</span>
+              <span key={t} className="px-3 py-1 text-xs font-medium rounded-full" style={{ backgroundColor: 'rgb(var(--green-50))', color: 'rgb(var(--green-600))' }}>{t}</span>
             ))}
           </div>
         </div>
 
         {/* Footer */}
-        <div className="shrink-0 px-6 sm:px-8 py-4 flex justify-end" style={{ borderTop: '1px solid #e5e7eb', backgroundColor: '#fafafa' }}>
+        <div className="shrink-0 px-6 sm:px-8 py-4 flex justify-end" style={{ borderTop: '1px solid rgb(var(--gray-200))', backgroundColor: 'rgb(var(--gray-50))' }}>
           <button onClick={onClose} className="px-5 py-2 text-sm font-semibold rounded-lg transition-colors"
-            style={{ background: 'linear-gradient(135deg, #2563eb 0%, #0d9488 100%)', color: '#ffffff' }}>
+            style={{ background: 'linear-gradient(135deg, #2f8cff 0%, #178a5c 100%)', color: '#fff' }}>
             Read Full Article
           </button>
         </div>
@@ -188,7 +188,7 @@ function ShareBar({ post, slug }: { post: BlogPost; slug: string }) {
     {
       name: 'X',
       href: `https://twitter.com/intent/tweet?url=${encodeURIComponent(url)}&text=${encodeURIComponent(post.title)}&hashtags=${post.hashtags.map(h => h.replace('#', '')).join(',')}`,
-      bg: '#111827',
+      bg: 'rgb(var(--gray-900))',
       icon: <svg className="h-3.5 w-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>,
     },
   ]
@@ -198,7 +198,7 @@ function ShareBar({ post, slug }: { post: BlogPost; slug: string }) {
       {channels.map(ch => (
         <a key={ch.name} href={ch.href} target="_blank" rel="noopener noreferrer"
           className="p-2 rounded-lg transition-all duration-200 hover:scale-110 hover:opacity-90"
-          style={{ backgroundColor: ch.bg, color: '#ffffff' }}
+          style={{ backgroundColor: ch.bg, color: '#fff' }}
           title={`Share on ${ch.name}`}>
           {ch.icon}
         </a>
@@ -206,7 +206,7 @@ function ShareBar({ post, slug }: { post: BlogPost; slug: string }) {
 
       <button onClick={handleCopy}
         className="p-2 rounded-lg transition-all duration-200 hover:scale-110"
-        style={{ backgroundColor: '#4b5563', color: '#ffffff' }}
+        style={{ backgroundColor: '#4b5563', color: '#fff' }}
         title="Copy link with hashtags">
         {copied ? (
           <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
@@ -253,17 +253,17 @@ export default function BlogPostClient({ post, slug, relatedPosts }: {
   }
 
   return (
-    <div className="min-h-screen" style={{ backgroundColor: '#f3f4f6' }}>
+    <div className="min-h-screen" style={{ backgroundColor: 'rgb(var(--gray-100))' }}>
       {/* Sticky Share Bar */}
       <div className="fixed top-0 left-0 right-0 z-50 transition-all duration-300"
         style={{ transform: scrolled ? 'translateY(0)' : 'translateY(-100%)', opacity: scrolled ? 1 : 0 }}>
-        <div style={{ backgroundColor: 'rgba(255,255,255,0.95)', backdropFilter: 'blur(12px)', borderBottom: '1px solid #e5e7eb' }}>
+        <div style={{ backgroundColor: 'rgba(255,255,255,0.95)', backdropFilter: 'blur(12px)', borderBottom: '1px solid rgb(var(--gray-200))' }}>
           <div className="max-w-4xl mx-auto px-4 sm:px-6 py-2.5 flex items-center justify-between gap-4">
             <div className="flex items-center gap-3 min-w-0">
-              <Link href="/resources/blog" className="shrink-0 transition-colors" style={{ color: '#9ca3af' }}>
+              <Link href="/resources/blog" className="shrink-0 transition-colors" style={{ color: 'rgb(var(--gray-400))' }}>
                 <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
               </Link>
-              <p className="text-sm font-semibold truncate" style={{ color: '#1f2937' }}>{post.title}</p>
+              <p className="text-sm font-semibold truncate" style={{ color: 'rgb(var(--gray-900))' }}>{post.title}</p>
             </div>
             <ShareBar post={post} slug={slug} />
           </div>
@@ -272,7 +272,7 @@ export default function BlogPostClient({ post, slug, relatedPosts }: {
 
       {/* Article Card */}
       <div className="max-w-4xl mx-auto px-4 sm:px-6 py-6 lg:py-10">
-        <article className="rounded-2xl shadow-xl overflow-hidden" style={{ backgroundColor: '#ffffff', border: '1px solid rgba(229,231,235,0.6)' }}>
+        <article className="rounded-2xl shadow-xl overflow-hidden" style={{ backgroundColor: 'rgb(var(--raised))', border: '1px solid rgb(var(--gray-200))' }}>
 
           {/* Header */}
           <header className="relative overflow-hidden px-6 sm:px-10 py-8 lg:py-10" style={{ backgroundColor: post.coverColor }}>
@@ -284,10 +284,10 @@ export default function BlogPostClient({ post, slug, relatedPosts }: {
               </Link>
               <div className="flex items-center gap-3 mb-4">
                 <span className="px-3 py-1 text-xs font-bold rounded-full tracking-wide uppercase"
-                  style={{ backgroundColor: 'rgba(255,255,255,0.2)', color: '#ffffff' }}>{post.category}</span>
+                  style={{ backgroundColor: 'rgba(255,255,255,0.2)', color: '#fff' }}>{post.category}</span>
                 <span className="text-sm" style={{ color: 'rgba(255,255,255,0.7)' }}>{post.readTime}</span>
               </div>
-              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold leading-tight mb-5" style={{ color: '#ffffff' }}>
+              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold leading-tight mb-5" style={{ color: '#fff' }}>
                 {post.title}
               </h1>
               <AuthorByline
@@ -305,12 +305,12 @@ export default function BlogPostClient({ post, slug, relatedPosts }: {
 
           {/* Share Bar */}
           <div className="px-6 sm:px-10 py-4 flex items-center justify-between"
-            style={{ borderBottom: '1px solid #f3f4f6', backgroundColor: '#fafafa' }}>
+            style={{ borderBottom: '1px solid rgb(var(--gray-100))', backgroundColor: 'rgb(var(--gray-50))' }}>
             <div className="flex items-center gap-3">
-              <span className="text-xs font-medium uppercase tracking-wider hidden sm:inline" style={{ color: '#6b7280' }}>Share</span>
+              <span className="text-xs font-medium uppercase tracking-wider hidden sm:inline" style={{ color: 'rgb(var(--gray-500))' }}>Share</span>
               <SummarizeButton onClick={() => setShowSummary(true)} />
               <a href="#discussion" className="text-xs font-semibold px-3 py-1.5 rounded-full transition-colors"
-                style={{ color: '#4f46e5', backgroundColor: '#eef2ff', border: '1px solid #e0e7ff' }}>
+                style={{ color: 'rgb(var(--primary-600))', backgroundColor: 'rgb(var(--primary-50))', border: '1px solid rgb(var(--primary-200))' }}>
                 Join Discussion
               </a>
             </div>
@@ -342,15 +342,15 @@ export default function BlogPostClient({ post, slug, relatedPosts }: {
           <References references={post.references} />
 
           {/* Tags */}
-          <div className="px-6 sm:px-10 py-6" style={{ borderTop: '1px solid #f3f4f6' }}>
+          <div className="px-6 sm:px-10 py-6" style={{ borderTop: '1px solid rgb(var(--gray-100))' }}>
             <div className="flex flex-wrap gap-2 mb-3">
               {post.tags.map(tag => (
-                <span key={tag} className="px-3 py-1.5 text-sm rounded-full font-medium" style={{ backgroundColor: '#f3f4f6', color: '#374151' }}>{tag}</span>
+                <span key={tag} className="px-3 py-1.5 text-sm rounded-full font-medium" style={{ backgroundColor: 'rgb(var(--gray-100))', color: 'rgb(var(--gray-700))' }}>{tag}</span>
               ))}
             </div>
             <div className="flex flex-wrap gap-1.5">
               {post.hashtags.map(ht => (
-                <span key={ht} className="text-sm font-medium" style={{ color: '#4f46e5' }}>{ht}</span>
+                <span key={ht} className="text-sm font-medium" style={{ color: 'rgb(var(--primary-600))' }}>{ht}</span>
               ))}
             </div>
           </div>
@@ -359,7 +359,7 @@ export default function BlogPostClient({ post, slug, relatedPosts }: {
           {(() => {
             const author = resolveAuthor(post.author)
             return (
-              <div className="px-6 sm:px-10 py-8" style={{ borderTop: '1px solid #f3f4f6', backgroundColor: '#f9fafb' }}>
+              <div className="px-6 sm:px-10 py-8" style={{ borderTop: '1px solid rgb(var(--gray-100))', backgroundColor: 'rgb(var(--gray-50))' }}>
                 <div className="flex items-start gap-4">
                   {author.photoUrl ? (
                     // eslint-disable-next-line @next/next/no-img-element
@@ -410,8 +410,8 @@ export default function BlogPostClient({ post, slug, relatedPosts }: {
 
           {/* Bottom Share */}
           <div className="px-6 sm:px-10 py-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3"
-            style={{ backgroundColor: '#f9fafb', borderTop: '1px solid #f3f4f6' }}>
-            <p className="text-sm font-medium" style={{ color: '#4b5563' }}>Found this insightful? Share with your network.</p>
+            style={{ backgroundColor: 'rgb(var(--gray-50))', borderTop: '1px solid rgb(var(--gray-100))' }}>
+            <p className="text-sm font-medium" style={{ color: 'rgb(var(--gray-600))' }}>Found this insightful? Share with your network.</p>
             <ShareBar post={post} slug={slug} />
           </div>
         </article>
@@ -421,30 +421,30 @@ export default function BlogPostClient({ post, slug, relatedPosts }: {
         </div>
 
         {/* Newsletter */}
-        <div className="mt-8 rounded-2xl shadow-lg overflow-hidden" style={{ backgroundColor: '#1e293b' }}>
+        <div className="mt-8 rounded-2xl shadow-lg overflow-hidden" style={{ backgroundColor: 'rgb(var(--gray-900))' }}>
           <div className="px-6 sm:px-10 py-10 text-center">
             {subscribed ? (
               <div className="flex flex-col items-center gap-3">
                 <CheckCircle className="h-10 w-10" style={{ color: '#4ade80' }} />
-                <h3 className="text-xl font-bold" style={{ color: '#ffffff' }}>You&apos;re subscribed!</h3>
-                <p className="max-w-md text-sm" style={{ color: '#94a3b8' }}>
+                <h3 className="text-xl font-bold" style={{ color: '#fff' }}>You&apos;re subscribed!</h3>
+                <p className="max-w-md text-sm" style={{ color: 'rgb(var(--gray-400))' }}>
                   You&apos;ll receive the latest AI insights from across the globe directly in your inbox.
                 </p>
               </div>
             ) : (
               <>
-                <h3 className="text-xl font-bold mb-2" style={{ color: '#ffffff' }}>Stay ahead of the curve</h3>
-                <p className="mb-6 max-w-md mx-auto text-sm" style={{ color: '#94a3b8' }}>
+                <h3 className="text-xl font-bold mb-2" style={{ color: '#fff' }}>Stay ahead of the curve</h3>
+                <p className="mb-6 max-w-md mx-auto text-sm" style={{ color: 'rgb(var(--gray-400))' }}>
                   Practitioner insights on enterprise AI delivered to your inbox. No spam, just signal.
                 </p>
                 <form onSubmit={handleSubscribe} className="flex flex-col sm:flex-row items-center justify-center gap-3 max-w-sm mx-auto">
                   <input type="email" required value={email} onChange={e => setEmail(e.target.value)} placeholder="Enter your email"
                     aria-label="Email address for newsletter"
                     className="w-full sm:flex-1 px-4 py-2.5 rounded-lg text-sm focus:outline-none"
-                    style={{ backgroundColor: 'rgba(255,255,255,0.1)', color: '#ffffff', border: '1px solid rgba(255,255,255,0.15)' }} />
+                    style={{ backgroundColor: 'rgba(255,255,255,0.1)', color: '#fff', border: '1px solid rgba(255,255,255,0.15)' }} />
                   <EmailOTP email={email} onVerified={() => setEmailVerified(true)} verified={emailVerified} compact />
                   <button type="submit" disabled={!emailVerified} className="shrink-0 px-5 py-2.5 font-semibold text-sm rounded-lg transition-colors hover:opacity-90"
-                    style={{ backgroundColor: '#4f46e5', color: '#ffffff', opacity: !emailVerified ? 0.5 : 1 }}>
+                    style={{ backgroundColor: '#1f7cff', color: '#fff', opacity: !emailVerified ? 0.5 : 1 }}>
                     Subscribe
                   </button>
                 </form>
@@ -456,22 +456,22 @@ export default function BlogPostClient({ post, slug, relatedPosts }: {
         {/* Related Posts */}
         {relatedPosts.length > 0 && (
           <div className="mt-8 mb-8">
-            <h3 className="text-lg font-bold mb-5" style={{ color: '#111827' }}>Continue reading</h3>
+            <h3 className="text-lg font-bold mb-5" style={{ color: 'rgb(var(--gray-900))' }}>Continue reading</h3>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               {relatedPosts.map(rp => (
                 <Link key={rp.slug} href={`/resources/blog/${rp.slug}`}
                   className="group rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300"
-                  style={{ backgroundColor: '#ffffff', border: '1px solid rgba(229,231,235,0.6)' }}>
+                  style={{ backgroundColor: 'rgb(var(--raised))', border: '1px solid rgb(var(--gray-200))' }}>
                   <div className="h-28 flex flex-col justify-end p-4" style={{ backgroundColor: rp.coverColor }}>
                     <span className="text-[10px] font-bold uppercase tracking-wider mb-1" style={{ color: 'rgba(255,255,255,0.7)' }}>
                       {rp.category}
                     </span>
-                    <h4 className="text-sm font-bold leading-snug line-clamp-2" style={{ color: '#ffffff' }}>
+                    <h4 className="text-sm font-bold leading-snug line-clamp-2" style={{ color: '#fff' }}>
                       {rp.title}
                     </h4>
                   </div>
                   <div className="p-4">
-                    <p className="text-xs line-clamp-2" style={{ color: '#6b7280' }}>{rp.excerpt}</p>
+                    <p className="text-xs line-clamp-2" style={{ color: 'rgb(var(--gray-500))' }}>{rp.excerpt}</p>
                   </div>
                 </Link>
               ))}

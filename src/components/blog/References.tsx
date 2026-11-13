@@ -11,7 +11,7 @@ export default function References({ references }: ReferencesProps) {
   return (
     <section
       className="px-6 sm:px-10 py-10"
-      style={{ borderTop: '1px solid #f3f4f6', backgroundColor: '#fafafa' }}
+      style={{ borderTop: '1px solid rgb(var(--gray-100))', backgroundColor: 'rgb(var(--gray-50))' }}
       aria-label="References and further reading"
     >
       <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-1">
@@ -26,7 +26,7 @@ export default function References({ references }: ReferencesProps) {
           <li key={i} className="flex items-start gap-3">
             <span
               className="shrink-0 mt-1 inline-flex items-center justify-center w-6 h-6 rounded-full text-[11px] font-bold"
-              style={{ backgroundColor: '#e0efff', color: '#1d4ed8' }}
+              style={{ backgroundColor: 'rgb(var(--primary-100))', color: 'rgb(var(--primary-700))' }}
               aria-hidden="true"
             >
               {i + 1}

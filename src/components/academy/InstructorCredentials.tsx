@@ -8,7 +8,7 @@ import { credentialsForCourse, monthYear, transcriptUrl } from '@/data/credentia
 export default function InstructorCredentials({ slug, instructor }: { slug: string; instructor: string }) {
   const { primary, related } = credentialsForCourse(slug)
   return (
-    <details className="group px-1 text-[13.5px] text-[#6e6e73]">
+    <details className="group px-1 text-[13.5px] text-gray-500">
       <summary className="cursor-pointer list-none [&::-webkit-details-marker]:hidden">
         Taught by Jalal Khan, {instructor}.{' '}
         <span className="text-primary-600 group-open:hidden">Credentials ›</span>
@@ -16,7 +16,7 @@ export default function InstructorCredentials({ slug, instructor }: { slug: stri
       </summary>
       <div className="mt-3 space-y-2 leading-[1.55]">
         {primary && (
-          <p className="text-[#3a3a3f]">
+          <p className="text-gray-700">
             Holds the <strong className="font-semibold text-gray-900">{primary.code}</strong> certification this course prepares you for
             ({primary.name}, earned {monthYear(primary.earned)}).
           </p>

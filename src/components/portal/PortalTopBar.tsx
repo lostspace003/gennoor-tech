@@ -1,9 +1,11 @@
 'use client'
 
-import Link from 'next/link'
-import Image from 'next/image'
 import { Menu, Search } from 'lucide-react'
+import Link from 'next/link'
 import { cn } from '@/lib/utils'
+import { RailLogo } from './PortalSidebar'
+import ThemeSwitch from './ThemeSwitch'
+import type { Theme } from '@/lib/theme'
 
 /**
  * Mobile-only chrome. On desktop the Apple-style rail carries the logo,
@@ -15,15 +17,17 @@ import { cn } from '@/lib/utils'
 interface Props {
   onMobileOpen: () => void
   onSearchOpen: () => void
+  theme: Theme
+  onTheme: (t: Theme) => void
 }
 
 const GLYPH =
   'inline-flex items-center justify-center rounded-lg text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-colors duration-100'
 
-export default function PortalTopBar({ onMobileOpen, onSearchOpen }: Props) {
+export default function PortalTopBar({ onMobileOpen, onSearchOpen, theme, onTheme }: Props) {
   return (
     <header
-      className="fixed top-0 left-0 right-0 z-50 h-[var(--portal-topbar-h)] bg-white/85 backdrop-blur-xl border-b border-[#e8e8ed] lg:hidden"
+      className="fixed top-0 left-0 right-0 z-50 h-[var(--portal-topbar-h)] bg-surface/85 backdrop-blur-xl border-b border-gray-200 lg:hidden"
       role="banner"
     >
       <div className="flex items-center h-full px-2 sm:px-3 gap-1">
@@ -37,21 +41,8 @@ export default function PortalTopBar({ onMobileOpen, onSearchOpen }: Props) {
           <Menu className="w-[19px] h-[19px]" strokeWidth={1.75} />
         </button>
 
-        {/* Logo */}
-        <Link
-          href="/"
-          className="flex items-center flex-shrink-0 ml-0.5 rounded-lg"
-          aria-label="Gennoor Tech home"
-        >
-          <Image
-            src="/logos/gennoor-tech-compact-white_600x140_navbar.png"
-            alt="Gennoor Tech"
-            width={600}
-            height={140}
-            priority
-            className="h-[34px] w-auto"
-          />
-        </Link>
+        {/* Logo: drawn in type, like the rail's, so it reads on the dark bar */}
+        <div className="flex-shrink-0 ml-0.5"><RailLogo compact /></div>
 
         <div className="flex-1" />
 
@@ -65,10 +56,13 @@ export default function PortalTopBar({ onMobileOpen, onSearchOpen }: Props) {
           <Search className="w-[17px] h-[17px]" strokeWidth={1.75} />
         </button>
 
+        {/* Dark or light */}
+        <ThemeSwitch theme={theme} onChange={onTheme} compact />
+
         {/* The one filled action */}
         <Link
           href="/resources/calendar"
-          className="inline-flex items-center justify-center h-9 px-4 ml-1 text-[13px] font-semibold text-white bg-primary-600 hover:bg-[#0077ed] rounded-full transition-colors duration-100 whitespace-nowrap"
+          className="inline-flex items-center justify-center h-9 px-4 ml-1 text-[13px] font-semibold text-white bg-primary-600 hover:bg-primary-500 rounded-full transition-colors duration-100 whitespace-nowrap"
         >
           Book a call
         </Link>

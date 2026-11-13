@@ -17,17 +17,17 @@ export default function ShortsStrip({ videos }: { videos: YouTubeVideo[] }) {
           href={`https://www.youtube.com/shorts/${video.id}`}
           target="_blank"
           rel="noopener noreferrer"
-          className="group relative w-40 sm:w-44 shrink-0 aspect-[9/16] rounded-2xl overflow-hidden bg-[#1d1d1f] transition-opacity duration-200 hover:opacity-95"
+          className="group relative w-40 sm:w-44 shrink-0 aspect-[9/16] rounded-2xl overflow-hidden bg-gray-900 transition-opacity duration-200 hover:opacity-95"
         >
           {video.thumbnail && (
             <Image src={video.thumbnail} alt={video.title} fill className="object-cover" sizes="176px" />
           )}
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent" />
-          <div className="absolute top-2 right-2.5 bg-[#1d1d1f]/85 text-white text-[11px] font-semibold px-[7px] py-0.5 rounded-[5px]">
+          <div className="absolute top-2 right-2.5 bg-gray-900/85 text-white text-[11px] font-semibold px-[7px] py-0.5 rounded-[5px]">
             {video.duration}
           </div>
           <div className="absolute inset-0 flex items-center justify-center">
-            <div className="w-11 h-11 bg-[#1d1d1f]/85 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+            <div className="w-11 h-11 bg-gray-900/85 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200">
               <Play className="w-4 h-4 text-white ml-0.5 fill-white" />
             </div>
           </div>

@@ -47,7 +47,7 @@ export default function POCDetailModal({ isOpen, onClose }: POCDetailModalProps)
       style={{ background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(4px)' }}
       onClick={(e) => { if (e.target === e.currentTarget) onClose() }}
     >
-      <div className="bg-white rounded-2xl w-full max-w-3xl max-h-[90vh] overflow-y-auto relative shadow-2xl">
+      <div className="bg-raised rounded-2xl w-full max-w-3xl max-h-[90vh] overflow-y-auto relative shadow-2xl">
         {/* Close button */}
         <button
           onClick={onClose}

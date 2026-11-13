@@ -64,7 +64,7 @@ export default function PageCTA({
                 className={cn(
                   'inline-flex items-center justify-center gap-2 px-7 py-3.5 text-sm font-semibold rounded-xl transition-all duration-300 group',
                   c.variant === 'ghost'
-                    ? 'text-gray-700 bg-white/80 backdrop-blur-sm ring-1 ring-gray-200 hover:ring-primary-300 hover:text-primary-700'
+                    ? 'text-gray-700 bg-surface/80 backdrop-blur-sm ring-1 ring-gray-200 hover:ring-primary-300 hover:text-primary-700'
                     : 'text-white bg-primary-600'
                 )}
               >

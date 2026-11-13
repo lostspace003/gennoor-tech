@@ -83,7 +83,7 @@ export default async function LabsCoursePage({ params }: PageProps) {
 
   return (
     <Shell>
-    <main className="bg-white">
+    <main className="bg-surface">
       <BreadcrumbJsonLd
         items={[
           { name: 'Home', url: 'https://gennoor.com' },
@@ -184,7 +184,7 @@ export default async function LabsCoursePage({ params }: PageProps) {
             <div className="mt-4">
               <StripLegend sections={course.sections} dark />
             </div>
-            <p className="text-[13px] text-[#6f7d92] mt-3">Each bar is one lesson. Gaps separate the modules.</p>
+            <p className="text-[13px] text-gray-400 mt-3">Each bar is one lesson. Gaps separate the modules.</p>
           </div>
         </div>
       </section>
@@ -195,7 +195,7 @@ export default async function LabsCoursePage({ params }: PageProps) {
             <h2 className="font-heading text-[28px] font-bold tracking-[-0.02em] text-gray-900 mb-6">What you will be able to do</h2>
             <ul className="grid sm:grid-cols-2 gap-x-10 gap-y-4">
               {course.outcomes.map(o => (
-                <li key={o} className="flex gap-3 text-[15.5px] leading-[1.5] text-[#3a3a3f]">
+                <li key={o} className="flex gap-3 text-[15.5px] leading-[1.5] text-gray-700">
                   <Check className="w-[18px] h-[18px] shrink-0 mt-[3px] text-primary-600" strokeWidth={2.5} />
                   {o}
                 </li>
@@ -205,26 +205,26 @@ export default async function LabsCoursePage({ params }: PageProps) {
 
           <section id="curriculum" className="scroll-mt-24">
             <h2 className="font-heading text-[28px] font-bold tracking-[-0.02em] text-gray-900 mb-2">Curriculum</h2>
-            <p className="text-[#6e6e73] mb-6">{totalItems} items (lessons and quizzes) across {course.sections.length} modules. {enrolled ? 'Pick any lesson to open it.' : price ? `The ${previews.size} free previews are listed first. The rest open when you buy the course.` : 'Pick any lesson to open it. You will sign in first if you have not already.'}</p>
+            <p className="text-gray-500 mb-6">{totalItems} items (lessons and quizzes) across {course.sections.length} modules. {enrolled ? 'Pick any lesson to open it.' : price ? `The ${previews.size} free previews are listed first. The rest open when you buy the course.` : 'Pick any lesson to open it. You will sign in first if you have not already.'}</p>
             <PreviewProvider slug={slug} previews={price && !enrolled ? previewList : []}>
             <PreviewList />
             <OutlineGate slug={slug}>
-            <div className="border-t border-[#e8e8ed]">
+            <div className="border-t border-gray-200">
               {course.sections.map((s, i) => (
-                <details key={i} className="group border-b border-[#e8e8ed]" open={i === Math.min(1, course.sections.length - 1)}>
+                <details key={i} className="group border-b border-gray-200" open={i === Math.min(1, course.sections.length - 1)}>
                   <summary className="cursor-pointer list-none py-5 flex items-center gap-5 [&::-webkit-details-marker]:hidden">
                     <div className="min-w-0 flex-1">
                       <div className="font-semibold text-gray-900 text-[16px] leading-snug group-open:text-primary-600 transition-colors">{s.title}</div>
                       <div className="mt-3 max-w-xs"><CourseStrip sections={[s]} height={8} maxSeconds={longestLesson(course.sections)} /></div>
                     </div>
-                    <span className="text-[13px] text-[#86868b] tabular-nums shrink-0">{s.items.length} {s.items.length === 1 ? "lesson" : "lessons"}</span>
-                    <span className="text-[#86868b] transition-transform group-open:rotate-90" aria-hidden>›</span>
+                    <span className="text-[13px] text-gray-400 tabular-nums shrink-0">{s.items.length} {s.items.length === 1 ? "lesson" : "lessons"}</span>
+                    <span className="text-gray-400 transition-transform group-open:rotate-90" aria-hidden>›</span>
                   </summary>
                   <ul className="pb-5 grid gap-px">
                     {s.items.map(it => (
                       <li key={it.id}>
                         {enrolled ? (
-                          <Link href={`/studio/${slug}/learn?item=${it.id}`} className="flex items-start gap-3 py-1.5 text-[14.5px] leading-snug text-[#424245] hover:text-primary-600 transition-colors">
+                          <Link href={`/studio/${slug}/learn?item=${it.id}`} className="flex items-start gap-3 py-1.5 text-[14.5px] leading-snug text-gray-700 hover:text-primary-600 transition-colors">
                             <span className="w-1.5 h-4 rounded-[1px] mt-0.5 shrink-0" style={{ background: KIND_COLOR[kindOf(it)] }} />
                             <span className="flex-1">{it.title}</span>
                             {progress[it.id]?.done && <Check className="w-4 h-4 mt-0.5 shrink-0 text-emerald-600" strokeWidth={2.5} />}
@@ -260,7 +260,7 @@ export default async function LabsCoursePage({ params }: PageProps) {
             {course.about && course.about.length > 0 ? (
               <CourseAbout blocks={course.about} counts={counts} />
             ) : (
-              <div className="space-y-4 text-[16px] leading-[1.7] text-[#3a3a3f] max-w-[68ch]">
+              <div className="space-y-4 text-[16px] leading-[1.7] text-gray-700 max-w-[68ch]">
                 {course.description.map((p, i) => <p key={i} className="whitespace-pre-line">{p}</p>)}
               </div>
             )}
@@ -277,22 +277,22 @@ export default async function LabsCoursePage({ params }: PageProps) {
               <p className="px-6 py-4 text-[14px] text-[#aab6c8]">This course prepares you for the certification above.</p>
             </div>
           )}
-          <div className="rounded-2xl bg-[#f5f6f8] p-7">
+          <div className="rounded-2xl bg-gray-50 p-7">
             <h2 className="font-heading font-semibold text-gray-900 mb-3">Before you start</h2>
-            <ul className="space-y-2.5 text-[14.5px] leading-snug text-[#424245] list-disc pl-5">
+            <ul className="space-y-2.5 text-[14.5px] leading-snug text-gray-700 list-disc pl-5">
               {course.requirements.map(r => <li key={r}>{r}</li>)}
             </ul>
           </div>
           <div className="px-1">
             <h2 className="font-heading font-semibold text-gray-900 mb-3">Who it is for</h2>
-            <ul className="space-y-2.5 text-[14.5px] leading-snug text-[#424245] list-disc pl-5">
+            <ul className="space-y-2.5 text-[14.5px] leading-snug text-gray-700 list-disc pl-5">
               {course.audience.map(r => <li key={r}>{r}</li>)}
             </ul>
           </div>
           {enrolled && (
-            <Link href={`/studio/${slug}/discussion`} className="block rounded-2xl border border-[#e2e5ec] p-5 hover:border-primary-400 transition-colors">
+            <Link href={`/studio/${slug}/discussion`} className="block rounded-2xl border border-gray-200 p-5 hover:border-primary-400 transition-colors">
               <div className="font-heading font-semibold text-gray-900">Course discussion</div>
-              <div className="text-[14px] text-[#6e6e73] mt-1">Ask questions and talk with other learners and the team.</div>
+              <div className="text-[14px] text-gray-500 mt-1">Ask questions and talk with other learners and the team.</div>
             </Link>
           )}
           {course.instructor && <InstructorCredentials slug={slug} instructor={course.instructor} />}

@@ -111,9 +111,9 @@ export default async function CourseDetailPage({ params }: PageProps) {
 
       {/* HERO */}
       <section className="relative py-10 lg:py-10 overflow-hidden">
-        <div className="absolute inset-0 bg-white" />
+        <div className="absolute inset-0 bg-surface" />
         <div className="absolute inset-0" />
-        <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-white to-transparent" />
+        <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-surface to-transparent" />
 
         <div className="relative container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-4xl mx-auto">
@@ -369,7 +369,7 @@ export default async function CourseDetailPage({ params }: PageProps) {
                         href={course.pdfUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center justify-center gap-2 px-6 py-2.5 text-sm font-semibold rounded-xl text-amber-700 bg-white border border-amber-200 hover:bg-amber-50 transition-all"
+                        className="inline-flex items-center justify-center gap-2 px-6 py-2.5 text-sm font-semibold rounded-xl text-amber-700 bg-raised border border-amber-200 hover:bg-amber-50 transition-all"
                       >
                         <Download className="w-4 h-4" />
                         Download PDF version

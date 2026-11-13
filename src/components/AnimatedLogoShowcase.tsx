@@ -111,7 +111,7 @@ export default function AnimatedLogoShowcase() {
         <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wider">
           Compact — Navbar
         </h3>
-        <div className="flex justify-center items-center min-h-[105px] bg-white rounded-lg p-4 overflow-x-auto">
+        <div className="flex justify-center items-center min-h-[105px] bg-raised rounded-lg p-4 overflow-x-auto">
           <div id="logo-compact">
             <GennoorLogo variant="compact"  />
           </div>

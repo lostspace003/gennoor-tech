@@ -32,14 +32,14 @@ export default function WebinarsPage() {
   const upcomingWebinars = getPublicWebinars()
 
   return (
-    <main className="min-h-screen bg-white">
+    <main className="min-h-screen bg-raised">
       {/* ===== Hero ===== */}
       <section className="px-8 pt-8 lg:pt-10 pb-8 text-center">
         <WebinarIllustration className="w-[112px] h-[112px] mx-auto mb-6" />
         <h1 className="text-[clamp(40px,4.8vw,64px)] leading-[1.06] tracking-[-0.03em] font-bold text-gray-900">
           Learn live.
         </h1>
-        <p className="text-[clamp(18px,1.8vw,22px)] leading-[1.45] text-[#6e6e73] max-w-[560px] mx-auto mt-5">
+        <p className="text-[clamp(18px,1.8vw,22px)] leading-[1.45] text-gray-500 max-w-[560px] mx-auto mt-5">
           Webinars and hands-on workshops, with recordings if you miss one.
         </p>
       </section>
@@ -48,18 +48,18 @@ export default function WebinarsPage() {
       <section className="px-6 pb-10 lg:pb-12">
         <div className="max-w-[1080px] mx-auto">
           <h2 className="text-[clamp(28px,3vw,40px)] font-bold tracking-[-0.02em] text-gray-900 text-center">Expert sessions.</h2>
-          <p className="text-[17px] text-[#6e6e73] text-center mt-3 max-w-[520px] mx-auto">Talks and workshops we have delivered.</p>
+          <p className="text-[17px] text-gray-500 text-center mt-3 max-w-[520px] mx-auto">Talks and workshops we have delivered.</p>
           <div className="grid grid-cols-[minmax(0,1fr)] lg:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)] gap-10 lg:gap-14 items-center mt-8">
             <div>
               <p className="text-[12px] font-semibold uppercase tracking-[0.12em] text-primary-600">Workshop · 6 October 2026 · Mumbai</p>
               <h3 className="font-heading text-[26px] font-bold tracking-[-0.02em] text-gray-900 mt-3 leading-tight">From Campus to Career: AI skills for engineers</h3>
-              <p className="text-[15px] text-[#6e6e73] mt-3">For the Department of CSE (AI &amp; ML), Anjuman-I-Islam&apos;s M. H. Saboo Siddik College of Engineering.</p>
+              <p className="text-[15px] text-gray-500 mt-3">For the Department of CSE (AI &amp; ML), Anjuman-I-Islam&apos;s M. H. Saboo Siddik College of Engineering.</p>
               <ul className="mt-6 space-y-2.5">
                 {SABOO_TOPICS.map(t => (
                   <li key={t} className="flex gap-3 text-[15px] text-gray-800"><span aria-hidden className="mt-2 w-1.5 h-1.5 rounded-full bg-primary-600 shrink-0" />{t}</li>
                 ))}
               </ul>
-              <p className="mt-7 text-[14px] text-[#6e6e73]">Want a session like this for your college or team? <Link href="/contact" className="font-medium text-primary-600 hover:text-[#0077ed]">Talk to us ›</Link></p>
+              <p className="mt-7 text-[14px] text-gray-500">Want a session like this for your college or team? <Link href="/contact" className="font-medium text-primary-600 hover:text-primary-500">Talk to us ›</Link></p>
             </div>
             <SessionCarousel photos={SABOO_PHOTOS} />
           </div>
@@ -67,7 +67,7 @@ export default function WebinarsPage() {
       </section>
 
       {/* ===== Schedule ===== */}
-      <section className="bg-[#f5f5f7] px-8 py-10 pb-14">
+      <section className="bg-gray-50 px-8 py-10 pb-14">
         <div className="max-w-[920px] mx-auto">
           <h2 className="text-[22px] font-bold tracking-[-0.01em] text-gray-900 mb-5">Upcoming</h2>
 
@@ -76,10 +76,10 @@ export default function WebinarsPage() {
               {upcomingWebinars.map(s => (
                 <div
                   key={s.id}
-                  className="bg-white border border-[#e8e8ed] rounded-2xl px-6 py-[22px] grid grid-cols-[70px_1fr] sm:grid-cols-[90px_1fr_auto] gap-4 sm:gap-6 items-center"
+                  className="bg-raised border border-gray-200 rounded-2xl px-6 py-[22px] grid grid-cols-[70px_1fr] sm:grid-cols-[90px_1fr_auto] gap-4 sm:gap-6 items-center"
                 >
-                  <div className="text-center bg-[#f5f5f7] rounded-xl py-2.5">
-                    <div className="text-[11px] font-semibold uppercase text-[#86868b]">{s.month}</div>
+                  <div className="text-center bg-gray-50 rounded-xl py-2.5">
+                    <div className="text-[11px] font-semibold uppercase text-gray-400">{s.month}</div>
                     <div className="text-[22px] font-bold tracking-[-0.02em] text-gray-900">{s.day}</div>
                   </div>
                   <div className="min-w-0">
@@ -87,17 +87,17 @@ export default function WebinarsPage() {
                       <span className="text-[15.5px] font-bold text-gray-900">{s.title}</span>
                       <span
                         className={`text-[10.5px] font-semibold tracking-[0.08em] uppercase ${
-                          s.type === 'Workshop' ? 'text-[#1d8348]' : 'text-primary-600'
+                          s.type === 'Workshop' ? 'text-green-600' : 'text-primary-600'
                         }`}
                       >
                         {s.type}
                       </span>
                     </div>
-                    <div className="text-[12.5px] text-[#86868b] mt-0.5">{s.meta}</div>
+                    <div className="text-[12.5px] text-gray-400 mt-0.5">{s.meta}</div>
                   </div>
                   <button
                     onClick={() => setRegistering(s)}
-                    className="justify-self-start sm:justify-self-auto col-span-2 sm:col-span-1 text-[12.5px] font-semibold bg-primary-600 hover:bg-[#0077ed] text-white px-5 py-[9px] rounded-full transition-colors"
+                    className="justify-self-start sm:justify-self-auto col-span-2 sm:col-span-1 text-[12.5px] font-semibold bg-primary-600 hover:bg-primary-500 text-white px-5 py-[9px] rounded-full transition-colors"
                   >
                     Register free
                   </button>
@@ -105,11 +105,11 @@ export default function WebinarsPage() {
               ))}
             </div>
           ) : (
-            <div className="bg-white border border-[#e8e8ed] rounded-2xl px-8 py-8 text-center">
+            <div className="bg-raised border border-gray-200 rounded-2xl px-8 py-8 text-center">
               <p className="text-[15.5px] font-bold text-gray-900 mb-1.5">
                 First public dates announcing soon.
               </p>
-              <p className="text-[13.5px] text-[#6e6e73] max-w-[440px] mx-auto mb-6">
+              <p className="text-[13.5px] text-gray-500 max-w-[440px] mx-auto mb-6">
                 Live webinars on AI strategy, hands-on workshops, and expert
                 panels are in the works. Sessions will also stream on our YouTube
                 channel.
@@ -123,7 +123,7 @@ export default function WebinarsPage() {
                 >
                   Subscribe on YouTube
                 </a>
-                <Link href="/contact" className="text-[15px] font-medium text-primary-600 hover:text-[#0077ed]">
+                <Link href="/contact" className="text-[15px] font-medium text-primary-600 hover:text-primary-500">
                   Get notified ›
                 </Link>
               </div>
@@ -136,27 +136,27 @@ export default function WebinarsPage() {
               <h2 className="text-[22px] font-bold tracking-[-0.01em] text-gray-900 mt-8 mb-5">
                 Past sessions
               </h2>
-              <div className="bg-white border border-[#e8e8ed] rounded-2xl overflow-hidden">
+              <div className="bg-raised border border-gray-200 rounded-2xl overflow-hidden">
                 {pastWebinars.map((p, i) => (
                   <div
                     key={`${p.title}-${p.date}`}
                     className={`grid grid-cols-1 sm:grid-cols-[1fr_auto_auto] gap-2 sm:gap-5 px-6 py-[15px] items-baseline ${
-                      i < pastWebinars.length - 1 ? 'border-b border-[#f5f5f7]' : ''
+                      i < pastWebinars.length - 1 ? 'border-b border-gray-100' : ''
                     }`}
                   >
                     <span className="text-sm font-semibold text-gray-900">{p.title}</span>
-                    <span className="text-xs text-[#86868b]">{p.date}</span>
+                    <span className="text-xs text-gray-400">{p.date}</span>
                     {p.recordingUrl ? (
                       <a
                         href={p.recordingUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-[12.5px] font-semibold text-primary-600 hover:text-[#0077ed]"
+                        className="text-[12.5px] font-semibold text-primary-600 hover:text-primary-500"
                       >
                         Watch recording ›
                       </a>
                     ) : (
-                      <span className="text-[12.5px] text-[#86868b]">Recording soon</span>
+                      <span className="text-[12.5px] text-gray-400">Recording soon</span>
                     )}
                   </div>
                 ))}
@@ -167,7 +167,7 @@ export default function WebinarsPage() {
           <h2 className="text-[22px] font-bold tracking-[-0.01em] text-gray-900 mt-8 mb-5">
             In the meantime
           </h2>
-          <div className="bg-white border border-[#e8e8ed] rounded-2xl overflow-hidden">
+          <div className="bg-raised border border-gray-200 rounded-2xl overflow-hidden">
             {[
               { title: 'Free hands-on workshops', detail: 'Claude Cowork and more — run regularly online.', href: '/workshops', cta: 'See workshops ›' },
               { title: 'Training excerpts and walkthroughs', detail: 'Full video courses with labs, quizzes and certificates.', href: '/studio', cta: 'Open the Learning Studio ›' },
@@ -176,23 +176,23 @@ export default function WebinarsPage() {
               <div
                 key={row.title}
                 className={`grid grid-cols-1 sm:grid-cols-[1fr_auto] gap-3 sm:gap-5 px-6 py-4 items-baseline ${
-                  i < arr.length - 1 ? 'border-b border-[#f5f5f7]' : ''
+                  i < arr.length - 1 ? 'border-b border-gray-100' : ''
                 }`}
               >
                 <div>
                   <span className="text-sm font-semibold text-gray-900">{row.title}</span>
-                  <span className="text-xs text-[#86868b]"> — {row.detail}</span>
+                  <span className="text-xs text-gray-400"> — {row.detail}</span>
                 </div>
-                <Link href={row.href} className="text-[12.5px] font-semibold text-primary-600 hover:text-[#0077ed]">
+                <Link href={row.href} className="text-[12.5px] font-semibold text-primary-600 hover:text-primary-500">
                   {row.cta}
                 </Link>
               </div>
             ))}
           </div>
 
-          <p className="text-[13px] text-[#86868b] mt-5 text-center">
+          <p className="text-[13px] text-gray-400 mt-5 text-center">
             Want a private session for your team?{' '}
-            <Link href="/contact" className="font-medium text-primary-600 hover:text-[#0077ed]">
+            <Link href="/contact" className="font-medium text-primary-600 hover:text-primary-500">
               Talk to us
             </Link>{' '}
             — we run these in-house with your data.

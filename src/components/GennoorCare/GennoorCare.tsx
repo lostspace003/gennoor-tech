@@ -225,7 +225,7 @@ export default function GennoorCare() {
   }
 
   return (
-    <>
+    <div>
       {!open && (
         <button
           onClick={() => setOpen(true)}
@@ -239,7 +239,7 @@ export default function GennoorCare() {
       )}
 
       {open && (
-        <div className="fixed bottom-0 right-0 sm:bottom-5 sm:right-5 z-50 w-full sm:w-[330px] h-[100dvh] sm:h-[480px] sm:max-h-[78dvh] bg-white sm:rounded-2xl shadow-2xl border border-gray-200 flex flex-col overflow-hidden">
+        <div className="fixed bottom-0 right-0 sm:bottom-5 sm:right-5 z-50 w-full sm:w-[330px] h-[100dvh] sm:h-[480px] sm:max-h-[78dvh] bg-raised sm:rounded-2xl shadow-2xl border border-gray-200 flex flex-col overflow-hidden">
           {/* Header */}
           <div className="px-3.5 py-2.5 bg-primary-600 text-white flex items-center justify-between shrink-0">
             <div className="flex items-center gap-2.5">
@@ -257,7 +257,7 @@ export default function GennoorCare() {
           <div className="flex-1 overflow-y-auto p-3 space-y-2 min-h-0 bg-gray-50">
             {stage === 'greet' && (
               <div className="space-y-2.5 mt-3">
-                <div className="bg-white border border-gray-200 rounded-2xl rounded-bl-md px-3.5 py-2.5 text-sm text-gray-800 max-w-[88%]">
+                <div className="bg-raised border border-gray-200 rounded-2xl rounded-bl-md px-3.5 py-2.5 text-sm text-gray-800 max-w-[88%]">
                   Hi there! 👋 I'm GennoorCare — I know everything on gennoor.com: courses, corporate training, POCs and more.
                   <br /><br />May I know your name?
                 </div>
@@ -270,7 +270,7 @@ export default function GennoorCare() {
               </p>
             )}
             {msgs.map((m, i) => (
-              <div key={i} className={`max-w-[88%] rounded-2xl px-3 py-2 text-[13px] leading-relaxed break-words ${m.role === 'user' ? 'ml-auto bg-primary-600 text-white rounded-br-md whitespace-pre-line' : 'bg-white border border-gray-200 text-gray-800 rounded-bl-md'}`}>
+              <div key={i} className={`max-w-[88%] rounded-2xl px-3 py-2 text-[13px] leading-relaxed break-words ${m.role === 'user' ? 'ml-auto bg-primary-600 text-white rounded-br-md whitespace-pre-line' : 'bg-raised border border-gray-200 text-gray-800 rounded-bl-md'}`}>
                 {m.role === 'assistant' ? renderText(m.content) : m.content}
                 {/* Only add chips for links the reply text doesn't already contain — no duplicates */}
                 {m.links && m.links.filter((l) => !linkInContent(m.content, l.url)).length > 0 && (
@@ -288,14 +288,14 @@ export default function GennoorCare() {
               </div>
             ))}
             {busy && (
-              <div className="bg-white border border-gray-200 rounded-2xl rounded-bl-md px-3.5 py-2.5 w-16">
+              <div className="bg-raised border border-gray-200 rounded-2xl rounded-bl-md px-3.5 py-2.5 w-16">
                 <span className="inline-flex gap-1"><Dot d="0s" /><Dot d="0.15s" /><Dot d="0.3s" /></span>
               </div>
             )}
 
             {/* Lead form */}
             {showLead && !leadDone && (
-              <div className="bg-white border border-primary-200 rounded-xl p-3.5 space-y-2">
+              <div className="bg-raised border border-primary-200 rounded-xl p-3.5 space-y-2">
                 <p className="text-xs font-medium text-gray-700">Leave your details — our team will reach out:</p>
                 <input value={lead.name} onChange={(e) => setLead({ ...lead, name: e.target.value })} placeholder="Your name *" className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm" />
                 <input value={lead.email} onChange={(e) => setLead({ ...lead, email: e.target.value })} placeholder="Work email *" type="email" className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm" />
@@ -315,7 +315,7 @@ export default function GennoorCare() {
 
             {/* Skippable exit feedback */}
             {showFeedback && (
-              <div className="bg-white border border-gray-200 rounded-xl p-3.5 space-y-2">
+              <div className="bg-raised border border-gray-200 rounded-xl p-3.5 space-y-2">
                 <p className="text-xs font-medium text-gray-700">Before you go — was this helpful?</p>
                 <div className="flex gap-2">
                   <button onClick={() => sendFeedback(true)} className="flex-1 px-3 py-2 bg-green-600 text-white text-sm rounded-lg hover:bg-green-700">👍 Yes</button>
@@ -329,7 +329,7 @@ export default function GennoorCare() {
           </div>
 
           {/* Footer */}
-          <div className="p-2.5 border-t border-gray-100 bg-white shrink-0 space-y-1.5">
+          <div className="p-2.5 border-t border-gray-100 bg-raised shrink-0 space-y-1.5">
             {!leadDone && stage === 'chat' && (msgs.length > 0 || offerLead) && !showLead && (
               <button onClick={() => setShowLead(true)} className="text-[11px] text-primary-600 hover:underline">📞 Request a callback from our team</button>
             )}
@@ -348,7 +348,7 @@ export default function GennoorCare() {
           </div>
         </div>
       )}
-    </>
+    </div>
   )
 }
 
@@ -378,7 +378,7 @@ function AdaptiveCard({ card, disabled, onSubmit }: {
               value={answers[f.id] || ''}
               onChange={(e) => set(f.id, e.target.value)}
               disabled={disabled}
-              className="w-full px-2.5 py-1.5 rounded-lg border border-gray-200 bg-white text-[12px] text-gray-800 focus:ring-2 focus:ring-primary-400 focus:border-transparent disabled:opacity-60"
+              className="w-full px-2.5 py-1.5 rounded-lg border border-gray-200 bg-raised text-[12px] text-gray-800 focus:ring-2 focus:ring-primary-400 focus:border-transparent disabled:opacity-60"
             >
               <option value="">Select…</option>
               {(f.options || []).map((o) => <option key={o} value={o}>{o}</option>)}
@@ -392,7 +392,7 @@ function AdaptiveCard({ card, disabled, onSubmit }: {
               placeholder={f.placeholder || 'Type your answer'}
               disabled={disabled}
               maxLength={200}
-              className="w-full px-2.5 py-1.5 rounded-lg border border-gray-200 bg-white text-[12px] text-gray-800 placeholder:text-gray-400 focus:ring-2 focus:ring-primary-400 focus:border-transparent disabled:opacity-60"
+              className="w-full px-2.5 py-1.5 rounded-lg border border-gray-200 bg-raised text-[12px] text-gray-800 placeholder:text-gray-400 focus:ring-2 focus:ring-primary-400 focus:border-transparent disabled:opacity-60"
             />
           )}
         </label>

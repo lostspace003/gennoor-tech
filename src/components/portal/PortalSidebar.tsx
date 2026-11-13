@@ -1,26 +1,24 @@
 'use client'
 
-import { Fragment, useState, useEffect, useRef } from 'react'
+import { Fragment, useEffect } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { ChevronLeft, ChevronRight, X, Search, PanelLeftOpen, MessageCircle } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import {
-  portalNav,
-  isItemActive,
-  isSectionActive,
-  type PortalNavSection,
-} from '@/lib/portal-nav'
+import { portalNav, isItemActive, type PortalNavSection } from '@/lib/portal-nav'
+import type { Theme } from '@/lib/theme'
+import ThemeSwitch from './ThemeSwitch'
 
 /**
- * The site rail in the Apple idiom (per the redesign handoff):
+ * The site menu.
  *
- *  - a #f5f5f7 panel with a hairline border, logo card at the top,
- *    one filled pill ("Book a call") at the bottom
- *  - selection is a filled tint (#e8f0fe) with accent text — no edge markers
- *  - rows are 13.5px, icons 17px monochrome; the only colour in the rail is
- *    the accent on the selected row
- *  - the desktop top bar is gone; search and collapse live here instead
+ * One level, read from top to bottom. A section with more than one page (Learning Studio,
+ * Claude) is the link to its main page, and its other pages sit under it on a thin line,
+ * always visible: nothing has to be opened to find a page, and there is no menu inside the
+ * menu. Folded to icons, each icon is still one link, with its name beside it on hover.
+ *
+ * It takes the look of the site (dark or light) from the theme on <html>; the switch for it
+ * is at the foot, above WhatsApp and "Book a call".
  */
 
 interface Props {
@@ -36,21 +34,31 @@ interface Props {
   onTogglePin?: () => void
   /** Open the ⌘K search modal. */
   onSearchOpen?: () => void
+  theme: Theme
+  onTheme: (t: Theme) => void
 }
 
-/** Shared row geometry so sections and children line up exactly. */
+/** Shared row geometry so sections and their pages line up exactly. */
 const ROW = 'flex items-center gap-[11px] rounded-lg px-3 py-2 text-[13.5px] transition-colors duration-100'
-const ROW_IDLE = 'text-gray-900 font-normal hover:bg-[#eaeaef]'
+const ROW_IDLE = 'text-gray-900 font-normal hover:bg-gray-100'
 const ROW_ACTIVE = 'bg-primary-100 text-primary-600 font-semibold'
-const ICON_IDLE = 'text-[#86868b]'
+const ICON_IDLE = 'text-gray-400'
 const ICON_ACTIVE = 'text-primary-600'
 
-/** Tooltip shown beside collapsed-rail icons — explains what each icon is. */
 const WHATSAPP_URL =
   'https://wa.me/919326352241?text=' +
   encodeURIComponent('Hi Jalal, I visited gennoor.com and would like to talk about AI training and automation for my organization.')
 
-/** WhatsApp, always just above "Book a call". The label shows on hover or keyboard focus. */
+/** The name of an icon, beside it, when the menu is folded. */
+function RailTip({ label }: { label: string }) {
+  return (
+    <span className="pointer-events-none absolute left-full top-1/2 -translate-y-1/2 ml-3 px-2.5 py-1.5 rounded-lg bg-[#16213f] text-white text-[11.5px] font-medium whitespace-nowrap opacity-0 group-hover:opacity-100 group-focus-visible:opacity-100 transition-opacity duration-150 z-[70] shadow-lg">
+      {label}
+    </span>
+  )
+}
+
+/** WhatsApp, always just beside "Book a call". The label shows on hover or keyboard focus. */
 function WhatsAppLink({ compact }: { compact?: boolean }) {
   return (
     <a
@@ -59,112 +67,47 @@ function WhatsAppLink({ compact }: { compact?: boolean }) {
       rel="noopener noreferrer"
       aria-label="Connect to WhatsApp"
       className={cn(
-        'group relative flex items-center justify-center rounded-full bg-[#25d366] hover:bg-[#1fb857] text-white shadow-sm hover:shadow-md transition-all duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#25d366]',
-        compact ? 'w-9 h-9 mx-auto mb-2' : 'w-10 h-10',
+        'group relative flex shrink-0 items-center justify-center rounded-full bg-[#25d366] hover:bg-[#1fb857] text-white shadow-sm hover:shadow-md transition-all duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#25d366]',
+        compact ? 'w-9 h-9 mx-auto' : 'w-10 h-10',
       )}
     >
       <MessageCircle className={compact ? 'w-[18px] h-[18px]' : 'w-5 h-5'} />
-      <span className="pointer-events-none absolute left-full top-1/2 -translate-y-1/2 ml-3 px-2.5 py-1.5 rounded-lg bg-[#1d1d1f] text-white text-[11.5px] font-medium whitespace-nowrap opacity-0 group-hover:opacity-100 group-focus-visible:opacity-100 transition-opacity duration-150 z-[70] shadow-lg">
-        Connect to WhatsApp
-      </span>
+      <RailTip label="Connect to WhatsApp" />
     </a>
   )
 }
 
-function RailTip({ label }: { label: string }) {
-  return (
-    <span className="pointer-events-none absolute left-full top-1/2 -translate-y-1/2 ml-3 px-2.5 py-1.5 rounded-lg bg-[#1d1d1f] text-white text-[11.5px] font-medium whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-150 z-[70] shadow-lg">
-      {label}
-    </span>
-  )
-}
-
-/** The Gennoor Tech logo drawn inline: same colours as the brand SVG, tagline large enough to read. */
-function RailLogo() {
+/** The Gennoor Tech logo drawn inline: the brand's blue and gold; the quiet letters follow the theme, so it reads on the dark rail. */
+export function RailLogo({ compact = false }: { compact?: boolean }) {
   const arc: Array<[number, number]> = [[105.8, 84.0], [93.4, 99.9], [75.4, 108.8], [55.3, 108.9], [37.1, 100.3], [24.5, 84.6], [20.0, 65.0], [24.5, 45.4], [37.1, 29.7], [55.3, 21.1], [75.4, 21.2], [93.4, 30.1]]
   return (
     <Link href="/" aria-label="Gennoor Tech home" className="flex select-none items-center gap-2.5">
-      <svg viewBox="10 10 110 110" className="h-[46px] w-[46px] flex-shrink-0" aria-hidden="true">
-        {arc.map(([cx, cy], i) => <circle key={i} cx={cx} cy={cy} r={6.4} fill="#2563EB" />)}
-        <circle cx={80} cy={65} r={6.4} fill="#F59E0B" />
-        <circle cx={95} cy={65} r={6.4} fill="#F59E0B" />
-        <circle cx={110} cy={65} r={6.4} fill="#2563EB" />
+      <svg viewBox="10 10 110 110" className={cn('flex-shrink-0', compact ? 'h-[34px] w-[34px]' : 'h-[46px] w-[46px]')} aria-hidden="true">
+        {arc.map(([cx, cy], i) => <circle key={i} cx={cx} cy={cy} r={6.4} fill="#3d94ff" />)}
+        <circle cx={80} cy={65} r={6.4} fill="#ffb02e" />
+        <circle cx={95} cy={65} r={6.4} fill="#ffb02e" />
+        <circle cx={110} cy={65} r={6.4} fill="#3d94ff" />
       </svg>
       <div className="min-w-0">
-        <div className="font-heading text-[21px] font-extrabold leading-none tracking-[-0.01em] whitespace-nowrap">
-          <span className="text-[#2D3748]">Ge</span><span className="text-[#2563EB]">nn</span><span className="text-[#F59E0B]">oo</span><span className="text-[#2563EB]">r</span><span className="text-[#4A5568]"> Tech</span>
+        <div className={cn('font-heading font-extrabold leading-none tracking-[-0.01em] whitespace-nowrap', compact ? 'text-[17px]' : 'text-[21px]')}>
+          <span className="text-gray-900">Ge</span><span className="text-[#3d94ff]">nn</span><span className="text-[#ffb02e]">oo</span><span className="text-[#3d94ff]">r</span><span className="text-gray-700"> Tech</span>
         </div>
-        <div className="mt-1.5 whitespace-nowrap text-[10.5px] font-bold uppercase tracking-[0.1em] text-[#475569]">Train. Innovate. Build.</div>
+        <div className={cn('whitespace-nowrap font-bold uppercase tracking-[0.1em] text-gray-500', compact ? 'mt-1 text-[8.5px]' : 'mt-1.5 text-[10.5px]')}>Train. Innovate. Build.</div>
       </div>
     </Link>
   )
 }
 
-export default function PortalSidebar({
-  pinned,
-  collapsed,
-  mobileOpen,
-  onMobileClose,
-  onTogglePin,
-  onSearchOpen,
-}: Props) {
+export default function PortalSidebar({ pinned, collapsed, mobileOpen, onMobileClose, onTogglePin, onSearchOpen, theme, onTheme }: Props) {
   const pathname = usePathname()
-  const [expanded, setExpanded] = useState<Set<string>>(new Set())
-  // Collapsed-rail flyout: which section's submenu panel is open
-  const [flyout, setFlyout] = useState<string | null>(null)
-  const asideRef = useRef<HTMLElement>(null)
 
-  // Auto-expand any section that contains the active route
-  useEffect(() => {
-    const next = new Set(expanded)
-    portalNav.forEach(s => {
-      if (s.children && isSectionActive(s, pathname)) {
-        next.add(s.name)
-      }
-    })
-    setExpanded(next)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pathname])
-
-  // Close mobile drawer + any flyout on route change
+  // Close the phone's menu when a page is chosen
   useEffect(() => {
     if (mobileOpen) onMobileClose()
-    setFlyout(null)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathname])
 
-  // Flyout housekeeping: close when the rail expands, when clicking
-  // anywhere outside the rail, or on Escape.
-  useEffect(() => {
-    if (!collapsed) setFlyout(null)
-  }, [collapsed])
-
-  useEffect(() => {
-    if (!flyout) return
-    const onPointerDown = (e: PointerEvent) => {
-      if (asideRef.current && !asideRef.current.contains(e.target as Node)) setFlyout(null)
-    }
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setFlyout(null)
-    }
-    document.addEventListener('pointerdown', onPointerDown)
-    document.addEventListener('keydown', onKey)
-    return () => {
-      document.removeEventListener('pointerdown', onPointerDown)
-      document.removeEventListener('keydown', onKey)
-    }
-  }, [flyout])
-
-  const toggleSection = (name: string) => {
-    setExpanded(prev => {
-      const next = new Set(prev)
-      if (next.has(name)) next.delete(name)
-      else next.add(name)
-      return next
-    })
-  }
-
-  // Desktop visual state: collapsed unless pinned OR being hovered
+  // Folded to icons on a desktop; on a phone the menu always shows its names
   const showLabels = !collapsed
 
   return (
@@ -172,7 +115,7 @@ export default function PortalSidebar({
       {/* Mobile backdrop */}
       <div
         className={cn(
-          'fixed inset-0 z-40 bg-gray-900/25 backdrop-blur-[2px] lg:hidden transition-opacity duration-200',
+          'fixed inset-0 z-40 bg-black/50 backdrop-blur-[2px] lg:hidden transition-opacity duration-200',
           mobileOpen ? 'opacity-100' : 'pointer-events-none opacity-0'
         )}
         onClick={onMobileClose}
@@ -180,30 +123,29 @@ export default function PortalSidebar({
       />
 
       <aside
-        ref={asideRef}
         className={cn(
           'fixed top-0 left-0 z-50 lg:z-40 h-dvh',
-          'bg-[#f5f5f7] border-r border-[#e8e8ed] flex flex-col',
+          'bg-gray-50 border-r border-gray-200 flex flex-col',
           'transition-[width,transform] duration-200 ease-out',
           // Width — desktop
           collapsed ? 'lg:w-[var(--portal-rail-w-collapsed)]' : 'lg:w-[var(--portal-rail-w-expanded)]',
           // Width — mobile (always full expanded width)
-          'w-[272px]',
+          'w-[280px] max-w-[86vw]',
           // Mobile show/hide
           mobileOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
         )}
         aria-label="Primary navigation"
       >
         {/* Mobile header — only renders on mobile */}
-        <div className="flex items-center justify-between h-[52px] pl-4 pr-2 border-b border-[#e8e8ed] lg:hidden">
-          <span className="text-[15px] font-semibold text-gray-900">Menu</span>
+        <div className="flex items-center justify-between h-[56px] pl-4 pr-2 border-b border-gray-200 lg:hidden">
+          <RailLogo compact />
           <button
             type="button"
             onClick={onMobileClose}
-            className="p-2 rounded-lg text-gray-500 hover:bg-[#eaeaef] transition-colors"
-            aria-label="Close navigation"
+            className="p-2.5 rounded-lg text-gray-500 hover:bg-gray-100 transition-colors"
+            aria-label="Close the menu"
           >
-            <X className="w-[18px] h-[18px]" />
+            <X className="w-5 h-5" />
           </button>
         </div>
 
@@ -216,9 +158,9 @@ export default function PortalSidebar({
                 <button
                   type="button"
                   onClick={onTogglePin}
-                  className="absolute -right-3 top-[30px] z-10 flex h-6 w-6 items-center justify-center rounded-full bg-white border border-[#d2d2d7] text-gray-600 shadow-sm hover:text-gray-900 hover:border-gray-400 transition-colors"
-                  aria-label={pinned ? 'Collapse navigation' : 'Pin navigation open'}
-                  title={pinned ? 'Collapse navigation' : 'Pin navigation open'}
+                  className="absolute -right-3 top-[30px] z-10 flex h-6 w-6 items-center justify-center rounded-full bg-raised border border-gray-300 text-gray-600 shadow-sm hover:text-gray-900 hover:border-gray-400 transition-colors"
+                  aria-label={pinned ? 'Fold the menu to icons' : 'Keep the menu open'}
+                  title={pinned ? 'Fold the menu to icons' : 'Keep the menu open'}
                 >
                   {pinned ? <ChevronLeft className="w-[14px] h-[14px]" strokeWidth={2.25} /> : <ChevronRight className="w-[14px] h-[14px]" strokeWidth={2.25} />}
                 </button>
@@ -228,11 +170,11 @@ export default function PortalSidebar({
             <button
               type="button"
               onClick={onTogglePin}
-              className="group relative w-full flex items-center justify-center p-2 rounded-lg text-gray-500 hover:bg-[#eaeaef] transition-colors"
-              aria-label="Expand navigation"
+              className="group relative w-full flex items-center justify-center p-2 rounded-lg text-gray-500 hover:bg-gray-100 transition-colors"
+              aria-label="Open the menu"
             >
               <PanelLeftOpen className="w-[17px] h-[17px]" strokeWidth={1.75} />
-              <RailTip label="Expand navigation" />
+              <RailTip label="Open the menu" />
             </button>
           )}
         </div>
@@ -243,20 +185,14 @@ export default function PortalSidebar({
             <button
               type="button"
               onClick={onSearchOpen}
-              className={cn(
-                ROW,
-                'w-full text-left text-[#6e6e73] hover:bg-[#eaeaef]',
-                !showLabels && 'group relative justify-center px-0'
-              )}
+              className={cn(ROW, 'w-full text-left text-gray-500 hover:bg-gray-100', !showLabels && 'group relative justify-center px-0')}
               aria-label="Search the website"
             >
               <Search className={cn('w-[17px] h-[17px] flex-shrink-0', ICON_IDLE)} strokeWidth={1.7} />
               {showLabels ? (
                 <>
                   <span className="truncate flex-1">Search</span>
-                  <kbd className="text-[10.5px] font-medium text-gray-500 bg-white border border-[#e8e8ed] px-1.5 py-0.5 rounded-md leading-none">
-                    ⌘K
-                  </kbd>
+                  <kbd className="text-[10.5px] font-medium text-gray-500 bg-raised border border-gray-200 px-1.5 py-0.5 rounded-md leading-none">⌘K</kbd>
                 </>
               ) : (
                 <RailTip label="Search  ⌘K" />
@@ -266,7 +202,6 @@ export default function PortalSidebar({
         )}
 
         <div className={cn('flex-1 px-3 py-1.5', showLabels ? 'overflow-y-auto' : 'overflow-visible')}>
-          {/* Main nav */}
           <nav aria-label="Site sections">
             <ul className="space-y-0.5">
               {portalNav.map(section => (
@@ -274,51 +209,45 @@ export default function PortalSidebar({
                   {/* Group break — padding, not margin, because space-y owns the margins */}
                   {section.startsGroup && (
                     <li aria-hidden="true" className="py-1.5">
-                      <div className={cn('border-t border-[#e8e8ed]', showLabels ? 'mx-3' : 'mx-2')} />
+                      <div className={cn('border-t border-gray-200', showLabels ? 'mx-3' : 'mx-2')} />
                     </li>
                   )}
-                  <SectionRow
-                    section={section}
-                    pathname={pathname}
-                    showLabels={showLabels}
-                    isExpanded={expanded.has(section.name)}
-                    onToggle={() => toggleSection(section.name)}
-                    flyoutOpen={flyout === section.name}
-                    onFlyoutToggle={() =>
-                      setFlyout(f => (f === section.name ? null : section.name))
-                    }
-                  />
+                  <SectionRow section={section} pathname={pathname} showLabels={showLabels} />
                 </Fragment>
               ))}
             </ul>
           </nav>
         </div>
 
-        {/* Bottom block — the one filled action, plus the delivery footprint */}
-        <div className={cn('border-t border-[#e8e8ed]', showLabels ? 'p-4' : 'p-2')}>
+        {/* The foot: the look of the site, then the two ways to reach us */}
+        <div className={cn('border-t border-gray-200', showLabels ? 'p-4' : 'p-2')}>
           {showLabels ? (
-            <div className="flex flex-col gap-2.5">
-              <WhatsAppLink />
-              <Link
-                href="/resources/calendar"
-                className="flex items-center justify-center bg-primary-600 text-white text-[13px] font-semibold py-2.5 rounded-full hover:bg-[#0077ed] transition-colors"
-              >
-                Book a call
-              </Link>
-              <p className="text-[11px] text-[#86868b] text-center">Mumbai, India</p>
+            <div className="flex flex-col gap-3">
+              <ThemeSwitch theme={theme} onChange={onTheme} />
+              <div className="flex items-center gap-2.5">
+                <WhatsAppLink />
+                <Link
+                  href="/resources/calendar"
+                  className="flex-1 flex items-center justify-center bg-primary-600 text-white text-[13px] font-semibold py-2.5 rounded-full hover:bg-primary-500 transition-colors"
+                >
+                  Book a call
+                </Link>
+              </div>
+              <p className="text-[11px] text-gray-400 text-center">Mumbai, India</p>
             </div>
           ) : (
-            <>
-            <WhatsAppLink compact />
-            <Link
-              href="/resources/calendar"
-              className="group relative flex items-center justify-center w-9 h-9 mx-auto bg-primary-600 text-white rounded-full hover:bg-[#0077ed] transition-colors"
-              aria-label="Book a call"
-            >
-              <ChevronRight className="w-4 h-4" strokeWidth={2} />
-              <RailTip label="Book a call" />
-            </Link>
-            </>
+            <div className="flex flex-col items-center gap-2">
+              <ThemeSwitch theme={theme} onChange={onTheme} compact />
+              <WhatsAppLink compact />
+              <Link
+                href="/resources/calendar"
+                className="group relative flex items-center justify-center w-9 h-9 bg-primary-600 text-white rounded-full hover:bg-primary-500 transition-colors"
+                aria-label="Book a call"
+              >
+                <ChevronRight className="w-4 h-4" strokeWidth={2} />
+                <RailTip label="Book a call" />
+              </Link>
+            </div>
           )}
         </div>
       </aside>
@@ -326,113 +255,22 @@ export default function PortalSidebar({
   )
 }
 
-function SectionRow({
-  section,
-  pathname,
-  showLabels,
-  isExpanded,
-  onToggle,
-  flyoutOpen,
-  onFlyoutToggle,
-}: {
-  section: PortalNavSection
-  pathname: string
-  showLabels: boolean
-  isExpanded: boolean
-  onToggle: () => void
-  flyoutOpen: boolean
-  onFlyoutToggle: () => void
-}) {
+/** One section of the menu: its own row, and under it, on a thin line, its further pages. */
+function SectionRow({ section, pathname, showLabels }: { section: PortalNavSection; pathname: string; showLabels: boolean }) {
   const Icon = section.icon
-  const active = isSectionActive(section, pathname)
-  const hasChildren = !!(section.children && section.children.length > 0)
+  const children = section.children ?? []
+  const childOn = children.some(c => isItemActive(c.href, pathname))
+  // A section is the current page only when none of its own pages is
+  const on = !!section.href && isItemActive(section.href, pathname) && !childOn
+  const href = section.href ?? children[0]?.href ?? '/'
 
-  // Collapsed rail + section WITH children — clicking the icon opens a
-  // flyout submenu beside the rail listing the section page and every
-  // child, so nothing is more than two taps away while collapsed.
-  if (!showLabels && hasChildren) {
-    return (
-      <li className="relative">
-        <button
-          type="button"
-          onClick={onFlyoutToggle}
-          className={cn(
-            ROW,
-            'group relative w-full justify-center px-0',
-            active || flyoutOpen ? ROW_ACTIVE : ROW_IDLE
-          )}
-          aria-expanded={flyoutOpen}
-          aria-haspopup="menu"
-        >
-          <Icon
-            className={cn(
-              'w-[17px] h-[17px] flex-shrink-0',
-              active || flyoutOpen ? ICON_ACTIVE : ICON_IDLE
-            )}
-            strokeWidth={1.7}
-          />
-          <span className="sr-only">{section.name}</span>
-          {!flyoutOpen && <RailTip label={section.name} />}
-        </button>
-
-        {flyoutOpen && (
-          <div
-            className="absolute left-full top-0 ml-2 w-60 bg-white border border-[#e8e8ed] rounded-xl shadow-lg p-1.5 z-[70]"
-            role="menu"
-            aria-label={`${section.name} submenu`}
-          >
-            {section.href && (
-              <Link
-                href={section.href}
-                className="block px-3 py-2 rounded-lg text-[13px] font-semibold text-gray-900 hover:bg-[#f5f5f7]"
-                role="menuitem"
-              >
-                {section.name}
-              </Link>
-            )}
-            <div className="my-1 border-t border-[#f0f0f2]" />
-            {section.children!.map(child => {
-              const childActive = isItemActive(child.href, pathname)
-              return (
-                <Link
-                  key={child.name}
-                  href={child.href}
-                  className={cn(
-                    'flex items-center px-3 py-2 rounded-lg text-[13px]',
-                    childActive
-                      ? 'bg-primary-100 text-primary-600 font-semibold'
-                      : 'text-[#6e6e73] hover:bg-[#f5f5f7] hover:text-gray-900'
-                  )}
-                  role="menuitem"
-                >
-                  <span className="truncate">{child.name}</span>
-                  {child.badge && (
-                    <span className="ml-auto text-[10px] font-semibold uppercase tracking-wide text-gray-500">
-                      {child.badge}
-                    </span>
-                  )}
-                </Link>
-              )
-            })}
-          </div>
-        )}
-      </li>
-    )
-  }
-
-  // Collapsed rail + leaf section — an icon link with a tooltip naming it.
-  if (!showLabels && section.href) {
-    const on = isItemActive(section.href, pathname)
+  // Folded to icons: one icon, one link. The name shows beside it; the section's other pages are on its page.
+  if (!showLabels) {
+    const lit = on || childOn
     return (
       <li>
-        <Link
-          href={section.href}
-          className={cn(ROW, 'group relative justify-center px-0', on ? ROW_ACTIVE : ROW_IDLE)}
-        >
-          <Icon
-            className={cn('w-[17px] h-[17px] flex-shrink-0', on ? ICON_ACTIVE : ICON_IDLE)}
-            strokeWidth={1.7}
-          />
+        <Link href={href} aria-current={on ? 'page' : undefined} className={cn(ROW, 'group relative justify-center px-0', lit ? ROW_ACTIVE : ROW_IDLE)}>
+          <Icon className={cn('w-[17px] h-[17px] flex-shrink-0', lit ? ICON_ACTIVE : ICON_IDLE)} strokeWidth={1.7} />
           <span className="sr-only">{section.name}</span>
           <RailTip label={section.name} />
         </Link>
@@ -440,78 +278,31 @@ function SectionRow({
     )
   }
 
-  // Leaf row (no children) — renders as a plain link
-  if (!hasChildren && section.href) {
-    const exact = isItemActive(section.href, pathname)
-    return (
-      <li>
-        <Link
-          href={section.href}
-          className={cn(ROW, exact ? ROW_ACTIVE : ROW_IDLE)}
-        >
-          <Icon
-            className={cn('w-[17px] h-[17px] flex-shrink-0', exact ? ICON_ACTIVE : ICON_IDLE)}
-            strokeWidth={1.7}
-          />
-          <span className="truncate">{section.name}</span>
-          {section.badge && (
-            <span className="ml-auto rounded-full bg-primary-600 px-2 py-[1px] text-[10px] font-bold uppercase tracking-wide text-white">{section.badge}</span>
-          )}
-        </Link>
-      </li>
-    )
-  }
-
-  // Parent row (has children) — expandable.
-  // A parent is never "selected"; only its child is. It gets a weight change so
-  // you can still see which group you're inside without a second filled pill.
   return (
     <li>
-      <button
-        type="button"
-        onClick={onToggle}
-        className={cn(
-          ROW,
-          'w-full text-left',
-          active ? 'text-gray-900 font-medium hover:bg-[#eaeaef]' : ROW_IDLE
+      <Link href={href} aria-current={on ? 'page' : undefined} className={cn(ROW, on ? ROW_ACTIVE : ROW_IDLE, childOn && 'font-semibold')}>
+        <Icon className={cn('w-[17px] h-[17px] flex-shrink-0', on ? ICON_ACTIVE : childOn ? 'text-gray-700' : ICON_IDLE)} strokeWidth={1.7} />
+        <span className="truncate">{section.name}</span>
+        {section.badge && (
+          <span className="ml-auto rounded-full bg-[#ffc24b] px-2 py-[1px] text-[10px] font-bold uppercase tracking-wide text-[#2a1a00]">{section.badge}</span>
         )}
-        aria-expanded={isExpanded}
-      >
-        <Icon
-          className={cn('w-[17px] h-[17px] flex-shrink-0', active ? 'text-gray-700' : ICON_IDLE)}
-          strokeWidth={1.7}
-        />
-        <span className="truncate flex-1">{section.name}</span>
-        <ChevronRight
-          className={cn(
-            'w-3.5 h-3.5 flex-shrink-0 text-gray-400 transition-transform duration-200',
-            isExpanded && 'rotate-90'
-          )}
-          strokeWidth={2}
-        />
-      </button>
+      </Link>
 
-      {showLabels && isExpanded && section.children && (
-        <ul className="mt-px mb-1 space-y-px">
-          {/* Children are text-only and indented to the parent's label column —
-              a second row of icons here is what made the rail feel busy. */}
-          {section.children.map(child => {
+      {/* The section's other pages: always there, on a thin line under it */}
+      {children.length > 0 && (
+        <ul className="mt-0.5 mb-1 ml-[20px] border-l border-gray-200 pl-[9px] space-y-0.5">
+          {children.map(child => {
             const childActive = isItemActive(child.href, pathname)
             return (
               <li key={child.name}>
                 <Link
                   href={child.href}
-                  className={cn(
-                    ROW,
-                    'pl-[40px] text-[13px]',
-                    childActive ? ROW_ACTIVE : 'text-[#6e6e73] hover:bg-[#eaeaef] hover:text-gray-900'
-                  )}
+                  aria-current={childActive ? 'page' : undefined}
+                  className={cn(ROW, 'py-1.5 text-[13px]', childActive ? ROW_ACTIVE : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900')}
                 >
                   <span className="truncate">{child.name}</span>
                   {child.badge && (
-                    <span className="ml-auto text-[10px] font-semibold uppercase tracking-wide text-gray-500">
-                      {child.badge}
-                    </span>
+                    <span className="ml-auto rounded-full border border-gray-300 px-1.5 py-[1px] text-[9.5px] font-bold uppercase tracking-wide text-gray-500">{child.badge}</span>
                   )}
                 </Link>
               </li>

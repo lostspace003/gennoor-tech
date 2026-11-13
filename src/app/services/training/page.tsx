@@ -59,11 +59,11 @@ export default function TrainingPage() {
   return (
     <main className="min-h-screen">
       {/* ===== Hero ===== */}
-      <section className="bg-white px-8 pt-8 lg:pt-10 pb-[72px] text-center">
+      <section className="bg-surface px-8 pt-8 lg:pt-10 pb-[72px] text-center">
         <h1 className="text-[clamp(40px,4.8vw,64px)] leading-[1.06] tracking-[-0.03em] font-bold text-gray-900 max-w-[760px] mx-auto">
           Programs we teach.
         </h1>
-        <p className="text-[clamp(18px,1.8vw,22px)] leading-[1.45] text-[#6e6e73] max-w-[620px] mx-auto mt-[22px]">
+        <p className="text-[clamp(18px,1.8vw,22px)] leading-[1.45] text-gray-500 max-w-[620px] mx-auto mt-[22px]">
           {bootcamps.length} bootcamps and {allCoursePdfs.length} instructor-led courses, from leaders to engineers.
           Every program is adapted to your team and the work they do.
         </p>
@@ -71,52 +71,52 @@ export default function TrainingPage() {
           <Link href="/contact#book" className="pill-primary-sm">
             Plan a cohort
           </Link>
-          <Link href="/studio" className="text-[15px] font-medium text-primary-600 hover:text-[#0077ed]">
+          <Link href="/studio" className="text-[15px] font-medium text-primary-600 hover:text-primary-500">
             Learning Studio ›
           </Link>
         </div>
       </section>
 
       {/* ===== Catalog ===== */}
-      <section id="catalog" className="bg-[#f5f5f7] px-8 pt-10 pb-14 scroll-mt-24">
+      <section id="catalog" className="bg-gray-50 px-8 pt-10 pb-14 scroll-mt-24">
         <div className="max-w-[1080px] mx-auto">
           {/* Toolbar — segmented control + count */}
           <div className="flex justify-between items-center flex-wrap gap-4 mb-4">
-            <div className="flex bg-[#e8e8ed] rounded-full p-[3px]">
+            <div className="flex bg-gray-100 rounded-full p-[3px]">
               {(['All', 'Bootcamps', 'Courses'] as Tab[]).map(t => (
                 <button
                   key={t}
                   onClick={() => setTab(t)}
                   className={`text-[13px] font-semibold px-[18px] py-[7px] rounded-full transition-all duration-200 ${
                     tab === t
-                      ? 'bg-white text-gray-900 shadow-[0_1px_3px_rgba(0,0,0,0.08)]'
-                      : 'bg-transparent text-[#6e6e73]'
+                      ? 'bg-raised text-gray-900 shadow-[0_1px_3px_rgba(0,0,0,0.08)]'
+                      : 'bg-transparent text-gray-500'
                   }`}
                 >
                   {t}
                 </button>
               ))}
             </div>
-            <div className="text-[13px] text-[#86868b]">{shownCount} programs</div>
+            <div className="text-[13px] text-gray-400">{shownCount} programs</div>
           </div>
 
           {/* Quiet filters — search, level (bootcamps), track (courses) */}
           <div className="flex flex-wrap items-center gap-2.5 mb-7">
             <div className="relative">
-              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#86868b] w-3.5 h-3.5" />
+              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 w-3.5 h-3.5" />
               <input
                 type="text"
                 placeholder="Search programs…"
                 value={search}
                 onChange={e => setSearch(e.target.value)}
-                className="w-[220px] pl-9 pr-4 py-[7px] text-[13px] bg-white border border-[#d2d2d7] rounded-full text-gray-900 placeholder:text-[#86868b] focus:border-primary-600 focus:ring-0"
+                className="w-[220px] pl-9 pr-4 py-[7px] text-[13px] bg-raised border border-gray-300 rounded-full text-gray-900 placeholder:text-gray-400 focus:border-primary-600 focus:ring-0"
               />
             </div>
             {showBootcamps && (
               <select
                 value={level}
                 onChange={e => setLevel(e.target.value)}
-                className="pl-4 pr-8 py-[7px] text-[13px] bg-white border border-[#d2d2d7] rounded-full text-[#6e6e73] focus:border-primary-600 focus:ring-0"
+                className="pl-4 pr-8 py-[7px] text-[13px] bg-raised border border-gray-300 rounded-full text-gray-500 focus:border-primary-600 focus:ring-0"
                 aria-label="Filter bootcamps by level"
               >
                 <option value="all">All levels</option>
@@ -131,7 +131,7 @@ export default function TrainingPage() {
                 <button
                   onClick={() => setTrack('all')}
                   className={`px-3.5 py-[7px] text-xs font-semibold rounded-full transition-colors ${
-                    track === 'all' ? 'bg-gray-900 text-white' : 'bg-white text-[#6e6e73] border border-[#d2d2d7]'
+                    track === 'all' ? 'bg-gray-900 text-white' : 'bg-raised text-gray-500 border border-gray-300'
                   }`}
                 >
                   All tracks
@@ -141,7 +141,7 @@ export default function TrainingPage() {
                     key={t}
                     onClick={() => setTrack(t)}
                     className={`px-3.5 py-[7px] text-xs font-semibold rounded-full transition-colors ${
-                      track === t ? 'bg-gray-900 text-white' : 'bg-white text-[#6e6e73] border border-[#d2d2d7]'
+                      track === t ? 'bg-gray-900 text-white' : 'bg-raised text-gray-500 border border-gray-300'
                     }`}
                   >
                     {TRACK_LABEL[t]}
@@ -152,7 +152,7 @@ export default function TrainingPage() {
             {hasFilters && (
               <button
                 onClick={() => { setSearch(''); setLevel('all'); setTrack('all') }}
-                className="inline-flex items-center gap-1 text-xs font-semibold text-primary-600 hover:text-[#0077ed]"
+                className="inline-flex items-center gap-1 text-xs font-semibold text-primary-600 hover:text-primary-500"
               >
                 <X className="w-3 h-3" />
                 Clear
@@ -168,7 +168,7 @@ export default function TrainingPage() {
               {showCourses && filteredCourses.map(c => <CoursePdfCard key={c.slug} course={c} />)}
             </div>
           ) : (
-            <div className="text-center py-10 text-[#6e6e73] text-sm">
+            <div className="text-center py-10 text-gray-500 text-sm">
               No programs match your filters.
             </div>
           )}
@@ -176,10 +176,10 @@ export default function TrainingPage() {
       </section>
 
       {/* ===== Delivery ===== */}
-      <section className="bg-white px-8 py-10 lg:py-14">
+      <section className="bg-surface px-8 py-10 lg:py-14">
         <div className="max-w-[1080px] mx-auto">
           <h2 className="display-card text-center mb-8">Delivered your way.</h2>
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-px bg-[#e8e8ed] border border-[#e8e8ed] rounded-[18px] overflow-hidden">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-px bg-gray-100 border border-gray-200 rounded-[18px] overflow-hidden">
             {[
               {
                 title: 'On-site',
@@ -194,15 +194,15 @@ export default function TrainingPage() {
                 body: 'Leadership sessions on site, technical sessions online. One curriculum.',
               },
             ].map(cell => (
-              <div key={cell.title} className="bg-white px-7 py-8">
+              <div key={cell.title} className="bg-surface px-7 py-8">
                 <div className="text-[18px] font-bold text-gray-900 mb-2">{cell.title}</div>
-                <div className="text-sm leading-[1.55] text-[#6e6e73]">{cell.body}</div>
+                <div className="text-sm leading-[1.55] text-gray-500">{cell.body}</div>
               </div>
             ))}
           </div>
-          <p className="text-center text-[13px] text-[#86868b] mt-6">
+          <p className="text-center text-[13px] text-gray-400 mt-6">
             We are based in Mumbai, India.{' '}
-            <Link href="/contact" className="text-primary-600 font-medium hover:text-[#0077ed]">
+            <Link href="/contact" className="text-primary-600 font-medium hover:text-primary-500">
               Plan a session ›
             </Link>
           </p>
@@ -210,11 +210,11 @@ export default function TrainingPage() {
       </section>
 
       {/* ===== Certification prep ===== */}
-      <section className="bg-[#f5f5f7] px-8 py-10 lg:py-14">
+      <section className="bg-gray-50 px-8 py-10 lg:py-14">
         <div className="max-w-[1080px] mx-auto">
           <div className="text-center mb-8">
             <h2 className="display-card mb-3">Certification exam preparation.</h2>
-            <p className="text-[17px] text-[#6e6e73] max-w-[560px] mx-auto">
+            <p className="text-[17px] text-gray-500 max-w-[560px] mx-auto">
               Preparation for Microsoft, Google Cloud, AWS and GitHub exams.
             </p>
           </div>
@@ -225,9 +225,9 @@ export default function TrainingPage() {
               { name: 'AWS', certs: ['Cloud Practitioner', 'AI Practitioner', 'ML Engineer + Specialty'] },
               { name: 'GitHub', certs: ['GH-900 Foundations', 'GH-300 Actions', 'GH-200 Copilot'] },
             ].map(p => (
-              <div key={p.name} className="bg-white border border-[#e8e8ed] rounded-[18px] px-6 py-6">
+              <div key={p.name} className="bg-raised border border-gray-200 rounded-[18px] px-6 py-6">
                 <h3 className="text-[15px] font-bold text-gray-900 mb-2.5">{p.name}</h3>
-                <ul className="space-y-1.5 text-[12.5px] text-[#6e6e73]">
+                <ul className="space-y-1.5 text-[12.5px] text-gray-500">
                   {p.certs.map(c => (
                     <li key={c}>{c}</li>
                   ))}
@@ -244,10 +244,10 @@ export default function TrainingPage() {
       </section>
 
       {/* ===== FAQ ===== */}
-      <section className="bg-white px-8 py-10 lg:py-14">
+      <section className="bg-surface px-8 py-10 lg:py-14">
         <div className="max-w-[720px] mx-auto">
           <h2 className="display-card text-center mb-8">Questions, answered.</h2>
-          <div className="border-t border-[#e8e8ed]">
+          <div className="border-t border-gray-200">
             {[
               { question: 'How does the 2-day curriculum work?', answer: 'Each curriculum is an instructor-led 2-day (16-hour) course delivered on-site or virtual to your team. The PDF is the full curriculum document — outcomes, modules, topic breakdown — that you can review before booking. Customised to your industry, your data, your tools.' },
               { question: 'What\'s the difference between a 2-day curriculum and a longer bootcamp?', answer: '2-day curriculum courses are focused, single-topic intensives — one core skill mastered across 16 hours. Bootcamps are 3–10 day deep dives that combine multiple skills and include hands-on labs on your live environment. Most teams start with a 2-day course and scale up from there.' },
@@ -256,11 +256,11 @@ export default function TrainingPage() {
               { question: 'Do you include certification preparation?', answer: 'Yes, many bootcamps include preparation for Microsoft, AWS, Google Cloud and GitHub exams.' },
               { question: 'Can the training be built around our work?', answer: 'Yes. We start from what your people do every day and use your own examples wherever you allow it.' },
             ].map(faq => (
-              <details key={faq.question} className="group border-b border-[#e8e8ed] py-5">
+              <details key={faq.question} className="group border-b border-gray-200 py-5">
                 <summary className="relative cursor-pointer list-none pr-8 text-[16px] font-semibold text-gray-900">
                   {faq.question}
                 </summary>
-                <p className="text-sm text-[#6e6e73] mt-3 leading-relaxed">{faq.answer}</p>
+                <p className="text-sm text-gray-500 mt-3 leading-relaxed">{faq.answer}</p>
               </details>
             ))}
           </div>
@@ -268,9 +268,9 @@ export default function TrainingPage() {
       </section>
 
       {/* ===== CTA ===== */}
-      <section className="bg-[#f5f5f7] px-8 py-[90px] text-center">
+      <section className="bg-gray-50 px-8 py-[90px] text-center">
         <h2 className="display-card">Not sure where to start?</h2>
-        <p className="text-[18px] text-[#6e6e73] mt-3 mb-7 max-w-[480px] mx-auto">
+        <p className="text-[18px] text-gray-500 mt-3 mb-7 max-w-[480px] mx-auto">
           Tell us what your team needs to be able to do. We will suggest a program and a format.
         </p>
         <Link href="/contact" className="pill-primary-sm">
@@ -290,20 +290,20 @@ function CoursePdfCard({ course }: { course: CoursePdf }) {
   const viewerUrl = `/services/training/curriculum/${course.slug}`
   const pdfUrl = `/api/content/courses/pdfs/${course.slug}.pdf`
   return (
-    <div className="bg-white border border-[#e8e8ed] hover:border-[#d2d2d7] rounded-[18px] px-6 py-[26px] flex flex-col transition-colors">
+    <div className="bg-raised border border-gray-200 hover:border-gray-300 rounded-[18px] px-6 py-[26px] flex flex-col transition-colors">
       <div className="flex justify-between items-center mb-3">
-        <span className="text-[11px] font-semibold tracking-[0.12em] uppercase text-[#86868b]">Course</span>
+        <span className="text-[11px] font-semibold tracking-[0.12em] uppercase text-gray-400">Course</span>
         <span className="text-[11px] font-semibold text-primary-600">{course.trackLabel}</span>
       </div>
       <h3 className="text-[17px] font-bold leading-[1.25] text-gray-900 mb-1.5">{course.title}</h3>
-      <div className="text-[12.5px] text-[#86868b] mb-2.5">
+      <div className="text-[12.5px] text-gray-400 mb-2.5">
         {course.duration} · {course.modules.length} modules · Instructor-led
       </div>
-      <p className="text-[13px] leading-normal text-[#6e6e73] mb-3.5">{course.subtitle}</p>
-      <div className="border-t border-[#f0f0f2] pt-3 mt-auto flex items-center justify-between">
+      <p className="text-[13px] leading-normal text-gray-500 mb-3.5">{course.subtitle}</p>
+      <div className="border-t border-gray-100 pt-3 mt-auto flex items-center justify-between">
         <Link
           href={viewerUrl}
-          className="inline-flex items-center gap-1 text-[13px] font-semibold text-primary-600 hover:text-[#0077ed]"
+          className="inline-flex items-center gap-1 text-[13px] font-semibold text-primary-600 hover:text-primary-500"
         >
           View curriculum
           <ArrowRight className="w-3.5 h-3.5" />
@@ -311,7 +311,7 @@ function CoursePdfCard({ course }: { course: CoursePdf }) {
         <a
           href={pdfUrl}
           download={`${course.slug}.pdf`}
-          className="inline-flex items-center gap-1.5 text-[12.5px] font-semibold text-[#6e6e73] hover:text-gray-900 transition-colors"
+          className="inline-flex items-center gap-1.5 text-[12.5px] font-semibold text-gray-500 hover:text-gray-900 transition-colors"
           title="Download PDF"
           aria-label="Download PDF"
         >

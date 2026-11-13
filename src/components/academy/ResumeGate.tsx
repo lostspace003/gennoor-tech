@@ -10,7 +10,7 @@ import ResumePanel from './ResumePanel'
  */
 export default function ResumeGate({ course, point }: { course: LmsCourse; point: ResumePoint }) {
   return (
-    <div className="bg-[#eef0f4] min-h-screen">
+    <div className="bg-gray-100 min-h-screen">
       <div className="bg-[#0f1824] text-white px-4 sm:px-6 py-3 flex items-center gap-3 text-sm">
         <Link href={`/studio/${course.slug}`} className="text-[#8d9bb0] hover:text-white shrink-0 transition-colors">{course.code}</Link>
         <span className="text-[#4b5a70]">/</span>

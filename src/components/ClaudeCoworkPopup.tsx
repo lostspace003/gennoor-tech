@@ -74,7 +74,7 @@ export default function ClaudeCoworkPopup() {
         </div>
 
         {/* Body */}
-        <div className="bg-white px-6 py-5">
+        <div className="bg-surface px-6 py-5">
           <div className="flex flex-wrap gap-2 mb-4">
             {[
               { label: '32 attended', color: '#22c55e' },
@@ -91,7 +91,7 @@ export default function ClaudeCoworkPopup() {
             ))}
           </div>
 
-          <ul className="space-y-2 text-sm text-[#1B2845] mb-5">
+          <ul className="space-y-2 text-sm text-gray-900 mb-5">
             {[
               '8 hands-on modules from basics to Chrome integrations',
               'Real workflows — Excel, PowerPoint, documents & more',
@@ -107,15 +107,15 @@ export default function ClaudeCoworkPopup() {
           <Link
             href="/workshops/claude-cowork"
             onClick={dismiss}
-            className="flex items-center justify-center gap-2 w-full px-6 py-3.5 bg-[#FFD23F] hover:bg-[#e6be38] text-[#1B2845] font-bold rounded-full transition-colors text-sm"
+            className="flex items-center justify-center gap-2 w-full px-6 py-3.5 bg-[#FFD23F] hover:bg-[#e6be38] text-gray-900 font-bold rounded-full transition-colors text-sm"
           >
             VIEW RECAP <ArrowRight className="w-4 h-4" />
           </Link>
         </div>
 
         {/* Footer */}
-        <div className="bg-[#FFF8F0] px-6 py-3 rounded-b-2xl text-center">
-          <p className="text-[11px] text-[#5C6784]">
+        <div className="bg-amber-50 px-6 py-3 rounded-b-2xl text-center">
+          <p className="text-[11px] text-gray-500">
             Event completed May 10, 2026 &middot; 73 registered &middot; Stay tuned for upcoming workshops
           </p>
         </div>

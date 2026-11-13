@@ -56,7 +56,7 @@ export default function CertificationDetailsModal({
       />
 
       {/* Modal */}
-      <div className="relative z-10 w-full max-w-4xl max-h-[90vh] bg-white rounded-lg shadow-xl flex flex-col overflow-hidden">
+      <div className="relative z-10 w-full max-w-4xl max-h-[90vh] bg-raised rounded-lg shadow-xl flex flex-col overflow-hidden">
         {/* Header */}
         <div className={`h-2 ${getProviderColor(certification.provider)}`}></div>
         <div className="flex items-center justify-between p-6 border-b">

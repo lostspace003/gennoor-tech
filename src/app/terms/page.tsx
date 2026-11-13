@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 
 export default function TermsPage() {
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-surface">
       {/* Hero */}
       <PageHero
         eyebrow="Terms of Service"
@@ -20,7 +20,7 @@ export default function TermsPage() {
       />
 
       <div className="max-w-3xl mx-auto px-4 pt-8 pb-10 sm:pb-14">
-        <div className="bg-white rounded-2xl border border-gray-200/70 shadow-[0_2px_4px_rgba(15,23,42,0.05),0_16px_36px_-14px_rgba(15,23,42,0.08)] p-8 sm:p-10">
+        <div className="bg-raised rounded-2xl border border-gray-200/70 shadow-[0_2px_4px_rgba(15,23,42,0.05),0_16px_36px_-14px_rgba(15,23,42,0.08)] p-8 sm:p-10">
         <div className="space-y-8 text-gray-700 text-[15px] leading-relaxed">
           <section>
             <h2 className="text-lg font-semibold text-gray-900 mb-2">1. Who We Are</h2>

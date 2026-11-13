@@ -85,11 +85,11 @@ export default function ScheduleCallModal({ isOpen, onClose, course = '', course
   return (
     <div className="fixed inset-0 z-[60] flex items-start sm:items-center justify-center sm:p-4 overflow-y-auto" role="dialog" aria-modal="true" aria-label="Schedule a call">
       <div className="fixed inset-0 bg-black/50" onClick={requestClose} />
-      <div className="relative z-10 w-full sm:max-w-lg bg-white sm:rounded-2xl min-h-screen sm:min-h-0 sm:max-h-[92vh] flex flex-col overflow-hidden">
-        <div className="flex items-start justify-between px-6 py-5 border-b border-[#e8e8ed]">
+      <div className="relative z-10 w-full sm:max-w-lg bg-raised sm:rounded-2xl min-h-screen sm:min-h-0 sm:max-h-[92vh] flex flex-col overflow-hidden">
+        <div className="flex items-start justify-between px-6 py-5 border-b border-gray-200">
           <div>
             <h2 className="font-heading text-xl font-bold tracking-[-0.01em] text-gray-900">Schedule a Call</h2>
-            <p className="text-sm text-[#6e6e73] mt-0.5">{course ? `About: ${course}` : 'A 30-minute tech call with our team'}</p>
+            <p className="text-sm text-gray-500 mt-0.5">{course ? `About: ${course}` : 'A 30-minute tech call with our team'}</p>
           </div>
           <button onClick={requestClose} aria-label="Close" className="p-2 -m-2 rounded-lg hover:bg-gray-100"><X className="w-5 h-5 text-gray-600" /></button>
         </div>
@@ -98,14 +98,14 @@ export default function ScheduleCallModal({ isOpen, onClose, course = '', course
           <div className="px-6 py-12 text-center">
             <CheckCircle className="w-14 h-14 text-emerald-600 mx-auto mb-4" />
             <h3 className="text-xl font-semibold text-gray-900 mb-2">Request sent</h3>
-            <p className="text-[#6e6e73]">We will confirm by email. Once approved you will get the Microsoft Teams invite{slot ? ` for ${formatInZone(istInstant(slot.date, slot.time), tz)}` : ''}.</p>
+            <p className="text-gray-500">We will confirm by email. Once approved you will get the Microsoft Teams invite{slot ? ` for ${formatInZone(istInstant(slot.date, slot.time), tz)}` : ''}.</p>
             <button onClick={onClose} className="mt-6 px-5 py-2.5 rounded-xl bg-primary-600 text-white font-medium hover:bg-primary-700">Close</button>
           </div>
         ) : (
           <div className="px-6 py-5 overflow-y-auto flex-1">
             <ol className="flex items-center gap-2 mb-5 text-xs font-medium">
               {STEPS.map((s, i) => (
-                <li key={s} className={`flex-1 pb-1.5 border-b-2 ${i <= step ? 'border-primary-600 text-primary-600' : 'border-[#e8e8ed] text-[#86868b]'}`}>{i + 1}. {s}</li>
+                <li key={s} className={`flex-1 pb-1.5 border-b-2 ${i <= step ? 'border-primary-600 text-primary-600' : 'border-gray-200 text-gray-400'}`}>{i + 1}. {s}</li>
               ))}
             </ol>
 
@@ -116,7 +116,7 @@ export default function ScheduleCallModal({ isOpen, onClose, course = '', course
                   <input id="sc-email" type="email" value={email} onChange={e => setEmail(e.target.value.trim())} className={FIELD} autoComplete="email" />
                 </div>
                 <EmailOTP email={email} onVerified={() => setVerified(true)} verified={verified} />
-                <p className="text-xs text-[#86868b]">We verify your email with a 6-digit code before you can book.</p>
+                <p className="text-xs text-gray-400">We verify your email with a 6-digit code before you can book.</p>
               </div>
             )}
 
@@ -164,7 +164,7 @@ export default function ScheduleCallModal({ isOpen, onClose, course = '', course
 
             {step === 2 && (
               <div>
-                <p className="text-sm text-[#6e6e73] mb-3">Calls run between 6:00 and 9:00 pm IST. Times below are shown in <strong>{tz.replace(/_/g, ' ')}</strong>{country ? ` (${country})` : ''}.</p>
+                <p className="text-sm text-gray-500 mb-3">Calls run between 6:00 and 9:00 pm IST. Times below are shown in <strong>{tz.replace(/_/g, ' ')}</strong>{country ? ` (${country})` : ''}.</p>
                 {!days.length && !error && <div className="py-8 text-center"><Loader2 className="w-6 h-6 animate-spin mx-auto text-primary-600" /></div>}
                 <div className="flex gap-2 overflow-x-auto pb-2 -mx-1 px-1">
                   {days.map(d => (
@@ -192,7 +192,7 @@ export default function ScheduleCallModal({ isOpen, onClose, course = '', course
         )}
 
         {!done && (
-          <div className="flex gap-3 px-6 py-4 border-t border-[#e8e8ed]">
+          <div className="flex gap-3 px-6 py-4 border-t border-gray-200">
             {step > 0 && <button type="button" onClick={() => { setStep(step - 1); setError('') }} className="px-4 py-2.5 rounded-xl border border-gray-300 text-gray-700 font-medium hover:bg-gray-50">Back</button>}
             <div className="flex-1" />
             {step < 2 ? (

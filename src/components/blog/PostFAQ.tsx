@@ -20,7 +20,7 @@ export default function PostFAQ({ faqs }: PostFAQProps) {
   return (
     <section
       className="px-6 sm:px-10 py-10"
-      style={{ borderTop: '1px solid #f3f4f6', backgroundColor: '#ffffff' }}
+      style={{ borderTop: '1px solid rgb(var(--gray-100))', backgroundColor: 'rgb(var(--raised))' }}
       aria-label="Frequently asked questions"
     >
       <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-1">
@@ -38,8 +38,8 @@ export default function PostFAQ({ faqs }: PostFAQProps) {
               key={i}
               className="rounded-xl border overflow-hidden transition-colors"
               style={{
-                borderColor: isOpen ? '#cfe5ff' : '#e5e7eb',
-                backgroundColor: isOpen ? '#f8fbff' : '#ffffff',
+                borderColor: isOpen ? 'rgb(var(--primary-200))' : 'rgb(var(--gray-200))',
+                backgroundColor: isOpen ? 'rgb(var(--primary-50))' : 'rgb(var(--raised))',
               }}
             >
               <button

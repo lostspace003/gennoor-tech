@@ -21,10 +21,10 @@ function Flow() {
   return (
     <ol className="grid grid-cols-2 sm:grid-cols-5 gap-3 mb-6">
       {FLOW.map((s, i) => (
-        <li key={s.name} className="relative rounded-xl bg-[#f5f6f8] px-4 pt-5 pb-4">
+        <li key={s.name} className="relative rounded-xl bg-gray-50 px-4 pt-5 pb-4">
           <span className="absolute left-0 right-0 top-0 h-1.5 rounded-t-xl" style={{ background: s.color }} />
           <p className="font-semibold text-gray-900 text-[15px]">{s.name}</p>
-          <p className="text-[12.5px] leading-snug text-[#6e6e73] mt-1.5">{s.note}</p>
+          <p className="text-[12.5px] leading-snug text-gray-500 mt-1.5">{s.note}</p>
           {i < FLOW.length - 1 && <span aria-hidden className="hidden sm:block absolute -right-[10px] top-1/2 -translate-y-1/2 text-[#b4bac6] z-10">›</span>}
         </li>
       ))}
@@ -43,10 +43,10 @@ function Tiles({ c }: { c: Counts }) {
   return (
     <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 mb-7">
       {tiles.map(t => (
-        <div key={t.l} className="rounded-xl border border-[#e8e8ed] px-4 py-4">
+        <div key={t.l} className="rounded-xl border border-gray-200 px-4 py-4">
           <span className="block w-6 h-1 rounded-full mb-3" style={{ background: t.color }} />
           <p className="text-[28px] font-bold tracking-[-0.02em] text-gray-900 tabular-nums leading-none">{t.v}</p>
-          <p className="text-[13px] text-[#6e6e73] mt-2">{t.l}</p>
+          <p className="text-[13px] text-gray-500 mt-2">{t.l}</p>
         </div>
       ))}
     </div>
@@ -69,7 +69,7 @@ export default function CourseAbout({ blocks, counts }: { blocks: AboutBlock[]; 
           return (
             <div key={i}>
               {/^how .* works/i.test(heading) && blocks[i - 1]?.t === 'h' && <Flow />}
-              <p className="text-[16px] leading-[1.75] text-[#3a3a3f] mb-4 max-w-[68ch]">{b.text}</p>
+              <p className="text-[16px] leading-[1.75] text-gray-700 mb-4 max-w-[68ch]">{b.text}</p>
             </div>
           )
         }
@@ -81,16 +81,16 @@ export default function CourseAbout({ blocks, counts }: { blocks: AboutBlock[]; 
             {labelled ? (
               <ul className="grid sm:grid-cols-2 gap-4">
                 {b.items.map(it => (
-                  <li key={it.label} className="rounded-2xl border border-[#e8e8ed] bg-white p-5">
+                  <li key={it.label} className="rounded-2xl border border-gray-200 bg-raised p-5">
                     <p className="font-semibold text-gray-900 text-[16px] leading-snug">{it.label}</p>
-                    <p className="text-[14.5px] leading-[1.6] text-[#4a4a50] mt-2">{it.text}</p>
+                    <p className="text-[14.5px] leading-[1.6] text-gray-700 mt-2">{it.text}</p>
                   </li>
                 ))}
               </ul>
             ) : (
               <ul className="space-y-3">
                 {b.items.map(it => (
-                  <li key={it.text} className="flex gap-3 text-[15.5px] leading-[1.55] text-[#3a3a3f]">
+                  <li key={it.text} className="flex gap-3 text-[15.5px] leading-[1.55] text-gray-700">
                     <Check className="w-[18px] h-[18px] shrink-0 mt-[3px] text-primary-600" strokeWidth={2.5} />
                     {it.text}
                   </li>

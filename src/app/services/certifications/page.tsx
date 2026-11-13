@@ -86,9 +86,9 @@ export default function CertificationPreparationPage() {
     <main className="min-h-screen">
       {/* Hero Section */}
       <section className="relative py-10 lg:py-10 overflow-hidden">
-        <div className="absolute inset-0 bg-white"></div>
+        <div className="absolute inset-0 bg-surface"></div>
         <div className="absolute inset-0"></div>
-        <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-white to-transparent"></div>
+        <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-surface to-transparent"></div>
         <div className="relative container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col-reverse lg:flex-row lg:items-center lg:justify-between gap-8">
           <div className="max-w-4xl">
@@ -122,7 +122,7 @@ export default function CertificationPreparationPage() {
             <select
               value={selectedProvider}
               onChange={(e) => setSelectedProvider(e.target.value as any)}
-              className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 bg-white"
+              className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 bg-raised"
             >
               <option value="all">All Providers</option>
               <option value="Microsoft">Microsoft</option>
@@ -135,7 +135,7 @@ export default function CertificationPreparationPage() {
             <select
               value={selectedLevel}
               onChange={(e) => setSelectedLevel(e.target.value as any)}
-              className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 bg-white"
+              className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 bg-raised"
             >
               <option value="all">All Levels</option>
               <option value="Fundamentals">Fundamentals</option>
@@ -187,7 +187,7 @@ export default function CertificationPreparationPage() {
                   {certs.map((cert) => (
                     <div
                       key={cert.id}
-                      className="bg-white rounded-2xl border border-gray-200/70 shadow-sm overflow-hidden group hover:shadow-xl transition-all duration-300"
+                      className="bg-raised rounded-2xl border border-gray-200/70 shadow-sm overflow-hidden group hover:shadow-xl transition-all duration-300"
                     >
                       {/* Card Header */}
                       <div className={`h-2 ${getProviderColor(cert.provider)}`}></div>
@@ -246,7 +246,7 @@ export default function CertificationPreparationPage() {
                         <div className="flex gap-2">
                           <button
                             onClick={() => handleViewDetails(cert)}
-                            className="flex-1 inline-flex items-center justify-center px-4 py-2 bg-white ring-1 ring-gray-200 text-gray-700 text-sm font-semibold rounded-xl hover:ring-primary-300 hover:text-primary-700 transition-all"
+                            className="flex-1 inline-flex items-center justify-center px-4 py-2 bg-raised ring-1 ring-gray-200 text-gray-700 text-sm font-semibold rounded-xl hover:ring-primary-300 hover:text-primary-700 transition-all"
                           >
                             <Info className="w-4 h-4 mr-2" />
                             More Details
@@ -274,7 +274,7 @@ export default function CertificationPreparationPage() {
         <div className="section-divider"></div>
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-4xl mx-auto">
-            <div className="bg-white rounded-2xl border border-gray-200/70 shadow-sm p-8">
+            <div className="bg-raised rounded-2xl border border-gray-200/70 shadow-sm p-8">
               <h2 className="text-2xl font-bold text-gray-900 mb-6 text-center">
                 Quick Certification Enquiry
               </h2>
@@ -300,7 +300,7 @@ export default function CertificationPreparationPage() {
           </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-5xl mx-auto">
-            <div className="bg-white rounded-2xl border border-gray-200/70 shadow-sm p-6 text-center">
+            <div className="bg-raised rounded-2xl border border-gray-200/70 shadow-sm p-6 text-center">
               <div className="w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-4">
                 <Award className="w-8 h-8 text-primary-600" />
               </div>
@@ -310,7 +310,7 @@ export default function CertificationPreparationPage() {
               </p>
             </div>
 
-            <div className="bg-white rounded-2xl border border-gray-200/70 shadow-sm p-6 text-center">
+            <div className="bg-raised rounded-2xl border border-gray-200/70 shadow-sm p-6 text-center">
               <div className="w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-4">
                 <Target className="w-8 h-8 text-primary-600" />
               </div>
@@ -320,7 +320,7 @@ export default function CertificationPreparationPage() {
               </p>
             </div>
 
-            <div className="bg-white rounded-2xl border border-gray-200/70 shadow-sm p-6 text-center">
+            <div className="bg-raised rounded-2xl border border-gray-200/70 shadow-sm p-6 text-center">
               <div className="w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-4">
                 <BookOpen className="w-8 h-8 text-primary-600" />
               </div>
@@ -330,7 +330,7 @@ export default function CertificationPreparationPage() {
               </p>
             </div>
 
-            <div className="bg-white rounded-2xl border border-gray-200/70 shadow-sm p-6 text-center">
+            <div className="bg-raised rounded-2xl border border-gray-200/70 shadow-sm p-6 text-center">
               <div className="w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-4">
                 <CheckCircle className="w-8 h-8 text-primary-600" />
               </div>
@@ -340,7 +340,7 @@ export default function CertificationPreparationPage() {
               </p>
             </div>
 
-            <div className="bg-white rounded-2xl border border-gray-200/70 shadow-sm p-6 text-center">
+            <div className="bg-raised rounded-2xl border border-gray-200/70 shadow-sm p-6 text-center">
               <div className="w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-4">
                 <Users className="w-8 h-8 text-primary-600" />
               </div>
@@ -350,7 +350,7 @@ export default function CertificationPreparationPage() {
               </p>
             </div>
 
-            <div className="bg-white rounded-2xl border border-gray-200/70 shadow-sm p-6 text-center">
+            <div className="bg-raised rounded-2xl border border-gray-200/70 shadow-sm p-6 text-center">
               <div className="w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-4">
                 <Globe className="w-8 h-8 text-primary-600" />
               </div>

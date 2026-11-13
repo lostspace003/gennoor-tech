@@ -11,6 +11,7 @@ import { ClaudePartnerBar } from '@/components/ClaudePartner'
 import { cn } from '@/lib/utils'
 import { isChromelessRoute } from '@/lib/chrome'
 import CustomTraining from '@/components/custom-training/CustomTraining'
+import { readTheme, saveTheme, showTheme, type Theme } from '@/lib/theme'
 
 const PIN_STORAGE_KEY = 'gennoor.portal.pinned'
 
@@ -20,6 +21,8 @@ export default function PortalShell({ children }: { children: React.ReactNode })
   const [mobileOpen, setMobileOpen] = useState(false)
   const [searchOpen, setSearchOpen] = useState(false)
   const [mounted, setMounted] = useState(false)
+  // Dark is the look the site opens in; the visitor's own choice is read once the page is in the browser
+  const [theme, setTheme] = useState<Theme>('dark')
 
   // Hydrate pinned state from localStorage on the client
   useEffect(() => {
@@ -46,6 +49,13 @@ export default function PortalShell({ children }: { children: React.ReactNode })
   useEffect(() => {
     setMobileOpen(false)
   }, [pathname])
+
+  // The look of the site. Pages with their own shell (admin, CRM, the lesson players) carry none.
+  useEffect(() => { setTheme(readTheme()) }, [])
+  useEffect(() => {
+    showTheme(isChromelessRoute(pathname) ? 'none' : theme)
+  }, [pathname, theme])
+  const changeTheme = (t: Theme) => { setTheme(t); saveTheme(t) }
 
   // Instant scroll reset on route change. `html { scroll-behavior: smooth }`
   // makes the router's own reset animate and land late/short — behavior:'instant'
@@ -77,10 +87,12 @@ export default function PortalShell({ children }: { children: React.ReactNode })
 
   // App surfaces (CRM, admin, the chapter player) render their own
   // full-screen shells — no site topbar/sidebar/breadcrumb/padding.
+  // They are also the "paper" side of the site: light, as before.
   if (isChromelessRoute(pathname)) {
     return <>{children}</>
   }
 
+  // Every other page takes the look on <html>: dark ("stage") or light ("day"), src/styles/stage.css.
   return (
     <>
       <RouteProgress />
@@ -89,6 +101,8 @@ export default function PortalShell({ children }: { children: React.ReactNode })
       <PortalTopBar
         onMobileOpen={() => setMobileOpen(true)}
         onSearchOpen={() => setSearchOpen(true)}
+        theme={theme}
+        onTheme={changeTheme}
       />
 
       <PortalSidebar
@@ -98,6 +112,8 @@ export default function PortalShell({ children }: { children: React.ReactNode })
         onMobileClose={() => setMobileOpen(false)}
         onTogglePin={() => setPinned(p => !p)}
         onSearchOpen={() => setSearchOpen(true)}
+        theme={theme}
+        onTheme={changeTheme}
       />
 
       {/* Content area — pushes right of the rail on desktop, full width on mobile.

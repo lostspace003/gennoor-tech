@@ -79,13 +79,13 @@ export default async function VerifyPage({ params }: Props) {
     return (
       <main className="min-h-screen bg-[#f5f0eb] flex items-center justify-center px-4 py-12">
         <ScrollReveal>
-          <div className="max-w-lg w-full bg-white rounded-2xl shadow-xl p-10 text-center border border-red-100">
+          <div className="max-w-lg w-full bg-raised rounded-2xl shadow-xl p-10 text-center border border-red-100">
             <div className="w-16 h-16 mx-auto mb-6 rounded-full bg-red-50 flex items-center justify-center">
               <ShieldCheck className="w-8 h-8 text-red-500" strokeWidth={2.5} />
             </div>
-            <h1 className="text-2xl font-extrabold text-[#1B2845] mb-3">Certificate Not Found</h1>
-            <p className="text-[#5C6784] mb-8 leading-relaxed">
-              The credential ID <span className="font-mono font-semibold text-[#1B2845]">{certId}</span> could not be verified. Please check the ID and try again, or contact us if you believe this is an error.
+            <h1 className="text-2xl font-extrabold text-gray-900 mb-3">Certificate Not Found</h1>
+            <p className="text-gray-500 mb-8 leading-relaxed">
+              The credential ID <span className="font-mono font-semibold text-gray-900">{certId}</span> could not be verified. Please check the ID and try again, or contact us if you believe this is an error.
             </p>
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
               <Link
@@ -96,7 +96,7 @@ export default async function VerifyPage({ params }: Props) {
               </Link>
               <Link
                 href="/"
-                className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-full border-2 border-[#1B2845] text-[#1B2845] font-semibold hover:bg-[#1B2845] hover:text-white transition-all duration-300"
+                className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-full border-2 border-[#1B2845] text-gray-900 font-semibold hover:bg-[#1B2845] hover:text-white transition-all duration-300"
               >
                 Go to Homepage
               </Link>
@@ -126,13 +126,13 @@ export default async function VerifyPage({ params }: Props) {
         </ScrollReveal>
 
         <ScrollReveal delay={0.05}>
-          <div className="bg-white rounded-3xl shadow-2xl overflow-hidden border border-[#e6dfd4]">
+          <div className="bg-raised rounded-3xl shadow-2xl overflow-hidden border border-gray-200">
             {/* Top band */}
             <div className="bg-[#1B2845] px-8 sm:px-12 py-10 relative overflow-hidden">
               <div className="absolute top-0 right-0 w-64 h-64 bg-[#FFD23F]/10 rounded-full -translate-y-1/2 translate-x-1/2" />
               <div className="absolute bottom-0 left-0 w-48 h-48 bg-[#FF6B35]/10 rounded-full translate-y-1/2 -translate-x-1/2" />
               <div className="relative">
-                <div className="inline-flex items-center gap-2 bg-[#FFD23F] text-[#1B2845] px-4 py-1.5 rounded-full text-xs font-extrabold tracking-widest mb-4">
+                <div className="inline-flex items-center gap-2 bg-[#FFD23F] text-gray-900 px-4 py-1.5 rounded-full text-xs font-extrabold tracking-widest mb-4">
                   {isAcademy ? <GraduationCap className="w-4 h-4" strokeWidth={2.5} /> : <Award className="w-4 h-4" strokeWidth={2.5} />}
                   {isAcademy ? 'GENNOOR ACADEMY · CERTIFICATE OF COMPLETION' : 'GENNOOR TECH · CERTIFICATE OF COMPLETION'}
                 </div>
@@ -156,33 +156,33 @@ export default async function VerifyPage({ params }: Props) {
             <div className="px-8 sm:px-12 py-10">
               <div className="grid sm:grid-cols-2 gap-6 mb-8">
                 <div className="flex items-start gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-[#FFF8F0] flex items-center justify-center shrink-0">
+                  <div className="w-10 h-10 rounded-xl bg-amber-50 flex items-center justify-center shrink-0">
                     <Calendar className="w-5 h-5 text-[#FF6B35]" strokeWidth={2.5} />
                   </div>
                   <div>
-                    <p className="text-xs uppercase tracking-wider text-[#5C6784] font-bold mb-1">Issue Date</p>
-                    <p className="text-[#1B2845] font-semibold">{formatDate(cert.workshopDate)}</p>
+                    <p className="text-xs uppercase tracking-wider text-gray-500 font-bold mb-1">Issue Date</p>
+                    <p className="text-gray-900 font-semibold">{formatDate(cert.workshopDate)}</p>
                     {durationLabel && (
-                      <p className="text-sm text-[#5C6784] mt-0.5">Duration attended: {durationLabel}</p>
+                      <p className="text-sm text-gray-500 mt-0.5">Duration attended: {durationLabel}</p>
                     )}
                   </div>
                 </div>
                 <div className="flex items-start gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-[#FFF8F0] flex items-center justify-center shrink-0">
+                  <div className="w-10 h-10 rounded-xl bg-amber-50 flex items-center justify-center shrink-0">
                     <ShieldCheck className="w-5 h-5 text-[#FF6B35]" strokeWidth={2.5} />
                   </div>
                   <div>
-                    <p className="text-xs uppercase tracking-wider text-[#5C6784] font-bold mb-1">Credential ID</p>
-                    <p className="font-mono font-semibold text-[#1B2845] break-all">{cert.certId}</p>
+                    <p className="text-xs uppercase tracking-wider text-gray-500 font-bold mb-1">Credential ID</p>
+                    <p className="font-mono font-semibold text-gray-900 break-all">{cert.certId}</p>
                   </div>
                 </div>
                 <div className="flex items-start gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-[#FFF8F0] flex items-center justify-center shrink-0">
+                  <div className="w-10 h-10 rounded-xl bg-amber-50 flex items-center justify-center shrink-0">
                     <Award className="w-5 h-5 text-[#FF6B35]" strokeWidth={2.5} />
                   </div>
                   <div>
-                    <p className="text-xs uppercase tracking-wider text-[#5C6784] font-bold mb-1">Issued By</p>
-                    <p className="text-[#1B2845] font-semibold">{cert.issuerName}</p>
+                    <p className="text-xs uppercase tracking-wider text-gray-500 font-bold mb-1">Issued By</p>
+                    <p className="text-gray-900 font-semibold">{cert.issuerName}</p>
                     <a
                       href="https://gennoor.com"
                       className="text-sm text-[#FF6B35] hover:underline inline-flex items-center gap-1"
@@ -192,25 +192,25 @@ export default async function VerifyPage({ params }: Props) {
                   </div>
                 </div>
                 <div className="flex items-start gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-[#FFF8F0] flex items-center justify-center shrink-0">
+                  <div className="w-10 h-10 rounded-xl bg-amber-50 flex items-center justify-center shrink-0">
                     <CheckCircle2 className="w-5 h-5 text-green-600" strokeWidth={2.5} />
                   </div>
                   <div>
-                    <p className="text-xs uppercase tracking-wider text-[#5C6784] font-bold mb-1">Status</p>
+                    <p className="text-xs uppercase tracking-wider text-gray-500 font-bold mb-1">Status</p>
                     <p className="text-green-700 font-semibold">Verified & Active</p>
                     {cert.trainerName && !isAcademy && (
-                      <p className="text-sm text-[#5C6784] mt-0.5">Trainer: {cert.trainerName}</p>
+                      <p className="text-sm text-gray-500 mt-0.5">Trainer: {cert.trainerName}</p>
                     )}
                     {isAcademy && (
-                      <p className="text-sm text-[#5C6784] mt-0.5">Self-paced · Gennoor Academy</p>
+                      <p className="text-sm text-gray-500 mt-0.5">Self-paced · Gennoor Academy</p>
                     )}
                   </div>
                 </div>
               </div>
 
               {/* Action buttons */}
-              <div className="border-t border-[#e6dfd4] pt-8">
-                <h3 className="text-lg font-extrabold text-[#1B2845] mb-4">Share & Download</h3>
+              <div className="border-t border-gray-200 pt-8">
+                <h3 className="text-lg font-extrabold text-gray-900 mb-4">Share & Download</h3>
                 <div className="flex flex-wrap gap-3">
                   <a
                     href={linkedInAddUrl}
@@ -225,7 +225,7 @@ export default async function VerifyPage({ params }: Props) {
                     href={linkedInShareUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 px-5 py-3 rounded-full bg-white border-2 border-[#0A66C2] text-[#0A66C2] font-semibold hover:bg-[#0A66C2] hover:text-white transition-all duration-300"
+                    className="inline-flex items-center gap-2 px-5 py-3 rounded-full bg-raised border-2 border-[#0A66C2] text-[#0A66C2] font-semibold hover:bg-[#0A66C2] hover:text-white transition-all duration-300"
                   >
                     <Share2 className="w-5 h-5" />
                     Share on LinkedIn
@@ -242,7 +242,7 @@ export default async function VerifyPage({ params }: Props) {
                     </a>
                   )}
                 </div>
-                <p className="text-xs text-[#5C6784] mt-4 leading-relaxed">
+                <p className="text-xs text-gray-500 mt-4 leading-relaxed">
                   Clicking <strong>Add to LinkedIn Profile</strong> opens LinkedIn with the certificate details pre-filled. Sign in, review, and click <strong>Save</strong> to add it to your profile.
                   {!hasPdf && isAcademy && (
                     <> This is a web-only credential — the public verify URL is the credential of record.</>
@@ -252,11 +252,11 @@ export default async function VerifyPage({ params }: Props) {
             </div>
 
             {/* Footer */}
-            <div className="bg-[#FFF8F0] px-8 sm:px-12 py-6 border-t border-[#e6dfd4]">
+            <div className="bg-amber-50 px-8 sm:px-12 py-6 border-t border-gray-200">
               <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
                 <div>
-                  <p className="text-xs text-[#5C6784] mb-1">This page is the public, tamper-resistant record of credential</p>
-                  <p className="text-sm font-mono font-semibold text-[#1B2845] break-all">{buildVerifyUrl(cert.certId)}</p>
+                  <p className="text-xs text-gray-500 mb-1">This page is the public, tamper-resistant record of credential</p>
+                  <p className="text-sm font-mono font-semibold text-gray-900 break-all">{buildVerifyUrl(cert.certId)}</p>
                 </div>
                 <Link
                   href="/"
@@ -272,7 +272,7 @@ export default async function VerifyPage({ params }: Props) {
         <ScrollReveal delay={0.1}>
           <div className="mt-6 text-center">
             {isAcademy ? (
-              <p className="text-sm text-[#5C6784]">
+              <p className="text-sm text-gray-500">
                 Issued via{' '}
                 {academyCourse ? (
                   <Link href={`/ai-academy/${academyCourse.id}`} className="text-[#FF6B35] font-semibold hover:underline">
@@ -284,7 +284,7 @@ export default async function VerifyPage({ params }: Props) {
                 · Self-paced course completed in{durationLabel ? ` ${durationLabel}` : ' the learner\'s own time'}
               </p>
             ) : (
-              <p className="text-sm text-[#5C6784]">
+              <p className="text-sm text-gray-500">
                 Issued via <Link href="/workshops/claude-cowork" className="text-[#FF6B35] font-semibold hover:underline">Claude Cowork Workshop</Link> · Trained by{' '}
                 <Link href="/about/founder" className="text-[#FF6B35] font-semibold hover:underline">{cert.trainerName || 'Jalal Khan'}</Link>
               </p>

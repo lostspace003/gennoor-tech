@@ -329,7 +329,7 @@ export default function CertificationEnquiryForm({
 
       {/* Modal */}
       <div className="relative z-10 w-full max-w-2xl my-8">
-        <div className="bg-white rounded-lg shadow-xl max-h-[90vh] flex flex-col overflow-hidden">
+        <div className="bg-raised rounded-lg shadow-xl max-h-[90vh] flex flex-col overflow-hidden">
           {/* Header */}
           <div className="flex items-center justify-between p-6 border-b flex-shrink-0 bg-primary-50">
             <div>

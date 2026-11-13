@@ -38,7 +38,7 @@ export default async function AiWeekendPage() {
   const ribbon = `Limited cohort of ${WEEKEND.seats} · ${cohort.label} · ${rupees(WEEKEND.fee)} instead of ${rupees(WEEKEND.regularFee)}`
 
   return (
-    <main className="bg-[#fbfaf7] text-gray-900 pb-28">
+    <main className="text-gray-900 pb-28">
       {/* Moving ribbon: the three facts people look for first */}
       <div className="bg-[#0C1426] text-white text-xs sm:text-[13px] font-medium overflow-hidden" aria-label={ribbon}>
         <div className="weekend-ribbon flex whitespace-nowrap py-2" aria-hidden="true">
@@ -63,12 +63,12 @@ export default async function AiWeekendPage() {
                 Two mornings, eight hours, six working demos. Watch Claude set up for real work, a weekly task automated, and an agent built from nothing. Then take the full kit and do it yourself. No coding background needed.
               </p>
               <dl className="mt-6 grid grid-cols-1 sm:grid-cols-3 gap-4 text-sm">
-                <Fact icon={CalendarDays} label="Dates" value={cohort.label} />
+                <Fact icon={CalendarDays} label="Next weekend" value={cohort.label} />
                 <Fact icon={Clock} label="Each day" value={time} />
                 <Fact icon={Video} label="Where" value={WEEKEND.mode} />
               </dl>
               <div className="mt-7 flex flex-wrap items-center gap-x-5 gap-y-3">
-                <a href="#register" className="inline-flex items-center justify-center rounded-xl bg-amber-400 px-7 py-3.5 text-base font-bold text-[#0C1426] hover:bg-amber-300 transition-colors">
+                <a href="#register" className="st-pill st-gold">
                   {full ? 'Join the next cohort' : `Reserve my seat · ${rupees(WEEKEND.fee)}`}
                 </a>
                 <div className="text-sm leading-tight">
@@ -114,8 +114,8 @@ export default async function AiWeekendPage() {
           ['2 days', 'Saturday and Sunday'],
           ['1 kit', 'to repeat it all yourself'],
         ].map(([big, small]) => (
-          <div key={big} className="rounded-2xl border border-gray-200 bg-white p-5">
-            <div className="text-3xl font-bold tracking-tight text-[#0C1426]">{big}</div>
+          <div key={big} className="rounded-2xl border border-gray-200 bg-raised p-5">
+            <div className="text-3xl font-bold tracking-tight text-gray-900">{big}</div>
             <div className="mt-1 text-sm text-gray-500">{small}</div>
           </div>
         ))}
@@ -185,7 +185,7 @@ export default async function AiWeekendPage() {
 
       {/* Who teaches it */}
       <section className={`${wrap} mt-10`}>
-        <div className="rounded-3xl border border-gray-200 bg-white p-6 sm:p-8 grid md:grid-cols-[auto_1fr] gap-6 items-center">
+        <div className="rounded-3xl border border-gray-200 bg-raised p-6 sm:p-8 grid md:grid-cols-[auto_1fr] gap-6 items-center">
           <div className="w-24 h-24 rounded-2xl bg-[#0C1426] text-amber-300 flex items-center justify-center text-3xl font-bold" aria-hidden="true">
             {WEEKEND.trainer.name.split(' ').map((w) => w[0]).slice(0, 2).join('')}
           </div>
@@ -211,7 +211,7 @@ export default async function AiWeekendPage() {
         </div>
         <ol className="mt-8 grid md:grid-cols-3 gap-4">
           {HOW_YOU_LEARN.map((s, i) => (
-            <li key={s.title} className="rounded-3xl border border-gray-200 bg-white p-6">
+            <li key={s.title} className="rounded-3xl border border-gray-200 bg-raised p-6">
               <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[#0C1426] text-sm font-bold text-amber-300">{i + 1}</div>
               <h3 className="mt-4 text-xl font-bold tracking-tight">{s.title}</h3>
               <p className="mt-2 text-[15px] leading-relaxed text-gray-600">{s.text}</p>
@@ -234,14 +234,14 @@ export default async function AiWeekendPage() {
 
       {/* Price and the form */}
       <section id="register" className={`${wrap} mt-10 scroll-mt-6`}>
-        <div className="rounded-3xl bg-[#f3efe6] p-5 sm:p-8 grid lg:grid-cols-2 gap-6">
+        <div className="rounded-3xl bg-gray-50 p-5 sm:p-8 grid lg:grid-cols-2 gap-6">
           <div>
             <h2 className="text-3xl sm:text-4xl font-bold tracking-tight">Reserve your seat</h2>
             <p className="mt-2 text-gray-600">{cohort.label} · {time}</p>
             <div className="mt-5 inline-flex items-center rounded-full bg-[#0C1426] px-3 py-1 text-xs font-semibold text-amber-300">Limited cohort · {WEEKEND.seats} seats</div>
             <div className="mt-3 flex flex-wrap items-baseline gap-x-3 gap-y-1">
               <s className="text-2xl font-semibold text-gray-400" aria-label={`Regular price ${rupees(WEEKEND.regularFee)}`}>{rupees(WEEKEND.regularFee)}</s>
-              <span className="text-5xl font-bold tracking-tight text-[#0C1426]">{rupees(WEEKEND.fee)}</span>
+              <span className="text-5xl font-bold tracking-tight text-gray-900">{rupees(WEEKEND.fee)}</span>
               <span className="text-sm text-gray-500">for both days</span>
             </div>
             {left !== null && taken !== null && (
@@ -250,8 +250,8 @@ export default async function AiWeekendPage() {
                   <span className="font-semibold text-gray-900">{full ? 'This cohort is full' : `${left} seats left`}</span>
                   <span className="text-gray-500">{taken} of {WEEKEND.seats} taken</span>
                 </div>
-                <div className="mt-1.5 h-2 rounded-full bg-white" role="progressbar" aria-valuemin={0} aria-valuemax={WEEKEND.seats} aria-valuenow={taken} aria-label="Seats taken">
-                  <div className="h-2 rounded-full bg-amber-500" style={{ width: `${Math.min(100, (taken / WEEKEND.seats) * 100)}%` }} />
+                <div className="mt-1.5 h-2 rounded-full bg-raised" role="progressbar" aria-valuemin={0} aria-valuemax={WEEKEND.seats} aria-valuenow={taken} aria-label="Seats taken">
+                  <div className="h-2 rounded-full bg-[#f5a623]" style={{ width: `${Math.min(100, (taken / WEEKEND.seats) * 100)}%` }} />
                 </div>
               </div>
             )}
@@ -260,7 +260,7 @@ export default async function AiWeekendPage() {
                 <li key={x} className="flex gap-3 text-[15px] text-gray-800"><Check className="w-4 h-4 mt-1 shrink-0 text-green-600" />{x}</li>
               ))}
             </ul>
-            <div className="mt-6 rounded-2xl border border-gray-200 bg-white p-4">
+            <div className="mt-6 rounded-2xl border border-gray-200 bg-raised p-4">
               <div className="text-sm font-semibold text-gray-900">How it works</div>
               <ol className="mt-2.5 space-y-2.5">
                 {HOW_YOU_LEARN.map((s, i) => (
@@ -271,12 +271,12 @@ export default async function AiWeekendPage() {
                 ))}
               </ol>
             </div>
-            <div className="mt-3 flex gap-3 rounded-2xl border border-gray-200 bg-white p-4 text-sm text-gray-600">
+            <div className="mt-3 flex gap-3 rounded-2xl border border-gray-200 bg-raised p-4 text-sm text-gray-600">
               <ShieldCheck className="w-5 h-5 shrink-0 text-green-600" />
               <span>{online ? 'Pay securely by UPI, card or net banking. Your seat is confirmed the moment the payment goes through, and a receipt is emailed to you.' : 'Reserve now, pay after. We email you the payment details and confirm your seat once the fee is received.'}</span>
             </div>
           </div>
-          <div className="rounded-2xl bg-white border border-gray-200 p-5 sm:p-6">
+          <div className="rounded-2xl bg-raised border border-gray-200 p-5 sm:p-6">
             <RegisterForm cohortLabel={cohort.label} fee={WEEKEND.fee} full={full} online={online} />
           </div>
         </div>
@@ -284,7 +284,7 @@ export default async function AiWeekendPage() {
 
       {/* Certificate */}
       <section className={`${wrap} mt-10`}>
-        <div className="rounded-3xl border border-gray-200 bg-white p-6 sm:p-8 flex flex-col sm:flex-row gap-5 sm:items-center">
+        <div className="rounded-3xl border border-gray-200 bg-raised p-6 sm:p-8 flex flex-col sm:flex-row gap-5 sm:items-center">
           <Award className="w-10 h-10 shrink-0 text-amber-500" />
           <div>
             <h2 className="text-2xl font-bold tracking-tight">A certificate of attendance</h2>

@@ -25,7 +25,7 @@ export default function LabsSpotlight({ className = '' }: { className?: string }
             <h2 className="font-heading text-[28px] lg:text-[34px] font-bold tracking-[-0.02em] !text-white">Want to go deeper? Try certifications and projects.</h2>
             <p className="text-[16px] text-[#aab6c8] mt-2 max-w-xl">Full video courses with labs and projects, taught step by step. Your progress follows you to any device.</p>
           </div>
-          <Link href="/studio" className="px-6 py-2.5 rounded-full bg-white text-gray-900 text-[15px] font-semibold hover:bg-[#e8eefc] transition-colors">See all certifications and projects</Link>
+          <Link href="/studio" className="px-6 py-2.5 rounded-full bg-raised text-gray-900 text-[15px] font-semibold hover:bg-primary-100 transition-colors">See all certifications and projects</Link>
         </div>
 
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">

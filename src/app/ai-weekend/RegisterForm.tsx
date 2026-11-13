@@ -3,8 +3,8 @@
 import { useCallback, useEffect, useState } from 'react'
 import { CheckCircle2, Loader2, ShieldCheck } from 'lucide-react'
 
-const input = 'w-full rounded-xl border border-gray-300 bg-white px-3.5 py-3 text-[15px] text-gray-900 placeholder:text-gray-400 focus:border-primary-600 focus:outline-none focus:ring-2 focus:ring-primary-600/20'
-const bigButton = 'w-full rounded-xl bg-[#0C1426] px-5 py-3.5 text-base font-bold text-white hover:bg-black disabled:opacity-60 inline-flex items-center justify-center gap-2'
+const input = 'w-full rounded-xl border border-gray-300 bg-raised px-3.5 py-3 text-[15px] text-gray-900 placeholder:text-gray-400 focus:border-primary-600 focus:outline-none focus:ring-2 focus:ring-primary-600/20'
+const bigButton = 'st-pill st-gold w-full disabled:opacity-60'
 
 /** What the server sends so Razorpay's payment window can open. Nothing in it is secret. */
 interface Checkout { registrationId: string; token: string; keyId: string; orderId: string; amount: number; name: string; email: string; phone: string; description: string }
@@ -194,13 +194,13 @@ export function StickyRegister({ fee, regularFee, note }: { fee: number; regular
   }, [])
   return (
     // A floating card in the middle of the screen, clear of the site menu and the chat buttons in the corners
-    <div className={`fixed left-1/2 bottom-[76px] sm:bottom-4 z-40 w-[min(92vw,520px)] -translate-x-1/2 rounded-2xl border border-gray-200 bg-white/95 shadow-xl backdrop-blur transition-all duration-300 ${hidden ? 'pointer-events-none translate-y-6 opacity-0' : ''}`}>
+    <div className={`fixed left-1/2 bottom-[76px] sm:bottom-4 z-40 w-[min(92vw,520px)] -translate-x-1/2 rounded-2xl border border-gray-200 bg-surface/95 shadow-xl backdrop-blur transition-all duration-300 ${hidden ? 'pointer-events-none translate-y-6 opacity-0' : ''}`}>
       <div className="flex items-center justify-between gap-3 px-4 py-2.5">
         <div className="min-w-0">
-          <div className="leading-none"><span className="text-xl font-bold text-[#0C1426]">₹{fee.toLocaleString('en-IN')}</span> <s className="text-sm text-gray-400">₹{regularFee.toLocaleString('en-IN')}</s></div>
+          <div className="leading-none"><span className="text-xl font-bold text-gray-900">₹{fee.toLocaleString('en-IN')}</span> <s className="text-sm text-gray-400">₹{regularFee.toLocaleString('en-IN')}</s></div>
           <div className="mt-1 truncate text-xs text-gray-500">{note}</div>
         </div>
-        <a href="#register" className="shrink-0 rounded-xl bg-[#0C1426] px-5 py-3 text-sm font-bold text-white hover:bg-black">Reserve my seat</a>
+        <a href="#register" className="st-pill st-gold st-sm shrink-0">Reserve my seat</a>
       </div>
     </div>
   )

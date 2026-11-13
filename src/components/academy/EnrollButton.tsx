@@ -52,7 +52,7 @@ export default function EnrollButton({
       <button
         type="button"
         onClick={() => router.push(learnHref)}
-        className={`inline-flex items-center justify-center gap-2 px-7 py-3 bg-primary-600 hover:bg-[#0077ed] text-white text-sm font-semibold rounded-full transition-colors ${className}`}
+        className={`inline-flex items-center justify-center gap-2 px-7 py-3 bg-primary-600 hover:bg-primary-500 text-white text-sm font-semibold rounded-full transition-colors ${className}`}
       >
         <PlayCircle className="w-4 h-4" /> {startLabel}
       </button>
@@ -65,7 +65,7 @@ export default function EnrollButton({
         type="button"
         onClick={() => (isLoggedIn ? enroll() : setAuthOpen(true))}
         disabled={busy}
-        className={`inline-flex items-center justify-center gap-2 px-7 py-3 bg-primary-600 hover:bg-[#0077ed] text-white text-sm font-semibold rounded-full transition-colors disabled:opacity-60 ${className}`}
+        className={`inline-flex items-center justify-center gap-2 px-7 py-3 bg-primary-600 hover:bg-primary-500 text-white text-sm font-semibold rounded-full transition-colors disabled:opacity-60 ${className}`}
       >
         {busy && <Loader2 className="w-4 h-4 animate-spin" />}
         Enroll

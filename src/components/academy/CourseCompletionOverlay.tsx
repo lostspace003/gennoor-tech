@@ -151,7 +151,7 @@ export default function CourseCompletionOverlay({
   return (
     <div className="fixed inset-0 z-[80] flex items-center justify-center p-4 animate-fade-in">
       <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={onClose} />
-      <div className={`relative bg-white rounded-3xl shadow-2xl ${modalMaxWidth} w-full overflow-hidden max-h-[92vh] overflow-y-auto`}>
+      <div className={`relative bg-raised rounded-3xl shadow-2xl ${modalMaxWidth} w-full overflow-hidden max-h-[92vh] overflow-y-auto`}>
         {/* Themed celebration header */}
         <div className="relative px-6 sm:px-8 py-8 text-center overflow-hidden" style={themedBg}>
           <div className="absolute top-4 left-6 text-white/30"><Sparkles className="w-5 h-5" /></div>
@@ -320,7 +320,7 @@ export default function CourseCompletionOverlay({
 
               <button
                 onClick={() => setStep('offer')}
-                className="w-full inline-flex items-center justify-center gap-2 px-5 py-3 bg-white ring-1 ring-gray-200 hover:ring-gray-300 text-gray-900 text-sm font-semibold rounded-xl transition-all duration-200"
+                className="w-full inline-flex items-center justify-center gap-2 px-5 py-3 bg-raised ring-1 ring-gray-200 hover:ring-gray-300 text-gray-900 text-sm font-semibold rounded-xl transition-all duration-200"
               >
                 What we offer next
                 <ArrowRight className="w-4 h-4" />
@@ -346,7 +346,7 @@ export default function CourseCompletionOverlay({
                   <Link
                     key={c.href}
                     href={c.href}
-                    className="group flex flex-col gap-2 p-4 rounded-xl ring-1 ring-gray-200 hover:ring-gray-300 hover:shadow-md transition-all duration-200 bg-white"
+                    className="group flex flex-col gap-2 p-4 rounded-xl ring-1 ring-gray-200 hover:ring-gray-300 hover:shadow-md transition-all duration-200 bg-raised"
                   >
                     <div className="flex items-center gap-2">
                       <div className="w-9 h-9 rounded-lg flex items-center justify-center" style={themedAccentBg}>

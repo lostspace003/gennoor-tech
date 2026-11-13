@@ -89,7 +89,7 @@ export function OutlineLesson({ id, title, color }: { id: string; title: string;
     <button
       type="button"
       onClick={() => open?.(id)}
-      className="w-full flex items-start gap-3 py-1.5 text-left text-[14.5px] leading-snug text-[#424245] hover:text-primary-600 transition-colors"
+      className="w-full flex items-start gap-3 py-1.5 text-left text-[14.5px] leading-snug text-gray-700 hover:text-primary-600 transition-colors"
     >
       <span className="w-1.5 h-4 rounded-[1px] mt-0.5 shrink-0" style={{ background: color }} />
       <span className="flex-1">{title}</span>

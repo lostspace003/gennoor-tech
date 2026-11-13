@@ -100,7 +100,7 @@ function CommentForm({
     <form onSubmit={handleSubmit} className="space-y-3">
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <div>
-          <label className="block text-xs font-medium mb-1" style={{ color: '#374151' }}>
+          <label className="block text-xs font-medium mb-1" style={{ color: 'rgb(var(--gray-700))' }}>
             Name
           </label>
           <input
@@ -111,11 +111,11 @@ function CommentForm({
             onChange={e => setAuthorName(e.target.value)}
             placeholder="Your name"
             className="w-full px-3 py-2 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
-            style={{ border: '1px solid #d1d5db', color: '#1f2937', backgroundColor: '#ffffff' }}
+            style={{ border: '1px solid rgb(var(--gray-300))', color: 'rgb(var(--gray-900))', backgroundColor: 'rgb(var(--raised))' }}
           />
         </div>
         <div>
-          <label className="block text-xs font-medium mb-1" style={{ color: '#374151' }}>
+          <label className="block text-xs font-medium mb-1" style={{ color: 'rgb(var(--gray-700))' }}>
             Email
           </label>
           <div className="flex gap-2">
@@ -126,7 +126,7 @@ function CommentForm({
               onChange={e => setAuthorEmail(e.target.value)}
               placeholder="your@email.com"
               className="flex-1 px-3 py-2 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
-              style={{ border: '1px solid #d1d5db', color: '#1f2937', backgroundColor: '#ffffff' }}
+              style={{ border: '1px solid rgb(var(--gray-300))', color: 'rgb(var(--gray-900))', backgroundColor: 'rgb(var(--raised))' }}
             />
             <EmailOTP
               email={authorEmail}
@@ -135,14 +135,14 @@ function CommentForm({
               compact
             />
           </div>
-          <p className="text-xs mt-1" style={{ color: '#9ca3af' }}>
+          <p className="text-xs mt-1" style={{ color: 'rgb(var(--gray-400))' }}>
             Your email will not be displayed publicly.
           </p>
         </div>
       </div>
 
       <div>
-        <label className="block text-xs font-medium mb-1" style={{ color: '#374151' }}>
+        <label className="block text-xs font-medium mb-1" style={{ color: 'rgb(var(--gray-700))' }}>
           Comment
         </label>
         <textarea
@@ -153,17 +153,17 @@ function CommentForm({
           onChange={e => setContent(e.target.value)}
           placeholder={parentId ? 'Write a reply...' : 'Share your thoughts...'}
           className="w-full px-3 py-2 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 resize-none"
-          style={{ border: '1px solid #d1d5db', color: '#1f2937', backgroundColor: '#ffffff' }}
+          style={{ border: '1px solid rgb(var(--gray-300))', color: 'rgb(var(--gray-900))', backgroundColor: 'rgb(var(--raised))' }}
         />
         <div className="flex justify-end">
-          <span className="text-xs" style={{ color: content.length > 1800 ? '#ef4444' : '#9ca3af' }}>
+          <span className="text-xs" style={{ color: content.length > 1800 ? 'rgb(var(--red-600))' : 'rgb(var(--gray-400))' }}>
             {content.length}/2000
           </span>
         </div>
       </div>
 
       {error && (
-        <p className="text-sm" style={{ color: '#ef4444' }}>{error}</p>
+        <p className="text-sm" style={{ color: 'rgb(var(--red-600))' }}>{error}</p>
       )}
 
       <div className="flex items-center gap-2">
@@ -172,8 +172,8 @@ function CommentForm({
           disabled={!emailVerified || !authorName.trim() || !content.trim() || submitting}
           className="px-4 py-2 text-sm font-semibold rounded-lg transition-colors"
           style={{
-            backgroundColor: '#4f46e5',
-            color: '#ffffff',
+            backgroundColor: '#1f7cff',
+            color: '#fff',
             opacity: (!emailVerified || !authorName.trim() || !content.trim() || submitting) ? 0.5 : 1,
             cursor: (!emailVerified || !authorName.trim() || !content.trim() || submitting) ? 'not-allowed' : 'pointer',
           }}
@@ -185,7 +185,7 @@ function CommentForm({
             type="button"
             onClick={onCancel}
             className="px-4 py-2 text-sm font-medium rounded-lg transition-colors"
-            style={{ color: '#6b7280', backgroundColor: '#f3f4f6' }}
+            style={{ color: 'rgb(var(--gray-500))', backgroundColor: 'rgb(var(--gray-100))' }}
           >
             Cancel
           </button>
@@ -220,47 +220,47 @@ function CommentItem({
       <div
         className="p-4 rounded-lg"
         style={{
-          backgroundColor: comment.isAuthorReply ? '#f0f7ff' : '#f9fafb',
-          borderLeft: comment.isAuthorReply ? '3px solid #4f46e5' : '3px solid transparent',
+          backgroundColor: comment.isAuthorReply ? 'rgb(var(--primary-50))' : 'rgb(var(--gray-50))',
+          borderLeft: comment.isAuthorReply ? '3px solid rgb(var(--primary-600))' : '3px solid transparent',
         }}
       >
         <div className="flex items-center gap-2.5 mb-2">
           <div
             className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold shrink-0"
             style={{
-              backgroundColor: comment.isAuthorReply ? '#4f46e5' : '#d1d5db',
-              color: comment.isAuthorReply ? '#ffffff' : '#374151',
+              backgroundColor: comment.isAuthorReply ? 'rgb(var(--primary-600))' : 'rgb(var(--gray-300))',
+              color: comment.isAuthorReply ? 'rgb(var(--raised))' : 'rgb(var(--gray-700))',
             }}
           >
             {initials}
           </div>
           <div className="flex items-center gap-2 flex-wrap">
-            <span className="text-sm font-semibold" style={{ color: '#1f2937' }}>
+            <span className="text-sm font-semibold" style={{ color: 'rgb(var(--gray-900))' }}>
               {comment.authorName}
             </span>
             {comment.isAuthorReply && (
               <span
                 className="px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider rounded"
-                style={{ backgroundColor: '#4f46e5', color: '#ffffff' }}
+                style={{ backgroundColor: '#1f7cff', color: '#fff' }}
               >
                 Author
               </span>
             )}
-            <span className="text-xs" style={{ color: '#9ca3af' }}>
+            <span className="text-xs" style={{ color: 'rgb(var(--gray-400))' }}>
               {relativeTime(comment.timestamp)}
             </span>
           </div>
         </div>
-        <p className="text-sm leading-relaxed whitespace-pre-wrap" style={{ color: '#374151' }}>
+        <p className="text-sm leading-relaxed whitespace-pre-wrap" style={{ color: 'rgb(var(--gray-700))' }}>
           {comment.content}
         </p>
         {!comment.parentId && (
           <button
             onClick={() => setShowReplyForm(!showReplyForm)}
             className="mt-2 text-xs font-medium transition-colors"
-            style={{ color: '#6b7280' }}
-            onMouseEnter={e => (e.currentTarget.style.color = '#4f46e5')}
-            onMouseLeave={e => (e.currentTarget.style.color = '#6b7280')}
+            style={{ color: 'rgb(var(--gray-500))' }}
+            onMouseEnter={e => (e.currentTarget.style.color = 'rgb(var(--primary-600))')}
+            onMouseLeave={e => (e.currentTarget.style.color = 'rgb(var(--gray-500))')}
           >
             Reply
           </button>
@@ -269,7 +269,7 @@ function CommentItem({
 
       {/* Nested replies */}
       {replies.length > 0 && (
-        <div className="ml-6 mt-2 space-y-2" style={{ borderLeft: '2px solid #e5e7eb', paddingLeft: '12px' }}>
+        <div className="ml-6 mt-2 space-y-2" style={{ borderLeft: '2px solid rgb(var(--gray-200))', paddingLeft: '12px' }}>
           {replies.map(reply => {
             const replyInitials = reply.authorName
               .split(' ')
@@ -283,38 +283,38 @@ function CommentItem({
                 key={reply.rowKey}
                 className="p-3 rounded-lg"
                 style={{
-                  backgroundColor: reply.isAuthorReply ? '#f0f7ff' : '#f9fafb',
-                  borderLeft: reply.isAuthorReply ? '3px solid #4f46e5' : '3px solid transparent',
+                  backgroundColor: reply.isAuthorReply ? 'rgb(var(--primary-50))' : 'rgb(var(--gray-50))',
+                  borderLeft: reply.isAuthorReply ? '3px solid rgb(var(--primary-600))' : '3px solid transparent',
                 }}
               >
                 <div className="flex items-center gap-2 mb-1.5">
                   <div
                     className="w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold shrink-0"
                     style={{
-                      backgroundColor: reply.isAuthorReply ? '#4f46e5' : '#d1d5db',
-                      color: reply.isAuthorReply ? '#ffffff' : '#374151',
+                      backgroundColor: reply.isAuthorReply ? 'rgb(var(--primary-600))' : 'rgb(var(--gray-300))',
+                      color: reply.isAuthorReply ? 'rgb(var(--raised))' : 'rgb(var(--gray-700))',
                     }}
                   >
                     {replyInitials}
                   </div>
                   <div className="flex items-center gap-2 flex-wrap">
-                    <span className="text-sm font-semibold" style={{ color: '#1f2937' }}>
+                    <span className="text-sm font-semibold" style={{ color: 'rgb(var(--gray-900))' }}>
                       {reply.authorName}
                     </span>
                     {reply.isAuthorReply && (
                       <span
                         className="px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider rounded"
-                        style={{ backgroundColor: '#4f46e5', color: '#ffffff' }}
+                        style={{ backgroundColor: '#1f7cff', color: '#fff' }}
                       >
                         Author
                       </span>
                     )}
-                    <span className="text-xs" style={{ color: '#9ca3af' }}>
+                    <span className="text-xs" style={{ color: 'rgb(var(--gray-400))' }}>
                       {relativeTime(reply.timestamp)}
                     </span>
                   </div>
                 </div>
-                <p className="text-sm leading-relaxed whitespace-pre-wrap" style={{ color: '#374151' }}>
+                <p className="text-sm leading-relaxed whitespace-pre-wrap" style={{ color: 'rgb(var(--gray-700))' }}>
                   {reply.content}
                 </p>
               </div>
@@ -325,7 +325,7 @@ function CommentItem({
 
       {/* Inline reply form */}
       {showReplyForm && (
-        <div className="ml-6 mt-2" style={{ borderLeft: '2px solid #e5e7eb', paddingLeft: '12px' }}>
+        <div className="ml-6 mt-2" style={{ borderLeft: '2px solid rgb(var(--gray-200))', paddingLeft: '12px' }}>
           <CommentForm
             slug={slug}
             parentId={comment.rowKey}
@@ -388,14 +388,14 @@ export default function BlogComments({ slug }: { slug: string }) {
   return (
     <div
       className="mt-8 rounded-2xl shadow-lg overflow-hidden"
-      style={{ backgroundColor: '#ffffff', border: '1px solid rgba(229,231,235,0.6)' }}
+      style={{ backgroundColor: 'rgb(var(--raised))', border: '1px solid rgb(var(--gray-200))' }}
     >
       <div className="px-6 sm:px-10 py-8">
         {/* Header */}
-        <h3 className="text-lg font-bold mb-1" style={{ color: '#111827' }}>
+        <h3 className="text-lg font-bold mb-1" style={{ color: 'rgb(var(--gray-900))' }}>
           Discussion
         </h3>
-        <p className="text-sm mb-6" style={{ color: '#6b7280' }}>
+        <p className="text-sm mb-6" style={{ color: 'rgb(var(--gray-500))' }}>
           {loading
             ? 'Loading comments...'
             : commentCount === 0
@@ -404,7 +404,7 @@ export default function BlogComments({ slug }: { slug: string }) {
         </p>
 
         {/* New comment form */}
-        <div className="mb-8 p-4 rounded-xl" style={{ backgroundColor: '#f9fafb', border: '1px solid #e5e7eb' }}>
+        <div className="mb-8 p-4 rounded-xl" style={{ backgroundColor: 'rgb(var(--gray-50))', border: '1px solid rgb(var(--gray-200))' }}>
           <CommentForm slug={slug} onSubmitted={handleNewComment} />
         </div>
 
@@ -427,7 +427,7 @@ export default function BlogComments({ slug }: { slug: string }) {
           <div className="flex justify-center py-8">
             <div
               className="w-6 h-6 rounded-full animate-spin"
-              style={{ border: '2px solid #e5e7eb', borderTopColor: '#4f46e5' }}
+              style={{ border: '2px solid rgb(var(--gray-200))', borderTopColor: 'rgb(var(--primary-600))' }}
             />
           </div>
         )}

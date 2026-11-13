@@ -26,7 +26,7 @@ export default function CertificationCards({ certs, category, categoryColor }: C
         {certs.map((cert) => (
           <div
             key={cert.id}
-            className="bg-white rounded-lg border border-gray-200 p-6 hover:shadow-lg transition-shadow"
+            className="bg-raised rounded-lg border border-gray-200 p-6 hover:shadow-lg transition-shadow"
           >
             <div className="flex justify-between items-start mb-3">
               <div className="flex-1">

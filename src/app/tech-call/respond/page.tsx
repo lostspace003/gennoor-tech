@@ -31,7 +31,7 @@ function Respond() {
     setDone({ state: d.state, when: d.when, teamsUrl: d.teamsUrl })
   }
 
-  const card = 'bg-white border border-gray-200 rounded-2xl p-6 sm:p-8'
+  const card = 'bg-raised border border-gray-200 rounded-2xl p-6 sm:p-8'
   let body
   if (bad) body = <p className="text-gray-700">This link is not valid. Please use the link in your latest email from Gennoor Tech.</p>
   else if (!info) body = <Loader2 className="w-6 h-6 animate-spin text-primary-600" />

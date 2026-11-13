@@ -54,7 +54,7 @@ export default function AcademyLiveSessions({
             </div>
             <button
               onClick={() => setRegistering(next)}
-              className="shrink-0 self-start sm:self-auto text-[13px] font-semibold bg-white hover:bg-white/90 text-gray-900 px-5 py-2.5 rounded-full transition-colors"
+              className="shrink-0 self-start sm:self-auto text-[13px] font-semibold bg-raised hover:bg-surface/90 text-gray-900 px-5 py-2.5 rounded-full transition-colors"
             >
               Register free
             </button>
@@ -62,24 +62,24 @@ export default function AcademyLiveSessions({
 
           {/* Remaining sessions */}
           {rest.length > 0 && (
-            <div className="bg-white border border-[#e8e8ed] rounded-2xl overflow-hidden mt-4">
+            <div className="bg-raised border border-gray-200 rounded-2xl overflow-hidden mt-4">
               {rest.map((s, i) => (
                 <div
                   key={s.id}
                   className={`grid grid-cols-1 sm:grid-cols-[auto_1fr_auto] gap-2 sm:gap-5 px-6 py-4 items-center ${
-                    i < rest.length - 1 ? 'border-b border-[#f5f5f7]' : ''
+                    i < rest.length - 1 ? 'border-b border-gray-100' : ''
                   }`}
                 >
-                  <span className="text-[12.5px] font-semibold text-[#86868b] tabular-nums">
+                  <span className="text-[12.5px] font-semibold text-gray-400 tabular-nums">
                     {s.month} {s.day}
                   </span>
                   <div className="min-w-0">
                     <span className="text-sm font-semibold text-gray-900">{s.title}</span>
-                    <span className="block text-xs text-[#86868b] mt-0.5">{s.meta}</span>
+                    <span className="block text-xs text-gray-400 mt-0.5">{s.meta}</span>
                   </div>
                   <button
                     onClick={() => setRegistering(s)}
-                    className="justify-self-start sm:justify-self-auto text-[12.5px] font-semibold text-primary-600 hover:text-[#0077ed]"
+                    className="justify-self-start sm:justify-self-auto text-[12.5px] font-semibold text-primary-600 hover:text-primary-500"
                   >
                     Register free ›
                   </button>
@@ -89,18 +89,18 @@ export default function AcademyLiveSessions({
           )}
         </>
       ) : (
-        <div className="bg-white border border-[#e8e8ed] rounded-2xl px-6 py-8 text-center">
-          <div className="w-11 h-11 rounded-xl bg-[#f5f5f7] flex items-center justify-center mx-auto mb-4">
-            <CalendarDays className="w-[22px] h-[22px] text-[#86868b]" />
+        <div className="bg-raised border border-gray-200 rounded-2xl px-6 py-8 text-center">
+          <div className="w-11 h-11 rounded-xl bg-gray-50 flex items-center justify-center mx-auto mb-4">
+            <CalendarDays className="w-[22px] h-[22px] text-gray-400" />
           </div>
           <p className="text-[15px] font-bold text-gray-900 mb-1.5">
             No Academy sessions scheduled yet.
           </p>
-          <p className="text-[13px] text-[#6e6e73] max-w-[420px] mx-auto mb-5">
+          <p className="text-[13px] text-gray-500 max-w-[420px] mx-auto mb-5">
             Live cohort sessions and Q&amp;A clinics will appear here. In the
             meantime, every course below is self-paced and available now.
           </p>
-          <Link href="/webinars" className="text-[13px] font-semibold text-primary-600 hover:text-[#0077ed]">
+          <Link href="/webinars" className="text-[13px] font-semibold text-primary-600 hover:text-primary-500">
             See the public schedule ›
           </Link>
         </div>

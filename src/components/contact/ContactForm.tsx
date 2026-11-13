@@ -22,7 +22,7 @@ type FormStatus = 'idle' | 'submitting' | 'success' | 'error';
 
 const LABEL = 'block text-[12.5px] font-semibold text-gray-900 mb-1.5';
 const FIELD =
-  'w-full box-border font-[inherit] text-[14px] px-3.5 py-[11px] border border-[#d2d2d7] rounded-xl bg-white text-gray-900 placeholder:text-[#86868b] outline-none focus:border-primary-600 focus:ring-0 transition-colors';
+  'w-full box-border font-[inherit] text-[14px] px-3.5 py-[11px] border border-gray-300 rounded-xl bg-raised text-gray-900 placeholder:text-gray-400 outline-none focus:border-primary-600 focus:ring-0 transition-colors';
 
 export default function ContactForm() {
   const [formData, setFormData] = useState<FormData>({
@@ -70,16 +70,16 @@ export default function ContactForm() {
   if (status === 'success') {
     return (
       <div className="text-center py-12">
-        <div className="text-[44px] font-bold text-[#1d8348] mb-3">✓</div>
+        <div className="text-[44px] font-bold text-green-600 mb-3">✓</div>
         <h3 className="text-[22px] font-bold tracking-[-0.01em] text-gray-900 mb-2">
           Message sent.
         </h3>
-        <p className="text-[14.5px] text-[#6e6e73] mb-6">
+        <p className="text-[14.5px] text-gray-500 mb-6">
           We reply within one business day — usually faster.
         </p>
         <button
           onClick={() => setStatus('idle')}
-          className="text-sm font-medium text-primary-600 hover:text-[#0077ed] transition-colors"
+          className="text-sm font-medium text-primary-600 hover:text-primary-500 transition-colors"
         >
           Send another message ›
         </button>
@@ -90,8 +90,8 @@ export default function ContactForm() {
   return (
     <form onSubmit={handleSubmit} className="space-y-3.5">
       {status === 'error' && (
-        <div className="border border-[#eaa59d] bg-[#fdf4f3] rounded-xl px-4 py-3">
-          <p className="text-sm text-[#9b2c21]">
+        <div className="border border-red-300 bg-red-50 rounded-xl px-4 py-3">
+          <p className="text-sm text-red-700">
             Something went wrong. Please try again or email us directly at{' '}
             <a href="mailto:contact@gennoor.com" className="underline font-medium">
               contact@gennoor.com
@@ -204,7 +204,7 @@ export default function ContactForm() {
         <button
           type="submit"
           disabled={status === 'submitting'}
-          className="inline-flex items-center gap-2 bg-primary-600 hover:bg-[#0077ed] text-white text-[15px] font-semibold px-7 py-[13px] rounded-full transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          className="inline-flex items-center gap-2 bg-primary-600 hover:bg-primary-500 text-white text-[15px] font-semibold px-7 py-[13px] rounded-full transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {status === 'submitting' ? (
             <>

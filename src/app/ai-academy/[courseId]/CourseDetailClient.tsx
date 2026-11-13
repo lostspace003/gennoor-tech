@@ -151,7 +151,7 @@ export default function CourseDetailClient({ course }: CourseDetailClientProps) 
       </section>
 
       {/* Stats bar */}
-      <section className="bg-white border-b border-gray-200">
+      <section className="bg-raised border-b border-gray-200">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
             {[
@@ -175,7 +175,7 @@ export default function CourseDetailClient({ course }: CourseDetailClientProps) 
       </section>
 
       {/* Two-column: structured callouts + course brief */}
-      <section className="bg-white">
+      <section className="bg-raised">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-10 max-w-6xl">
           <div className="grid gap-8 lg:grid-cols-3">
             {/* Left rail (1/3) — Audience + how it works */}
@@ -245,7 +245,7 @@ export default function CourseDetailClient({ course }: CourseDetailClientProps) 
                     {course.learningOutcomes.map((outcome, i) => (
                       <li
                         key={i}
-                        className="flex items-start gap-3 p-4 rounded-xl bg-white ring-1 ring-gray-200 hover:ring-gray-300 hover:shadow-sm transition-all"
+                        className="flex items-start gap-3 p-4 rounded-xl bg-raised ring-1 ring-gray-200 hover:ring-gray-300 hover:shadow-sm transition-all"
                       >
                         <div
                           className="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5"
@@ -284,7 +284,7 @@ export default function CourseDetailClient({ course }: CourseDetailClientProps) 
       </section>
 
       {/* Closing CTA */}
-      <section className="bg-white border-t border-gray-200">
+      <section className="bg-surface border-t border-gray-200">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8 max-w-5xl">
           <div
             className="rounded-2xl p-8 lg:p-10 text-white relative overflow-hidden"
@@ -300,7 +300,7 @@ export default function CourseDetailClient({ course }: CourseDetailClientProps) 
               <div className="flex flex-wrap gap-3">
                 <Link
                   href="/contact#book"
-                  className="inline-flex items-center gap-2 px-5 py-3 bg-white text-gray-900 font-bold rounded-lg hover:bg-gray-100 transition-colors"
+                  className="inline-flex items-center gap-2 px-5 py-3 bg-raised text-gray-900 font-bold rounded-lg hover:bg-gray-100 transition-colors"
                 >
                   Book a 30-min call
                 </Link>
