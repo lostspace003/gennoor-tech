@@ -36,7 +36,7 @@ reel.push({
   bg: ground(GLOWV.gold, { mx: 50, my: 38 }) + sparksV(26, 11),
   fg: `
     <div class="abs" data-b="0" data-fx="pop" data-pad="90" style="left:${360 - 82}px;top:222px">${wkBolt(164)}</div>
-    <div class="abs h1 center" data-b="1" style="left:30px;width:660px;top:470px;font-size:64px;line-height:1.1">What could you<br>build with <span style="color:var(--claude)">Claude</span></div>
+    <div class="abs h1 center" data-b="1" style="left:30px;width:660px;top:470px;font-size:64px;line-height:1.1">What could you<br>build with <span style="color:var(--gold)">AI</span></div>
     <div class="abs h1 center nowrap" data-b="2" style="left:0;width:720px;top:630px"><span class="grad serif" style="font-size:84px;padding:0 10px">in one weekend?</span></div>`,
 })
 
@@ -65,23 +65,29 @@ const buildV = (b, k, icon, tone, title, line, top = 366, tall = 156, step = 172
     <span style="position:absolute;right:22px;top:14px;font:650 46px/1 var(--display);letter-spacing:-.04em;color:rgba(255,255,255,.1)">0${k + 1}</span></div>`
 const headV = (kicker, title, color) => `<div class="abs kicker" data-b="0" data-fx="fade" style="left:${RX}px;top:196px;font-size:15px;${color ? `color:${color}` : ''}">${kicker}</div>
     <div class="abs h2" data-b="0" data-o="1" style="left:${RX - 2}px;top:228px;width:640px;font-size:48px;line-height:1.1">${title}</div>`
+// Saturday has four parts: four shorter rows in the same space (they end at 862; the safe area ends at 866)
+const buildV4 = (b, k, icon, tone, title, line) => `<div class="abs card" data-b="${b}" style="left:${RX}px;top:${366 + k * 126}px;width:${RW}px;height:118px;padding:0 24px;display:flex;align-items:center;gap:20px">
+    ${ico(icon, 78, tone)}
+    <div style="min-width:0"><div class="h3 nowrap" style="font-size:23px">${title}</div><div class="p" style="margin-top:6px;font-size:16.5px;line-height:1.3">${line}</div></div>
+    <span style="position:absolute;right:20px;top:12px;font:650 40px/1 var(--display);letter-spacing:-.04em;color:rgba(255,255,255,.1)">0${k + 1}</span></div>`
 reel.push({
   id: 'day1',
-  cues: [['w03', { 1: 'we' }], ['w04', { 2: 'weekly', 3: 'workspace' }]],
+  cues: [['w03', { 1: 'how', 2: 'weekly' }], ['w04', { 3: 'pictures', 4: 'skills' }]],
   bg: ground(GLOWV.blue, { mx: 50, my: 48 }),
-  fg: `${headV('Day 1 &middot; Saturday', 'We set <span style="color:var(--claude)">Claude</span> up<br>to know your work.', 'var(--blue2)')}
-    ${buildV(1, 0, 'file-text', 'blue', 'Your context file', 'So the answers stop<br>being generic.')}
-    ${buildV(2, 1, 'table-2', 'green', 'A weekly report in minutes', 'A messy sheet goes in.<br>A summary comes out.')}
-    ${buildV(3, 2, 'folder-open', 'violet', 'A connected workspace', 'Claude reads your files<br>and drafts directly.')}`,
+  fg: `${headV('Day 1 &middot; Saturday', 'From how AI works<br>to your own tools.', 'var(--blue2)')}
+    ${buildV4(1, 0, 'file-text', 'blue', 'Your context file', 'So the answers stop being generic.')}
+    ${buildV4(2, 1, 'table-2', 'green', 'A weekly report in minutes', 'A messy sheet in, a summary out.')}
+    ${buildV4(3, 2, 'video', 'rose', 'Pictures, video and sound', 'Made with AI, from a description.')}
+    ${buildV4(4, 3, 'blocks', 'violet', 'Skills and connectors', 'AI reaches your files and tools.')}`,
 })
 reel.push({
   id: 'day2',
-  cues: [['w05', { 1: 'automate', 2: 'app' }], ['w06', { 3: 'agent' }]],
+  cues: [['w05', { 1: 'automate', 2: 'agent' }], ['w06', { 3: 'team' }]],
   bg: ground(GLOWV.gold, { mx: 50, my: 48 }),
-  fg: `${headV('Day 2 &middot; Sunday', 'We automate a task.<br>Then build an agent.')}
+  fg: `${headV('Day 2 &middot; Sunday', 'We automate a task.<br>Then build agents.')}
     ${buildV(1, 0, 'repeat', 'gold', 'One task automated', 'A job you repeat every week<br>now runs when you ask.')}
-    ${buildV(2, 1, 'app-window', 'rose', 'A small working app', 'Built just by describing it.<br>No coding needed.')}
-    ${buildV(3, 2, 'bot', 'green', 'Your first agent', 'Give it a goal. It researches,<br>drafts and checks its own work.')}`,
+    ${buildV(2, 1, 'bot', 'green', 'Your first agent', 'Give it a goal. It researches,<br>drafts and checks its own work.')}
+    ${buildV(3, 2, 'users', 'rose', 'A team of agents', 'Each has one job, and they<br>pass the work to each other.')}`,
 })
 
 // ------------------------------------------------------------------ 5. how the weekend works

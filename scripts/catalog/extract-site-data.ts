@@ -4,11 +4,16 @@
  *   npx tsx --env-file=.env.local scripts/catalog/extract-site-data.ts
  *
  * Writes scripts/catalog/catalog-data.json from the same data the pages use
- * (published Learning Studio courses, AI Essentials, the Claude
- * certifications and courses, team training programmes, exam preparation, the AI
- * Weekend, proof-of-concept builds). Typed by hand: the short "What we offer" and
- * "Built for your organization" lists, which follow the Training, Claude and
- * Automation pages and the sales pitch.
+ * (published Learning Studio courses, AI Essentials, the Claude certifications,
+ * the Claude automation courses, the AI Weekend). Typed by hand: the short
+ * "What we offer" and "Built for your organization" lists, which follow the film
+ * "What we do" and the Training, Claude and Automation pages.
+ *
+ * The catalogue lists ONLY what we really offer (owner, 13 November 2026: "I would like
+ * to have reality in the catalog ... whatever we have in the video, that is the same value").
+ * So there is no list of team programmes, exam preparation or prototype blueprints, and of
+ * Microsoft's courses only the AI, data, AI-for-business and Copilot titles, as "coming soon
+ * to the Learning Studio" (see import-title-plan.py).
  *
  * No prices anywhere, by the owner's decision (November 2026): cost depends on
  * scope and is discussed on a call.
@@ -20,13 +25,10 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'fs'
 import path from 'path'
 import { listLmsCourses, toCard } from '@/lib/lms'
 import { previewIds } from '@/lib/lms-access'
-import { pocs } from '@/data/pocs'
 import { courses as essentials } from '@/config/courses'
 import { CLAUDE_CERTS } from '@/data/claude-certifications'
 import tocCourses from '@/data/toc-courses.json'
-import { getAllPrograms } from '@/data/training-programs'
-import { getAllCertifications } from '@/data/certification-prep'
-import { WEEKEND, DAYS, INCLUDED, nextCohort, timeLabel } from '@/data/ai-weekend'
+import { WEEKEND, DAYS, DEMO_WORD, INCLUDED, nextCohort, timeLabel } from '@/data/ai-weekend'
 
 const SITE = 'https://www.gennoor.com'
 const KIND: Record<string, string> = { certification: 'Certification', project: 'Project', course: 'Use case' }
@@ -48,9 +50,11 @@ async function main() {
   const cohort = nextCohort()
   // Microsoft's official courses, from the title plan Microsoft sends to trainers (see import-title-plan.py)
   const msFile = path.join(process.cwd(), 'scripts', 'catalog', 'microsoft-courses.json')
-  const microsoft: Array<Record<string, any>> = existsSync(msFile) ? JSON.parse(readFileSync(msFile, 'utf-8')).courses : []
-  const programs = getAllPrograms()
-  const exams = getAllCertifications()
+  const planned: Array<Record<string, any>> = existsSync(msFile) ? JSON.parse(readFileSync(msFile, 'utf-8')).courses : []
+  // A Microsoft course that is already a Learning Studio course is live, not "coming soon"
+  const live = new Set(studio.map((c) => String(c.code).toUpperCase()))
+  const microsoft = planned.filter((c) => !live.has(String(c.code).replace(/T\d+$/i, '').toUpperCase()))
+  const domains = [...new Set((tocCourses as Array<Record<string, any>>).map((c) => c.domain))]
 
   const data = {
     meta: {
@@ -58,7 +62,7 @@ async function main() {
       walkthrough: `${SITE}/studio`,
       counts: {
         studio: studioRows.length, essentials: essentials.length, claudeCerts: CLAUDE_CERTS.length,
-        claudeCourses: tocCourses.length, programs: programs.length, exams: exams.length, pocs: pocs.length, microsoft: microsoft.length, microsoftNew: microsoft.filter((c) => c.isNew).length,
+        claudeCourses: tocCourses.length, comingSoon: microsoft.length,
       },
       studioHours: Math.round(studioRows.reduce((n, r) => n + r.card.hours, 0)),
       studioLessons: studioRows.reduce((n, r) => n + r.card.lectures, 0),
@@ -66,30 +70,27 @@ async function main() {
       featured: studioRows.slice(0, 4).map((r) => ({ code: r.c.code, title: r.c.title, kind: KIND[r.card.kind] || r.card.kind, lessons: r.card.lectures, hours: r.card.hours, slug: r.c.slug })),
     },
 
-    'What we offer': sheet(['#', 'Offering', 'What it includes', 'Best for', 'Link'], [
-      [1, 'Learning Studio', `${studioRows.length} video courses with labs, quizzes and a certificate: certification preparation and real projects. Preview lessons of every course play without signing in.`, 'People and teams who want to learn at their own pace', `${SITE}/studio`],
-      [2, 'AI Essentials', `${essentials.length} short interactive courses with animated slides, narration and a quiz, each about an hour.`, 'Every role, including people who do not code', `${SITE}/ai-academy`],
-      [3, 'Claude certification preparation', `A guide for each of the ${CLAUDE_CERTS.length} Claude certifications, with a storyline, short videos and a practice exam.`, 'Anyone preparing for a Claude certification', `${SITE}/claude/certifications`],
-      [4, 'Claude training for teams', 'Live sessions on Claude for everyday work, Claude Cowork and Claude Code, built around what your team does.', 'Teams starting with Claude or wanting to use it well', `${SITE}/claude`],
-      [5, 'Training for your team', 'Live training, online or at your office: Claude, Microsoft AI and automation courses, plus preparation for certification exams.', 'Smaller teams and larger organizations', `${SITE}/training`],
-      [6, 'Microsoft official courses', `Microsoft's own instructor-led courses with hands-on labs, taught by a Microsoft Certified Trainer. ${microsoft.length} titles across AI, data, security, infrastructure, business applications and Microsoft 365.`, 'Teams preparing for a Microsoft certification or rolling out a Microsoft product', `${SITE}/training`],
-      [7, 'Custom training courses', 'A course written around your own tools, processes and examples, with video lessons, labs, quizzes and a certificate.', 'Teams whose work a standard course does not cover', `${SITE}/training`],
-      [8, 'Custom automation training', 'A course built on one process your team runs every week, with their own examples and files. Taught live and hands-on, so they automate that process themselves, with Claude and other AI tools.', 'Teams with a task they repeat every week', `${SITE}/training`],
-      [9, 'A learning platform for your company', 'We build and set up a learning platform (LMS) for your organization: your courses, your people, your name on it. On our platform or built for you, in the cloud or on your premises.', 'Organizations with a regular training need', `${SITE}/contact`],
-      [10, 'Proof-of-concept builds', `A working prototype of one AI use case, with a fixed scope. ${pocs.length} ready blueprints to start from.`, 'Teams that want to see it work before they commit', `${SITE}/contact`],
-      [11, 'Automation', 'One process at a time: scoped in writing first, built with Claude, and tested on your own examples.', 'A process that eats hours every week', `${SITE}/automation`],
-      [12, WEEKEND.name, `${WEEKEND.tagline}. Two live sessions on the last weekend of every month, Saturday and Sunday: six working demos, and the complete kit afterwards.`, 'People who want to see it built live', `${SITE}/ai-weekend`],
-    ], { C: 70, D: 44, E: 34 }),
+    'What we offer': sheet(['#', 'What we offer', 'What it is', 'Best for', 'Link'], [
+      [1, 'Learning Studio video courses', `${studioRows.length} video courses with labs, a quiz in every module and a certificate: preparation for a certification, or one real project from start to finish. Preview lessons of every course play without signing in.`, 'People and teams who want to learn at their own pace', `${SITE}/studio`],
+      [2, 'AI Essentials', `${essentials.length} short interactive courses with animated slides, narration and a quiz. One useful skill in about an hour. Open on the website.`, 'Every role, including people who do not code', `${SITE}/ai-academy`],
+      [3, 'Claude certification preparation', `A guide and a practice exam for each of the ${CLAUDE_CERTS.length} Claude certifications, with a storyline and short videos. Open on the website.`, 'Anyone preparing for a Claude certification', `${SITE}/claude/certifications`],
+      [4, 'Claude automation courses for teams', `${tocCourses.length} instructor-led courses, each built around one job a team does: ${domains.join(' and ')}. Every course has its outline on the website.`, 'Teams that want to automate a real process with Claude', `${SITE}/claude`],
+      [5, 'Training built on your work', 'We learn what your people do, build the course around it, and teach it live, online or at your office. The examples and exercises come from your own work.', 'A team whose work a ready-made course does not cover', `${SITE}/training`],
+      [6, 'Automation training', 'One process your team runs every week, and a course built on it with their own examples and files. Taught live and hands-on, so they automate it themselves, and a person still checks the result.', 'A team with a task it repeats every week', `${SITE}/training`],
+      [7, 'A learning platform for your company', 'We build and set up a learning platform (LMS) for your organization: your courses, your people, your name on it. In the cloud or on your premises.', 'An organization with a regular training need', `${SITE}/contact`],
+      [8, 'A prototype first', 'One use case built as a working prototype, with the scope agreed in writing before we start and tested on your own examples. People stay in charge of checking.', 'A team that wants to see it work before it commits', `${SITE}/automation`],
+      [9, WEEKEND.name, `${WEEKEND.tagline}. Two live sessions on the last weekend of every month, Saturday and Sunday: ${DEMO_WORD} working demos, and the complete kit afterwards.`, 'People who want to see it built live', `${SITE}/ai-weekend`],
+      [10, 'Coming soon to the Learning Studio', `${microsoft.length} Microsoft courses on AI, AI for business, Copilot and data are on their way to the Learning Studio, in the same form as the courses there now: video lessons, labs, quizzes and a certificate.`, 'People and teams following a Microsoft learning path', `${SITE}/studio`],
+    ], { B: 38, C: 78, D: 44, E: 34 }),
 
     'Built for you': sheet(['What we build', 'What it includes', 'How it is delivered'], [
-      ['A custom training course', 'Lessons written around your own tools, processes and examples. Hands-on labs, a quiz in every module and a certificate. Narration in a voice you choose, with a digital presenter on screen if you want one.', 'On the Learning Studio, or on your own platform'],
-      ['A learning platform (LMS) for your company', 'Your courses and your people only, under your name. Video lessons with captions and saved progress, quizzes, labs, certificates, an assistant that answers questions inside the lesson, and a question board answered by a trainer. Other features on request.', 'On our platform or built for you, in the cloud or on your premises'],
+      ['A custom training course', 'Lessons written around your own tools, processes and examples. Hands-on labs, a quiz in every module and a certificate.', 'On the Learning Studio, or on your own platform'],
+      ['A learning platform (LMS) for your company', 'Your courses and your people only, under your name. Video lessons with captions and saved progress, quizzes, labs, certificates, an assistant that answers questions inside the lesson, and a question board answered by a trainer.', 'In the cloud or on your premises, built and set up by us'],
       ['Automation training built on your process', 'We take one process your team runs every week and build the course on it, with their own examples and files. In the sessions they automate it themselves, with Claude and other AI tools, and a person still checks the result.', 'Live and hands-on, online or at your office'],
       ['Live training built on your work', 'We learn what your people do, build the examples and exercises from it, and teach it hands-on.', 'Online or at your office'],
       ['Less time in the classroom', 'People learn the concepts with short video lessons and practise with labs first. Trainer time is kept for questions and the hard parts. Our aim is about 60% less classroom time than a usual 3 to 5 day course; how much depends on the course and the team.', 'Self-paced first, then live with a trainer'],
-      ['Support after the training', 'A doubt desk for your organization: learners post a question, a trainer answers, and the answer stays for the next person. The course stays open to go back to.', 'On the platform, online or on your premises'],
-      ['A proof of concept', 'One AI use case built as a working prototype, with the scope agreed before work starts. See the blueprints sheet.', 'Built in your environment, tested on your examples'],
-      ['Automation of one process', 'Scoped in writing first, built with Claude, tested on real cases from your work, with people kept in charge of checking.', 'One process at a time'],
+      ['Support after the training', 'A doubt desk for your organization: learners post a question, a trainer answers, and the answer stays for the next person. The course stays open to go back to.', 'On the platform'],
+      ['A prototype first', 'One use case built as a working prototype, with the scope agreed in writing before work starts, tested on your own examples, with people kept in charge of checking. One process at a time.', 'Built with you, on your examples'],
     ], { A: 36, B: 96, C: 44 }),
 
     'Learning Studio': sheet(
@@ -109,25 +110,14 @@ async function main() {
       (tocCourses as Array<Record<string, any>>).map((c, i) => [i + 1, c.title, c.domain, c.level, `${c.days} days, ${c.hours} hours`, sentence(c.audience, 120), sentence(c.tagline), `${SITE}/claude/courses/${c.slug}`]),
       { B: 46, C: 26, E: 20, F: 40, G: 70, H: 44 }),
 
-    'Team training': sheet(['#', 'Title', 'Type', 'Level', 'Duration', 'Audience', 'Technology', 'Description', 'Link'],
-      programs.map((p, i) => [i + 1, p.title, p.category === 'bootcamp' ? 'Bootcamp' : 'Course', p.level, p.duration, p.audience, p.technology, sentence(p.description), `${SITE}/services/training/${p.slug}`]),
-      { B: 46, F: 34, G: 18, H: 70, I: 44 }),
+    // Microsoft's courses that are on their way to the Learning Studio: AI, AI for business, Copilot and data only
+    'Coming soon': sheet(['#', 'Code', 'Title', 'Family', "Microsoft's course length", 'Leads to', 'Status', "Microsoft's page"],
+      microsoft.map((c, i) => [i + 1, String(c.code).replace(/T\d+$/i, ''), c.title, c.family, c.duration, c.leadsTo, 'Coming soon', c.url]),
+      { B: 11, C: 62, D: 18, E: 16, F: 26, G: 14, H: 52 }),
 
-    'Microsoft courses': sheet(['#', 'Code', 'Title', 'Area', 'Duration', 'Leads to', 'Hands-on', 'Status', 'Link'],
-      microsoft.map((c, i) => [i + 1, c.code, c.title, c.area, c.duration, c.leadsTo, c.handsOn, c.isNew ? 'New' : c.updated ? `Updated ${c.updated}` : '', c.url]),
-      { B: 13, C: 62, D: 26, E: 11, F: 24, G: 12, H: 17, I: 52 }),
-
-    'Exam preparation': sheet(['#', 'Code', 'Title', 'Provider', 'Level', 'Link'],
-      exams.map((e, i) => [i + 1, e.code, e.title, e.provider, e.level, `${SITE}/services/certifications/${e.slug}`]),
-      { B: 14, C: 60, D: 16, E: 18, F: 50 }),
-
-    'PoC blueprints': sheet(['#', 'Title', 'Category', 'Problem it solves', 'What we build', 'Timeline', 'Industries'],
-      pocs.map((p, i) => [i + 1, p.title, p.category, sentence(p.problem.replace(/ — /g, ', '), 200), sentence(p.build.join('. '), 260), p.timeline, p.industries.join(', ')]),
-      { B: 38, C: 24, D: 56, E: 70, F: 12, G: 34 }),
-
-    'AI Weekend': sheet(['Day', 'What you build', 'What you leave with'],
-      DAYS.flatMap((d) => d.projects.map((p) => [d.label.replace('·', '-'), p.name, p.result])),
-      { A: 22, B: 34, C: 90 }),
+    'AI Weekend': sheet(['#', 'Day', 'Part', 'What is built live', 'What you leave with'],
+      DAYS.flatMap((d) => d.projects.map((p, n) => [d.label.replace('·', '-'), d.agenda[n] || '', p.name, p.result])).map((r, i) => [i + 1, ...r]),
+      { B: 20, C: 42, D: 36, E: 84 }),
   }
 
   // Course pictures for the presentation and the films (a working folder, not committed)

@@ -88,7 +88,7 @@ export default function PromoPlayer({ src, poster, startMuted = true, framed = t
   }
 
   return (
-    <div ref={boxRef} className={`relative aspect-video overflow-hidden bg-black ${framed ? 'rounded-2xl shadow-[0_30px_60px_-20px_rgba(0,0,0,.6)] ring-1 ring-white/10' : ''}`}>
+    <div ref={boxRef} className={`st-keep relative aspect-video overflow-hidden bg-black ${framed ? 'rounded-2xl shadow-[0_30px_60px_-20px_rgba(0,0,0,.6)] ring-1 ring-white/10' : ''}`}>
       <video
         ref={ref}
         src={src}

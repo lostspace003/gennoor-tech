@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import { CalendarDays, Clock, Video, Zap } from 'lucide-react'
-import { WEEKEND, timeLabel } from '@/data/ai-weekend'
+import { WEEKEND, timeLabel, DEMO_WORD } from '@/data/ai-weekend'
 import films from '@/data/films.json'
 import FilmPlayer from './FilmPlayer'
 import Ground from '@/components/stage/Ground'
@@ -30,7 +30,7 @@ export default function WeekendFilm() {
               <span className="st-kicker">Live · every month</span>
             </p>
             <h2 id="weekend-film" className="font-heading text-[clamp(28px,3vw,40px)] font-bold leading-[1.08] tracking-[-0.025em] text-gray-900 mt-3.5">{WEEKEND.name}</h2>
-            <p className="text-[17px] leading-[1.5] text-gray-600 mt-2.5">{WEEKEND.tagline}. Six working demos, built live in front of you, and the complete kit to repeat them.</p>
+            <p className="text-[17px] leading-[1.5] text-gray-600 mt-2.5">{WEEKEND.tagline}. {DEMO_WORD.charAt(0).toUpperCase() + DEMO_WORD.slice(1)} working demos, built live in front of you, and the complete kit to repeat them.</p>
             <dl className="mt-5 space-y-2.5">
               {facts.map(([Icon, label, value]) => (
                 <div key={label} className="flex items-start gap-3 text-[15px]">

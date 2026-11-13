@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import { pageMeta } from '@/lib/seo'
 import { CalendarDays, Clock, Video, Check, Hammer, Award, ShieldCheck, Package } from 'lucide-react'
-import { WEEKEND, DAYS, FOR_YOU, INCLUDED, HOW_YOU_LEARN, KIT, TOOLS, FAQS, nextCohort, timeLabel } from '@/data/ai-weekend'
+import { WEEKEND, DAYS, FOR_YOU, INCLUDED, HOW_YOU_LEARN, KIT, TOOLS, FAQS, nextCohort, timeLabel, DEMO_COUNT, DEMO_WORD } from '@/data/ai-weekend'
 import RegisterForm, { StickyRegister } from './RegisterForm'
 import { getRegistrations } from '@/lib/weekend'
 import { razorpayConfigured } from '@/lib/razorpay'
@@ -14,8 +14,8 @@ export const revalidate = 300
 export const metadata: Metadata = pageMeta({
   title: `${WEEKEND.name}: ${WEEKEND.tagline}`,
   // The fee is named here because this is the page where it is paid; the words a shared link shows leave it out.
-  description: `A live two-day workshop on the last weekend of every month. Eight hours with a trainer, six demos built live, and the full kit to repeat them yourself. ₹${WEEKEND.fee}.`,
-  shareDescription: 'Live online on the last weekend of every month, Saturday & Sunday. Eight hours with a trainer, six demos built live, and the full kit to repeat them yourself.',
+  description: `A live two-day workshop on the last weekend of every month. Eight hours with an industry expert, ${DEMO_WORD} demos built live, and the full kit to repeat them yourself. ₹${WEEKEND.fee}.`,
+  shareDescription: `Live online on the last weekend of every month, Saturday & Sunday. Eight hours with an industry expert, ${DEMO_WORD} demos built live, and the full kit to repeat them yourself.`,
   path: '/ai-weekend',
   image: 'ai-weekend',
 })
@@ -58,7 +58,7 @@ export default async function AiWeekendPage() {
               <h1 className="mt-4 text-4xl sm:text-5xl font-bold tracking-tight leading-[1.08] text-white">{WEEKEND.name}</h1>
               <p className="mt-2 text-xl sm:text-2xl font-semibold text-amber-300">{WEEKEND.tagline}</p>
               <p className="mt-4 max-w-xl text-[15px] sm:text-base leading-relaxed text-white/80">
-                Two mornings, eight hours, six working demos. Watch Claude set up for real work, a weekly task automated, and an agent built from nothing. Then take the full kit and do it yourself. No coding background needed.
+                Two mornings, eight hours, {DEMO_WORD} working demos. From how AI works to a team of agents: see AI set up for real work, a weekly task automated, and agents built from nothing. Then take the full kit and do it yourself. No coding background needed.
               </p>
               <dl className="mt-6 grid grid-cols-1 sm:grid-cols-3 gap-4 text-sm">
                 <Fact icon={CalendarDays} label="Next weekend" value={cohort.label} />
@@ -107,8 +107,8 @@ export default async function AiWeekendPage() {
       {/* Numbers that are simply true about the format */}
       <section className={`${wrap} mt-8 grid grid-cols-2 lg:grid-cols-4 gap-3`}>
         {[
-          ['8 hours', 'live with the trainer'],
-          ['6 demos', 'built live, step by step'],
+          ['8 hours', 'live with an industry expert'],
+          [`${DEMO_COUNT} demos`, 'built live, step by step'],
           ['2 days', 'Saturday and Sunday'],
           ['1 kit', 'to repeat it all yourself'],
         ].map(([big, small]) => (
@@ -136,7 +136,7 @@ export default async function AiWeekendPage() {
       <section className={`${wrap} mt-10`}>
         <div className="text-center">
           <h2 className="text-3xl sm:text-4xl font-bold tracking-tight">Your two days</h2>
-          <p className="mt-2 text-gray-500">Six demos. Two live sessions. One kit to repeat them all.</p>
+          <p className="mt-2 text-gray-500">{DEMO_WORD.charAt(0).toUpperCase() + DEMO_WORD.slice(1)} demos. Two live sessions. One kit to repeat them all.</p>
         </div>
         <div className="mt-8 grid lg:grid-cols-2 gap-5">
           {DAYS.map((d, i) => (
@@ -163,7 +163,8 @@ export default async function AiWeekendPage() {
 
                 <div className="mt-5 text-sm font-semibold">How the four hours go</div>
                 <ol className="mt-2 grid sm:grid-cols-2 gap-x-4 gap-y-1.5 text-sm text-white/75">
-                  {d.agenda.map((a, n) => <li key={a} className="flex gap-2"><span className="text-white/40 tabular-nums">{n + 1}.</span>{a}</li>)}
+                  {/* the parts are numbered across the weekend, 1 to 7, not from 1 again on Sunday */}
+                  {d.agenda.map((a, n) => <li key={a} className="flex gap-2"><span className="text-white/40 tabular-nums">{DAYS.slice(0, i).reduce((sum, x) => sum + x.agenda.length, 0) + n + 1}.</span>{a}</li>)}
                 </ol>
               </div>
             </article>
@@ -184,14 +185,12 @@ export default async function AiWeekendPage() {
       {/* Who teaches it */}
       <section className={`${wrap} mt-10`}>
         <div className="rounded-3xl border border-gray-200 bg-raised p-6 sm:p-8 grid md:grid-cols-[auto_1fr] gap-6 items-center">
-          <div className="w-24 h-24 rounded-2xl st-night text-amber-300 flex items-center justify-center text-3xl font-bold" aria-hidden="true">
-            {WEEKEND.trainer.name.split(' ').map((w) => w[0]).slice(0, 2).join('')}
-          </div>
+          {/* A drawn figure, not a photograph of anyone, and no name: see WEEKEND.expert */}
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={WEEKEND.expert.image} alt="" width={112} height={112} className="h-28 w-28 rounded-full object-cover border border-gray-200 bg-raised" />
           <div>
-            <div className="text-xs font-semibold uppercase tracking-widest text-gray-400">Your trainer</div>
-            <h2 className="mt-1 text-2xl font-bold tracking-tight">{WEEKEND.trainer.name}</h2>
-            <div className="text-sm text-gray-500">{WEEKEND.trainer.role}</div>
-            <p className="mt-3 text-[15px] leading-relaxed text-gray-700">{WEEKEND.trainer.line}</p>
+            <h2 className="text-2xl font-bold tracking-tight">{WEEKEND.expert.heading}</h2>
+            <p className="mt-2 text-[15px] leading-relaxed text-gray-700">{WEEKEND.expert.line}</p>
             <div className="mt-4 flex flex-wrap items-center gap-4">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <a href="https://claude.com/partners" target="_blank" rel="noopener noreferrer"><img src="/cpn/cpn-certified-horizontal.svg" alt="Claude Partner Network - Certified" width={170} height={54} /></a>

@@ -34,21 +34,19 @@ LINK = f(10, True, BLUE, underline="single")
 
 # sheet -> (display title, tab colour, short note shown under the title, link column header or None)
 SHEETS = {
-    "What we offer": ("What we offer", BLUE, "Eleven ways to work with us."),
-    "Built for you": ("Built for your organization", ORANGE, "Courses, a learning platform and working prototypes, made for one company."),
-    "Learning Studio": ("Learning Studio courses", BLUE, "Video courses with labs, quizzes and a certificate. Preview lessons play without signing in."),
-    "AI Essentials": ("AI Essentials", BLUE, "Short interactive courses with narration and a quiz."),
-    "Claude certifications": ("Claude certification preparation", "D97757", "A guide and a practice exam for each Claude certification."),
-    "Claude courses": ("Claude courses for teams", "D97757", "Instructor-led courses, by domain."),
-    "Team training": ("Team training programmes", BLUE, "Instructor-led, online or at your office."),
-    "Microsoft courses": ("Microsoft official courses", BLUE, "Microsoft's own instructor-led courses. New titles are listed first. Tell us which one and we will confirm the trainer and the dates."),
-    "Exam preparation": ("Exam preparation", BLUE, "Certification exams we prepare people for."),
-    "PoC blueprints": ("Proof-of-concept blueprints", BLUE, "Fixed-scope prototypes we can build. A starting point, shaped to your case."),
+    # Only what we really offer, in the order of the film "What we do" (owner, 13 November 2026)
+    "What we offer": ("What we offer", BLUE, "Everything we do, each with its page on the website."),
+    "Learning Studio": ("Learning Studio courses", BLUE, "Video courses with labs, quizzes and a certificate. Live now. Preview lessons play without signing in."),
+    "Coming soon": ("Coming soon to the Learning Studio", BLUE, "Microsoft courses on AI, AI for business, Copilot and data, on their way to the Learning Studio."),
+    "AI Essentials": ("AI Essentials", BLUE, "Short interactive courses with narration and a quiz. Open on the website."),
+    "Claude certifications": ("Claude certification preparation", "D97757", "A guide and a practice exam for each Claude certification. Open on the website."),
+    "Claude courses": ("Claude automation courses for teams", "D97757", "Instructor-led, each built around one job a team does. The outline of each is on its page."),
+    "Built for you": ("Built for your organization", ORANGE, "A course, a learning platform or a working prototype, made for one company."),
     "AI Weekend": ("Gennoor AI Weekend", ORANGE, "What is built live across the two days."),
 }
-WIDE = {"What it includes", "Description", "What you leave with", "Problem it solves", "What we build"}
+WIDE = {"What it includes", "What it is", "Description", "What you leave with", "Problem it solves", "What we build"}
 CENTER = {"#", "Chapters", "Lessons", "Hours", "Quizzes", "Preview lessons", "Timeline", "Hands-on", "Status"}
-BOLD = {"Title", "Offering", "What you build", "Code"}
+BOLD = {"Title", "Offering", "What we offer", "What you build", "What is built live", "Code"}
 FIRST_BOLD = {"Built for you"}  # sheets whose first column is the name of the thing
 META = DATA["meta"]
 

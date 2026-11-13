@@ -17,10 +17,33 @@ first: it lists every file and every command. This file is the order of work and
 | Both films, tall 9:16 | `build.mjs film <film>-reel` → `mix.py <film>-reel` → `upload-reels.mjs` | `/media/videos/…-reel.mp4` (media store), covers in `public/videos` |
 | Presentation | `build.mjs deck overview` → `deck.py overview` | `public/Gennoor-Tech-Catalog/Gennoor-Tech-Overview.pptx` |
 | Catalogue workbook | `scripts/catalog/extract-site-data.ts` → `build-catalog-xlsx.py` | `public/Gennoor-Tech-Catalog/Gennoor-Tech-Catalog.xlsx` |
+| Presenter's script for the presentation | written by hand: `scripts/show/presenter/1 - What we do (presenter script, slide by slide).txt` | the owner's `Videos` folder, beside the presentation |
 
 The owner's copies live in `C:\Users\losts\Desktop\Videos` (the four films and two Instagram covers, from the
-`.master.mp4` files in `scripts/show/.work`) and `C:\Users\losts\Desktop\Gennoor Films` (presentation, catalogue).
+`.master.mp4` files in `scripts/show/.work`; the presentation, its presenter's script and the catalogue) and
+`C:\Users\losts\Desktop\Gennoor Films` (presentation, its script, catalogue).
 Copy the new files there whenever a film or the presentation changes.
+
+**Names in the `Videos` folder** (owner, 13 November 2026): a file is named like the video it belongs to. The
+main film is `1 - What we do (website and LinkedIn, wide 16x9).mp4`, so its presentation is
+`1 - What we do (presentation for client calls).pptx` and its script is
+`1 - What we do (presenter script, slide by slide).txt`. The catalogue is
+`5 - Gennoor Tech course catalogue (Excel).xlsx`. The presentation and its script belong to the main film
+only; the AI Weekend film has no presentation of its own (it is one slide of this one).
+
+## The presenter's script
+
+For a client call, a person with no technical background presents the deck from this script. The owner's
+words: "simple way so that a non-technical person can explain and understand", "in TXT slide by slide",
+and, on the first version: "I don't want click by click, I want slide by slide."
+
+- One section per slide, in the order of the deck: **the slide shows**, **say**, **in plain words**, and
+  where its blue button goes. Nothing about which click brings what.
+- Plain text, no special characters, so it opens anywhere.
+- It says only what the slide and its `notes` in `js/scenes-overview.js` say. No price, no client names,
+  the Claude Partner line word for word, "about 60% less classroom time" always as an aim.
+- It ends with a five-minute version, plain answers to the questions clients ask, and a short word list.
+- When a slide is added, removed or changed, change its section, then copy the file to both folders.
 
 ## The order of work
 
@@ -42,6 +65,12 @@ Copy the new files there whenever a film or the presentation changes.
   month, Saturday & Sunday".
 - **Vision first, few words, more picture.** Do not show a small number as if it were impressive.
 - **Custom automation training** is part of what we do and has its own scene and slide.
+- **The AI Weekend is about AI, not one product** (owner, 13 November 2026: "why to have claude based only"). Seven
+  parts over the eight hours, four on Saturday and three on Sunday, said in our own words; they are written once in
+  `src/data/ai-weekend.ts`, and the films, the slide, the page, the catalogue and the LinkedIn posts follow it.
+- **Nobody is named as the trainer** (owner, same day: "Don't put my name under trainer. That will give a wrong
+  trust value"). Say "an industry expert". Where a picture is wanted it is the drawn 3D figure
+  `public/assets/ai-weekend-expert.jpg` in a circle, never a photograph.
 - **The Claude Partner line** word for word, badge on its white card.
 - The presentation is **click by click**, and every section ends with a button to its page on the website.
 

@@ -8,8 +8,7 @@ import RouteProgress from '@/components/portal/RouteProgress'
 import {
   LayoutDashboard, Linkedin, Sparkles, GraduationCap, MessageSquare, Users, PhoneCall, Mail, Menu, X, ExternalLink, Wallet, PenLine, Bot, Network, History,
   ChevronLeft, ChevronRight, PanelLeftOpen, BarChart3, TrendingUp, Activity, BookOpen, Send, Calendar, Settings, HardDrive, Search, Globe, Lock, LogOut, Briefcase, MessageCircle,
-  Film, CalendarDays, LineChart,
-} from 'lucide-react'
+  Film, CalendarDays, LineChart, Megaphone, } from 'lucide-react'
 
 /**
  * The frame of the admin centre: the menu on the left, where you are at the top.
@@ -54,6 +53,7 @@ const GROUPS = [
   { title: 'LinkedIn', items: [
     { href: '/admin/linkedin-hub', label: 'LinkedIn hub', icon: Network },
     { href: '/admin/autopilot', label: 'Autopilot', icon: Bot },
+    { href: '/admin/campaign', label: 'Film campaign', icon: Megaphone },
     { href: '/admin/linkedin', label: 'Connection', icon: Linkedin },
   ] },
   { title: 'Content', items: [

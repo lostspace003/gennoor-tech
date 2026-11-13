@@ -1,6 +1,6 @@
 import { escapeHtml } from '@/lib/escape-html'
 import { emailShell, emailTitle, emailDetails, emailButton, emailSteps, emailCallout, emailContact, textToHtml } from '@/lib/crm/email-theme'
-import { WEEKEND, DAYS, KIT, timeLabel, type Cohort } from '@/data/ai-weekend'
+import { WEEKEND, DAYS, KIT, timeLabel, type Cohort, DEMO_WORD } from '@/data/ai-weekend'
 import type { CohortSettings } from '@/lib/weekend'
 
 // The AI Weekend's own emails. They are separate from the CRM's email series:
@@ -78,7 +78,7 @@ export function buildWeekendEmail(
       return {
         subject: `${WEEKEND.tagline}: ${cohort.label}`,
         html: shell(
-          emailTitle(hello, `On the last weekend of every month we run the ${WEEKEND.name}: two live mornings where you watch real work being done with Claude, step by step.`) +
+          emailTitle(hello, `On the last weekend of every month we run the ${WEEKEND.name}: two live mornings where you watch real work being done with AI, step by step.`) +
             programme() +
             emailSteps(
               [
@@ -93,7 +93,7 @@ export function buildWeekendEmail(
             emailButton('Reserve my seat', PAGE) +
             p(`<span style="font-size:14px;color:#64748b">Seats in each cohort are limited. No coding background is needed.</span>`) +
             stop,
-          `${cohort.label}. Two live mornings, six demos, and the full kit. ${rupees(WEEKEND.fee)}.`
+          `${cohort.label}. Two live mornings, ${DEMO_WORD} demos, and the full kit. ${rupees(WEEKEND.fee)}.`
         ),
       }
 

@@ -2,6 +2,9 @@
   The Gennoor AI Weekend film. Six scenes, about a minute.
   It says what is built on each day and how the weekend works. It carries no dates and no
   price: both change, and the page it sends people to shows them.
+
+  The weekend is about AI, not one product (owner, 13 November 2026): seven parts over the
+  two days, four on Saturday and three on Sunday, as in src/data/ai-weekend.ts.
 */
 const weekend = []
 const wkBolt = (size) => `<div style="position:relative;width:${size}px;height:${size}px"><div data-loop="pulse" data-per="2" style="position:absolute;inset:-38%;border-radius:50%;background:radial-gradient(closest-side,rgba(255,190,70,.62),transparent 70%)"></div>${ico('zap', size, 'gold', 'round')}</div>`
@@ -14,7 +17,7 @@ weekend.push({
   bg: ground(GLOW.gold, { mx: 50, my: 46 }) + sparks(26, 11),
   fg: `
     <div class="abs" data-b="0" data-fx="pop" data-pad="80" style="left:${640 - 66}px;top:112px">${wkBolt(132)}</div>
-    <div class="abs h1 center nowrap" data-b="1" style="left:0;width:1280px;top:306px;font-size:70px">What could you build with <span style="color:var(--claude)">Claude</span></div>
+    <div class="abs h1 center nowrap" data-b="1" style="left:0;width:1280px;top:306px;font-size:70px">What could you build with <span style="color:var(--gold)">AI</span></div>
     <div class="abs h1 center nowrap" data-b="2" style="left:0;width:1280px;top:392px"><span class="grad serif" style="font-size:86px;padding:0 10px">in one weekend?</span></div>`,
 })
 
@@ -40,23 +43,28 @@ weekend.push({
 const build = (b, k, icon, tone, title, line, extra = '') => `<div class="abs card" data-b="${b}" style="left:${84 + k * 372}px;top:226px;width:344px;height:330px;padding:28px">
     <div class="row" style="justify-content:space-between;align-items:flex-start">${ico(icon, 96, tone)}<span style="font:650 60px/1 var(--display);letter-spacing:-.04em;color:rgba(255,255,255,.09)">0${k + 1}</span></div>
     <div class="h3 nowrap" style="margin-top:26px;font-size:23.5px">${title}</div><div class="p" style="margin-top:10px;font-size:17px">${line}</div>${extra}</div>`
+// Saturday has four parts, so its cards are narrower than Sunday's three
+const build4 = (b, k, icon, tone, title, line) => `<div class="abs card" data-b="${b}" style="left:${84 + k * 281}px;top:226px;width:269px;height:330px;padding:26px 24px">
+    <div class="row" style="justify-content:space-between;align-items:flex-start">${ico(icon, 84, tone)}<span style="font:650 54px/1 var(--display);letter-spacing:-.04em;color:rgba(255,255,255,.09)">0${k + 1}</span></div>
+    <div class="h3" style="margin-top:24px;font-size:21.5px;line-height:1.16;min-height:50px">${title}</div><div class="p" style="margin-top:10px;font-size:16px">${line}</div></div>`
 weekend.push({
   id: 'day1',
-  cues: [['w03', { 1: 'we' }], ['w04', { 2: 'weekly', 3: 'workspace' }]],
+  cues: [['w03', { 1: 'how', 2: 'weekly' }], ['w04', { 3: 'pictures', 4: 'skills' }]],
   bg: ground(GLOW.blue, { mx: 50, my: 58 }),
-  fg: `${head('Day 1 &middot; Saturday', 'We set <span style="color:var(--claude)">Claude</span> up to know your work.', { color: 'var(--blue2)' })}
-    ${build(1, 0, 'file-text', 'blue', 'Your context file', 'So the answers stop<br>being generic.')}
-    ${build(2, 1, 'table-2', 'green', 'A weekly report in minutes', 'A messy sheet goes in.<br>A summary comes out.')}
-    ${build(3, 2, 'folder-open', 'violet', 'A connected workspace', 'Claude reads your files<br>and drafts directly.')}`,
+  fg: `${head('Day 1 &middot; Saturday', 'From how AI works to your own tools.', { color: 'var(--blue2)' })}
+    ${build4(1, 0, 'file-text', 'blue', 'Your context file', 'AI that knows your work, so the answers stop being generic.')}
+    ${build4(2, 1, 'table-2', 'green', 'A weekly report in minutes', 'A messy sheet goes in. A summary comes out.')}
+    ${build4(3, 2, 'video', 'rose', 'Pictures, video and sound', 'Made with AI, from a plain description.')}
+    ${build4(4, 3, 'blocks', 'violet', 'Skills and connectors', 'AI reaches your files and your tools.')}`,
 })
 weekend.push({
   id: 'day2',
-  cues: [['w05', { 1: 'automate', 2: 'app' }], ['w06', { 3: 'agent' }]],
+  cues: [['w05', { 1: 'automate', 2: 'agent' }], ['w06', { 3: 'team' }]],
   bg: ground(GLOW.gold, { mx: 50, my: 58 }),
-  fg: `${head('Day 2 &middot; Sunday', 'We automate a task. Then build an agent.')}
+  fg: `${head('Day 2 &middot; Sunday', 'We automate a task. Then build agents.')}
     ${build(1, 0, 'repeat', 'gold', 'One task automated', 'A job you repeat every week<br>now runs when you ask.')}
-    ${build(2, 1, 'app-window', 'rose', 'A small working app', 'Built just by describing it.<br>No coding needed.')}
-    ${build(3, 2, 'bot', 'green', 'Your first agent', 'Give it a goal. It researches,<br>drafts and checks its own work.')}`,
+    ${build(2, 1, 'bot', 'green', 'Your first agent', 'Give it a goal. It researches,<br>drafts and checks its own work.')}
+    ${build(3, 2, 'users', 'rose', 'A team of agents', 'Each has one job, and they<br>pass the work to each other.')}`,
 })
 
 // ------------------------------------------------------------------ 5. how the weekend works

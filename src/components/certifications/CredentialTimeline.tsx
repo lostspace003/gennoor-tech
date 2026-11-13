@@ -43,7 +43,7 @@ export default function CredentialTimeline({ items }: { items: Credential[] }) {
               track === t ? 'bg-primary-600 border-primary-600 text-white' : 'bg-raised border-gray-300 text-gray-700 hover:border-gray-400'
             }`}
           >
-            {t === 'all' ? 'All' : credentialTracks[t]} <span className={track === t ? 'text-white/75' : 'text-gray-400'}>{count(t)}</span>
+            {t === 'all' ? 'All' : credentialTracks[t]} <span className={track === t ? 'text-white' : 'text-gray-400'}>{count(t)}</span>
           </button>
         ))}
       </div>

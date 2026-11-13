@@ -119,7 +119,20 @@ for the one post featured at the top. The two smaller tiles come from the tags.
   done: the sign-in of the admin centre and the payment return address are tied to the address they
   were set up on. It is the owner's decision.
 
-## 6. The check
+## 6. The catalogue
+
+`public/Gennoor-Tech-Catalog/Gennoor-Tech-Catalog.xlsx` is built from the site
+(`scripts/catalog/extract-site-data.ts`, then `build-catalog-xlsx.py`). The owner's words (13 November
+2026): "I would like to have reality in the catalog ... whatever we have in the video, that is the same
+value." So it lists only what we really offer, in the order of the film "What we do": the Learning Studio
+courses that are live, the interactive AI Essentials courses, the Claude certification preparation, the
+Claude automation courses that have a page, what we build for one organization, and the AI Weekend. No
+list of team programmes, exam preparation or prototype blueprints. Of Microsoft's courses, only the AI,
+data (DP), AI for business (AB) and Copilot titles, as "coming soon to the Learning Studio"
+(`scripts/catalog/import-title-plan.py "<the title plan Microsoft sends>"`). No prices, nothing called
+"free", nobody named as a trainer.
+
+## 7. The check
 
 ```bash
 node scripts/seo-head.mjs http://localhost:3111 home training resources/blog/<a-post>

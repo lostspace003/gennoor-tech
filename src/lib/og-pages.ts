@@ -3,7 +3,7 @@ import {
   Presentation, Sparkles, Users, Video, Workflow, Zap, BarChart3, Bot, Cloud,
 } from 'lucide-react'
 import type { OgCard } from '@/lib/og-card'
-import { WEEKEND } from '@/data/ai-weekend'
+import { DEMO_WORD, WEEKEND } from '@/data/ai-weekend'
 
 /**
  * The share picture of each fixed page: what a link to it shows on LinkedIn, WhatsApp or X.
@@ -24,10 +24,10 @@ export const OG_PAGES: Record<string, OgCard> = {
   'ai-weekend': {
     kicker: 'The last weekend of every month, Saturday & Sunday',
     title: `${WEEKEND.name}: ${WEEKEND.tagline.charAt(0).toLowerCase()}${WEEKEND.tagline.slice(1)}`,
-    line: 'Live online with a trainer. Six demos built live, and the kit to repeat them yourself.',
+    line: `Live online with an industry expert. ${DEMO_WORD.charAt(0).toUpperCase()}${DEMO_WORD.slice(1)} demos built live, and the kit to repeat them yourself.`,
     foot: 'gennoor.com/ai-weekend',
     icon: Zap, tone: 'gold',
-    beside: [{ icon: 'spark', tone: 'claude' }, { icon: Hammer, tone: 'violet' }],
+    beside: [{ icon: Bot, tone: 'green' }, { icon: Hammer, tone: 'violet' }],
   },
   training: {
     kicker: 'Training for organizations',

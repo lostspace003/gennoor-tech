@@ -12,6 +12,7 @@ guide before doing that kind of work.
 | Anything a visitor or a member of staff sees: a page, a component, a menu, a style | `docs/DESIGN.md` | `gennoor-site-design` |
 | A film, the presentation, an Instagram or LinkedIn video, the catalogue | `scripts/show/README.md` | `gennoor-films` |
 | A new page, a title or a description, the picture a shared link shows, a blog post, the sitemap | `docs/SEO.md` | `gennoor-site-design` |
+| A LinkedIn post, the film campaign, what the writing agents are told | `docs/LINKEDIN.md` | |
 | Finishing: branch, pull request, merge, deploy | `.claude/skills/gennoor-ship/SKILL.md` | `gennoor-ship` |
 
 The skills are in `.claude/skills/`. They are plain Markdown: any tool can read them.
@@ -21,13 +22,16 @@ The skills are in `.claude/skills/`. They are plain Markdown: any tool can read 
 1. **The look is decided.** Dark "stage" and light "day" for the public site, light "paper" for the admin
    centre. Colours by name, the icon-tile kit, one-level menus. Do not restyle from taste; follow `docs/DESIGN.md`.
 2. **Look at what you made.** A change to a page is checked in both themes, on a desktop and on a phone
-   (`node scripts/shot.mjs`), before it is called done.
+   (`node scripts/shot.mjs`), before it is called done. In the light look every word must be readable:
+   `node scripts/contrast-check.mjs <pages>` measures it.
 3. **Never on `main`.** Branch, pull request, squash merge, then make the local folder identical to GitHub.
 4. **Say what was not checked.** In the pull request and to the owner. Never claim more than was done.
 5. **What is written for the public is plain and true.** No prices in the films, the presentation or the
    catalogue, and none on a page except where someone pays (the AI Weekend, a Learning Studio course).
    Courses are never called "free". No customer names. Only what exists or has been agreed. The AI Weekend
    is "the last weekend of every month, Saturday & Sunday". The Claude Partner line is used word for word.
+   The AI Weekend is about AI, not one product: its seven parts are written once, in `src/data/ai-weekend.ts`.
+   Nobody is named as the trainer: "an industry expert". The catalogue lists only what we really offer.
 6. **Only the look changes when the look changes.** Page addresses, form field names and API paths stay.
 7. **Not without being asked:** sending a real email, typing a password or a secret, closing the owner's
    PowerPoint or Excel, deleting data.
@@ -40,4 +44,6 @@ npx tsc --noEmit && npx next build                     # before every pull reque
 node scripts/shot.mjs <folder> --full [--light] home training   # photographs of pages, 1366 and 390 wide
 python scripts/stage-codemod.py                        # lists colours written as fixed values
 node scripts/seo-head.mjs http://localhost:3111 home training   # what a search engine and a shared link read
+node scripts/contrast-check.mjs home ai-weekend        # can every word be read, in light and in dark
+npx tsx scripts/campaign-check.ts                      # the LinkedIn film campaign: the plan and all its posts
 ```

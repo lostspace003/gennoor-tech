@@ -81,6 +81,12 @@ The admin centre keeps the light "paper" look; the rules are in `docs/DESIGN.md`
 - **A blog picture hidden with `hidden lg:flex` still showed on a phone**, because `st-art` sets its own
   `display`. Size a `<BlogArt>` for the phone too instead of hiding it.
 
+- **White words on a light block** on the AI Weekend page in the light look: the page wrote `text-white/65`,
+  a strength the light-look rules did not list. The rules now catch every strength; and
+  `node scripts/contrast-check.mjs <pages>` measures every page in both looks. Run it. The owner: "when you
+  change it to the light mode, the font should be properly visible."
+- **A video player's time went dark on its black bar** in the light look. A player carries `st-keep`.
+
 - **A white button on a film went dark** because `bg-white` was renamed to a theme colour. Something that
   must be white on every theme is written `bg-[#fff]`.
 - **Dark-navy text (`text-[#0C1426]`) vanished on dark cards.** Text is `text-gray-900` unless it sits on a
