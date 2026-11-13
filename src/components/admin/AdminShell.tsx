@@ -138,6 +138,9 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
   const pickTab = (e: React.MouseEvent, key: string) => {
     e.preventDefault()
     setTab(key)
+    // Written into the address as well: the dashboard reads it when it arrives, so a tab
+    // picked while the dashboard is still loading is the one that opens.
+    try { const u = new URL(window.location.href); u.searchParams.set('tab', key); window.history.replaceState(null, '', u) } catch { /* ignore */ }
     window.dispatchEvent(new CustomEvent('admin:select-tab', { detail: key }))
   }
 
