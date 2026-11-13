@@ -32,7 +32,32 @@ Pages are named without the leading slash, and the home page is `home` (Git Bash
 `/training` into a file path). Open the pictures and look at them: both themes, both widths.
 A page is not finished because it compiles.
 
+## An admin page
+
+The admin centre keeps the light "paper" look; the rules are in `docs/DESIGN.md`, section 9.
+
+1. The model is `src/app/admin/learners/page.tsx` (figures: period row, tiles, charts, tables, Excel) and
+   `src/app/admin/payments/page.tsx` (a list with filters). Add the page to `GROUPS` in
+   `src/components/admin/AdminShell.tsx` as one row; never a row that opens a list.
+2. Figures are read in one file in `src/lib/` and served by an address under `/api/admin/` that starts
+   with `verifyAdmin`. Run the reading against the real records once and check that the tiles, the charts
+   and the tables agree before drawing anything.
+3. Charts: one blue, one axis, columns that can be read by pointer and by keyboard, the same numbers in a
+   table. The `dataviz` skill has the method; section 9 has the colours already checked for this site.
+4. The screenshot script shows only the sign-in page for `/admin/...`. Look at the page signed in, in the
+   browser, at 1366 and at 390 wide, and say in the pull request how it was looked at.
+
 ## Mistakes already made here, so do not repeat them
+
+- **A class the project had never used did nothing in the running dev server** (`w-[190px]`: the dropdown
+  stayed 494 pixels wide). Stop and start `npx next dev` after adding such a class; the production build
+  is not affected.
+- **A chart and the tile beside it gave different totals**, because each counted enrolments in its own
+  place. Count once, and let both read the same number.
+- **A heading with no size class came out huge** on an admin page: the site styles every bare `h2`. Give
+  each heading its size.
+- **Records named a course in two ways** (its address, and its code in small letters), so one course showed
+  as two. Check real records for old spellings before trusting a grouping.
 
 - **A white button on a film went dark** because `bg-white` was renamed to a theme colour. Something that
   must be white on every theme is written `bg-[#fff]`.

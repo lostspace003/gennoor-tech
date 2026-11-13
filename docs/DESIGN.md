@@ -153,6 +153,31 @@ Light and compact; it does not take the stage look. Content starts at the top le
 width; long lists scroll inside themselves and have filters and pages; a list that is loading says so and
 never says "nothing yet" before the answer has arrived.
 
+- **The frame** is `src/components/admin/AdminShell.tsx`: the one-level menu (`GROUPS`), a line that says
+  where you are, and on the dashboard its sections as two rows of tabs. On a phone the top bar says where
+  you are and the menu is a drawer. A new page is one new row in `GROUPS`, nothing more.
+- **A page of figures** follows `src/app/admin/learners/page.tsx` (Learner analytics):
+  - The period comes first, in one row above everything it scopes: ready-made periods, then your own dates.
+    While another period is being read, the last figures stay in place, faded. No spinner in their place.
+  - Headline numbers are tiles: a small label, the number, one line under it. The number has no colour.
+  - One job for each chart and one axis for each chart. Two measures are two charts side by side, never
+    two scales on one chart.
+  - One series is one blue (`#2a78d6`). Finished, in progress and not started are one hue from dark to
+    light, then grey (`#1c5cab`, `#5996e0`, `#a8b0be`). These passed the palette check of the `dataviz`
+    skill on white and on the grey of a hovered row; put any other chart colour through the same check
+    before using it. Words and numbers stay in the grey text colours, never in the colour of the series.
+  - Columns are at most 24 pixels wide, rounded at the top, 2 pixels apart, standing on zero. Every
+    column can be read by pointing at it and by tabbing to it.
+  - The same numbers are in a table under the charts and in the Excel download.
+  - A tile and the chart beside it are counted by the same code, so they always add up to the same total.
+  - At the end of the page, a short list says how each figure is counted and what the site does not
+    record. An estimate is never shown as if it were measured.
+- **Reading the figures** happens in one file for each page (`src/lib/learner-analytics.ts`), behind an
+  address that checks the sign-in (`verifyAdmin`). Learners' names and emails stay inside the admin centre.
+- **Looking at an admin page.** `scripts/shot.mjs` cannot: these pages are behind the sign-in. Look at
+  them signed in, in the browser, at 1366 and at 390 wide. The sign-in check is never weakened or switched
+  off in anything that is committed.
+
 ## 10. Before you say it is done
 
 1. `npx tsc --noEmit` and `npx next build`.

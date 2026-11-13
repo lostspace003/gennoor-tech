@@ -23,9 +23,10 @@ The skills are in `.claude/skills/`. They are plain Markdown: any tool can read 
    (`node scripts/shot.mjs`), before it is called done.
 3. **Never on `main`.** Branch, pull request, squash merge, then make the local folder identical to GitHub.
 4. **Say what was not checked.** In the pull request and to the owner. Never claim more than was done.
-5. **What is written for the public is plain and true.** No prices on marketing pages. Courses are never
-   called "free". No customer names. Only what exists or has been agreed. The AI Weekend is "the last
-   weekend of every month, Saturday & Sunday". The Claude Partner line is used word for word.
+5. **What is written for the public is plain and true.** No prices in the films, the presentation or the
+   catalogue, and none on a page except where someone pays (the AI Weekend, a Learning Studio course).
+   Courses are never called "free". No customer names. Only what exists or has been agreed. The AI Weekend
+   is "the last weekend of every month, Saturday & Sunday". The Claude Partner line is used word for word.
 6. **Only the look changes when the look changes.** Page addresses, form field names and API paths stay.
 7. **Not without being asked:** sending a real email, typing a password or a secret, closing the owner's
    PowerPoint or Excel, deleting data.
