@@ -28,6 +28,33 @@ gh run list --limit 3                                 # the deploy: wait for "su
 
 A second push to `main` while a deploy is running cancels the first; the newer run carries both.
 
+## Checks that go with a kind of change
+
+Run the one that fits before the pull request, and say in it that you did. Each must end with ALL OK.
+
+| The change touches | Run |
+|---|---|
+| The autopilot, the writing rules, `src/lib/safe-text.ts` | `npx tsx scripts/autopilot-check.ts` |
+| The CRM (`src/lib/crm`, its screens, its addresses) | `npx tsx scripts/crm-check.ts` |
+| Who may sign in (`users.ts`, `middleware.ts`, `admin-auth.ts`, `auth.ts`) | `scripts/access-check.ts` against the BUILT site (the file says how) |
+| The LinkedIn film campaign | `npx tsx scripts/campaign-check.ts` |
+| A page a visitor sees | the screenshots and `node scripts/contrast-check.mjs` (skill `gennoor-site-design`) |
+
+## The agent service is a second deploy
+
+`services/studio-agents` (the container app `ca-gennoor-studio`) is not deployed by a merge. When a change
+touches it:
+
+1. Put the service out FIRST, from the branch (the commands are in `docs/studio-agent-terminated-issue.md`;
+   give the image the next number: `gennoor-studio:vNN`). The service takes what the current website sends,
+   so this is safe; an older service refuses a mode or a field it does not know, so the other order is not.
+2. Try it for real: `npx tsx --env-file=.env.local scripts/autopilot-live-check.ts` (a post) and, when
+   articles are concerned, `scripts/blog-live-check.ts`. Nothing is saved or posted by either.
+3. Then merge the website. The previous image stays in the registry as the way back.
+
+A failure of the autopilot or the daily blog does not show in GitHub. It shows on the Autopilot page
+("drafting failed: ...") and in the emails it sends. When the owner says "something failed", look there too.
+
 ## The pull request
 
 Written for a reader who does not write code. Plain words, short sentences, no jargon.

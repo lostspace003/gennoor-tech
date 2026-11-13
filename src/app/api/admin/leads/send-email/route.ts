@@ -5,6 +5,7 @@ import { downloadDocument } from '@/lib/crm/documents'
 import { sendEmail } from '@/lib/email-service'
 import { emailShell, textToHtml, markdownToEmailHtml } from '@/lib/crm/email-theme'
 import { teamMember } from '@/lib/crm/team'
+import { sendRoom, HOURLY_SEND_LIMIT } from '@/lib/crm/replies'
 
 const ADMIN_CC = process.env.EMAIL_ADMIN || 'admin@gennoor.com'
 // Outreach ALWAYS goes out as sales@gennoor.com (user rule, 2026-07-28)
@@ -41,6 +42,10 @@ export async function POST(request: Request) {
 
     if (sendable.length === 0) {
       return NextResponse.json({ error: 'None of the selected leads have an email address' }, { status: 400 })
+    }
+    // The same hourly limit as the series (see lib/crm/replies.ts): the whole site shares one allowance
+    if (sendable.length > sendRoom(allLeads)) {
+      return NextResponse.json({ error: `Only ${sendRoom(allLeads)} more email${sendRoom(allLeads) === 1 ? '' : 's'} can go this hour (the limit is ${HOURLY_SEND_LIMIT} an hour for the CRM). Try again a little later.` }, { status: 429 })
     }
 
     // Load attachments from the CRM document library

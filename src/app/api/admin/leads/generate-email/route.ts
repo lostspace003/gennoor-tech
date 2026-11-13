@@ -4,13 +4,15 @@ import { getLead } from '@/lib/crm/store'
 import { aiConfigured, draftEmail } from '@/lib/crm/ai'
 import { teamMember, signOffText } from '@/lib/crm/team'
 import { Lead } from '@/lib/crm/types'
+import { companyOf, greetingOf } from '@/lib/crm/greeting'
 
 // Used when the writing assistant is unavailable: a plain, honest starting point.
 function fallbackDraft(lead: Lead, senderEmail: string): { subject: string; body: string } {
-  const first = (lead.name || 'there').split(/\s+/)[0]
+  // The same rule as the series (lib/crm/greeting.ts): a name only when it is clearly a first name, never a stand-in
+  const first = greetingOf(lead)
   return {
-    subject: `Gennoor Tech and ${lead.company || 'your team'}`,
-    body: `Dear ${first},
+    subject: companyOf(lead) ? `Gennoor Tech and ${companyOf(lead)}` : 'From Gennoor Tech',
+    body: `${first ? `Dear ${first},` : 'Hello,'}
 
 Thank you for your message.
 

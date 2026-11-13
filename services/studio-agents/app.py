@@ -96,7 +96,11 @@ class RunBody(TextBody):
     # that is so a longer note never turns into a refused request.
     brief: str = Field(default="", max_length=12_000)
     references: str = Field(default="", max_length=60_000)
-    mode: Literal["post", "motion"] = "post"
+    # "text": the post alone (writer, then reviewer). The autopilot uses it: its posts have no picture.
+    mode: Literal["post", "motion", "text"] = "post"
+    # The writing rules and the reviewer's checks, sent by the website (src/lib/writing-rules.ts). Empty: the copies in agents.py.
+    rules: str = Field(default="", max_length=20_000)
+    review_rules: str = Field(default="", max_length=6_000)
 
 
 class BlogBody(TextBody):
@@ -104,6 +108,8 @@ class BlogBody(TextBody):
     brief: str = Field(default="", max_length=12_000)
     references: str = Field(default="", max_length=60_000)
     context: dict[str, Any] = Field(default_factory=dict)
+    rules: str = Field(default="", max_length=20_000)
+    review_rules: str = Field(default="", max_length=6_000)
 
 
 class LiBody(BaseModel):
@@ -186,7 +192,7 @@ async def li_call(b: LiBody):
 async def blog(b: BlogBody):
     async def stream():
         try:
-            async for ev in run_blog(b.topic, b.brief, b.references, b.context):
+            async for ev in run_blog(b.topic, b.brief, b.references, b.context, b.rules, b.review_rules):
                 yield json.dumps(ev) + "\n"
         except Exception as e:
             log.exception("blog pipeline failed")
@@ -199,7 +205,7 @@ async def blog(b: BlogBody):
 async def run(b: RunBody):
     async def stream():
         try:
-            async for ev in run_pipeline(b.topic, b.brief, b.references, b.mode):
+            async for ev in run_pipeline(b.topic, b.brief, b.references, b.mode, b.rules, b.review_rules):
                 if ev["type"] == "result" and b.mode == "motion" and ev.get("scene"):
                     yield json.dumps({"type": "step", "agent": "renderer", "label": "Render", "status": "running"}) + "\n"
                     try:

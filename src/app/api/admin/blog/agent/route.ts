@@ -2,6 +2,7 @@ import { NextRequest } from 'next/server'
 import { briefWithIconRule } from '@/lib/blog-icon'
 import { verifyAdmin, unauthorizedResponse } from '@/lib/admin-auth'
 import { agentFetch } from '@/lib/social/agent-service'
+import { READER_CHECK, articleRules } from '@/lib/writing-rules'
 import { createBlogDraft, dateLabel, taxonomy } from '@/lib/blog-studio'
 import { getRefs } from '@/lib/social/references'
 import { readBlob, recordSpend } from '@/lib/social/studio'
@@ -29,7 +30,7 @@ export async function POST(req: NextRequest) {
 
   let upstream: Response
   try {
-    upstream = await agentFetch('/blog', { topic, brief: briefWithIconRule(String(b.brief || '')), references: texts.join('\n\n').slice(0, 38_000), context }, req.signal)
+    upstream = await agentFetch('/blog', { topic, brief: briefWithIconRule(String(b.brief || '').slice(0, 10_000)), references: texts.join('\n\n').slice(0, 38_000), context, rules: articleRules(), review_rules: READER_CHECK }, req.signal)
   } catch (e: any) {
     return Response.json({ error: e?.message || 'Agent service unreachable.' }, { status: 502 })
   }

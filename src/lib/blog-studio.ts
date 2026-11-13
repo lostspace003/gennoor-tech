@@ -105,6 +105,13 @@ export async function createBlogDraft(topic: string, agent: { body?: string; met
   return draft
 }
 
+/**
+ * What every reviser is told. On 13 November 2026 six published articles were found to describe their own
+ * revision ("What changed in this revision", "the earlier draft stated...", "the source set provided for this
+ * article does not support..."): the reviser had been told to apply the reviewer's notes and wrote about doing so.
+ */
+const NO_SELF_TALK = `The reader must never be able to tell that the article was revised. Never mention a draft, a revision, a reviewer, an editor, notes, "the sources provided" or what was removed or softened, and never explain why something is not said. A claim that cannot be supported is simply left out, and the sentences around it are joined so that nothing looks missing. Never add a section about the changes.`
+
 /** One revision call: edit the whole article or a single part according to the editor's instruction. */
 export async function reviseBlogDraft(id: string, instruction: string, part: 'body' | 'meta' | 'all'): Promise<BlogDraft | null> {
   const d = await getBlogDraft(id)
@@ -112,7 +119,9 @@ export async function reviseBlogDraft(id: string, instruction: string, part: 'bo
   const wantBody = part !== 'meta', wantMeta = part !== 'body'
   const json = await foundry('/openai/v1/responses', {
     model: TEXT_MODEL,
-    instructions: `You are the editor of the Gennoor Tech blog (enterprise AI training company, India). Apply the editor's instruction to the draft. Keep the house style: practitioner voice, no hype, HTML body using <h2>, <p>, <ul>, <strong>, relative internal links, never invent facts, numbers, quotes or URLs. Return JSON only: {${wantBody ? '"body": string (the full revised HTML body),' : ''}${wantMeta ? ' "meta": {only the fields you changed: title, excerpt, tldr, keyTakeaways, faqs, references, category, tags, hashtags}' : ''}}`,
+    instructions: `You are the editor of the Gennoor Tech blog (an AI training company in India). Apply the editor's instruction to the draft. Keep the house style: written for a manager who is not technical, every technical word explained where it first appears, short sentences, no hype, HTML body using <h2>, <p>, <ul>, <strong>, relative internal links; never invent facts, numbers, quotes or URLs.
+${NO_SELF_TALK}
+Return JSON only: {${wantBody ? '"body": string (the full revised HTML body),' : ''}${wantMeta ? ' "meta": {only the fields you changed: title, excerpt, tldr, keyTakeaways, faqs, references, category, tags, hashtags}' : ''}}`,
     input: `Instruction: ${instruction}\n\nCURRENT META:\n${JSON.stringify({ ...d.meta, date: undefined, slug: undefined })}\n\nCURRENT BODY:\n${d.body}`,
   })
   const out: string = json.output_text || (json.output || []).flatMap((o: any) => o.content || []).map((c: any) => c.text || '').join('')

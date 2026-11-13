@@ -1,5 +1,6 @@
 // Shared CRM lead types — used by both API routes and the CRM UI.
 // Keep this file free of server-only imports.
+import type { LeadReply } from './replies'
 
 /**
  * ONE axis says where a lead stands. The stored keys are the older names, kept
@@ -117,6 +118,8 @@ export interface Lead {
   // Archived leads are parked with a reason and can be restored.
   dumped?: { at: string; by: string; reason: string }
   sequence?: SequenceState
+  /** The last thing they wrote to us, kept by the mailbox check (see ./replies.ts and ./reply-sync.ts). */
+  reply?: LeadReply
   linkedinTouches?: LinkedInTouch[]
   emailHistory: EmailRecord[]
   activities: LeadActivity[]

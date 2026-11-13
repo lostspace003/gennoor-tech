@@ -100,13 +100,14 @@ export async function upsertLeads(incoming: Lead[], by: string): Promise<{ added
     let updated = 0
     const keyOf = (l: Lead) =>
       l.email ? `e:${l.email.toLowerCase()}` : `nc:${l.name.toLowerCase()}|${l.company.toLowerCase()}`
-    const index = new Map(leads.map((l, i) => [keyOf(l), i]))
+    // By lead, not by position: adding a new lead at the top moves every position, and the next row of the
+    // same sheet then filled in the blanks of the wrong person.
+    const index = new Map(leads.map((l) => [keyOf(l), l]))
 
     for (const lead of incoming) {
       const key = keyOf(lead)
-      const existingIdx = index.get(key)
-      if (existingIdx !== undefined) {
-        const existing = leads[existingIdx]
+      const existing = index.get(key)
+      if (existing) {
         // Fill blanks on the existing record; imports never overwrite worked data
         for (const field of ['phone', 'designation', 'linkedin', 'website', 'country', 'city', 'notes'] as const) {
           if (!existing[field] && lead[field]) (existing as any)[field] = lead[field]
@@ -115,7 +116,7 @@ export async function upsertLeads(incoming: Lead[], by: string): Promise<{ added
         updated++
       } else {
         leads.unshift(lead)
-        index.set(key, 0)
+        index.set(key, lead)
         added++
       }
     }

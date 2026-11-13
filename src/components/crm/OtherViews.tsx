@@ -1,58 +1,64 @@
 'use client'
 
 import { useEffect, useMemo, useState } from 'react'
-import Link from 'next/link'
-import { Mail, Users, Upload, FileText, Trash2, RefreshCw, Video, Search, X, CalendarClock, Eye } from 'lucide-react'
+import { Upload, FileText, Trash2, RefreshCw, Video, Search, X, CalendarClock, Eye } from 'lucide-react'
 import { Lead } from '@/lib/crm/types'
-import { timeAgo, formatDateTime, api, Spinner, InfoTip, MultiSelect, Pagination, DurationSlider, TimeSlider, LeadLocalTime, DateRangeFilter, DateRange, rangeBounds, rangeLabel } from './shared'
+import { formatDateTime, api, Spinner, InfoTip, MultiSelect, Pagination, DurationSlider, TimeSlider, LeadLocalTime, DateRangeFilter, DateRange, rangeBounds, rangeLabel } from './shared'
 import { istInstant, isoToIstParts } from '@/lib/crm/timezones'
 import DocPreview from './DocPreview'
 import { useCrm } from './CrmContext'
 
-/* ---------------- Inbox (whole CRM) ---------------- */
+/* ---------------- Replies (whole CRM) ---------------- */
 
 interface InboxMessage {
   id: string; from: string; fromName: string; subject: string; preview: string
-  receivedAt: string; leadId: string; leadName: string; leadCompany: string
+  receivedAt: string; leadId: string; leadName: string; leadCompany: string; owner?: string
   mailboxes?: string[]
+  /** A real reply, a request to stop, or mail a machine sent (out of office, a meeting answer) */
+  kind?: 'reply' | 'stop' | 'auto'
+  /** The lead is waiting for an answer to this message */
+  waiting?: boolean
 }
 
-// "sales, jalalkhan" — compact usernames for the mailbox(es) a reply landed in
+// "sales, jalalkhan": short names of the mailbox or mailboxes a reply landed in
 const mailboxNames = (m: InboxMessage) => (m.mailboxes || []).map((x) => x.split('@')[0]).join(', ')
 
-const INBOX_PER_PAGE = 10
+const INBOX_PER_PAGE = 12
+type Show = 'waiting' | 'all'
 
-export function InboxView({ onOpenLead }: { onOpenLead: (id: string) => void }) {
+/**
+ * Every message from a lead, from every team mailbox, newest first. It opens on the ones still waiting for an
+ * answer. Automatic mail (out of office, delivery failures, meeting answers) is left out unless asked for.
+ */
+export function InboxView({ onOpenLead }: { onOpenLead: (id: string, reply?: boolean) => void }) {
+  const { reload, notify } = useCrm()
   const [messages, setMessages] = useState<InboxMessage[]>([])
   const [note, setNote] = useState('')
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
-  const [fromFilter, setFromFilter] = useState<string[]>([])
-  // Default "all time" so nothing silently disappears; presets narrow it down
+  const [show, setShow] = useState<Show>('waiting')
+  const [withAuto, setWithAuto] = useState(false)
+  const [mailboxFilter, setMailboxFilter] = useState<string[]>([])
+  // "All time" unless narrowed, so nothing disappears without being asked to
   const [range, setRange] = useState<DateRange>({ days: 0, from: '', to: '' })
-  const [grouped, setGrouped] = useState(false)
   const [page, setPage] = useState(1)
+  const [busy, setBusy] = useState('')
 
-  const load = async () => {
+  const load = async (fresh = false) => {
     setLoading(true)
     try {
-      const res = await api<{ configured: boolean; messages: InboxMessage[]; note?: string; error?: string }>('/api/admin/leads/inbox')
+      const res = await api<{ configured: boolean; messages: InboxMessage[]; note?: string; error?: string; changed?: number }>(`/api/admin/leads/inbox${fresh ? '?fresh=1' : ''}`)
       setMessages(res.messages || [])
-      setNote(res.error || res.note || (!res.configured ? 'Inbound email is not configured.' : ''))
+      setNote(res.error || res.note || (!res.configured ? 'Reading replies is not set up on this site yet.' : ''))
+      if (res.changed) await reload()
     } catch (e: any) { setNote(e.message) } finally { setLoading(false) }
   }
+  useEffect(() => { load() }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
-  useEffect(() => { load() }, [])
+  const waiting = useMemo(() => messages.filter((m) => m.waiting), [messages])
+  // With nothing waiting, the page shows everything rather than an empty list
+  useEffect(() => { if (!loading && waiting.length === 0) setShow('all') }, [loading, waiting.length])
 
-  // One entry per sender address — the multi-select filter for multi-email threads
-  const senders = useMemo(() => {
-    const map = new Map<string, string>()
-    for (const m of messages) if (!map.has(m.from.toLowerCase())) map.set(m.from.toLowerCase(), m.leadName || m.fromName || m.from)
-    return [...map.entries()].map(([value, name]) => ({ value, label: `${name} · ${value}` }))
-  }, [messages])
-
-  // Which team mailbox(es) replies landed in — filter by team member
-  const [mailboxFilter, setMailboxFilter] = useState<string[]>([])
   const mailboxOptions = useMemo(() => {
     const set = new Set<string>()
     for (const m of messages) for (const mb of m.mailboxes || []) set.add(mb.toLowerCase())
@@ -60,116 +66,96 @@ export function InboxView({ onOpenLead }: { onOpenLead: (id: string) => void }) 
   }, [messages])
 
   const filtered = useMemo(() => {
-    const term = search.toLowerCase()
+    const term = search.trim().toLowerCase()
     const { fromMs, toMs } = rangeBounds(range)
     return messages.filter((m) => {
-      const t = new Date(m.receivedAt).getTime()
-      return (fromFilter.length === 0 || fromFilter.includes(m.from.toLowerCase())) &&
-        (mailboxFilter.length === 0 || (m.mailboxes || []).some((mb) => mailboxFilter.includes(mb.toLowerCase()))) &&
-        t >= fromMs && t <= toMs &&
-        (!term || m.subject.toLowerCase().includes(term) || m.preview.toLowerCase().includes(term) ||
-          m.from.toLowerCase().includes(term) || m.leadName.toLowerCase().includes(term) || (m.leadCompany || '').toLowerCase().includes(term))
+      const at = new Date(m.receivedAt).getTime()
+      if (show === 'waiting' ? !m.waiting : !withAuto && m.kind === 'auto') return false
+      return (mailboxFilter.length === 0 || (m.mailboxes || []).some((mb) => mailboxFilter.includes(mb.toLowerCase()))) &&
+        at >= fromMs && at <= toMs &&
+        (!term || [m.subject, m.preview, m.from, m.leadName, m.leadCompany].some((v) => (v || '').toLowerCase().includes(term)))
     })
-  }, [messages, search, fromFilter, mailboxFilter, range])
-
-  // Grouped view: one section per lead, newest thread first
-  const groups = useMemo(() => {
-    const map = new Map<string, { leadId: string; leadName: string; leadCompany: string; msgs: InboxMessage[] }>()
-    for (const m of filtered) {
-      const g = map.get(m.leadId) || { leadId: m.leadId, leadName: m.leadName, leadCompany: m.leadCompany, msgs: [] }
-      g.msgs.push(m)
-      map.set(m.leadId, g)
-    }
-    return [...map.values()].sort((a, b) => b.msgs[0].receivedAt.localeCompare(a.msgs[0].receivedAt))
-  }, [filtered])
+  }, [messages, search, show, withAuto, mailboxFilter, range])
 
   const safePage = Math.min(page, Math.max(1, Math.ceil(filtered.length / INBOX_PER_PAGE)))
   const pageMsgs = filtered.slice((safePage - 1) * INBOX_PER_PAGE, safePage * INBOX_PER_PAGE)
+  const autoCount = messages.filter((m) => m.kind === 'auto').length
+
+  const noAnswer = async (m: InboxMessage) => {
+    setBusy(m.id)
+    try {
+      await api('/api/admin/leads/inbox', { method: 'POST', body: JSON.stringify({ leadIds: [m.leadId], action: 'handled' }) })
+      await reload()
+      setMessages((list) => list.map((x) => (x.leadId === m.leadId ? { ...x, waiting: false } : x)))
+      notify('Taken off the list of replies to answer')
+    } catch (e: any) { notify(e.message, true) } finally { setBusy('') }
+  }
 
   return (
-    <div className="p-3 sm:p-5 space-y-3 max-w-6xl">
+    <div className="p-3 sm:p-5 space-y-3 max-w-5xl">
       <div className="flex flex-wrap items-center gap-2">
-        <h3 className="text-sm font-semibold text-gray-800 flex items-center gap-1.5">Replies from leads (all team inboxes) <InfoTip text="Emails from any known lead address, swept across every team mailbox (sales@, admin@ and each member — outreach goes out as sales@ with the sender CC'd, so replies can land anywhere). Filter by date, sender, or which mailbox received it; group by lead for threads. Click one to open that lead's conversation and reply with AI." /></h3>
+        <h2 className="text-sm font-semibold text-gray-900 flex items-center gap-1.5">Replies from leads <InfoTip text="Every email from a lead's address, from every team mailbox: sales, admin and each person's own. A reply moves its lead to Talking by itself, and a lead who asks us to stop is no longer sent the series. Open a message to read the whole conversation and answer; the answer is drafted for you to correct." /></h2>
         <div className="ml-auto flex items-center gap-2 flex-wrap">
           <div className="relative">
             <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-400" />
-            <input
-              value={search}
-              onChange={(e) => { setSearch(e.target.value); setPage(1) }}
-              placeholder="Search subject, sender..."
-              className="pl-8 pr-3 py-2 border border-gray-200 rounded-lg text-xs w-48"
-            />
+            <input value={search} onChange={(e) => { setSearch(e.target.value); setPage(1) }} placeholder="Search a name, a subject" aria-label="Search replies" className="pl-8 pr-3 py-2 border border-gray-200 rounded-lg text-xs w-48" />
           </div>
-          <MultiSelect label="Email" options={senders} values={fromFilter} onChange={(v) => { setFromFilter(v); setPage(1) }} />
-          <MultiSelect label="Received in" options={mailboxOptions} values={mailboxFilter} onChange={(v) => { setMailboxFilter(v); setPage(1) }} />
-          <button
-            onClick={() => setGrouped((g) => !g)}
-            title="Group messages by lead"
-            className={`px-2.5 py-2 text-xs border rounded-lg flex items-center gap-1 ${grouped ? 'bg-primary-50 border-primary-300 text-primary-700' : 'border-gray-200 text-gray-600 hover:bg-gray-50'}`}
-          >
-            <Users className="w-3.5 h-3.5" /> By lead
-          </button>
-          <button onClick={load} className="p-2 border border-gray-200 rounded-lg hover:bg-gray-50"><RefreshCw className="w-4 h-4 text-gray-500" /></button>
+          {mailboxOptions.length > 1 && <MultiSelect label="Received in" options={mailboxOptions} values={mailboxFilter} onChange={(v) => { setMailboxFilter(v); setPage(1) }} />}
+          <button onClick={() => load(true)} className="p-2 border border-gray-200 rounded-lg hover:bg-gray-50" title="Look at the mailboxes now" aria-label="Look at the mailboxes now"><RefreshCw className={`w-4 h-4 text-gray-500 ${loading ? 'animate-spin' : ''}`} /></button>
         </div>
       </div>
+
       <div className="flex items-center gap-2 flex-wrap">
-        <DateRangeFilter
-          value={range}
-          onChange={(r) => { setRange(r); setPage(1) }}
-          presets={[{ days: 1, label: 'Today' }, { days: 7, label: 'Week' }, { days: 30, label: 'Month' }]}
-        />
-        <span className="text-[11px] text-gray-400">{filtered.length} of {messages.length} replies · {rangeLabel(range)}</span>
+        {([['waiting', `Waiting for an answer (${waiting.length})`], ['all', `All replies (${messages.length - (withAuto ? 0 : autoCount)})`]] as Array<[Show, string]>).map(([key, label]) => (
+          <button key={key} onClick={() => { setShow(key); setPage(1) }} className={`px-2.5 py-1 text-xs rounded-full border transition-colors ${show === key ? 'bg-primary-600 text-white border-primary-600' : 'border-gray-200 text-gray-600 hover:bg-gray-50'}`}>{label}</button>
+        ))}
+        {show === 'all' && (
+          <>
+            <DateRangeFilter value={range} onChange={(r) => { setRange(r); setPage(1) }} presets={[{ days: 1, label: 'Today' }, { days: 7, label: 'Week' }, { days: 30, label: 'Month' }]} />
+            {autoCount > 0 && (
+              <label className="text-xs text-gray-600 flex items-center gap-1.5 cursor-pointer">
+                <input type="checkbox" className="rounded" checked={withAuto} onChange={(e) => { setWithAuto(e.target.checked); setPage(1) }} /> Show automatic mail ({autoCount})
+              </label>
+            )}
+          </>
+        )}
       </div>
+
       {note && <p className="text-xs bg-amber-50 border border-amber-200 text-amber-800 rounded-lg px-3 py-2">{note}</p>}
-      {loading && <Spinner label="Checking inbox..." />}
+      {loading && messages.length === 0 && <Spinner label="Looking at the mailboxes…" />}
       {!loading && filtered.length === 0 && !note && (
-        <div className="bg-gray-50 rounded-lg p-10 text-center text-sm text-gray-400">{messages.length === 0 ? 'No replies from known leads yet.' : 'No emails match the current filters.'}</div>
-      )}
-      {grouped ? (
-        <div className="space-y-3">
-          {groups.map((g) => (
-            <div key={g.leadId} className="bg-white border border-gray-200 rounded-lg overflow-hidden">
-              <button onClick={() => onOpenLead(g.leadId)} className="w-full text-left px-3 py-2 bg-gray-50 border-b border-gray-100 flex items-center justify-between gap-2 hover:bg-gray-100">
-                <span className="text-sm font-medium text-green-700 truncate">{g.leadName}{g.leadCompany ? ` · ${g.leadCompany}` : ''}</span>
-                <span className="text-[11px] text-gray-400 shrink-0">{g.msgs.length} message{g.msgs.length === 1 ? '' : 's'} · open lead →</span>
-              </button>
-              <div className="divide-y divide-gray-50">
-                {g.msgs.map((m) => (
-                  <button key={m.id} onClick={() => onOpenLead(m.leadId)} className="w-full text-left px-3 py-2 hover:bg-gray-50">
-                    <div className="flex items-center justify-between gap-3">
-                      <div className="text-[13px] text-gray-900 truncate">{m.subject || '(no subject)'}</div>
-                      <div className="text-[11px] text-gray-400 shrink-0 flex items-center gap-1.5">
-                        {mailboxNames(m) && <span className="bg-primary-50 text-primary-600 rounded-full px-1.5 py-0.5" title="Team mailbox(es) this reply landed in">→ {mailboxNames(m)}</span>}
-                        {formatDateTime(m.receivedAt)}
-                      </div>
-                    </div>
-                    <p className="text-xs text-gray-500 mt-0.5 line-clamp-1">{m.preview}</p>
-                  </button>
-                ))}
-              </div>
-            </div>
-          ))}
+        <div className="bg-gray-50 rounded-lg p-10 text-center text-sm text-gray-500">
+          {messages.length === 0 ? 'No lead has written back in the last 45 days.' : show === 'waiting' ? 'Nobody is waiting for an answer.' : 'No reply matches what is chosen above.'}
         </div>
-      ) : (
-        <>
-          <div className="space-y-1.5">
-            {pageMsgs.map((m) => (
-              <button key={m.id} onClick={() => onOpenLead(m.leadId)} className="w-full text-left bg-white border border-gray-200 rounded-lg px-3 py-2.5 hover:border-primary-300 hover:shadow-sm transition-all">
-                <div className="flex items-center justify-between gap-3">
-                  <div className="text-sm font-medium text-gray-900 truncate">{m.subject || '(no subject)'}</div>
-                  <div className="text-[11px] text-gray-400 shrink-0">{formatDateTime(m.receivedAt)}</div>
-                </div>
-                <div className="text-[11px] mt-0.5 flex items-center gap-1.5 min-w-0">
-                  <span className="text-green-700 truncate">{m.leadName} · {m.leadCompany || m.from}</span>
-                  {mailboxNames(m) && <span className="bg-primary-50 text-primary-600 rounded-full px-1.5 py-0.5 shrink-0" title="Team mailbox(es) this reply landed in">→ {mailboxNames(m)}</span>}
-                </div>
-                <p className="text-xs text-gray-600 mt-1 line-clamp-1">{m.preview}</p>
-              </button>
-            ))}
-          </div>
-          <Pagination page={safePage} total={filtered.length} perPage={INBOX_PER_PAGE} onPage={setPage} />
-        </>
       )}
+
+      <div className="space-y-1.5">
+        {pageMsgs.map((m) => (
+          <div key={m.id} className={`bg-white border rounded-lg px-3 py-2.5 flex flex-wrap items-center gap-x-3 gap-y-2 ${m.waiting ? 'border-red-200' : 'border-gray-200'}`}>
+            <button onClick={() => onOpenLead(m.leadId, !!m.waiting && m.kind !== 'stop')} className="min-w-0 flex-1 basis-72 text-left hover:text-primary-700">
+              <div className="flex items-center gap-2 min-w-0">
+                <span className="text-sm font-medium text-gray-900 truncate">{m.leadName}{m.leadCompany ? <span className="text-gray-400 font-normal"> · {m.leadCompany}</span> : null}</span>
+                {m.waiting && m.kind !== 'stop' && <span className="text-[10.5px] font-semibold rounded-full bg-red-100 text-red-700 px-1.5 py-0.5 shrink-0">waiting for an answer</span>}
+                {m.kind === 'stop' && <span className="text-[10.5px] font-semibold rounded-full bg-gray-200 text-gray-700 px-1.5 py-0.5 shrink-0">asked to stop</span>}
+                {m.kind === 'auto' && <span className="text-[10.5px] rounded-full bg-gray-100 text-gray-500 px-1.5 py-0.5 shrink-0">automatic</span>}
+              </div>
+              <div className="text-[13px] text-gray-700 truncate mt-0.5">{m.subject || '(no subject)'}</div>
+              <p className="text-xs text-gray-500 line-clamp-1">{m.preview}</p>
+            </button>
+            <div className="flex items-center gap-2 ml-auto text-[11px] text-gray-500">
+              {mailboxNames(m) && <span className="bg-gray-100 rounded-full px-1.5 py-0.5" title="The team mailbox this landed in">in {mailboxNames(m)}</span>}
+              <span>{formatDateTime(m.receivedAt)}</span>
+              {m.waiting && (
+                <>
+                  <button onClick={() => noAnswer(m)} disabled={busy === m.id} className="text-xs text-gray-500 hover:text-gray-800 disabled:opacity-50">No reply needed</button>
+                  <button onClick={() => onOpenLead(m.leadId, m.kind !== 'stop')} className="px-2.5 py-1.5 bg-red-600 text-white text-xs rounded-lg hover:bg-red-700">{m.kind === 'stop' ? 'Read' : 'Reply'}</button>
+                </>
+              )}
+            </div>
+          </div>
+        ))}
+      </div>
+      <Pagination page={safePage} total={filtered.length} perPage={INBOX_PER_PAGE} onPage={setPage} />
     </div>
   )
 }
@@ -206,7 +192,7 @@ function dayHeading(iso: string): string {
 }
 
 export function SchedulerView() {
-  const { notify, leads } = useCrm()
+  const { notify, leads, ask } = useCrm()
   const [meetings, setMeetings] = useState<Meeting[]>([])
   const [note, setNote] = useState('')
   const [loading, setLoading] = useState(true)
@@ -279,7 +265,7 @@ export function SchedulerView() {
                   </button>
                   <button
                     onClick={async () => {
-                      const comment = prompt(`Cancel "${m.subject}"?\nOptional message for the attendees (they get the cancellation by email):`)
+                      const comment = await ask({ title: 'Cancel this meeting?', text: `${m.subject}\nEveryone invited gets the cancellation by email.`, input: { label: 'A message for them (optional)', placeholder: 'For example: sorry, we need to move this to next week' }, confirm: 'Cancel the meeting', danger: true })
                       if (comment === null) return
                       setBusy(m.id)
                       try {
@@ -395,6 +381,7 @@ type FolderKey = (typeof FILE_FOLDERS)[number]['key']
 const folderOf = (name: string) => (name.includes('/') ? name.split('/')[0] : 'general')
 
 export function DocumentsView({ canManage, notify }: { canManage: boolean; notify: (m: string, e?: boolean) => void }) {
+  const { ask } = useCrm()
   const [docs, setDocs] = useState<Doc[]>([])
   const [loading, setLoading] = useState(true)
   const [uploading, setUploading] = useState(false)
@@ -434,7 +421,7 @@ export function DocumentsView({ canManage, notify }: { canManage: boolean; notif
   }
 
   const remove = async (name: string) => {
-    if (!confirm(`Delete ${name.split('/').pop()}? This cannot be undone.`)) return
+    if ((await ask({ title: `Delete ${name.split('/').pop()}?`, text: 'The file is removed for everyone. This cannot be undone.', confirm: 'Delete the file', danger: true })) === null) return
     try {
       await api(`/api/admin/leads/documents?name=${encodeURIComponent(name)}`, { method: 'DELETE' })
       notify('File deleted')

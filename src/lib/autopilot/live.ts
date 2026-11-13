@@ -8,7 +8,8 @@ import { publishNew } from '@/lib/social/publisher'
 import { createAgentDraft, createDraft, foundry, getDraft, listDrafts, mutateDraft, readBlob, recordSpend, textUsd, tokensOf, writeBlob, type TraceStep } from '@/lib/social/studio'
 import { isTransient, withRetry, type Deps } from './engine'
 import { emptyState, DEFAULT_CONFIG, type Slot, type State, type TargetKey, type TopicIdea } from './types'
-import { BLOG_FORMATS, POST_FORMATS, RESEARCH_SOURCES, buildBrief, firstLine, formatOf, pillarOf } from './variety'
+import { BLOG_FORMATS, POST_FORMATS, RESEARCH_SOURCES, buildBrief, firstLine, formatOf, freshEnough, pillarOf } from './variety'
+import { READER_CHECK, postRules } from '@/lib/writing-rules'
 import { linksHtml } from './email-actions'
 
 const FILE = 'autopilot/state.json'
@@ -32,16 +33,12 @@ export async function loadState(): Promise<State> {
 }
 export async function saveState(s: State) { await writeBlob(FILE, JSON.stringify(s), 'application/json') }
 
-// The shape of a post follows its format, not one template: some posts are a short punchy take, some a numbered
-// walkthrough, some a list of seven tools, some a short story. Only the rules every post shares are fixed here.
-const REACH_RULES = `Write for REACH on LinkedIn, for senior IT, engineering and AI leaders in India, the Gulf, Europe and the US.
-- Let the format below decide the shape and length. Vary it: a tight 60-word take, a numbered walkthrough, a list of as many items as the material really supports, a short before/after story, a copyable prompt in its own block. Do not force every post into "hook + 3 bullets".
-- Short lines and white space; no paragraph longer than two sentences. Plain words, no hype words, no filler.
-- Never open with "X launched / announced / released Y", "Excited to share", or a company name as the first words.
-- One idea per post. Be concrete and opinionated where the sources support it; give the reader something to do or try.
-- End with one line that earns a reply or a save (a specific question, or "save this for..."), then 3-5 relevant hashtags.
-- Mention every vendor fairly. Never invent facts, numbers, quotes or links; use only the supplied sources.
-- Do not paste source links in the post body: the reference link goes in the first comment, which is posted automatically.`
+// The writing rules themselves travel with the request (src/lib/writing-rules.ts, sent as `rules`). These few lines
+// are the editor's notes that go with every post: the shape follows the format, and the facts are in the references.
+const POST_NOTES = `Editor's notes for this LinkedIn post:
+- The reader is a manager who is not technical. Follow the writing rules you were given, to the letter.
+- Let the format below decide the shape and the length. Posts must not all look alike.
+- The reference material holds the facts (use only these), the words to explain and the day it happened.`
 
 const retry = <T,>(fn: () => Promise<T>, sleep: (ms: number) => Promise<void>, tries = 3) => withRetry(fn, { tries, baseMs: 3000, sleep, retryable: isTransient })
 
@@ -55,24 +52,28 @@ export async function researchIdeas(ctx: Parameters<Deps['research']>[0] & { cou
   const pillar = pillarOf(ctx.pillar)
   const formats = ctx.blog ? BLOG_FORMATS : pillar ? POST_FORMATS.filter(f => pillar.formats.includes(f.key)) : POST_FORMATS
   const n = ctx.count ?? ((weekend ? cfg.weekendSlots : cfg.weekdaySlots).length + 5)
-  const instructions = `You are the research editor for Gennoor Tech, an enterprise AI training company, whose audience is IT leaders, architects, developers and AI practitioners. Use web search to find what people in AI are genuinely talking about, trying and sharing RIGHT NOW (mostly the last 24-72 hours; a strong use case or tool from the last few weeks is fine).
+  const maxAge = pillar?.maxAgeDays ?? 21
+  const instructions = `You are the research editor for Gennoor Tech, an AI training company. The readers are managers and business owners who are curious about AI and are NOT technical, and the technical people who work beside them. Use web search to find what people in AI are really talking about, trying and sharing RIGHT NOW. Today is ${date}.
 ${pillar ? `This search covers ONE stream of the day's plan: ${pillar.label}.\n${pillar.brief}` : RESEARCH_SOURCES}
-${ctx.blog ? 'These are for a long-form blog article of about 1,800 words, so choose topics with enough substance, a clear enterprise angle and several credible sources, not a single press release.\n' : ''}Pick ${n} ideas that people will save, share or comment on: useful, specific, surprising or hands-on. Each needs a real release, tool, repo, paper, case study, benchmark, number or debate behind it.
+${ctx.blog ? 'These are for a blog article of about 1,300 words that explains ONE story to a reader who is not technical. Prefer the biggest AI story of the last few days that a business should understand (a launch, a new rule, a study, a deal), with several credible sources. Not a niche developer topic, and not a single press release.\n' : ''}Pick ${n} ideas that people will save, share or comment on: useful, specific, surprising or something to try. Each needs something real behind it: a release, a tool, a case study, a study, a number or a debate.
 Rules:
-- Variety is the priority. Spread the set across ${pillar ? `at least ${Math.min(n, pillar.formats.length, 3)}` : `at least ${Math.min(n, 4)}`} different formats from the list below${pillar?.key === 'microsoft' ? ' and different Microsoft products' : ', and across different companies, vendors and communities. Never two ideas about the same company or product'}.
-- ${ctx.blog ? 'At most one idea may be plain vendor news.' : 'At most one idea may use the "news-take" format.'}
-- Prefer ideas the reader can act on (try it, copy it, decide with it) over announcements.
+- Freshness. Every idea carries "date": the day it happened or was published, taken from the source. ${pillar?.news ? `Only stories from the last ${maxAge} days. Never an older story.` : `Prefer the last 7 days; nothing older than ${maxAge} days.`}
+- Variety is the priority. Spread the set across ${pillar ? `at least ${Math.min(n, pillar.formats.length, 3)}` : `at least ${Math.min(n, 4)}`} different formats from the list below${pillar?.key === 'microsoft' ? ' and different Microsoft products' : ', and across different companies. Never two ideas about the same company or product'}.
+- ${ctx.blog ? 'At most one idea may be a niche technical topic.' : pillar?.news ? 'Rank by how many people are talking about it today.' : 'At most one idea may use the "news-take" format.'}
+- Plain titles. "title" and "hook" are written for the reader who is not technical: say who did what, or what the reader gets, in everyday words, with no jargon. Never a clever frame ("X makes Y a Z problem", "X is not a Y story", "X turned Y into a Z story", "the real story is", "X turns Y into Z"). Not "Anthropic's IPO roadshow turned AI demand into a Wall Street story" but "Anthropic has started selling its shares to the public". Not "GitHub's BYOK usage API update makes Copilot FinOps a Monday problem" but "GitHub now shows what each team's AI coding assistant costs".
+- "facts": the 5 to 8 facts a writer needs to tell this story WITHOUT opening the links: who did what, when, the numbers with what they measure, what is new compared with before, and one limit or open question. One plain sentence each, true to the source, ending with the source's name in brackets.
+- "terms": up to 4 technical words in this story that the reader would not know, each with a plain explanation of under 15 words.
 - ${weekend ? `It is the weekend. ${cfg.weekendTheme}` : 'It is a weekday.'}
 - Stay inside these areas, broadly read: ${cfg.topics.join('; ')}.
 - Never touch: ${cfg.avoid.join('; ')}.
-${ctx.avoidVendors?.length ? `- These vendors have had enough coverage this week; avoid them unless the story is unmissable: ${ctx.avoidVendors.join(', ')}.\n` : ''}${ctx.recentFormats?.length ? `- Recently used formats (favour the others): ${ctx.recentFormats.join(', ')}.\n` : ''}- Do not repeat or re-angle these recent topics, even in different words: ${recent.slice(-60).join(' | ') || 'none'}.
+${ctx.avoidVendors?.length && !pillar?.news ? `- These companies have had enough coverage this week; avoid them unless the story is unmissable: ${ctx.avoidVendors.join(', ')}.\n` : ''}${ctx.recentFormats?.length ? `- Recently used formats (favour the others): ${ctx.recentFormats.join(', ')}.\n` : ''}- Do not repeat or re-angle these recent topics, even in different words: ${recent.slice(-60).join(' | ') || 'none'}.
 - Only include sources you actually found.
-- Do not put the format name in the title (no "Builder buzz:", "Myth vs fact:" prefixes).
+- Do not put the format name in the title (no "Myth vs fact:" prefixes).
 Formats (use the key):
 ${formats.map(f => `- ${f.key}: ${f.guide}`).join('\n')}
-Reply with JSON only: {"ideas":[{"title": string (<=110 chars), "format": string (one key above), "angle": string (the specific take, 1-2 sentences), "hook": string (a draft opening line), "company": string (the organisation the story is about: for a use case the company that built it, e.g. "Wayfair", not the AI vendor it used; for a launch the vendor; "none" for a general debate), "vendor": string (the main AI vendor or product involved, or "none"), "heat": number 1-10 (how much people are talking about it and would share it), "why": string, "sources":[{"title": string, "url": string}]}]}`
+Reply with JSON only: {"ideas":[{"title": string (<=110 chars, plain words), "date": "YYYY-MM-DD", "format": string (one key above), "angle": string (what happened and why it matters to a business, 1-2 plain sentences), "hook": string (a draft opening line, plain words), "company": string (the organisation the story is about: for a use case the company that did it, e.g. "Wayfair", not the AI vendor it used; for a launch the vendor; "none" for a general debate), "vendor": string (the main AI vendor or product involved, or "none"), "heat": number 1-10 (how many people are talking about it and would share it), "why": string, "facts": [string], "terms": [{"term": string, "plain": string}], "sources":[{"title": string, "url": string}]}]}`
   // Several ideas with sources need far more room than a short answer; a cut-off JSON reply would read as "no topics".
-  const res = await retry(() => webGroundedCompletion(instructions, `Today is ${date}. Find the topics.`, 6000), sleep)
+  const res = await retry(() => webGroundedCompletion(instructions, `Today is ${date}. Find the topics.`, 9000), sleep)
   const parsed = parseJson<{ ideas?: TopicIdea[] }>(res.text)
   // Citation links carry tracking parameters (utm_source=...), so compare on host + path and keep the clean link.
   const clean = (u: string) => { try { const x = new URL(u); [...x.searchParams.keys()].filter(k => /^utm_|^ref$/i.test(k)).forEach(k => x.searchParams.delete(k)); x.hash = ''; return x.toString().replace(/\/$/, '') } catch { return u } }
@@ -89,8 +90,16 @@ Reply with JSON only: {"ideas":[{"title": string (<=110 chars), "format": string
       const checks = await Promise.all(listed.map(async s => ((await loads(s.url)) ? { title: s.title, url: clean(s.url) } : null)))
       kept = checks.filter((x): x is { title: string; url: string } => !!x)
     }
-    ideas.push({ ...i, sources: kept.length ? kept : [...known.values()].slice(0, 2) })
+    const facts = Array.isArray(i.facts) ? i.facts.map(f => String(f).replace(/\s+/g, ' ').trim()).filter(f => f.length > 12).slice(0, 10) : []
+    const terms = Array.isArray(i.terms) ? i.terms.filter(t => t && t.term && t.plain).map(t => ({ term: String(t.term).slice(0, 60), plain: String(t.plain).slice(0, 160) })).slice(0, 5) : []
+    ideas.push({ ...i, facts, terms, sources: kept.length ? kept : [...known.values()].slice(0, 2) })
   }
+  // An idea that happened too long ago for its stream is not news: it is dropped here, whatever the model called it.
+  const stale = ideas.filter(i => !freshEnough(i, pillar, date, maxAge))
+  if (stale.length) console.log(`[research] ${pillar?.key || (ctx.blog ? 'blog' : 'all')}: dropped ${stale.length} stale idea(s): ${stale.map(i => `${i.date || 'no date'} ${i.title.slice(0, 50)}`).join(' | ')}`)
+  const current = ideas.filter(i => !stale.includes(i))
+  ideas.length = 0
+  ideas.push(...current)
   // Unknown format keys are dropped (the planner then treats the idea as format-less). Ranking and the vendor and
   // format spread are decided by the planner, which knows the day's slots and the week's history.
   for (const i of ideas) if (!formatOf(formats, i.format)) i.format = undefined
@@ -98,8 +107,8 @@ Reply with JSON only: {"ideas":[{"title": string (<=110 chars), "format": string
 }
 
 /** Runs the Python agent team to completion and returns its final result (the web app does not need the live steps here). */
-async function runTeam(topic: string, brief: string, refs: string, mode: 'post' | 'motion') {
-  const res = await agentFetch('/run', { topic, brief, references: refs, mode })
+async function runTeam(body: TeamRequest) {
+  const res = await agentFetch('/run', body)
   // The service's own words are kept, so the Autopilot page says why (a bare "returned 500" hid the cause for two days)
   if (!res.ok || !res.body) throw new Error(`Agent service returned ${res.status}${res.ok ? '' : `: ${(await res.text().catch(() => '')).replace(/\s+/g, ' ').slice(0, 160)}`}`)
   const reader = res.body.getReader(), dec = new TextDecoder()
@@ -124,7 +133,15 @@ async function runTeam(topic: string, brief: string, refs: string, mode: 'post' 
   return { result, trace }
 }
 
-const sourcesText = (t: TopicIdea) => `${t.angle}\nSuggested hook (a starting point, not a must): ${t.hook || ''}\n${t.why ? `Why now: ${t.why}\n` : ''}Sources (use only these):\n${t.sources.map(s => `- ${s.title}: ${s.url}`).join('\n')}`
+/** What the writers are given about a story: they have no web access, so the facts come with the request. */
+export const sourcesText = (t: TopicIdea) => [
+  `The story: ${t.angle}`,
+  t.date ? `When it happened: ${t.date}` : '',
+  t.why ? `Why it matters now: ${t.why}` : '',
+  t.facts?.length ? `FACTS (use only these and the sources; each ends with where it comes from):\n${t.facts.map(f => `- ${f}`).join('\n')}` : '',
+  t.terms?.length ? `WORDS TO EXPLAIN in plain words where you use them:\n${t.terms.map(x => `- ${x.term}: ${x.plain}`).join('\n')}` : '',
+  `Sources (the link goes in the first comment, never in the post):\n${t.sources.map(s => `- ${s.title}: ${s.url}`).join('\n')}`,
+].filter(Boolean).join('\n')
 const formatBrief = (t: TopicIdea) => { const f = formatOf(POST_FORMATS, t.format); return f ? `Format: ${f.label}. ${f.guide}\n` : '' }
 
 /** A different opening line for the personal profile, so the page and profile posts are not word-for-word identical. */
@@ -140,26 +157,61 @@ async function variantOf(text: string, sleep: Deps['sleep']): Promise<string | u
   } catch { return undefined }
 }
 
+/** One request to the agent team (services/studio-agents, POST /run). */
+export interface TeamRequest { topic: string; brief: string; references: string; mode: 'post' | 'motion' | 'text'; rules: string; review_rules: string }
+
 /**
  * What is sent to the writers for one slot: the editor's notes and the reference material. Kept apart from the
  * sending so that `npx tsx --env-file=.env.local scripts/autopilot-live-check.ts` can build the real thing and try it.
  * The brief is built to a fixed size: the service refuses a longer one, and on 12 and 13 November 2026 an over-long,
  * half-cut list of openings stopped every draft.
  */
-export function draftRequest(ctx: Parameters<Deps['generate']>[0]): { brief: string; references: string } {
+export function draftRequest(ctx: Parameters<Deps['generate']>[0]): TeamRequest {
   const { slot, cfg, notes, recentHooks = [] } = ctx
   const topic = slot.topic!
-  const brief = buildBrief({ rules: REACH_RULES, format: slot.kind === 'poll' ? '' : formatBrief(topic), weekend: slot.weekend ? cfg.weekendTheme : '', avoid: cfg.avoid, notes, openings: recentHooks }, BRIEF_MAX)
-  return { brief, references: sourcesText(topic) }
+  const brief = buildBrief({ rules: POST_NOTES, format: slot.kind === 'poll' ? '' : formatBrief(topic), weekend: slot.weekend ? cfg.weekendTheme : '', avoid: cfg.avoid, notes, openings: recentHooks }, BRIEF_MAX)
+  // "text": the post alone (the writer, then the reviewer). The writing rules travel with every request.
+  return { topic: topic.title, brief, references: sourcesText(topic), mode: 'text', rules: postRules(), review_rules: READER_CHECK }
+}
+
+/** The text a model call returned. */
+const textOf = (j: any): string => j.output_text || (j.output || []).flatMap((o: any) => o.content || []).map((c: any) => c.text || '').join('')
+
+/**
+ * The website's own writer and reviewer: two direct model calls with the same rules the agent team is given.
+ * Used only when the agent service does not answer.
+ */
+export async function writeDirect(topic: string, brief: string, refs: string): Promise<{ result: { text: string; review: { verdict: string; notes: string[] } }; trace: TraceStep[] }> {
+  const input = `Topic: ${topic}\nEditor's notes: ${brief}\n\nReference material:\n${refs}`
+  const w = await foundry('/openai/v1/responses', {
+    model: TEXT_MODEL,
+    instructions: `You write LinkedIn posts for Gennoor Tech, an AI training company in India. Using ONLY the facts supplied, write the post. Follow the format and the length the editor's notes ask for (otherwise 80-200 words, short lines).\n\n${postRules()}\n\nReply as JSON only: {"text": string}`,
+    input,
+  })
+  const text = (parseJson<{ text?: string }>(textOf(w))?.text || textOf(w)).trim()
+  const r = await foundry('/openai/v1/responses', {
+    model: TEXT_MODEL,
+    instructions: `You review LinkedIn posts for Gennoor Tech before they are published.\n\n${READER_CHECK}\n\nThen check the post against the rules the writer was given, below: one idea; the first line as the rules ask; every number and name is in the facts supplied; the format and length of the editor's notes; an opening unlike the recent ones in the notes; hashtags present; no first person singular; nothing of ours called free, no price, no customer's name, no promised result.\n\nRULES THE WRITER WAS GIVEN:\n${postRules()}\n\nReply as JSON only: {"verdict": "pass" | "revise", "notes": [string]}. Each note names the exact words to change.`,
+    input: `${input}\n\nTHE POST TO REVIEW:\n${text}`,
+  })
+  const review = parseJson<{ verdict?: string; notes?: string[] }>(textOf(r))
+  return {
+    result: { text, review: { verdict: review?.verdict === 'pass' ? 'pass' : 'revise', notes: Array.isArray(review?.notes) ? review!.notes!.map(String) : ['The review could not be read.'] } },
+    trace: [
+      { agent: 'writer', label: 'Write (by the website: the agent service did not answer)', output: text.slice(0, 12000), usd: textUsd(w) },
+      { agent: 'reviewer', label: 'Review (by the website)', output: textOf(r).slice(0, 4000), usd: textUsd(r) },
+    ],
+  }
 }
 
 async function generate(ctx: Parameters<Deps['generate']>[0], sleep: Deps['sleep']): ReturnType<Deps['generate']> {
   const { slot } = ctx
   const topic = slot.topic!
-  const { brief } = draftRequest(ctx)
+  const request = draftRequest(ctx)
+  const { brief } = request
 
   if (slot.kind === 'poll') {
-    const draft = await createDraft(topic.title, `${brief}\nThe poll should ask a question practitioners will have an opinion on, based on: ${sourcesText(topic)}`, 'poll')
+    const draft = await createDraft(topic.title, `${brief}\nThe poll should ask a question a manager who is not technical would have an opinion on, in plain words, based on:\n${sourcesText(topic)}`, 'poll')
     await recordSpend(draft.id, 'Autopilot poll', 0)
     const p = draft.poll
     const ok = !!p && p.question.length >= 10 && p.options.length >= 2 && p.options.every(o => o.length >= 2) && draft.text.length >= 40
@@ -167,9 +219,14 @@ async function generate(ctx: Parameters<Deps['generate']>[0], sleep: Deps['sleep
     return { draftId: draft.id, text: toPlain(draft.text), verdict: ok ? 'pass' : 'revise', notes: ok ? [] : ['The poll needs a clear question and 2-4 distinct options with an intro.'], variant }
   }
 
-  // GIF/motion posts are switched off: every slot produces a normal post.
-  const mode = 'post'
-  const { result, trace } = await runTeam(topic.title, brief, sourcesText(topic), mode)
+  // Autopilot posts have no picture, so the team runs its two-step text mode: the writer, then the reviewer.
+  // "It should not fail" (owner, 13 November 2026): when the agent service does not answer, the website writes the
+  // post itself with the same rules, so a slot is not held because one service is down.
+  const refs = request.references
+  const { result, trace } = await runTeam(request).catch(async (e) => {
+    console.error(`[autopilot] the agent team did not answer (${String(e?.message || e).slice(0, 160)}); the website writes this post itself`)
+    return writeDirect(topic.title, brief, refs)
+  })
   const draft = await createAgentDraft(topic.title, result, trace, [], topic.sources.map(x => x.url))
   for (const t of trace) if (t.usd) await recordSpend(draft.id, `Autopilot ${t.label}`, t.usd)
   // Autopilot posts are text-only: no image is generated for them.

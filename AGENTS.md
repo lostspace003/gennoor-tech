@@ -12,7 +12,8 @@ guide before doing that kind of work.
 | Anything a visitor or a member of staff sees: a page, a component, a menu, a style | `docs/DESIGN.md` | `gennoor-site-design` |
 | A film, the presentation, an Instagram or LinkedIn video, the catalogue | `scripts/show/README.md` | `gennoor-films` |
 | A new page, a title or a description, the picture a shared link shows, a blog post, the sitemap | `docs/SEO.md` | `gennoor-site-design` |
-| A LinkedIn post, the film campaign, what the writing agents are told | `docs/LINKEDIN.md` | |
+| A LinkedIn post, a blog article, the autopilot, the film campaign, what any writer or reviewer is told | `docs/LINKEDIN.md` and `src/lib/writing-rules.ts` | |
+| The CRM: leads, replies, the email series, the Today page | `docs/CRM.md` | |
 | Finishing: branch, pull request, merge, deploy | `.claude/skills/gennoor-ship/SKILL.md` | `gennoor-ship` |
 
 The skills are in `.claude/skills/`. They are plain Markdown: any tool can read them.
@@ -32,6 +33,10 @@ The skills are in `.claude/skills/`. They are plain Markdown: any tool can read 
    is "the last weekend of every month, Saturday & Sunday". The Claude Partner line is used word for word.
    The AI Weekend is about AI, not one product: its seven parts are written once, in `src/data/ai-weekend.ts`.
    Nobody is named as the trainer: "an industry expert". The catalogue lists only what we really offer.
+   **The reader is not technical.** Posts, articles and emails are written for a manager who is curious
+   about AI and is not a specialist: the point first, every technical word explained, short sentences, no
+   clever framing. The rules are in one file, `src/lib/writing-rules.ts`, and every writer and reviewer is
+   given them. A text never talks about its own drafting.
 6. **Only the look changes when the look changes.** Page addresses, form field names and API paths stay.
 7. **Not without being asked:** sending a real email, typing a password or a secret, closing the owner's
    PowerPoint or Excel, deleting data.
@@ -46,8 +51,10 @@ python scripts/stage-codemod.py                        # lists colours written a
 node scripts/seo-head.mjs http://localhost:3111 home training   # what a search engine and a shared link read
 node scripts/contrast-check.mjs home ai-weekend        # can every word be read, in light and in dark
 npx tsx scripts/campaign-check.ts                      # the LinkedIn film campaign: the plan and all its posts
-npx tsx scripts/autopilot-check.ts                     # what the autopilot sends to its writers is whole and fits (no network)
-npx tsx --env-file=.env.local scripts/autopilot-live-check.ts   # the autopilot's real request, tried on the live agent service
+npx tsx scripts/autopilot-check.ts                     # the autopilot: what it sends is whole and fits, the day's plan, the writing rules (no network)
+npx tsx scripts/crm-check.ts                           # the CRM: what a reply does, the Today lists, the hourly limit (made-up leads)
+npx tsx --env-file=.env.local scripts/autopilot-live-check.ts --fresh   # research now and one post written for real; nothing saved
+npx tsx --env-file=.env.local scripts/blog-live-check.ts       # one whole article written for real; nothing saved
 ```
 
 ## Who may sign in

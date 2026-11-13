@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import DOMPurify from 'dompurify'
 import {
   ArrowLeft, Mail, Phone, Building2, Linkedin, Globe, Send, Sparkles, Calendar, Trash2,
@@ -13,6 +13,7 @@ import { shortName } from '@/lib/crm/users'
 import { StatusBadge, StepSelect, api, formatDateTime, timeAgo, Spinner, DurationSlider, TimeSlider, LeadLocalTime } from './shared'
 import { useCrm } from './CrmContext'
 import SendStepModal from './SendStep'
+import { needsAnswer } from '@/lib/crm/replies'
 
 type Tab = 'details' | 'emails' | 'linkedin' | 'meeting'
 const TABS: Array<[Tab, string, any]> = [
@@ -37,12 +38,14 @@ interface Props {
   onReload: () => Promise<void>
   notify: Notify
   initialTab?: string
+  /** They came from Today to answer a reply, or to write a follow-up: the right window opens by itself. */
+  intent?: 'reply' | 'write'
 }
 
-export default function LeadWorkspace({ lead, canManage, onClose, onReload, notify, initialTab }: Props) {
+export default function LeadWorkspace({ lead, canManage, onClose, onReload, notify, initialTab, intent }: Props) {
   const pickTab = (t?: string): Tab => (TABS.some(([id]) => id === t) ? (t as Tab) : TAB_ALIASES[t || ''] || 'details')
   const [tab, setTab] = useState<Tab>(pickTab(initialTab))
-  const { userEmail, isManager } = useCrm()
+  const { userEmail, isManager, ask } = useCrm()
   const [busy, setBusy] = useState(false)
 
   useEffect(() => setTab(pickTab(initialTab)), [lead.id, initialTab]) // eslint-disable-line react-hooks/exhaustive-deps
@@ -62,8 +65,9 @@ export default function LeadWorkspace({ lead, canManage, onClose, onReload, noti
   const hold = async (action: 'claim' | 'release' | 'dump' | 'restore') => {
     let reason: string | undefined
     if (action === 'dump') {
-      reason = prompt('Why archive this lead? (for example: wrong fit, duplicate, no response)') || undefined
-      if (reason === undefined) return
+      const why = await ask({ title: `Archive ${lead.name}?`, text: 'An archived lead leaves every list. It can be restored at any time.', input: { label: 'Why? (kept on the lead)', placeholder: 'For example: wrong fit, duplicate, no response', required: true }, confirm: 'Archive' })
+      if (why === null) return
+      reason = why
     }
     setBusy(true)
     try {
@@ -128,7 +132,7 @@ export default function LeadWorkspace({ lead, canManage, onClose, onReload, noti
 
       <div className="flex-1 overflow-y-auto">
         {tab === 'details' && <DetailsTab lead={lead} canManage={canManage} canWork={canWork} onReload={onReload} onClose={onClose} notify={notify} />}
-        {tab === 'emails' && <EmailsTab lead={lead} canWork={canWork} onReload={onReload} notify={notify} />}
+        {tab === 'emails' && <EmailsTab lead={lead} canWork={canWork} onReload={onReload} notify={notify} intent={intent} />}
         {tab === 'linkedin' && <LinkedInTab lead={lead} canWork={canWork} onReload={onReload} notify={notify} onEdit={() => setTab('details')} />}
         {tab === 'meeting' && <MeetingTab lead={lead} canWork={canWork} onReload={onReload} notify={notify} />}
       </div>
@@ -144,6 +148,7 @@ const DETAIL_FIELDS: Array<[keyof Lead, string, string?]> = [
 ]
 
 function DetailsTab({ lead, canManage, canWork, onReload, onClose, notify }: { lead: Lead; canManage: boolean; canWork: boolean; onReload: () => Promise<void>; onClose: () => void; notify: Notify }) {
+  const { ask } = useCrm()
   const [editing, setEditing] = useState(false)
   const [form, setForm] = useState<Record<string, string>>({})
   const [saving, setSaving] = useState(false)
@@ -165,7 +170,7 @@ function DetailsTab({ lead, canManage, canWork, onReload, onClose, notify }: { l
   }
 
   const remove = async () => {
-    if (!confirm(`Delete ${lead.name} for good? This cannot be undone.`)) return
+    if ((await ask({ title: `Delete ${lead.name} for good?`, text: 'Their details, emails and history are removed. This cannot be undone. To keep them out of the way without losing anything, archive them instead.', confirm: 'Delete for good', danger: true })) === null) return
     try {
       await api(`/api/admin/leads?id=${encodeURIComponent(lead.id)}`, { method: 'DELETE' })
       await onReload()
@@ -289,7 +294,9 @@ function InfoRow({ icon: Icon, value, href, placeholder }: { icon: any; value: s
 
 /* ---------------- Emails: the series, then the conversation ---------------- */
 
-function EmailsTab({ lead, canWork, onReload, notify }: { lead: Lead; canWork: boolean; onReload: () => Promise<void>; notify: Notify }) {
+function EmailsTab({ lead, canWork, onReload, notify, intent }: { lead: Lead; canWork: boolean; onReload: () => Promise<void>; notify: Notify; intent?: 'reply' | 'write' }) {
+  const { ask } = useCrm()
+  const [opened, setOpened] = useState(false)
   const [inbound, setInbound] = useState<InboundMessage[]>([])
   const [inboundNote, setInboundNote] = useState('')
   const [loading, setLoading] = useState(true)
@@ -311,7 +318,7 @@ function EmailsTab({ lead, canWork, onReload, notify }: { lead: Lead; canWork: b
   const stopOrResume = async (action: 'stop' | 'resume') => {
     let reason = ''
     if (action === 'stop') {
-      const r = prompt('Why stop the emails? (for example: asked us to stop, now talking by phone)')
+      const r = await ask({ title: `Stop the email series for ${lead.name}?`, text: 'No more emails of the series will be offered for this lead. You can still write to them yourself, and resume the series later.', input: { label: 'Why? (kept on the lead)', placeholder: 'For example: asked us to stop, now talking by phone' }, confirm: 'Stop the emails' })
       if (r === null) return
       reason = r
     }
@@ -319,6 +326,31 @@ function EmailsTab({ lead, canWork, onReload, notify }: { lead: Lead; canWork: b
       await api('/api/admin/leads/sequence', { method: 'PATCH', body: JSON.stringify({ leadIds: [lead.id], action, reason }) })
       await onReload()
       notify(action === 'stop' ? 'Email series stopped for this lead' : 'Email series resumed')
+    } catch (e: any) { notify(e.message, true) }
+  }
+
+  // They came here to answer or to follow up: open the right window once, when the mail has been read
+  const waiting = needsAnswer(lead)
+  useEffect(() => {
+    if (opened || loading || !canWork || !lead.email || !intent) return
+    setOpened(true)
+    if (intent === 'reply') setComposing({ replyTo: inbound[0] || null })
+    else setComposing({ replyTo: null })
+  }, [intent, loading, opened, canWork, lead.email, inbound])
+
+  const noAnswerNeeded = async () => {
+    try {
+      await api('/api/admin/leads/inbox', { method: 'POST', body: JSON.stringify({ leadIds: [lead.id], action: 'handled' }) })
+      await onReload()
+      notify('Taken off the list of replies to answer')
+    } catch (e: any) { notify(e.message, true) }
+  }
+  const closeLead = async () => {
+    if ((await ask({ title: `Close ${lead.name}?`, text: 'The lead moves to Closed and leaves your lists. It can be moved back at any time.', confirm: 'Close lead' })) === null) return
+    try {
+      await api('/api/admin/leads', { method: 'PUT', body: JSON.stringify({ id: lead.id, status: 'lost' }) })
+      await onReload()
+      notify('Closed')
     } catch (e: any) { notify(e.message, true) }
   }
 
@@ -361,6 +393,10 @@ function EmailsTab({ lead, canWork, onReload, notify }: { lead: Lead; canWork: b
           <p className="text-xs bg-green-50 border border-green-200 text-green-800 rounded-lg px-3 py-2">All {SEQUENCE.length} emails have been sent. Write to them directly from here on.</p>
         ) : null}
 
+        {(lead.status === 'qualified' || lead.status === 'proposal') && !progress.stopped && !progress.finished && (
+          <p className="text-[11px] text-gray-500">You are in conversation with this lead, so the series is not on your Today list. Send its next email only if it helps.</p>
+        )}
+
         <ol className="space-y-0.5">
           {SEQUENCE.map((s, i) => {
             const sent = lead.sequence?.sent.find((x) => x.step === s.id)
@@ -402,6 +438,24 @@ function EmailsTab({ lead, canWork, onReload, notify }: { lead: Lead; canWork: b
           </div>
         </div>
 
+        {waiting && lead.reply && (
+          <div className={`rounded-lg border px-3.5 py-3 flex flex-wrap items-center justify-between gap-x-4 gap-y-2 ${lead.reply.kind === 'stop' ? 'border-gray-300 bg-gray-50' : 'border-red-200 bg-red-50'}`}>
+            <div className="min-w-0 flex-1 basis-64">
+              <div className={`text-sm font-semibold ${lead.reply.kind === 'stop' ? 'text-gray-800' : 'text-red-800'}`}>
+                {lead.reply.kind === 'stop' ? `${lead.name} asked us to stop. The email series has stopped.` : `${lead.name} replied ${timeAgo(lead.reply.at).toLowerCase()} and is waiting for an answer.`}
+              </div>
+              {lead.reply.preview && <p className="text-xs text-gray-600 mt-0.5 line-clamp-2">“{lead.reply.preview}”</p>}
+            </div>
+            {canWork && (
+              <div className="flex items-center gap-2">
+                <button onClick={noAnswerNeeded} className="text-xs text-gray-600 hover:text-gray-900">No reply needed</button>
+                {lead.reply.kind === 'stop'
+                  ? <button onClick={closeLead} className="px-3 py-1.5 bg-gray-800 text-white text-xs rounded-lg hover:bg-gray-900">Close lead</button>
+                  : <button onClick={() => setComposing({ replyTo: inbound[0] || null })} disabled={!lead.email} className="px-3 py-1.5 bg-red-600 text-white text-xs rounded-lg hover:bg-red-700 flex items-center gap-1.5 disabled:opacity-50"><Reply className="w-3.5 h-3.5" /> Reply</button>}
+              </div>
+            )}
+          </div>
+        )}
         {inboundNote && <p className="text-xs bg-amber-50 border border-amber-200 text-amber-800 rounded-lg px-3 py-2">{inboundNote}</p>}
         {loading && thread.length === 0 && <Spinner label="Loading…" />}
         {!loading && thread.length === 0 && <div className="bg-gray-50 rounded-lg p-8 text-center text-sm text-gray-400">Nothing sent yet. Start with email 1 of the series.</div>}
@@ -445,16 +499,22 @@ function EmailComposer({ lead, replyTo, onClose, onSent, notify }: { lead: Lead;
   const [cc, setCc] = useState('')
   const [busy, setBusy] = useState('')
   const [files, setFiles] = useState<string[]>([])
+  const typedOnce = useRef(false)
 
-  const draft = async () => {
+  // A reply opens with a first draft already on its way: the person reads, corrects and sends. Anything typed
+  // while it is being written is kept (the draft then does not replace it).
+  useEffect(() => { if (replyTo) draft(true) }, []) // eslint-disable-line react-hooks/exhaustive-deps
+
+  const draft = async (auto = false) => {
     setBusy('draft')
     try {
       const context = replyTo ? `Reply to this email from the lead:\n${(replyTo.body || replyTo.preview).replace(/<[^>]+>/g, ' ').slice(0, 2500)}` : ''
       const instructions = [context, ask.trim() && `What to say: ${ask.trim()}`].filter(Boolean).join('\n\n') || undefined
       const res = await api<{ subject: string; body: string; source: string }>('/api/admin/leads/generate-email', { method: 'POST', body: JSON.stringify({ leadId: lead.id, instructions, reply: !!replyTo }) })
+      if (auto && typedOnce.current) return
       if (!replyTo || !subject) setSubject(res.subject)
       setBody(res.body)
-      if (res.source !== 'ai') notify('The writing assistant is unavailable, so a standard draft was loaded. Edit it before sending.', true)
+      if (res.source !== 'ai') notify('The writing assistant is not available, so a plain draft was loaded. Write your answer where it says so before sending.', true)
     } catch (e: any) { notify(e.message, true) } finally { setBusy('') }
   }
 
@@ -512,12 +572,13 @@ function EmailComposer({ lead, replyTo, onClose, onSent, notify }: { lead: Lead;
         <div className="p-5 space-y-3 overflow-y-auto">
           <div className="flex gap-2">
             <input value={ask} onChange={(e) => setAsk(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && draft()} className={inputCls} placeholder={replyTo ? 'Optional: what should the reply say?' : 'Optional: what is this email about?'} />
-            <button onClick={draft} disabled={!!busy} className="px-3 py-2 border border-gray-300 text-gray-800 text-sm rounded-lg hover:bg-gray-50 flex items-center gap-1.5 whitespace-nowrap disabled:opacity-50">
+            <button onClick={() => draft()} disabled={!!busy} className="px-3 py-2 border border-gray-300 text-gray-800 text-sm rounded-lg hover:bg-gray-50 flex items-center gap-1.5 whitespace-nowrap disabled:opacity-50">
               <Sparkles className="w-4 h-4" /> {busy === 'draft' ? 'Writing…' : body ? 'Write again' : 'Write a draft'}
             </button>
           </div>
           <input value={subject} onChange={(e) => setSubject(e.target.value)} placeholder="Subject" className={`${inputCls} font-medium`} />
-          <textarea value={body} onChange={(e) => setBody(e.target.value)} rows={12} placeholder="Write your message, or press Write a draft and edit what comes back." className={inputCls} />
+          <textarea value={body} onChange={(e) => { typedOnce.current = true; setBody(e.target.value) }} rows={12} placeholder={busy === 'draft' ? 'Writing a first draft from their message…' : 'Write your message, or press Write a draft and edit what comes back.'} className={inputCls} />
+          {replyTo && <p className="text-[11px] text-gray-500">The draft is written by the assistant from their message. Read it, correct it, then send: nothing goes out by itself.</p>}
           <input value={cc} onChange={(e) => setCc(e.target.value)} placeholder="Copy others (comma-separated emails, optional)" className={`${inputCls} text-xs`} />
           <div className="flex flex-wrap items-center gap-2">
             <label className="px-2.5 py-1.5 border border-gray-200 rounded-lg text-xs cursor-pointer hover:bg-gray-50 flex items-center gap-1.5">
@@ -548,6 +609,7 @@ function EmailComposer({ lead, replyTo, onClose, onSent, notify }: { lead: Lead;
 interface LiUsage { configured: boolean; connects?: { used: number; cap: number }; messages?: { used: number; cap: number } }
 
 function LinkedInTab({ lead, canWork, onReload, notify, onEdit }: { lead: Lead; canWork: boolean; onReload: () => Promise<void>; notify: Notify; onEdit: () => void }) {
+  const { ask: confirmFirst } = useCrm()
   const [note, setNote] = useState(fillTokens(LINKEDIN_CONNECT_NOTE, lead))
   const [message, setMessage] = useState(fillTokens(LINKEDIN_FIRST_MESSAGE, lead))
   const [busy, setBusy] = useState('')
@@ -561,7 +623,7 @@ function LinkedInTab({ lead, canWork, onReload, notify, onEdit }: { lead: Lead; 
 
   const act = async (action: 'connect' | 'message') => {
     const text = action === 'connect' ? note : message
-    if (!confirm(action === 'connect' ? `Send a connection request to ${lead.name} from the company LinkedIn sign-in?` : `Send this LinkedIn message to ${lead.name}?`)) return
+    if ((await confirmFirst(action === 'connect' ? { title: `Send a connection request to ${lead.name}?`, text: 'It goes out from the company LinkedIn sign-in, with the note you see.', confirm: 'Send the request' } : { title: `Send this LinkedIn message to ${lead.name}?`, text: 'It goes out from the company LinkedIn sign-in.', confirm: 'Send the message' })) === null) return
     setBusy(action)
     try {
       await api('/api/admin/leads/linkedin', { method: 'POST', body: JSON.stringify({ action, leadId: lead.id, text }) })

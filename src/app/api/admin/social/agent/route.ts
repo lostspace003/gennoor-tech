@@ -1,6 +1,7 @@
 import { NextRequest } from 'next/server'
 import { verifyAdmin, unauthorizedResponse } from '@/lib/admin-auth'
 import { agentFetch } from '@/lib/social/agent-service'
+import { READER_CHECK, postRules } from '@/lib/writing-rules'
 import { createAgentDraft, recordSpend, type TraceStep } from '@/lib/social/studio'
 import { getRefs } from '@/lib/social/references'
 
@@ -30,7 +31,7 @@ export async function POST(req: NextRequest) {
 
   let upstream: Response
   try {
-    upstream = await agentFetch('/run', { topic, brief: String(b.brief || ''), references: texts.join('\n\n').slice(0, 38_000), mode }, req.signal)
+    upstream = await agentFetch('/run', { topic, brief: String(b.brief || '').slice(0, 11_000), references: texts.join('\n\n').slice(0, 38_000), mode, rules: postRules(), review_rules: READER_CHECK }, req.signal)
   } catch (e: any) {
     return Response.json({ error: e?.message || 'Agent service unreachable.' }, { status: 502 })
   }

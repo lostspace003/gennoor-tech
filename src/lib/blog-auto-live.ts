@@ -8,6 +8,9 @@ import { createBlogDraft, dateLabel, getBlogDraft, listBlogDrafts, mutateBlogDra
 import { emptyAutoState, DEFAULT_BLOG_AUTO, type AutoDeps, type AutoState } from '@/lib/blog-auto'
 import { sendAdminAlert, submitBlogPost } from '@/lib/blog-publish'
 import { agentFetch } from '@/lib/social/agent-service'
+import { webGroundedCompletion } from '@/lib/crm/foundry'
+import { isTransient, withRetry } from '@/lib/autopilot/engine'
+import { READER_CHECK, articleRules } from '@/lib/writing-rules'
 import { foundry, readBlob, recordSpend, textUsd, tokensOf, writeBlob } from '@/lib/social/studio'
 
 const FILE = 'blog/automation.json'
@@ -21,18 +24,72 @@ export async function loadAutoState(): Promise<AutoState> {
 }
 export async function saveAutoState(s: AutoState) { await writeBlob(FILE, JSON.stringify(s), 'application/json') }
 
-const sourcesText = (t: TopicIdea) => `${t.angle}\n${t.why ? `Why now: ${t.why}\n` : ''}Sources (cite ONLY these URLs):\n${t.sources.map(s => `- ${s.title}: ${s.url}`).join('\n')}`
+/** What the writers are given about the story. They have no web access: the facts come with the request. */
+const sourcesText = (t: TopicIdea) => [
+  `The story: ${t.angle}`,
+  t.date ? `When it happened: ${t.date}` : '',
+  t.why ? `Why it matters now: ${t.why}` : '',
+  t.facts?.length ? `FACTS (use only these; each ends with where it comes from):\n${t.facts.map(f => `- ${f}`).join('\n')}` : '',
+  t.terms?.length ? `WORDS TO EXPLAIN in plain words where they first appear:\n${t.terms.map(x => `- ${x.term}: ${x.plain}`).join('\n')}` : '',
+  t.unknown?.length ? `NOT YET KNOWN (state each as a fact about the world, for example "Microsoft has not said when ..."; never mention sources, pages or material):\n${t.unknown.map(u => `- ${u}`).join('\n')}` : '',
+  `Sources (cite ONLY these URLs):\n${t.sources.map(s => `- ${s.title}: ${s.url}`).join('\n')}`,
+].filter(Boolean).join('\n')
+
+/**
+ * Reads up on the chosen story before anything is written. The topic search returns a title and a line or two;
+ * an article written from that alone is padding, and a reviewer with no web access then strips out what it cannot
+ * trace. That is how the article on Claude 5.2 (10 November 2026) became an article about not being able to check
+ * the news, although the launch was real. So: one more search, for this story only, and the writers get the facts.
+ */
+async function dossier(topic: TopicIdea, sleep: (ms: number) => Promise<void>): Promise<TopicIdea> {
+  if ((topic.facts?.length || 0) >= 12) return topic
+  try {
+    const res = await withRetry(() => webGroundedCompletion(
+      `You are the researcher for an article that explains ONE story to a reader who is not technical. Use web search and read the primary sources (the company's own announcement and documentation first, then two or three good reports). Collect only what the pages really say.
+Reply with JSON only: {"facts": [14 to 20 strings: who did what and when; what it is; the numbers, each with what was measured; what is new compared with before; who can use it and where; what it costs to change, if the pages say; the limits and conditions; what is not yet known. One plain sentence each, true to the page, ending with the page's name in brackets], "terms": [{"term": string, "plain": string (under 15 plain words)}] (the 4 to 8 technical words in this story a manager would not know), "unknown": [string] (what the pages do not say and a reader might ask), "sources": [{"title": string, "url": string}] (the pages you read, primary first)}`,
+      `Today is ${new Date().toISOString().slice(0, 10)}.\nThe story: ${topic.title}\n${topic.angle}\nStart from: ${topic.sources.map(s => s.url).join(' , ') || '(search for it)'}`,
+      6000,
+    ), { tries: 2, baseMs: 4000, sleep, retryable: isTransient })
+    const p = JSON.parse(res.text.slice(res.text.indexOf('{'), res.text.lastIndexOf('}') + 1)) as { facts?: string[]; terms?: { term: string; plain: string }[]; unknown?: string[]; sources?: { title: string; url: string }[] }
+    const facts = (p.facts || []).map(f => String(f).replace(/\s+/g, ' ').trim()).filter(f => f.length > 12).slice(0, 22)
+    if (facts.length < 6) return topic
+    const cited = new Set(res.citations.map(c => c.url.split('?')[0].replace(/\/$/, '')))
+    const read = (p.sources || []).filter(x => /^https?:\/\//.test(x.url) && (cited.size === 0 || cited.has(x.url.split('?')[0].replace(/\/$/, '')))).slice(0, 8)
+    const sources = [...read, ...topic.sources.filter(x => !read.some(r => r.url === x.url))].slice(0, 10)
+    return {
+      ...topic,
+      facts,
+      unknown: (p.unknown || []).map(u => String(u).replace(/\s+/g, ' ').trim()).filter(Boolean).slice(0, 4),
+      terms: (p.terms || []).filter(t => t && t.term && t.plain).slice(0, 8),
+      sources,
+    }
+  } catch (e) {
+    console.error('[blog] the dossier search failed; writing from the topic notes', e)
+    return topic
+  }
+}
+
+/**
+ * What is sent to the agent team for one article (POST /blog): the story after a second, deeper search, the
+ * editor's notes, the writing rules and what the site already has. Kept apart from the sending so that
+ * `npx tsx --env-file=.env.local scripts/blog-live-check.ts` can build the real thing and try it.
+ */
+export async function blogRequest(idea: TopicIdea) {
+  const t = taxonomy()
+  const today = new Date().toISOString().slice(0, 10)
+  const topic = await dossier(idea, ms => new Promise<void>(r => setTimeout(r, ms)))
+  return {
+    topic: topic.title, brief: briefWithIconRule(`The reader is a manager who is not technical. What to explain: ${topic.angle}
+${formatOf(BLOG_FORMATS, topic.format) ? `Article format: ${formatOf(BLOG_FORMATS, topic.format)!.label}. ${formatOf(BLOG_FORMATS, topic.format)!.guide} Let this format shape the sections.
+` : ''}Opening: say what happened or what the problem is in the first paragraph, in plain words. Keep paragraphs short, and explain every technical word where it first appears (the reference material lists the ones to explain).`), references: sourcesText(topic).slice(0, 30_000),
+    rules: articleRules(), review_rules: READER_CHECK,
+    context: { date: today, dateLabel: dateLabel(today), categories: t.categories.map(c => c.name), tags: t.tags.slice(0, 150).map(x => x.name), posts: t.posts.slice(0, 60) },
+  }
+}
 
 /** Runs the Python agent team to completion and saves the result as a normal blog draft. */
 async function writeDraft(topic: TopicIdea): Promise<{ draftId: string; review: { verdict: string; notes: string[] } }> {
-  const t = taxonomy()
-  const today = new Date().toISOString().slice(0, 10)
-  const res = await agentFetch('/blog', {
-    topic: topic.title, brief: briefWithIconRule(`Audience: enterprise IT and AI leaders. Take: ${topic.angle}
-${formatOf(BLOG_FORMATS, topic.format) ? `Article format: ${formatOf(BLOG_FORMATS, topic.format)!.label}. ${formatOf(BLOG_FORMATS, topic.format)!.guide} Let this format shape the sections instead of the default section list.
-` : ''}Opening: start with a hook about the reader's problem or a sharp tension (what goes wrong, what it costs, what they get wrong), never with "X launched / announced Y". The news is evidence inside the argument, not the headline. Keep paragraphs short, use bullet lists for steps and takeaways, and vary the rhythm so the piece does not read as a press summary.`), references: sourcesText(topic).slice(0, 30_000),
-    context: { date: today, dateLabel: dateLabel(today), categories: t.categories.map(c => c.name), tags: t.tags.slice(0, 150).map(x => x.name), posts: t.posts.slice(0, 60) },
-  })
+  const res = await agentFetch('/blog', await blogRequest(topic))
   if (!res.ok || !res.body) throw new Error(`Agent service returned ${res.status}${res.ok ? '' : `: ${(await res.text().catch(() => '')).replace(/\s+/g, ' ').slice(0, 160)}`}`)
   const reader = res.body.getReader(), dec = new TextDecoder()
   let buf = '', result: any = null
@@ -66,7 +123,11 @@ async function reviewDraft(id: string): Promise<{ verdict: string; notes: string
   if (!d) throw new Error('Draft not found.')
   const j = await foundry('/openai/v1/responses', {
     model: TEXT_MODEL,
-    instructions: `You are the editorial review agent for the Gennoor Tech blog (enterprise AI training company, India). Check the article and metadata: facts and numbers are plausible and not invented, no invented quotes or URLs, every external link looks like a real source, roughly 1,600-2,400 words, practitioner voice with no hype, a hook opening about the reader's problem (revise if it opens by announcing a launch), short paragraphs with bullets where useful, h2 sections, internal links present (relative /resources/blog/<slug> and /services/training are correct), a practical next step, excerpt and TL;DR consistent with the body, FAQs answerable from the body. Pass an article that is good enough to publish; ask for revision only for real problems. Reply as JSON only: {"verdict": "pass" | "revise", "notes": [string]} with specific, actionable notes.`,
+    instructions: `You are the editorial review agent for the Gennoor Tech blog (an AI training company in India).
+
+${READER_CHECK}
+
+Then check the article and its metadata: facts and numbers are plausible and not invented, no invented quotes or URLs, every external link looks like a real source, 1,100-1,600 words (never ask for more words), h2 sections with plain headings, short paragraphs with lists where useful, internal links present (relative /resources/blog/<slug> and /services/training are correct), a practical next step, excerpt and TL;DR consistent with the body, FAQs answerable from the body. If there is news, the first paragraph says it. When a claim looks unsupported, the note to the writer is "leave this claim out": the article must never explain that something was removed or could not be checked. Pass an article that is good enough to publish; ask for a revision only for real problems. Reply as JSON only: {"verdict": "pass" | "revise", "notes": [string]} with notes that name the exact words to change.`,
     input: `METADATA:\n${JSON.stringify({ ...d.meta, date: undefined })}\n\nARTICLE BODY (HTML):\n${d.body}`,
   })
   await recordSpend(`blog-${id}`, 'Auto: re-review', textUsd(j), tokensOf(j))
@@ -90,7 +151,7 @@ export function liveAutoDeps(): AutoDeps {
     avoidKeywords: async () => (await loadLinkedInAutopilot()).config.avoidKeywords,
     generate: topic => writeDraft(topic),
     review: id => reviewDraft(id),
-    revise: async (id, notes) => { await reviseBlogDraft(id, `Apply the reviewer's notes and fix every real problem they raise: ${notes.join(' ')}`, 'all') },
+    revise: async (id, notes) => { await reviseBlogDraft(id, `Fix these problems in the article: ${notes.join(' ')}`, 'all') },
     text: async id => { const d = await getBlogDraft(id); return d ? `${d.meta.title} ${d.meta.excerpt} ${d.meta.tldr} ${d.body}` : '' },
     submit: async (id, opts) => {
       await mutateBlogDraft(id, x => { x.status = 'approved' })

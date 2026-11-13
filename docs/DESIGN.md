@@ -251,6 +251,16 @@ never says "nothing yet" before the answer has arrived.
 - **Looking at an admin page.** `scripts/shot.mjs` cannot: these pages are behind the sign-in. Look at
   them signed in, in the browser, at 1366 and at 390 wide. The sign-in check is never weakened or switched
   off in anything that is committed.
+- **Asking before doing.** A question to the person is a small window of the page, never the browser's own
+  grey pop-up (`prompt`, `confirm`, `alert`): in the CRM, `ask()` from `useCrm()`
+  (`src/components/crm/CrmContext.tsx`). It has a title that names the thing, one or two plain lines on
+  what will happen, a field when a reason is wanted, and a red button only for a step that cannot be
+  taken back. What happened afterwards is said by `notify()`.
+- **Where things stand, in one row.** The CRM's `StepStrip` (`src/components/crm/shared.tsx`): a count
+  under each step, in the order a lead moves through them. It is the summary on Today and the step
+  filter on the Leads page. One row; not a board. The rest of the CRM's rules are in `docs/CRM.md`.
+- **Words on a screen for staff are as plain as words for a visitor.** What happened and what to do next;
+  never the name of a service, a permission or a status code on its own.
 
 ## 10. Before you say it is done
 

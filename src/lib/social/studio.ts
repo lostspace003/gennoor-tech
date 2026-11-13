@@ -4,6 +4,7 @@ import { agentFetch, agentServiceConfigured } from '@/lib/social/agent-service'
 import { refSourceUrls, sourceImageFromUrl, withReferences, type Ref } from '@/lib/social/references'
 import { foundryAuthHeader, foundryConfigured } from '@/lib/crm/foundry'
 import { safeJson } from '@/lib/safe-text'
+import { postRules, shortRules } from '@/lib/writing-rules'
 import { artBrief, artInstruction, pickArt, type Art } from '@/lib/social/art-direction'
 import { extractHashtags, formatForLinkedIn, LINKEDIN_STYLE_GUIDE } from '@/lib/linkedin-format'
 
@@ -138,10 +139,17 @@ export async function foundry(path: string, body: unknown): Promise<any> {
   return json
 }
 
-const WRITER = `You write LinkedIn posts for Gennoor Tech, an enterprise AI and Microsoft training company (India). Voice: practical, credible, no hype, no emoji spam. NEVER use first-person singular (no "I", "I'm", "I've", "my", "me"); write direct and impersonal, about the topic or "you". Choose the shape that suits the topic and vary it from post to post: a tight 60-word take, a numbered walkthrough, a list of as many items as the material supports, a short before/after story, or a copyable prompt; usually 60-250 words with short lines. A strong first line (never "X announced Y"), one concrete takeaway, a closing line that invites a reply or a save, and 3-4 relevant hashtags at the end. Never invent statistics or quotes. Also write an image prompt for a realistic, text-free photograph of a believable real-world scene (styled per the art direction you are given, no logos, no readable text).
+// The writing rules are in one place, src/lib/writing-rules.ts: who reads (a manager who is not technical), plain
+// language, the craft of a post, what is always true. Every writer below is given them.
+const WRITER = `You write LinkedIn posts for Gennoor Tech, an AI training company in India. Choose the shape that suits the topic and vary it from post to post: a short take, a numbered walkthrough, a list of as many items as the material supports, a short before-and-after story, or a prompt to copy; usually 60-220 words with short lines.
+
+${postRules()}
+
+Also write an image prompt for a realistic, text-free photograph of a believable real-world scene (styled per the art direction you are given, no logos, no readable text).
 Reply as JSON only: {"text": string, "imagePrompt": string}`
 
-const POLL_WRITER = `You write LinkedIn polls for Gennoor Tech, an enterprise AI and Microsoft training company (India). Never use first-person singular ("I", "my", "me"). Write a short intro (40-90 words, plain, a clear reason to vote, 3 relevant hashtags at the end) and a poll. LinkedIn limits: question max 140 characters, 2 to 4 options, each option max 30 characters. Options must be distinct and balanced. Never invent statistics.
+const POLL_WRITER = `You write LinkedIn polls for Gennoor Tech, an AI training company in India. ${shortRules()}
+Write a short introduction (40-90 words: what the question is about in plain words, why it matters to a business, a clear reason to vote, 3 relevant hashtags at the end) and a poll. Someone who is not technical must understand the question and every option: explain any technical word in the introduction. LinkedIn limits: question max 140 characters, 2 to 4 options, each option max 30 characters. Options must be distinct and balanced. Never invent statistics.
 Reply as JSON only: {"text": string, "question": string, "options": string[]}`
 
 /** The post-writing agent: topic in, reviewed-by-human draft out. */
@@ -185,7 +193,7 @@ export async function polishPost(text: string, spendId = 'format'): Promise<stri
   try {
     const j = await foundry('/openai/v1/responses', {
       model: TEXT_MODEL,
-      instructions: `You tidy LinkedIn posts for Gennoor Tech without changing their meaning. ${LINKEDIN_STYLE_GUIDE}\nKeep every fact, name, number and link exactly. Rewrite any first-person singular ("I", "I'm", "I've", "my", "me") into a direct, impersonal voice. Do not add claims. If the post already has hashtags keep them; if it has none, add 3 to 5 relevant ones. Return only the final post text.`,
+      instructions: `You tidy LinkedIn posts for Gennoor Tech without changing their meaning. ${LINKEDIN_STYLE_GUIDE}\nKeep every fact, name, number and link exactly, and keep every plain explanation of a technical word: never make the post more technical or more clever than it was. Rewrite any first-person singular ("I", "I'm", "I've", "my", "me") into a direct, impersonal voice. Do not add claims. If the post already has hashtags keep them; if it has none, add 3 to 5 relevant ones. Return only the final post text.`,
       input: plain,
     })
     await recordSpend(spendId, 'Format for LinkedIn', textUsd(j), tokensOf(j))

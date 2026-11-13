@@ -1,7 +1,7 @@
 import { randomBytes } from 'crypto'
 import { hhmmToMinutes, isWeekend, localParts, zonedToUtc } from './time'
 import type { Config, DayPlan, Slot, State, TargetKey, TargetState, TopicIdea } from './types'
-import { echoedHook, firstLine, freshIdeas, ideaVendor, planSlots, vendorCounts, type Embed } from './variety'
+import { echoedHook, firstLine, freshIdeas, ideaVendor, pillarsFor, planSlots, vendorCounts, type Embed } from './variety'
 
 // The autopilot engine. Pure orchestration over injected dependencies, so every safeguard can be tested without
 // touching LinkedIn or a model. `tick` is called every ~15 minutes by a scheduled job and is safe to call twice.
@@ -100,7 +100,8 @@ export async function planDay(d: Deps, s: State, today: string, weekend: boolean
   const vendorWeek = vendorCounts(s.history, now, 7)
   const cap = cfg.companyWeeklyMax ?? 1
   const core = cfg.coreVendors ?? []
-  const pillars = planned.map((_, k) => cfg.slotPillars?.length ? cfg.slotPillars[k % cfg.slotPillars.length] : '').filter(Boolean)
+  // One stream for each slot, changing with the day of the week (the saved `slotPillars` is no longer read)
+  const pillars = pillarsFor(today, planned)
   const recentFormats = s.history.filter(h => h.format).slice(-8).map(h => h.format!)
   let ideas = await d.research({ date: today, weekend, cfg, recent: past.map(h => h.title), avoidVendors: Object.keys(vendorWeek).filter(v => vendorWeek[v] >= cap && !core.includes(v)), recentFormats, pillars })
   ideas = await freshIdeas(ideas, past, d.embed, now)

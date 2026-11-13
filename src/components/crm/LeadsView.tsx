@@ -7,13 +7,14 @@ import { Lead, LEAD_STEPS, STEP_LABELS, isAutoSource } from '@/lib/crm/types'
 import { LEAD_COLUMNS, mapHeaders, rowToLead, looksLikeEmail, leadToRow } from '@/lib/crm/import'
 import { sequenceProgress, stepNumber } from '@/lib/crm/sequence'
 import { CRM_USERS, shortName } from '@/lib/crm/users'
-import { StatusBadge, timeAgo, api, Spinner, MultiSelect, Pagination } from './shared'
+import { StatusBadge, StepStrip, timeAgo, api, Spinner, MultiSelect, Pagination } from './shared'
+import { needsAnswer } from '@/lib/crm/replies'
 import { useCrm } from './CrmContext'
 import SendStepModal from './SendStep'
 import FindOnLinkedIn from './FindOnLinkedIn'
 
 const PER_PAGE = 25
-type Scope = 'all' | 'pool' | 'mine' | 'site' | 'archived'
+type Scope = 'all' | 'replied' | 'pool' | 'mine' | 'site' | 'archived'
 
 interface Props {
   leads: Lead[]
@@ -38,7 +39,7 @@ export function seriesLabel(lead: Lead): { text: string; due: boolean } {
 }
 
 export default function LeadsView({ leads, canManage, onOpenLead, onReload, notify }: Props) {
-  const { userEmail } = useCrm()
+  const { userEmail, ask } = useCrm()
   const me = userEmail.toLowerCase()
   const [scope, setScope] = useState<Scope>('all')
   const [search, setSearch] = useState('')
@@ -57,13 +58,16 @@ export default function LeadsView({ leads, canManage, onOpenLead, onReload, noti
 
   // Deep links, used once then cleaned from the address bar:
   //   ?new=1        open the Add lead window
-  //   ?scope=pool   show unassigned leads
+  //   ?scope=pool   show unassigned leads (also mine, replied, site, archived)
+  //   ?step=qualified   show the leads at one step
   useEffect(() => {
     const params = new URLSearchParams(window.location.search)
     let touched = false
     if (params.get('new') === '1') { setAdding(true); params.delete('new'); touched = true }
     const s = params.get('scope')
-    if (s === 'pool' || s === 'mine' || s === 'site' || s === 'archived') { setScope(s); params.delete('scope'); touched = true }
+    if (s === 'pool' || s === 'mine' || s === 'site' || s === 'archived' || s === 'replied') { setScope(s); params.delete('scope'); touched = true }
+    const step = params.get('step')
+    if (step && (LEAD_STEPS as string[]).includes(step)) { setStepFilter([step]); params.delete('step'); touched = true }
     if (touched) {
       const qs = params.toString()
       window.history.replaceState(null, '', window.location.pathname + (qs ? `?${qs}` : ''))
@@ -73,6 +77,8 @@ export default function LeadsView({ leads, canManage, onOpenLead, onReload, noti
   const live = useMemo(() => leads.filter((l) => !l.dumped), [leads])
   const counts = {
     all: live.length,
+    // They wrote to us and nobody has answered yet
+    replied: live.filter((l) => needsAnswer(l)).length,
     pool: live.filter((l) => !l.owner).length,
     mine: live.filter((l) => l.owner?.toLowerCase() === me).length,
     // Added by the site itself: people who sent a form, or bought, finished or reviewed a course
@@ -101,6 +107,7 @@ export default function LeadsView({ leads, canManage, onOpenLead, onReload, noti
     const term = search.trim().toLowerCase()
     let out = scope === 'archived' ? leads.filter((l) => l.dumped) : live
     if (scope === 'pool') out = out.filter((l) => !l.owner)
+    if (scope === 'replied') out = out.filter((l) => needsAnswer(l))
     if (scope === 'mine') out = out.filter((l) => l.owner?.toLowerCase() === me)
     if (scope === 'site') out = out.filter((l) => isAutoSource(l.source))
     if (sourceFilter.length) out = out.filter((l) => sourceFilter.includes(l.source?.trim() || 'Not recorded'))
@@ -110,6 +117,21 @@ export default function LeadsView({ leads, canManage, onOpenLead, onReload, noti
     if (ownerFilter.length) out = out.filter((l) => ownerFilter.includes(l.owner ? l.owner.toLowerCase() : 'pool'))
     return out
   }, [leads, live, scope, search, orgFilter, stepFilter, ownerFilter, sourceFilter, me])
+
+  // The row of steps counts the leads the other choices leave, before the step itself is chosen
+  const stepCounts = useMemo(() => {
+    const term = search.trim().toLowerCase()
+    let out = scope === 'archived' ? leads.filter((l) => l.dumped) : live
+    if (scope === 'pool') out = out.filter((l) => !l.owner)
+    if (scope === 'replied') out = out.filter((l) => needsAnswer(l))
+    if (scope === 'mine') out = out.filter((l) => l.owner?.toLowerCase() === me)
+    if (scope === 'site') out = out.filter((l) => isAutoSource(l.source))
+    if (sourceFilter.length) out = out.filter((l) => sourceFilter.includes(l.source?.trim() || 'Not recorded'))
+    if (term) out = out.filter((l) => [l.name, l.company, l.email, l.designation, l.country].some((v) => (v || '').toLowerCase().includes(term)))
+    if (orgFilter.length) out = out.filter((l) => orgFilter.includes(l.company?.trim() || ''))
+    if (ownerFilter.length) out = out.filter((l) => ownerFilter.includes(l.owner ? l.owner.toLowerCase() : 'pool'))
+    return Object.fromEntries(LEAD_STEPS.map((st) => [st, out.filter((l) => l.status === st).length]))
+  }, [leads, live, scope, search, orgFilter, ownerFilter, sourceFilter, me])
 
   const pages = Math.max(1, Math.ceil(filtered.length / PER_PAGE))
   const safePage = Math.min(page, pages)
@@ -122,8 +144,9 @@ export default function LeadsView({ leads, canManage, onOpenLead, onReload, noti
     if (!selected.length) return
     let reason: string | undefined
     if (action === 'dump') {
-      reason = prompt('Why archive these leads? (for example: wrong fit, duplicate, no response)') || undefined
-      if (reason === undefined) return
+      const why = await ask({ title: `Archive ${selected.length} lead${selected.length === 1 ? '' : 's'}?`, text: 'Archived leads leave every list. They can be restored from the Archived view.', input: { label: 'Why? (kept on the lead)', placeholder: 'For example: wrong fit, duplicate, no response', required: true }, confirm: 'Archive' })
+      if (why === null) return
+      reason = why
     }
     setBusy(action)
     try {
@@ -138,7 +161,8 @@ export default function LeadsView({ leads, canManage, onOpenLead, onReload, noti
   }
 
   const remove = async () => {
-    if (!selected.length || !confirm(`Delete ${selected.length} lead(s) for good? This cannot be undone.`)) return
+    if (!selected.length) return
+    if ((await ask({ title: `Delete ${selected.length} lead${selected.length === 1 ? '' : 's'} for good?`, text: 'Their details, emails and history are removed. This cannot be undone. To keep them out of the way without losing anything, archive them instead.', confirm: 'Delete for good', danger: true })) === null) return
     setBusy('delete')
     try {
       await api(`/api/admin/leads?${selected.map((id) => `id=${encodeURIComponent(id)}`).join('&')}`, { method: 'DELETE' })
@@ -234,7 +258,6 @@ export default function LeadsView({ leads, canManage, onOpenLead, onReload, noti
             />
           </div>
           <MultiSelect label="Organization" options={orgs.slice(0, 200).map(([name, n]) => ({ value: name, label: `${name} (${n})` }))} values={orgFilter} onChange={(v) => { setOrgFilter(v); reset() }} />
-          <MultiSelect label="Step" options={LEAD_STEPS.map((s) => ({ value: s, label: STEP_LABELS[s] }))} values={stepFilter} onChange={(v) => { setStepFilter(v); reset() }} />
           <MultiSelect label="Owner" options={[{ value: 'pool', label: 'Unassigned' }, ...CRM_USERS.map((u) => ({ value: u, label: shortName(u) }))]} values={ownerFilter} onChange={(v) => { setOwnerFilter(v); reset() }} />
           <MultiSelect label="Came from" options={sources.map(([name, n]) => ({ value: name, label: `${name} (${n})` }))} values={sourceFilter} onChange={(v) => { setSourceFilter(v); reset() }} />
           {filtersOn && (
@@ -263,6 +286,7 @@ export default function LeadsView({ leads, canManage, onOpenLead, onReload, noti
           <div className="flex items-center gap-1.5">
             {([
               ['all', `All (${counts.all})`],
+              ['replied', `Needs an answer (${counts.replied})`],
               ['pool', `Unassigned (${counts.pool})`],
               ['mine', `Mine (${counts.mine})`],
               ['site', `From the website (${counts.site})`],
@@ -279,6 +303,10 @@ export default function LeadsView({ leads, canManage, onOpenLead, onReload, noti
           </div>
           <div className="text-xs text-gray-500">{filtered.length} lead{filtered.length === 1 ? '' : 's'}</div>
         </div>
+        {/* Where they stand, in one row. Press a step to see only its leads; press it again to see all. */}
+        {scope !== 'archived' && (
+          <StepStrip counts={stepCounts} active={stepFilter} onPick={(st) => { setStepFilter(stepFilter.includes(st) ? stepFilter.filter((x) => x !== st) : [...stepFilter, st]); reset() }} />
+        )}
       </div>
 
       {/* What to do with the ticked leads */}
@@ -368,7 +396,10 @@ export default function LeadsView({ leads, canManage, onOpenLead, onReload, noti
                     />
                   </td>
                   <td className="px-4 py-2.5 max-w-[240px]">
-                    <div className="text-sm font-medium text-gray-900 truncate">{lead.name}</div>
+                    <div className="text-sm font-medium text-gray-900 truncate">
+                      {lead.name}
+                      {needsAnswer(lead) && <span className={`ml-2 align-middle text-[10.5px] font-semibold rounded-full px-1.5 py-0.5 ${lead.reply?.kind === 'stop' ? 'bg-gray-200 text-gray-700' : 'bg-red-100 text-red-700'}`}>{lead.reply?.kind === 'stop' ? 'asked to stop' : 'replied'}</span>}
+                    </div>
                     <div className="text-xs text-gray-500 truncate">{lead.email || <span className="text-amber-600">no email</span>}</div>
                   </td>
                   <td className="px-4 py-2.5 max-w-[240px]">

@@ -68,8 +68,11 @@ export async function POST(req: NextRequest) {
     await mutateLeads((leads) => {
       const l = leads.find((x) => x.id === leadId)
       if (!l) return
+      const at = new Date().toISOString()
+      // An invitation to talk answers whatever they last wrote
+      if (l.reply && !(l.reply.handledAt && l.reply.handledAt >= l.reply.at)) { l.reply.handledAt = at; l.reply.handledBy = user.email }
       touch(l, {
-        at: new Date().toISOString(),
+        at,
         by: user.email,
         type: 'followup',
         description: `Teams meeting scheduled: ${subject} (${formatIstCstFull(start)})`,
