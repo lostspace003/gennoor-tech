@@ -36,7 +36,7 @@ function taskState(t: Task, drafts: Draft[] | null): { label: string; tone: stri
 const BADGE = { draft: 'bg-amber-100 text-amber-800', approved: 'bg-gray-100 text-gray-700', published: 'bg-emerald-100 text-emerald-800' }
 const POST_CHIPS = ['Make it shorter', 'Stronger first line', 'More practical, less salesy', 'Add a clear call to action', 'Rewrite the hashtags', 'More formal tone']
 const IMAGE_CHIPS = ['Simpler composition', 'Brighter colours', 'More abstract', 'Show people collaborating']
-const field = 'w-full text-sm border border-gray-200 rounded-md px-2.5 py-1.5 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-200 bg-white'
+const field = 'w-full text-sm border border-gray-200 rounded-md px-2.5 py-1.5 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-200 bg-raised'
 
 export default function SocialStudioPage() {
   const [drafts, setDrafts] = useState<Draft[] | null>(null)
@@ -292,9 +292,9 @@ export default function SocialStudioPage() {
   }, [zoom])
   const published = cur?.status === 'published'
   const edited = !!cur && published && cur.text !== (cur.publishedText ?? cur.text)
-  const btn = 'inline-flex items-center gap-1.5 px-3.5 py-2 text-[13px] font-medium rounded-md border border-gray-200 bg-white hover:border-gray-400 disabled:opacity-40'
+  const btn = 'inline-flex items-center gap-1.5 px-3.5 py-2 text-[13px] font-medium rounded-md border border-gray-200 bg-raised hover:border-gray-400 disabled:opacity-40'
   const primary = 'inline-flex items-center gap-1.5 px-3.5 py-2 text-[13px] font-medium bg-gray-800 text-white rounded-md hover:bg-gray-900 disabled:opacity-40'
-  const chip = 'px-2 py-1 text-xs rounded-full border border-gray-200 bg-white text-gray-700 hover:border-gray-500 hover:text-gray-900 disabled:opacity-40'
+  const chip = 'px-2 py-1 text-xs rounded-full border border-gray-200 bg-raised text-gray-700 hover:border-gray-500 hover:text-gray-900 disabled:opacity-40'
   const step = cur ? (cur.status === 'draft' ? 1 : cur.status === 'approved' ? 2 : 3) : 0
 
   return (
@@ -339,7 +339,7 @@ export default function SocialStudioPage() {
                 <label className="flex items-center gap-2 text-xs font-medium cursor-pointer"><input type="checkbox" checked={team} onChange={e => setTeam(e.target.checked)} /><Bot className="w-3.5 h-3.5 text-gray-500" />Use the AI agent team<InfoTip text="Four agents work in order and you watch each step: Research reads your references, Write drafts the post, Design plans the visual, Review checks the draft. Powered by the Microsoft Agent Framework." /></label>
                 {team && (
                   <div className="flex gap-1.5 mt-2 text-xs">
-                    <button onClick={() => setTeamOut('post')} className={`flex-1 px-2 py-1 rounded-md border ${teamOut === 'post' ? 'bg-gray-800 text-white border-gray-800' : 'border-gray-200 bg-white'}`}>Post + image</button>
+                    <button onClick={() => setTeamOut('post')} className={`flex-1 px-2 py-1 rounded-md border ${teamOut === 'post' ? 'bg-gray-800 text-white border-gray-800' : 'border-gray-200 bg-raised'}`}>Post + image</button>
                   </div>
                 )}
               </div>
@@ -350,7 +350,7 @@ export default function SocialStudioPage() {
             </div>
           </Fold>
           {tasks.length > 0 && (
-            <div className="rounded-xl border border-gray-200 bg-white p-3">
+            <div className="rounded-xl border border-gray-200 bg-raised p-3">
               <div className="flex items-center gap-1.5 text-[13px] font-semibold mb-2"><Hand className="w-3.5 h-3.5 text-gray-500" />Handled by you<span className="font-normal text-gray-500">· {tasks.filter(t => taskState(t, drafts).todo).length} to do</span><InfoTip text="Autopilot posts you said you'd handle. Click one to see what it is about and write it. The autopilot never posts these." /></div>
               <div className="space-y-1.5 max-h-72 overflow-y-auto">
                 {tasks.map(t => { const st = taskState(t, drafts); return (
@@ -383,7 +383,7 @@ export default function SocialStudioPage() {
 
         {/* Right: composer */}
         {run ? <AgentTimeline run={run} onClose={() => setRun(null)} /> : !cur && curTask ? (
-          <div className="rounded-xl border border-gray-200 bg-white p-5 space-y-3 lg:overflow-y-auto">
+          <div className="rounded-xl border border-gray-200 bg-raised p-5 space-y-3 lg:overflow-y-auto">
             <div className="flex items-center gap-2 text-xs text-gray-500"><Hand className="w-3.5 h-3.5" />Autopilot slot you are handling · {KIND_LABEL[curTask.kind]} · {new Date(curTask.at).toLocaleString([], { weekday: 'short', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}</div>
             <h2 className="text-lg font-semibold leading-snug">{curTask.topic!.title}</h2>
             {curTask.topic!.vendor && <div className="text-xs text-gray-500">{curTask.topic!.vendor}{curTask.topic!.heat ? ` · buzz ${curTask.topic!.heat}/10` : ''}</div>}
@@ -398,7 +398,7 @@ export default function SocialStudioPage() {
             }}>{busy ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Sparkles className="w-3.5 h-3.5" />}{curTask.kind === 'poll' ? 'Write the poll' : 'Write it with AI'}</button>
           </div>
         ) : !cur ? (
-          <div className="rounded-xl border border-dashed border-gray-300 bg-white/50 text-sm text-gray-500 p-10 text-center">Pick a draft on the left, or give the agent a topic.</div>
+          <div className="rounded-xl border border-dashed border-gray-300 bg-raised/50 text-sm text-gray-500 p-10 text-center">Pick a draft on the left, or give the agent a topic.</div>
         ) : (
           <div className="flex flex-col gap-3 min-h-0">
             {/* progress */}
@@ -414,7 +414,7 @@ export default function SocialStudioPage() {
 
             <ResizeGrid id="social-post" fixed="second" initial={360} breakpoint={1280} className="flex-1 min-h-0">
               {/* LinkedIn-style card, edited in place */}
-              <div className="rounded-xl border border-gray-200 bg-white shadow-sm p-4 min-h-0 xl:overflow-y-auto">
+              <div className="rounded-xl border border-gray-200 bg-raised shadow-sm p-4 min-h-0 xl:overflow-y-auto">
                 <div className="flex items-center gap-2.5 mb-3">
                   <div className="w-11 h-11 rounded-full bg-gray-800 text-white text-lg font-bold flex items-center justify-center">G</div>
                   <div className="leading-tight"><div className="text-sm font-semibold">Gennoor Tech</div><div className="text-xs text-gray-500">Enterprise AI &amp; Microsoft training · Just now · 🌐</div></div>
@@ -435,7 +435,7 @@ export default function SocialStudioPage() {
                     ))}
                     <div className="flex items-center gap-2 text-xs pt-1">
                       {cur.poll.options.length < 4 && !locked && <button className={btn} onClick={() => patchLocal(cur.id, { poll: { ...cur.poll!, options: [...cur.poll!.options, ''] } })}>+ Add option</button>}
-                      <select disabled={locked} value={cur.poll.duration} onChange={e => patchLocal(cur.id, { poll: { ...cur.poll!, duration: e.target.value } })} className="border border-gray-200 rounded-md px-2 py-1.5 bg-white">
+                      <select disabled={locked} value={cur.poll.duration} onChange={e => patchLocal(cur.id, { poll: { ...cur.poll!, duration: e.target.value } })} className="border border-gray-200 rounded-md px-2 py-1.5 bg-raised">
                         <option value="ONE_DAY">Poll lasts 1 day</option><option value="THREE_DAYS">Poll lasts 3 days</option><option value="SEVEN_DAYS">Poll lasts 7 days</option><option value="FOURTEEN_DAYS">Poll lasts 14 days</option>
                       </select>
                       <InfoTip text="Question up to 140 characters, 2 to 4 options of up to 30 characters each." />
@@ -460,7 +460,7 @@ export default function SocialStudioPage() {
               {/* Tools: the action bar is pinned at the top, the rest scrolls beneath it */}
               <div className="flex flex-col gap-3 min-h-0 xl:overflow-y-auto xl:pr-1">
                 {!locked && (
-                  <div className="rounded-xl border border-gray-200 bg-white shadow-sm p-3">
+                  <div className="rounded-xl border border-gray-200 bg-raised shadow-sm p-3">
                     <div className="text-xs font-semibold mb-2 flex items-center gap-1.5"><Sparkles className="w-3.5 h-3.5 text-gray-500" />Revise the {cur.kind === 'poll' ? 'poll' : 'post'} with AI<InfoTip text="Tell the AI what to change. It rewrites the draft and sends it back to Draft status so you re-approve." /></div>
                     <button disabled={!!busy || !cur.text.trim()} onClick={formatPost} className={`${btn} w-full justify-center mb-2`} title="Bold opening line, short paragraphs, quiet bullets, a light bulb at most, and a tidy hashtag line. Also applied automatically when the post is published.">{busy === 'format' ? <><Loader2 className="w-3.5 h-3.5 animate-spin" />Formatting…</> : <><FileText className="w-3.5 h-3.5" />Format for LinkedIn</>}</button>
                     <div className="flex flex-wrap gap-1.5 mb-2">{POST_CHIPS.map(c => <button key={c} disabled={!!busy} onClick={() => revise(c, 'post')} className={chip}>{c}</button>)}</div>
@@ -470,7 +470,7 @@ export default function SocialStudioPage() {
                 )}
 
                 {cur.kind !== 'poll' && (
-                  <div className="rounded-xl border border-gray-200 bg-white shadow-sm p-3">
+                  <div className="rounded-xl border border-gray-200 bg-raised shadow-sm p-3">
                     <div className="text-xs font-semibold mb-2 flex items-center gap-1.5"><ImageIcon className="w-3.5 h-3.5 text-gray-500" />Image<InfoTip text="The instruction sent to the image model (gpt-image-2). Edit it, or ask the AI to adjust it, then Regenerate. Images are text-free by design." /></div>
                     <textarea disabled={locked} value={cur.imagePrompt} onChange={e => patchLocal(cur.id, { imagePrompt: e.target.value })} rows={4} className={`${field} text-xs`} />
                     {!locked && <>
@@ -486,7 +486,7 @@ export default function SocialStudioPage() {
                 )}
 
                 {cur.motion && (
-                  <div className="rounded-xl border border-gray-200 bg-white shadow-sm p-3">
+                  <div className="rounded-xl border border-gray-200 bg-raised shadow-sm p-3">
                     <div className="text-xs font-semibold mb-2 flex items-center gap-1.5"><Film className="w-3.5 h-3.5 text-gray-500" />Motion graphic<span className="font-normal text-gray-400">{cur.motion.seconds}s loop</span></div>
                     <textarea value={sceneFor === cur.id ? sceneText : JSON.stringify(cur.motion.scene, null, 1)} onFocus={() => { if (sceneFor !== cur.id) { setSceneFor(cur.id); setSceneText(JSON.stringify(cur.motion!.scene, null, 1)) } }} onChange={e => { setSceneFor(cur.id); setSceneText(e.target.value) }} rows={8} spellCheck={false} className={`${field} font-mono text-xs`} />
                     <div className="flex flex-wrap gap-1.5 mt-2">
@@ -497,7 +497,7 @@ export default function SocialStudioPage() {
                   </div>
                 )}
                 {(cur.trace?.length || cur.review) && (
-                  <details className="rounded-xl border border-gray-200 bg-white shadow-sm p-3 group">
+                  <details className="rounded-xl border border-gray-200 bg-raised shadow-sm p-3 group">
                     <summary className="text-xs font-semibold cursor-pointer flex items-center gap-1.5 list-none"><Bot className="w-3.5 h-3.5 text-gray-500" />How this was made{cur.review && <span className={`ml-1 px-1.5 py-0.5 rounded text-xs ${cur.review.verdict === 'pass' ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'}`}>{cur.review.verdict === 'pass' ? 'review passed' : 'review: changes suggested'}</span>}<ChevronDown className="w-3.5 h-3.5 ml-auto text-gray-400 group-open:rotate-180 transition-transform" /></summary>
                     {cur.review?.notes?.length ? <ul className="mt-2 space-y-1 text-xs text-gray-700 list-disc pl-4">{cur.review.notes.map((n, i) => <li key={i} className="break-words">{n}</li>)}</ul> : null}
                     {cur.review?.verdict === 'revise' && !locked && <button disabled={!!busy} onClick={() => revise(`Apply the reviewer's notes: ${cur.review!.notes.join(' ')}`, 'post')} className={`${btn} mt-2`}><Sparkles className="w-3.5 h-3.5" />Apply reviewer notes</button>}
@@ -509,24 +509,24 @@ export default function SocialStudioPage() {
                     </div>
                   </details>
                 )}
-                <div className="rounded-xl border border-gray-200 bg-white shadow-sm p-3">
+                <div className="rounded-xl border border-gray-200 bg-raised shadow-sm p-3">
                   <div className="text-xs font-semibold mb-2 flex items-center gap-1.5"><Paperclip className="w-3.5 h-3.5 text-gray-500" />Reference material<InfoTip text="Links, documents and images the AI uses as the factual basis when it writes or revises this post and when it designs the image." /></div>
                   <RefBox refs={cur.references || []} busy={busy === 'ref'} url={refUrl} setUrl={setRefUrl} onUrl={() => addRef({ url: refUrl }, true)} onFile={f => addRef({ file: f }, true)} onRemove={removeRef} />
                 </div>
-                <div className="rounded-xl border border-gray-200 bg-white shadow-sm p-3">
+                <div className="rounded-xl border border-gray-200 bg-raised shadow-sm p-3">
                   <div className="text-xs font-semibold mb-1.5 flex items-center justify-between">Cost of this draft<span className="text-sm">{usd(spend.byDraft[cur.id] || 0)}</span></div>
                   <ul className="text-xs text-gray-500 space-y-0.5 max-h-28 overflow-y-auto">
                     {spend.entries.filter(e => e.draftId === cur.id).map((e, i) => <li key={i} className="flex justify-between"><span>{e.label}</span><span>{usd(e.usd)}</span></li>)}
                   </ul>
                   <div className="text-xs text-gray-400 mt-1">Estimate in USD from token usage and image count.</div>
                 </div>
-                <div className="order-first sticky top-0 z-10 rounded-xl border border-gray-200 bg-white shadow-sm p-3 space-y-2">
+                <div className="order-first sticky top-0 z-10 rounded-xl border border-gray-200 bg-raised shadow-sm p-3 space-y-2">
                   {cur.motion && (
                     <div className="flex items-center gap-2 text-xs pb-2 border-b border-gray-100">
                       <span className="text-gray-500">Post to LinkedIn as</span>
                       <div className="flex rounded-md border border-gray-200 overflow-hidden">
                         {([['gif', 'GIF'], ['still', cur.hasImage ? 'Still image' : 'No media']] as const).map(([v, l]) => (
-                          <button key={v} onClick={() => setPostMedia(v)} className={`px-2.5 py-1 ${postMedia === v ? 'bg-gray-800 text-white' : 'bg-white hover:bg-gray-50'}`}>{l}</button>
+                          <button key={v} onClick={() => setPostMedia(v)} className={`px-2.5 py-1 ${postMedia === v ? 'bg-gray-800 text-white' : 'bg-surface hover:bg-gray-50'}`}>{l}</button>
                         ))}
                       </div>
                       <InfoTip text="GIF plays silently in the feed. Still posts the AI image or text only." />
@@ -589,7 +589,7 @@ export default function SocialStudioPage() {
             <div className="flex items-center gap-2">
               <a href={zoom.kind === 'motion' ? `/api/admin/social/${zoom.id}/motion?download=1` : `/api/admin/social/${zoom.id}/image`} download className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs rounded-md border border-white/30 text-white hover:bg-white/10"><Download className="w-3.5 h-3.5" />Download</a>
             </div>
-            <button onClick={() => setZoom(null)} aria-label="Close" className="absolute -top-3 -right-3 w-8 h-8 rounded-full bg-white text-gray-800 shadow flex items-center justify-center"><X className="w-4 h-4" /></button>
+            <button onClick={() => setZoom(null)} aria-label="Close" className="absolute -top-3 -right-3 w-8 h-8 rounded-full bg-raised text-gray-800 shadow flex items-center justify-center"><X className="w-4 h-4" /></button>
           </div>
         </div>
       )}

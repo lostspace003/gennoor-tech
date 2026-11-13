@@ -246,7 +246,7 @@ export default function LeadsView({ leads, canManage, onOpenLead, onReload, noti
   return (
     <div>
       {/* Add leads + find them */}
-      <div className="bg-white border-b border-gray-200 px-3 sm:px-4 py-2.5 space-y-2.5">
+      <div className="bg-raised border-b border-gray-200 px-3 sm:px-4 py-2.5 space-y-2.5">
         <div className="flex flex-wrap items-center gap-2">
           <div className="relative flex-1 min-w-52 max-w-sm">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
@@ -322,10 +322,10 @@ export default function LeadsView({ leads, canManage, onOpenLead, onReload, noti
               <button onClick={() => setSendTo(chosen)} disabled={!!busy} className="px-3 py-1.5 bg-primary-600 text-white text-xs rounded-lg hover:bg-primary-700 flex items-center gap-1.5 disabled:opacity-50">
                 <Send className="w-3.5 h-3.5" /> Send next email
               </button>
-              <button onClick={() => hold('claim')} disabled={!!busy} className="px-3 py-1.5 border border-primary-300 bg-white text-primary-700 text-xs rounded-lg hover:bg-primary-50 flex items-center gap-1.5 disabled:opacity-50">
+              <button onClick={() => hold('claim')} disabled={!!busy} className="px-3 py-1.5 border border-primary-300 bg-raised text-primary-700 text-xs rounded-lg hover:bg-primary-50 flex items-center gap-1.5 disabled:opacity-50">
                 <Hand className="w-3.5 h-3.5" /> Pick up
               </button>
-              <button onClick={() => hold('release')} disabled={!!busy} className="px-3 py-1.5 border border-gray-300 bg-white text-gray-700 text-xs rounded-lg hover:bg-gray-50 flex items-center gap-1.5 disabled:opacity-50">
+              <button onClick={() => hold('release')} disabled={!!busy} className="px-3 py-1.5 border border-gray-300 bg-raised text-gray-700 text-xs rounded-lg hover:bg-gray-50 flex items-center gap-1.5 disabled:opacity-50">
                 <Undo2 className="w-3.5 h-3.5" /> Release
               </button>
               {canManage && (
@@ -333,13 +333,13 @@ export default function LeadsView({ leads, canManage, onOpenLead, onReload, noti
                   defaultValue=""
                   onChange={(e) => { if (e.target.value) { hold('assign', e.target.value); e.target.value = '' } }}
                   disabled={!!busy}
-                  className="px-2 py-1.5 border border-gray-300 text-gray-700 text-xs rounded-lg bg-white disabled:opacity-50"
+                  className="px-2 py-1.5 border border-gray-300 text-gray-700 text-xs rounded-lg bg-raised disabled:opacity-50"
                 >
                   <option value="" disabled>Give to…</option>
                   {CRM_USERS.map((u) => <option key={u} value={u}>{shortName(u)}</option>)}
                 </select>
               )}
-              <button onClick={() => hold('dump')} disabled={!!busy} className="px-3 py-1.5 border border-gray-300 bg-white text-gray-700 text-xs rounded-lg hover:bg-gray-50 flex items-center gap-1.5 disabled:opacity-50">
+              <button onClick={() => hold('dump')} disabled={!!busy} className="px-3 py-1.5 border border-gray-300 bg-raised text-gray-700 text-xs rounded-lg hover:bg-gray-50 flex items-center gap-1.5 disabled:opacity-50">
                 <Archive className="w-3.5 h-3.5" /> Archive
               </button>
             </>
@@ -354,7 +354,7 @@ export default function LeadsView({ leads, canManage, onOpenLead, onReload, noti
       )}
 
       {/* The list */}
-      <div className="bg-white overflow-x-auto">
+      <div className="bg-raised overflow-x-auto">
         <table className="w-full min-w-[720px]">
           <thead className="bg-gray-50 border-b border-gray-200">
             <tr>
@@ -446,7 +446,7 @@ export default function LeadsView({ leads, canManage, onOpenLead, onReload, noti
       {/* Check the sheet before anything is saved */}
       {upload && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-xl w-full max-w-3xl max-h-[88vh] flex flex-col">
+          <div className="bg-raised rounded-xl w-full max-w-3xl max-h-[88vh] flex flex-col">
             <div className="px-5 py-3.5 border-b border-gray-200 flex items-center justify-between">
               <div>
                 <h3 className="text-base font-semibold text-gray-900">Check before importing</h3>
@@ -526,7 +526,7 @@ function AddLeadModal({ userEmail, onClose, onAdded, notify }: {
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-xl w-full max-w-lg max-h-[88vh] flex flex-col">
+      <div className="bg-raised rounded-xl w-full max-w-lg max-h-[88vh] flex flex-col">
         <div className="px-5 py-3.5 border-b border-gray-200 flex items-center justify-between shrink-0">
           <h3 className="text-base font-semibold text-gray-900">Add a lead</h3>
           <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded" aria-label="Close"><X className="w-5 h-5 text-gray-500" /></button>

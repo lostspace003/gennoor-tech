@@ -797,18 +797,32 @@ input[type="range"]::-moz-range-thumb {
 
 
 /* Admin centre: thin, quiet scrollbars on the page and on every scrolling box. */
-[data-admin] * { scrollbar-width: thin; scrollbar-color: #cbd5e1 transparent; }
+[data-admin] * { scrollbar-width: thin; scrollbar-color: rgb(var(--gray-300)) transparent; }
 [data-admin] *::-webkit-scrollbar { width: 8px; height: 8px; }
 [data-admin] *::-webkit-scrollbar-track { background: transparent; }
-[data-admin] *::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 8px; border: 2px solid transparent; background-clip: content-box; }
-[data-admin] *::-webkit-scrollbar-thumb:hover { background: #94a3b8; background-clip: content-box; }
+[data-admin] *::-webkit-scrollbar-thumb { background: rgb(var(--gray-300)); border-radius: 8px; border: 2px solid transparent; background-clip: content-box; }
+[data-admin] *::-webkit-scrollbar-thumb:hover { background: rgb(var(--gray-400)); background-clip: content-box; }
 [data-admin] { font-size: 14px; }
+
+/* Charts drawn with the chart library are given their grid and axis colours as fixed values in the page.
+   These rules win over those values, so the grid and the words follow the look: a pale grey grid was
+   glaring on the dark look of the admin centre. The colours of the columns and lines stay as the page set them. */
+.recharts-cartesian-grid line { stroke: rgb(var(--gray-200)); }
+.recharts-cartesian-axis-line,
+.recharts-cartesian-axis-tick-line { stroke: rgb(var(--gray-300)); }
+.recharts-cartesian-axis-tick text,
+.recharts-legend-item-text { fill: rgb(var(--gray-500)); }
+.recharts-legend-item-text { color: rgb(var(--gray-600)) !important; }
+.recharts-default-tooltip { background-color: rgb(var(--raised)) !important; border-color: rgb(var(--gray-200)) !important; color: rgb(var(--gray-900)) !important; }
+.recharts-default-tooltip .recharts-tooltip-label { color: rgb(var(--gray-900)); }
+.recharts-pie-label-text { fill: rgb(var(--gray-600)); }
+.recharts-tooltip-cursor { fill: rgb(var(--gray-100)); }
 
 /* Admin: moving between pages is a short, quiet fade. */
 @keyframes admin-page-in { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
 .admin-page-in { animation: admin-page-in 160ms ease-out; }
 @keyframes admin-shimmer { 0% { background-position: -400px 0; } 100% { background-position: 400px 0; } }
-.admin-skeleton { background: linear-gradient(90deg, #eceef1 25%, #f6f7f9 37%, #eceef1 63%); background-size: 800px 100%; animation: admin-shimmer 1.2s infinite linear; border-radius: 10px; }
+.admin-skeleton { background: linear-gradient(90deg, rgb(var(--gray-100)) 25%, rgb(var(--gray-50)) 37%, rgb(var(--gray-100)) 63%); background-size: 800px 100%; animation: admin-shimmer 1.2s infinite linear; border-radius: 10px; }
 @media (prefers-reduced-motion: reduce) { .admin-page-in, .admin-skeleton { animation: none; } }
 
 /* The slow shine that crosses a gold offer ribbon or pill (components/academy/Offer.tsx) */

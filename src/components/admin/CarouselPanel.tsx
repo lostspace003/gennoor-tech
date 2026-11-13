@@ -6,7 +6,7 @@ import { Loader2, Download, Send, Clock } from 'lucide-react'
 interface Plan { title: string; caption: string; slides: { title: string; body?: string; bullets?: string[] }[] }
 
 const field = 'w-full rounded-md border border-gray-200 px-3 py-2 text-sm'
-const btn = 'inline-flex items-center gap-1.5 px-3 py-1.5 text-[13px] rounded-md border border-gray-200 bg-white disabled:opacity-40 hover:border-gray-400'
+const btn = 'inline-flex items-center gap-1.5 px-3 py-1.5 text-[13px] rounded-md border border-gray-200 bg-raised disabled:opacity-40 hover:border-gray-400'
 
 /** Card carousel (swipeable PDF): topic or web page in, cards + caption out, then download, post or schedule. */
 export default function CarouselPanel() {

@@ -49,7 +49,9 @@ line and feed line all come from the post itself (`docs/SEO.md`, section 4).
 
 ## An admin page
 
-The admin centre keeps the light "paper" look; the rules are in `docs/DESIGN.md`, section 9.
+The admin centre and the CRM are the light "paper" look, with a dark look the person can switch on; the
+rules are in `docs/DESIGN.md`, section 9. Every colour is written by name there too, and both looks are measured
+(`node scripts/contrast-check.mjs --back-office ...`).
 
 1. The model is `src/app/admin/learners/page.tsx` (figures: period row, tiles, charts, tables, Excel) and
    `src/app/admin/payments/page.tsx` (a list with filters). Add the page to `GROUPS` in

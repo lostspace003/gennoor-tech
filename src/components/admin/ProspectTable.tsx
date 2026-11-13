@@ -7,7 +7,7 @@ import InfoTip from '@/components/admin/InfoTip'
 export interface ProspectRow { name: string; degree?: string; title?: string; company?: string; location?: string; linkedin?: string; group?: string }
 type Found = { email?: string; emailStatus?: string; note?: string }
 
-const btn = 'inline-flex items-center gap-1.5 px-3 py-1.5 text-[13px] font-medium rounded-md border border-gray-200 bg-white hover:border-gray-400 disabled:opacity-40'
+const btn = 'inline-flex items-center gap-1.5 px-3 py-1.5 text-[13px] font-medium rounded-md border border-gray-200 bg-raised hover:border-gray-400 disabled:opacity-40'
 const CREDITS_PER_EMAIL = 2
 
 /**
@@ -77,7 +77,7 @@ export default function ProspectTable({ rows, fileName = 'prospects' }: { rows: 
         {crm.note && <span className="text-xs text-emerald-700">{crm.note}. <a href="/crm/leads?scope=pool" className="underline">Open them</a></span>}
         {msg && <span className="text-xs text-red-700">{msg}</span>}
       </div>
-      <div className="rounded-lg border border-gray-200 bg-white overflow-auto max-h-[60vh]">
+      <div className="rounded-lg border border-gray-200 bg-raised overflow-auto max-h-[60vh]">
         <table className="w-full text-[13px]">
           <thead className="sticky top-0 bg-gray-50 text-xs text-gray-500"><tr>
             <th className="px-3 py-2 w-8"><input type="checkbox" aria-label="Select everyone" checked={rows.length > 0 && picked.length === rows.length} onChange={e => setPicked(e.target.checked ? rows.map((_, i) => i) : [])} /></th>

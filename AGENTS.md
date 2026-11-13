@@ -21,7 +21,7 @@ The skills are in `.claude/skills/`. They are plain Markdown: any tool can read 
 ## Rules that hold everywhere
 
 1. **The look is decided.** Dark "stage" and light "day" for the public site, light "paper" for the admin
-   centre. Colours by name, the icon-tile kit, one-level menus. Do not restyle from taste; follow `docs/DESIGN.md`.
+   centre and the CRM, with a dark look the person working there can switch on (light is the default). Colours by name, the icon-tile kit, one-level menus. Do not restyle from taste; follow `docs/DESIGN.md`.
 2. **Look at what you made.** A change to a page is checked in both themes, on a desktop and on a phone
    (`node scripts/shot.mjs`), before it is called done. In the light look every word must be readable:
    `node scripts/contrast-check.mjs <pages>` measures it.
@@ -50,6 +50,8 @@ node scripts/shot.mjs <folder> --full [--light] home training   # photographs of
 python scripts/stage-codemod.py                        # lists colours written as fixed values
 node scripts/seo-head.mjs http://localhost:3111 home training   # what a search engine and a shared link read
 node scripts/contrast-check.mjs home ai-weekend        # can every word be read, in light and in dark
+node scripts/contrast-check.mjs --back-office admin/learners crm/queue   # the same for the admin centre and the CRM (made-up data)
+python scripts/stage-codemod.py --admin                # fixed colours in the admin centre and the CRM (they would not turn dark)
 npx tsx scripts/campaign-check.ts                      # the LinkedIn film campaign: the plan and all its posts
 npx tsx scripts/autopilot-check.ts                     # the autopilot: what it sends is whole and fits, the day's plan, the writing rules (no network)
 npx tsx scripts/crm-check.ts                           # the CRM: what a reply does, the Today lists, the hourly limit (made-up leads)

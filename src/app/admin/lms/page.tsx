@@ -62,7 +62,7 @@ function AddNew({ facet, noun, onAdded }: { facet: Facet; noun: string; onAdded:
           maxLength={40}
           aria-label={`New ${noun} name`}
           placeholder={`New ${noun}, e.g. ${example}`}
-          className="min-w-0 flex-1 rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm"
+          className="min-w-0 flex-1 rounded-md border border-gray-300 bg-raised px-3 py-1.5 text-sm"
         />
         <button type="button" onClick={add} disabled={busy || !name.trim()} className="px-3 py-1.5 bg-gray-800 text-white text-xs font-medium rounded-md disabled:opacity-50">{busy ? 'Adding…' : 'Add'}</button>
         <button type="button" onClick={() => { setOpen(false); setNote(null) }} className="text-xs text-gray-500 hover:text-gray-800">Close</button>
@@ -85,7 +85,7 @@ function Checks({ label, options, value, onChange }: { label: string; options: r
               type="button"
               aria-pressed={on}
               onClick={() => onChange(on ? value.filter(x => x !== o) : [...value, o])}
-              className={`px-2.5 py-1 rounded-full text-xs font-medium border transition-colors ${on ? 'bg-primary/10 text-primary border-primary' : 'bg-white text-gray-700 border-gray-300 hover:border-primary'}`}
+              className={`px-2.5 py-1 rounded-full text-xs font-medium border transition-colors ${on ? 'bg-primary/10 text-primary border-primary' : 'bg-raised text-gray-700 border-gray-300 hover:border-primary'}`}
             >
               {o}
             </button>
@@ -219,9 +219,9 @@ export default function AdminLmsPage() {
       <section className="mt-4">
         <div className="flex items-center justify-between mb-3">
           <h2 className="text-sm font-semibold text-gray-900">Courses</h2>
-          <button type="button" onClick={load} disabled={refreshing} className="text-xs text-gray-600 hover:text-gray-900 inline-flex items-center gap-1 rounded-md border border-gray-200 bg-white px-2.5 py-1 disabled:opacity-60"><RefreshCw className={`w-3.5 h-3.5 ${refreshing ? 'animate-spin' : ''}`} /> {refreshing ? 'Loading…' : 'Refresh'}</button>
+          <button type="button" onClick={load} disabled={refreshing} className="text-xs text-gray-600 hover:text-gray-900 inline-flex items-center gap-1 rounded-md border border-gray-200 bg-raised px-2.5 py-1 disabled:opacity-60"><RefreshCw className={`w-3.5 h-3.5 ${refreshing ? 'animate-spin' : ''}`} /> {refreshing ? 'Loading…' : 'Refresh'}</button>
         </div>
-        <div className="divide-y divide-gray-200 border border-gray-200 rounded-xl bg-white shadow-sm max-h-[28rem] overflow-y-auto">
+        <div className="divide-y divide-gray-200 border border-gray-200 rounded-xl bg-raised shadow-sm max-h-[28rem] overflow-y-auto">
           {rows.map(r => {
             const done = r.copy ? r.copy.success === r.copy.total : false
             return (
@@ -246,7 +246,7 @@ export default function AdminLmsPage() {
                     disabled={!r.published && !done}
                     onClick={() => publish(r, !r.published)}
                     title={!r.published && !done ? 'Wait until every file has copied' : ''}
-                    className="text-xs font-medium px-3 py-1.5 rounded-md border border-gray-200 bg-white text-gray-700 hover:bg-gray-50 disabled:opacity-40"
+                    className="text-xs font-medium px-3 py-1.5 rounded-md border border-gray-200 bg-raised text-gray-700 hover:bg-gray-50 disabled:opacity-40"
                   >
                     {r.published ? 'Unpublish' : 'Publish'}
                   </button>
@@ -274,7 +274,7 @@ export default function AdminLmsPage() {
         </div>
       </section>
 
-      <details className="mt-4 group rounded-xl border border-gray-200 bg-white shadow-sm">
+      <details className="mt-4 group rounded-xl border border-gray-200 bg-raised shadow-sm">
         <summary className="cursor-pointer list-none px-4 py-3 flex items-center justify-between after:!content-none [&::-webkit-details-marker]:hidden">
           <span><span className="block text-sm font-semibold text-gray-900">Add a new course</span><span className="block text-xs text-gray-500 mt-0.5">Paste the container link of a finished course package.</span></span>
           <ChevronRight className="w-4 h-4 text-gray-400 transition-transform group-open:rotate-90" aria-hidden />
@@ -286,7 +286,7 @@ export default function AdminLmsPage() {
           onChange={e => setSasUrl(e.target.value)}
           rows={3}
           placeholder="https://<account>.blob.core.windows.net/<container>?sp=rl&st=...&sig=..."
-          className="w-full rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm font-mono"
+          className="w-full rounded-md border border-gray-300 bg-raised px-3 py-1.5 text-sm font-mono"
         />
         <p className="text-xs text-gray-500 mt-1">Needs read + list permission on the container. The container must hold the course's "Upload package/course.json".</p>
         <label className="block text-xs font-semibold text-gray-800 mt-4 mb-1">Course slug (optional)</label>
@@ -294,18 +294,18 @@ export default function AdminLmsPage() {
           value={slug}
           onChange={e => setSlug(e.target.value)}
           placeholder="defaults to the container name, e.g. ai-103"
-          className="w-full rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm"
+          className="w-full rounded-md border border-gray-300 bg-raised px-3 py-1.5 text-sm"
         />
         <div className="grid sm:grid-cols-2 gap-4 mt-4">
           <label className="text-xs font-semibold text-gray-800">Company
-            <select value={vendor} onChange={e => setVendor(e.target.value)} className="mt-1 w-full rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm font-normal">
+            <select value={vendor} onChange={e => setVendor(e.target.value)} className="mt-1 w-full rounded-md border border-gray-300 bg-raised px-3 py-1.5 text-sm font-normal">
               <option value="">Detect from the course title</option>
               {opts.vendors.map(v => <option key={v}>{v}</option>)}
             </select>
             <AddNew facet="vendor" noun="company" onAdded={(n, _id, c) => { setCustom(c); setVendor(n) }} />
           </label>
           <label className="text-xs font-semibold text-gray-800">Type
-            <select value={kind} onChange={e => setKind(e.target.value)} className="mt-1 w-full rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm font-normal">
+            <select value={kind} onChange={e => setKind(e.target.value)} className="mt-1 w-full rounded-md border border-gray-300 bg-raised px-3 py-1.5 text-sm font-normal">
               <option value="">Detect from the course title</option>
               {opts.kinds.map(k => <option key={k.id} value={k.id}>{k.label}</option>)}
             </select>
@@ -330,7 +330,7 @@ export default function AdminLmsPage() {
         </div>
       </details>
 
-      <details className="mt-4 group rounded-xl border border-gray-200 bg-white shadow-sm">
+      <details className="mt-4 group rounded-xl border border-gray-200 bg-raised shadow-sm">
         <summary className="cursor-pointer list-none px-4 py-3 flex items-center justify-between after:!content-none [&::-webkit-details-marker]:hidden">
           <span><span className="block text-sm font-semibold text-gray-900">Add a promo video or thumbnail</span><span className="block text-xs text-gray-500 mt-0.5">Plays automatically when someone opens the course.</span></span>
           <ChevronRight className="w-4 h-4 text-gray-400 transition-transform group-open:rotate-90" aria-hidden />
@@ -338,16 +338,16 @@ export default function AdminLmsPage() {
         <div className="px-4 pb-4 pt-1">
 
         <div className="grid sm:grid-cols-2 gap-4 mt-4">
-          <select value={assetSlug} onChange={e => setAssetSlug(e.target.value)} className="rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm">
+          <select value={assetSlug} onChange={e => setAssetSlug(e.target.value)} className="rounded-md border border-gray-300 bg-raised px-3 py-1.5 text-sm">
             <option value="">Choose a course</option>
             {rows.map(r => <option key={r.slug} value={r.slug}>{r.code}</option>)}
           </select>
-          <select value={assetKind} onChange={e => setAssetKind(e.target.value as 'promo' | 'thumbnail')} className="rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm">
+          <select value={assetKind} onChange={e => setAssetKind(e.target.value as 'promo' | 'thumbnail')} className="rounded-md border border-gray-300 bg-raised px-3 py-1.5 text-sm">
             <option value="promo">Promo video (.mp4)</option>
             <option value="thumbnail">Thumbnail image</option>
           </select>
         </div>
-        <textarea value={assetUrl} onChange={e => setAssetUrl(e.target.value)} rows={2} placeholder="https://<account>.blob.core.windows.net/<container>/<file>?sp=r&st=...&sig=..." className="mt-4 w-full rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm font-mono" />
+        <textarea value={assetUrl} onChange={e => setAssetUrl(e.target.value)} rows={2} placeholder="https://<account>.blob.core.windows.net/<container>/<file>?sp=r&st=...&sig=..." className="mt-4 w-full rounded-md border border-gray-300 bg-raised px-3 py-1.5 text-sm font-mono" />
         <button
           type="button"
           disabled={assetBusy || !assetSlug || !assetUrl.trim()}
@@ -375,7 +375,7 @@ export default function AdminLmsPage() {
         </div>
       </details>
 
-      <details className="mt-4 group rounded-xl border border-gray-200 bg-white shadow-sm">
+      <details className="mt-4 group rounded-xl border border-gray-200 bg-raised shadow-sm">
         <summary className="cursor-pointer list-none px-4 py-3 flex items-center justify-between after:!content-none [&::-webkit-details-marker]:hidden">
           <span><span className="block text-sm font-semibold text-gray-900">Change how a course is filed</span><span className="block text-xs text-gray-500 mt-0.5">Company, type, level, topics and domains decide where it shows in the filters.</span></span>
           <ChevronRight className="w-4 h-4 text-gray-400 transition-transform group-open:rotate-90" aria-hidden />
@@ -390,7 +390,7 @@ export default function AdminLmsPage() {
             if (row) setTag({ vendor: row.vendor, kind: row.kind, level: row.level, topics: row.topics, domains: row.domains, track: row.track })
             setTagMsg('')
           }}
-          className="mt-4 rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm"
+          className="mt-4 rounded-md border border-gray-300 bg-raised px-3 py-1.5 text-sm"
         >
           <option value="">Choose a course</option>
           {rows.map(x => <option key={x.slug} value={x.slug}>{x.code}</option>)}
@@ -399,18 +399,18 @@ export default function AdminLmsPage() {
           <>
             <div className="grid sm:grid-cols-4 gap-4 mt-4">
               <div>
-                <select aria-label="Company" value={tag.vendor} onChange={e => setTag({ ...tag, vendor: e.target.value })} className="w-full rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm">{opts.vendors.map(v => <option key={v}>{v}</option>)}</select>
+                <select aria-label="Company" value={tag.vendor} onChange={e => setTag({ ...tag, vendor: e.target.value })} className="w-full rounded-md border border-gray-300 bg-raised px-3 py-1.5 text-sm">{opts.vendors.map(v => <option key={v}>{v}</option>)}</select>
                 <AddNew facet="vendor" noun="company" onAdded={(n, _id, c) => { setCustom(c); setTag(t => ({ ...t, vendor: n })) }} />
               </div>
               <div>
-                <select aria-label="Type" value={tag.kind} onChange={e => setTag({ ...tag, kind: e.target.value })} className="w-full rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm">{opts.kinds.map(k => <option key={k.id} value={k.id}>{k.label}</option>)}</select>
+                <select aria-label="Type" value={tag.kind} onChange={e => setTag({ ...tag, kind: e.target.value })} className="w-full rounded-md border border-gray-300 bg-raised px-3 py-1.5 text-sm">{opts.kinds.map(k => <option key={k.id} value={k.id}>{k.label}</option>)}</select>
                 <AddNew facet="kind" noun="type" onAdded={(_n, id, c) => { setCustom(c); setTag(t => ({ ...t, kind: id })) }} />
               </div>
               <div>
-                <select aria-label="Level" value={tag.level} onChange={e => setTag({ ...tag, level: e.target.value })} className="w-full rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm">{opts.levels.map(l => <option key={l}>{l}</option>)}</select>
+                <select aria-label="Level" value={tag.level} onChange={e => setTag({ ...tag, level: e.target.value })} className="w-full rounded-md border border-gray-300 bg-raised px-3 py-1.5 text-sm">{opts.levels.map(l => <option key={l}>{l}</option>)}</select>
                 <AddNew facet="level" noun="level" onAdded={(n, _id, c) => { setCustom(c); setTag(t => ({ ...t, level: n })) }} />
               </div>
-              <select value={tag.track} onChange={e => setTag({ ...tag, track: e.target.value })} className="self-start rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm" aria-label="Track (short courses)">
+              <select value={tag.track} onChange={e => setTag({ ...tag, track: e.target.value })} className="self-start rounded-md border border-gray-300 bg-raised px-3 py-1.5 text-sm" aria-label="Track (short courses)">
                 <option value="">No track</option>
                 {TRACKS.map(t => <option key={t.id} value={t.id}>{t.label}</option>)}
               </select>
@@ -437,14 +437,14 @@ export default function AdminLmsPage() {
         </div>
       </details>
 
-      <details className="mt-4 group rounded-xl border border-gray-200 bg-white shadow-sm">
+      <details className="mt-4 group rounded-xl border border-gray-200 bg-raised shadow-sm">
         <summary className="cursor-pointer list-none px-4 py-3 flex items-center justify-between after:!content-none [&::-webkit-details-marker]:hidden">
           <span><span className="block text-sm font-semibold text-gray-900">Rename a lesson</span><span className="block text-xs text-gray-500 mt-0.5">Fix a lesson or quiz title without importing the course again.</span></span>
           <ChevronRight className="w-4 h-4 text-gray-400 transition-transform group-open:rotate-90" aria-hidden />
         </summary>
         <div className="px-4 pb-4 pt-1">
           <div className="grid sm:grid-cols-2 gap-4 mt-4">
-            <select aria-label="Course" value={lessonSlug} onChange={e => { setLessonSlug(e.target.value); setLessonId(''); setLessonTitle(''); setLessonMsg(null) }} className="rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm">
+            <select aria-label="Course" value={lessonSlug} onChange={e => { setLessonSlug(e.target.value); setLessonId(''); setLessonTitle(''); setLessonMsg(null) }} className="rounded-md border border-gray-300 bg-raised px-3 py-1.5 text-sm">
               <option value="">Choose a course</option>
               {rows.map(x => <option key={x.slug} value={x.slug}>{x.code}</option>)}
             </select>
@@ -453,7 +453,7 @@ export default function AdminLmsPage() {
               value={lessonId}
               disabled={!lessonSlug}
               onChange={e => { setLessonId(e.target.value); setLessonTitle(rows.find(x => x.slug === lessonSlug)?.lessons?.find(l => l.id === e.target.value)?.title || ''); setLessonMsg(null) }}
-              className="rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm min-w-0"
+              className="rounded-md border border-gray-300 bg-raised px-3 py-1.5 text-sm min-w-0"
             >
               <option value="">Choose a lesson</option>
               {(rows.find(x => x.slug === lessonSlug)?.lessons || []).map(l => <option key={l.id} value={l.id}>{l.title}</option>)}
@@ -461,7 +461,7 @@ export default function AdminLmsPage() {
           </div>
           {lessonId && (
             <div className="mt-4 flex flex-wrap items-center gap-2">
-              <input value={lessonTitle} onChange={e => setLessonTitle(e.target.value)} maxLength={140} aria-label="New lesson title" className="min-w-0 flex-1 rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm" />
+              <input value={lessonTitle} onChange={e => setLessonTitle(e.target.value)} maxLength={140} aria-label="New lesson title" className="min-w-0 flex-1 rounded-md border border-gray-300 bg-raised px-3 py-1.5 text-sm" />
               <button
                 type="button"
                 disabled={!lessonTitle.trim()}

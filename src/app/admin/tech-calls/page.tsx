@@ -69,7 +69,7 @@ export default function TechCallsPage() {
           <p className="text-sm text-gray-500 mt-0.5">Approving a request creates the Microsoft Teams meeting from admin@gennoor.com and emails the confirmation.</p>
         </div>
       </div>
-      <div className="flex flex-wrap gap-1 bg-white rounded-xl p-1 mb-4 border border-gray-200 shadow-sm w-fit">
+      <div className="flex flex-wrap gap-1 bg-raised rounded-xl p-1 mb-4 border border-gray-200 shadow-sm w-fit">
         {(['pending', 'approved', 'declined', 'all'] as const).map(f => (
           <button key={f} onClick={() => setFilter(f)} className={`px-3 py-1.5 text-sm rounded-md capitalize ${filter === f ? 'bg-gray-800 text-white' : 'text-gray-600 hover:bg-gray-50'}`}>
             {f}{calls ? ` (${f === 'all' ? calls.length : calls.filter(c => c.status === f).length})` : ''}
@@ -83,7 +83,7 @@ export default function TechCallsPage() {
       ) : (
         <ul className="space-y-3">
           {shown.map(c => (
-            <li key={c.id} className="bg-white border border-gray-200 rounded-xl shadow-sm p-4">
+            <li key={c.id} className="bg-raised border border-gray-200 rounded-xl shadow-sm p-4">
               <div className="flex flex-wrap items-start justify-between gap-3">
                 <div>
                   <div className="flex flex-wrap items-center gap-2">
@@ -120,19 +120,19 @@ export default function TechCallsPage() {
                 <div className="mt-3 border border-gray-200 rounded-xl p-3 bg-gray-50 space-y-3">
                   <p className="text-sm font-medium text-gray-900">Suggest a new date and time (IST, only open slots are listed)</p>
                   <div className="flex flex-wrap gap-3">
-                    <select value={pDate} onChange={e => { setPDate(e.target.value); setPTime('') }} className="border border-gray-300 rounded-md px-3 py-2 text-sm bg-white" aria-label="New date">
+                    <select value={pDate} onChange={e => { setPDate(e.target.value); setPTime('') }} className="border border-gray-300 rounded-md px-3 py-2 text-sm bg-raised" aria-label="New date">
                       <option value="">Date</option>
                       {days.filter(d => d.slots.some(s => s.open)).map(d => <option key={d.date} value={d.date}>{d.date}</option>)}
                     </select>
-                    <select value={pTime} onChange={e => setPTime(e.target.value)} disabled={!pDate} className="border border-gray-300 rounded-md px-3 py-2 text-sm bg-white" aria-label="New time">
+                    <select value={pTime} onChange={e => setPTime(e.target.value)} disabled={!pDate} className="border border-gray-300 rounded-md px-3 py-2 text-sm bg-raised" aria-label="New time">
                       <option value="">Time</option>
                       {days.find(d => d.date === pDate)?.slots.filter(s => s.open).map(s => <option key={s.time} value={s.time}>{s.time} IST</option>)}
                     </select>
                   </div>
-                  <textarea value={pMsg} onChange={e => setPMsg(e.target.value)} maxLength={1000} rows={3} placeholder="Short message for the visitor (optional)" className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm bg-white" />
+                  <textarea value={pMsg} onChange={e => setPMsg(e.target.value)} maxLength={1000} rows={3} placeholder="Short message for the visitor (optional)" className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm bg-raised" />
                   <div className="flex flex-wrap gap-2">
                     <button disabled={!pDate || !pTime || busy === c.id} onClick={() => sendAsk(c.id)} className="px-4 py-2 rounded-md bg-gray-800 text-white text-sm font-medium hover:bg-gray-700 disabled:opacity-50">{busy === c.id ? 'Sending…' : 'Send to visitor'}</button>
-                    <button onClick={() => setAskId('')} className="px-4 py-2 rounded-md border border-gray-300 bg-white text-sm text-gray-700 hover:bg-gray-50">Cancel</button>
+                    <button onClick={() => setAskId('')} className="px-4 py-2 rounded-md border border-gray-300 bg-raised text-sm text-gray-700 hover:bg-gray-50">Cancel</button>
                   </div>
                   <p className="text-xs text-gray-500">The visitor gets Yes / No buttons. If they say yes, the Teams invite is created or updated and sent automatically. You do not need to confirm it.</p>
                 </div>
@@ -142,7 +142,7 @@ export default function TechCallsPage() {
                   <button disabled={busy === c.id} onClick={() => act(c.id, 'approve')} className="px-4 py-2 rounded-md bg-gray-800 text-white text-sm font-medium hover:bg-gray-700 disabled:opacity-50">
                     {busy === c.id ? 'Working…' : 'Approve and send Teams invite'}
                   </button>
-                  <button disabled={busy === c.id} onClick={() => act(c.id, 'decline')} className="px-4 py-2 rounded-md border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50">Decline</button>
+                  <button disabled={busy === c.id} onClick={() => act(c.id, 'decline')} className="px-4 py-2 rounded-md border border-gray-300 bg-raised text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50">Decline</button>
                 </div>
               )}
             </li>

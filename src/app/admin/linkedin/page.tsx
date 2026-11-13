@@ -116,7 +116,7 @@ export default function LinkedInPage() {
               {s.orgDaysLeft < 0 ? 'The company page login has expired.' : `The company page login expires in ${s.orgDaysLeft} day${s.orgDaysLeft === 1 ? '' : 's'}.`} Use "Connect + company page" to renew it, or page posts stop.
             </div>
           )}
-          <div className="rounded-lg border border-gray-200 bg-white p-3 mb-4 text-sm">
+          <div className="rounded-lg border border-gray-200 bg-raised p-3 mb-4 text-sm">
             <div className="flex flex-wrap items-center gap-x-6 gap-y-1 mb-3">
               <span>{dot(s.connected)}{s.connected ? `Connected as ${s.memberName || 'member'}` : 'Not connected'}<InfoTip text="Whether the site holds a valid LinkedIn login token for you. It lets the site post on your behalf; it never sees your password." /></span>
               {s.connected && <span>{dot(s.canPostAsOrg)}{s.canPostAsOrg ? `Page: ${s.orgName}` : 'Company page not linked'}<InfoTip text="Posting as the Gennoor company page needs LinkedIn's Community Management API, which must be approved on the LinkedIn app first. Until then only 'Post as me' works." /></span>}
@@ -124,16 +124,16 @@ export default function LinkedInPage() {
             </div>
             <div className="flex flex-wrap items-center gap-2">
               <a href="/api/linkedin/connect" className="px-3.5 py-2 text-[13px] font-medium bg-gray-800 text-white rounded-md hover:bg-gray-900">{s.connected ? 'Reconnect (member)' : 'Connect LinkedIn'}</a><InfoTip text="Opens LinkedIn so you can approve the app. Grants permission to post as you (Share on LinkedIn)." />
-              <a href="/api/linkedin/connect?org=1" className="px-3.5 py-2 text-[13px] font-medium text-gray-700 bg-white border border-gray-200 rounded-md hover:border-gray-400">Connect + company page</a><InfoTip text="Also asks for company-page permissions. LinkedIn will refuse this until the Community Management API is approved for the app." />
+              <a href="/api/linkedin/connect?org=1" className="px-3.5 py-2 text-[13px] font-medium text-gray-700 bg-raised border border-gray-200 rounded-md hover:border-gray-400">Connect + company page</a><InfoTip text="Also asks for company-page permissions. LinkedIn will refuse this until the Community Management API is approved for the app." />
             </div>
           </div>
 
-          <div className="rounded-lg border border-gray-200 bg-white p-3 mb-4 text-sm">
+          <div className="rounded-lg border border-gray-200 bg-raised p-3 mb-4 text-sm">
             <div className="font-medium mb-2">Carousel PDF<InfoTip text="The agent turns a topic or a web page into swipeable cards, or you upload your own PDF. Download it, post it now, or schedule it." /></div>
             <CarouselPanel />
           </div>
 
-          <div className="rounded-lg border border-gray-200 bg-white p-3 mb-4 text-sm">
+          <div className="rounded-lg border border-gray-200 bg-raised p-3 mb-4 text-sm">
             <div className="font-medium mb-2">Scheduled &amp; posted<InfoTip text="Carousels and event posts you scheduled or published from here. Delete removes the post from LinkedIn." /></div>
             {jobs.length === 0 ? <div className="text-gray-500">Nothing yet.</div> : (
               <ul className="divide-y divide-gray-100">{jobs.filter(j => j.state !== 'deleted').slice(0, 12).map(j => (
@@ -150,7 +150,7 @@ export default function LinkedInPage() {
           </div>
 
           {ads && (
-            <div className="rounded-lg border border-gray-200 bg-white p-3 mb-4 text-sm">
+            <div className="rounded-lg border border-gray-200 bg-raised p-3 mb-4 text-sm">
               <div className="font-medium mb-2">Lead Gen + Conversions (LinkedIn ads)<InfoTip text="Lead Gen Form answers are pulled into the CRM every 15 minutes. When a lead becomes Qualified or Won, or a call is booked, LinkedIn is told so its ads can learn what works." /></div>
               {!ads.configured ? (
                 <div className="text-amber-900 space-y-1.5">
@@ -174,8 +174,8 @@ export default function LinkedInPage() {
                   </div>
                   <div className="flex flex-wrap items-center gap-2">
                     <a href="/api/linkedin/connect?ads=1" className="px-3.5 py-2 text-[13px] font-medium bg-gray-800 text-white rounded-md hover:bg-gray-900">{ads.connected ? 'Reconnect ads' : 'Connect ads'}</a>
-                    <button disabled={!ads.connected || !!busy} onClick={() => adsAction('sync')} className="px-3.5 py-2 text-[13px] rounded-md border border-gray-200 bg-white disabled:opacity-40 hover:border-gray-400">{busy === 'sync' ? '…' : 'Sync leads now'}</button>
-                    <button disabled={!ads.connected || !!busy} onClick={() => adsAction('rules')} className="px-3.5 py-2 text-[13px] rounded-md border border-gray-200 bg-white disabled:opacity-40 hover:border-gray-400">{busy === 'rules' ? '…' : 'Create conversion rules'}</button>
+                    <button disabled={!ads.connected || !!busy} onClick={() => adsAction('sync')} className="px-3.5 py-2 text-[13px] rounded-md border border-gray-200 bg-raised disabled:opacity-40 hover:border-gray-400">{busy === 'sync' ? '…' : 'Sync leads now'}</button>
+                    <button disabled={!ads.connected || !!busy} onClick={() => adsAction('rules')} className="px-3.5 py-2 text-[13px] rounded-md border border-gray-200 bg-raised disabled:opacity-40 hover:border-gray-400">{busy === 'rules' ? '…' : 'Create conversion rules'}</button>
                   </div>
                 </>
               )}
@@ -183,7 +183,7 @@ export default function LinkedInPage() {
           )}
 
           <ListToolbar v={vp} noun="post" />
-          <ul className="divide-y divide-gray-100 rounded-lg border border-gray-200 bg-white">
+          <ul className="divide-y divide-gray-100 rounded-lg border border-gray-200 bg-raised">
             {vp.rows.map(p => {
               const sharedMember = p.shares.some(x => x.as === 'member')
               const sharedOrg = p.shares.some(x => x.as === 'organization')
@@ -194,11 +194,11 @@ export default function LinkedInPage() {
                     <div className="text-xs text-gray-500">{p.date}{sharedMember && <span className="ml-2 text-emerald-700">✓ shared by you</span>}{sharedOrg && <span className="ml-2 text-emerald-700">✓ shared on page</span>}</div>
                   </div>
                   <button disabled={!s.connected || !!busy || sharedMember} onClick={() => share(p.slug, ['member'])}
-                    className="px-3 py-1.5 text-[13px] rounded-md border border-gray-200 bg-white whitespace-nowrap disabled:opacity-40 hover:border-gray-400">
+                    className="px-3 py-1.5 text-[13px] rounded-md border border-gray-200 bg-raised whitespace-nowrap disabled:opacity-40 hover:border-gray-400">
                     {busy === p.slug ? '…' : 'Post as me'}
                   </button>
                   <button disabled={!s.canPostAsOrg || !!busy || sharedOrg} onClick={() => share(p.slug, ['organization'])}
-                    className="px-3 py-1.5 text-[13px] rounded-md border border-gray-200 bg-white whitespace-nowrap disabled:opacity-40 hover:border-gray-400">
+                    className="px-3 py-1.5 text-[13px] rounded-md border border-gray-200 bg-raised whitespace-nowrap disabled:opacity-40 hover:border-gray-400">
                     Post to page
                   </button>
                 </li>

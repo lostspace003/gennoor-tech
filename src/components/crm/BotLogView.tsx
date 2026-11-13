@@ -177,7 +177,7 @@ export default function BotLogView({ isManager, notify }: { isManager: boolean; 
 
           {report && (
             <>
-              <div className="bg-white border border-gray-200 rounded-xl p-5">{renderMd(report)}</div>
+              <div className="bg-raised border border-gray-200 rounded-xl p-5">{renderMd(report)}</div>
 
               {/* Forward to team */}
               <div className="flex flex-wrap items-center gap-2 bg-gray-50 border border-gray-200 rounded-lg p-2.5">
@@ -240,7 +240,7 @@ export default function BotLogView({ isManager, notify }: { isManager: boolean; 
             const idx = (safeLogPage - 1) * LOGS_PER_PAGE + i
             const open = expandedLog === idx
             return (
-              <div key={idx} className={`rounded-lg border ${l.leadCaptured ? 'border-green-300 bg-green-50' : l.q === '[feedback]' ? 'border-gray-200 bg-gray-50' : 'border-gray-200 bg-white'}`}>
+              <div key={idx} className={`rounded-lg border ${l.leadCaptured ? 'border-green-300 bg-green-50' : l.q === '[feedback]' ? 'border-gray-200 bg-gray-50' : 'border-gray-200 bg-raised'}`}>
                 <button onClick={() => setExpandedLog(open ? null : idx)} className="w-full text-left px-3 py-2 flex items-center gap-2">
                   <span className="text-[11px] text-gray-400 shrink-0">{formatDateTime(l.at)}</span>
                   {l.leadCaptured && <span className="text-[10px] bg-green-600 text-white rounded-full px-1.5 py-0.5 shrink-0">LEAD</span>}
@@ -263,7 +263,7 @@ export default function BotLogView({ isManager, notify }: { isManager: boolean; 
 
       {tab === 'index' && (
         <div className="space-y-3 max-w-lg">
-          <div className="bg-white border border-gray-200 rounded-xl p-4 text-sm text-gray-700 space-y-1">
+          <div className="bg-raised border border-gray-200 rounded-xl p-4 text-sm text-gray-700 space-y-1">
             {indexInfo?.indexed ? (
               <>
                 <div><strong>{indexInfo.pages}</strong> pages · <strong>{indexInfo.chunks}</strong> knowledge chunks</div>

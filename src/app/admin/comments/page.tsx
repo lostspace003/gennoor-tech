@@ -105,7 +105,7 @@ export default function AdminCommentsPage() {
           <h1 className="text-xl font-semibold tracking-tight text-gray-900 flex items-center gap-2"><MessageSquare className="w-5 h-5 text-primary-600" />Comments</h1>
           <p className="text-xs text-gray-500 mt-0.5">{comments.length} total · {count('approved')} approved · {count('hidden')} hidden</p>
         </div>
-        <button onClick={() => fetchComments()} disabled={loading} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md border border-gray-300 bg-white text-gray-700 text-xs font-medium hover:bg-gray-50 disabled:opacity-50">
+        <button onClick={() => fetchComments()} disabled={loading} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md border border-gray-300 bg-raised text-gray-700 text-xs font-medium hover:bg-gray-50 disabled:opacity-50">
           <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin' : ''}`} />Refresh
         </button>
       </div>
@@ -125,7 +125,7 @@ export default function AdminCommentsPage() {
           <button
             key={f}
             onClick={() => setFilter(f)}
-            className={`px-3 py-1.5 rounded-md text-xs font-medium border ${filter === f ? 'bg-gray-800 text-white border-gray-800' : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'}`}
+            className={`px-3 py-1.5 rounded-md text-xs font-medium border ${filter === f ? 'bg-gray-800 text-white border-gray-800' : 'bg-raised text-gray-700 border-gray-300 hover:bg-gray-50'}`}
           >
             {f.charAt(0).toUpperCase() + f.slice(1)}
           </button>
@@ -137,7 +137,7 @@ export default function AdminCommentsPage() {
 
       <div className="mt-4 space-y-4">
         {Object.keys(slugGroups).length === 0 ? (
-          <div className="border border-gray-200 rounded-xl bg-white shadow-sm p-8 text-center text-sm text-gray-500">
+          <div className="border border-gray-200 rounded-xl bg-raised shadow-sm p-8 text-center text-sm text-gray-500">
             {loading ? (
               <span className="inline-flex items-center gap-2"><Loader2 className="w-4 h-4 animate-spin" />Loading...</span>
             ) : (
@@ -146,7 +146,7 @@ export default function AdminCommentsPage() {
           </div>
         ) : (
           Object.entries(slugGroups).map(([slug, slugComments]) => (
-            <section key={slug} className="border border-gray-200 rounded-xl bg-white shadow-sm">
+            <section key={slug} className="border border-gray-200 rounded-xl bg-raised shadow-sm">
               <div className="flex items-center gap-2 px-4 py-2.5 border-b border-gray-100">
                 <h2 className="text-sm font-semibold text-gray-800 break-all">{slug}</h2>
                 <span className="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full">{slugComments.length}</span>
@@ -167,7 +167,7 @@ export default function AdminCommentsPage() {
                     <button
                       onClick={() => toggleStatus(c)}
                       disabled={actionLoading === c.rowKey}
-                      className={`shrink-0 inline-flex items-center gap-1 px-3 py-1.5 rounded-md text-xs font-medium disabled:opacity-50 ${c.status === 'approved' ? 'bg-white border border-gray-300 text-gray-700 hover:bg-gray-50' : 'bg-gray-800 text-white hover:bg-gray-700'}`}
+                      className={`shrink-0 inline-flex items-center gap-1 px-3 py-1.5 rounded-md text-xs font-medium disabled:opacity-50 ${c.status === 'approved' ? 'bg-raised border border-gray-300 text-gray-700 hover:bg-gray-50' : 'bg-gray-800 text-white hover:bg-gray-700'}`}
                     >
                       {actionLoading === c.rowKey ? '...' : c.status === 'approved' ? (<><EyeOff className="w-3.5 h-3.5" />Hide</>) : (<><Eye className="w-3.5 h-3.5" />Restore</>)}
                     </button>

@@ -20,8 +20,8 @@ interface Status {
 interface Result { tool: string; args: Record<string, any>; data: any; ok: boolean; cached?: boolean; at: number; ms?: number }
 
 const ICONS: Record<Tab, any> = { overview: Home, feed: Newspaper, people: Users, inbox: MessageSquare, companies: Building2, jobs: Briefcase, me: UserCircle, prospecting: Mail, activity: History }
-const field = 'w-full text-sm border border-gray-200 rounded-md px-2.5 py-1.5 focus:outline-none focus:border-blue-500 bg-white'
-const btn = 'inline-flex items-center gap-1.5 px-3.5 py-2 text-[13px] font-medium rounded-md border border-gray-200 bg-white hover:border-gray-400 disabled:opacity-40'
+const field = 'w-full text-sm border border-gray-200 rounded-md px-2.5 py-1.5 focus:outline-none focus:border-blue-500 bg-raised'
+const btn = 'inline-flex items-center gap-1.5 px-3.5 py-2 text-[13px] font-medium rounded-md border border-gray-200 bg-raised hover:border-gray-400 disabled:opacity-40'
 const primary = 'inline-flex items-center gap-1.5 px-3.5 py-2 text-[13px] font-medium bg-gray-800 text-white rounded-md hover:bg-gray-900 disabled:opacity-40'
 const pretty = (k: string) => k.replace(/_/g, ' ').replace(/^\w/, c => c.toUpperCase())
 
@@ -107,7 +107,7 @@ function CardsView({ cards }: { cards: Card[] }) {
           {shown.map((c, i) => {
             const long = (c.body || '').length > 280
             return (
-              <li key={i} className="rounded-lg border border-gray-200 bg-white p-3">
+              <li key={i} className="rounded-lg border border-gray-200 bg-raised p-3">
                 <div className="flex items-start gap-2">
                   <div className="min-w-0 flex-1">
                     <div className="text-[14px] font-semibold text-gray-900 break-words">{c.url ? <a href={c.url} target="_blank" rel="noreferrer" className="hover:underline">{c.title}</a> : c.title}{c.badge && <span className="ml-1.5 text-xs font-normal text-gray-500">· {c.badge}</span>}</div>
@@ -175,9 +175,9 @@ function ResultView({ r, label, onRun, busy }: { r: Result; label: string; onRun
           {mail.msg && <span className={`text-xs ${mail.state === 'error' ? 'text-red-700' : 'text-emerald-700'}`}>{mail.msg}</span>}
         </form>
       )}
-      {cards ? <CardsView cards={cards} /> : <div className="rounded-lg border border-gray-200 bg-white p-4 max-h-[70vh] overflow-y-auto"><Fmt md={md} /></div>}
+      {cards ? <CardsView cards={cards} /> : <div className="rounded-lg border border-gray-200 bg-raised p-4 max-h-[70vh] overflow-y-auto"><Fmt md={md} /></div>}
       {refs.length > 0 && (
-        <details className="rounded-lg border border-gray-200 bg-white" open={!cards}>
+        <details className="rounded-lg border border-gray-200 bg-raised" open={!cards}>
           <summary className="px-3 py-2 text-xs font-semibold cursor-pointer select-none">Open a profile, conversation or job from this result ({Math.min(refs.length, 120)})<span className="font-normal text-gray-500"> · each one uses a lookup</span></summary>
           <ul className="divide-y divide-gray-100 max-h-[28rem] overflow-y-auto border-t border-gray-100">
             {refs.slice(0, 120).map((x, i) => {
@@ -310,7 +310,7 @@ export default function LinkedInHubPage() {
         </div>
         <div className="flex flex-wrap items-center gap-2 text-xs">
           {limits.map(l => { const pct = l.cap ? l.used / l.cap : 0; return (
-            <span key={l.label} title={`${l.label} used today. Limits keep the account inside normal use and reset at midnight UTC.`} className={`px-2.5 py-1 rounded-full border ${pct > 0.85 ? 'border-red-200 bg-red-50 text-red-700' : pct > 0.6 ? 'border-amber-200 bg-amber-50 text-amber-800' : 'border-gray-200 bg-white text-gray-600'}`}>{l.label} <b className="font-semibold text-gray-900">{l.used}</b>/{l.cap}</span>
+            <span key={l.label} title={`${l.label} used today. Limits keep the account inside normal use and reset at midnight UTC.`} className={`px-2.5 py-1 rounded-full border ${pct > 0.85 ? 'border-red-200 bg-red-50 text-red-700' : pct > 0.6 ? 'border-amber-200 bg-amber-50 text-amber-800' : 'border-gray-200 bg-raised text-gray-600'}`}>{l.label} <b className="font-semibold text-gray-900">{l.used}</b>/{l.cap}</span>
           ) })}
           <WarmSwitch onChange={load} />
           <button onClick={load} className={btn} title="Check the connector again"><RefreshCw className="w-3.5 h-3.5" />Refresh</button>
@@ -327,7 +327,7 @@ export default function LinkedInHubPage() {
         </div>
       )}
       {st && unknown && ready && (
-        <div className="mb-3 rounded-xl border border-gray-200 bg-white p-3 text-sm flex flex-wrap items-center gap-3"><span className="text-gray-700">The connector is running. Check that your LinkedIn sign-in is still saved.</span><button onClick={() => run('get_my_profile', { sections: '' })} disabled={busy} className={primary}>Check sign-in</button></div>
+        <div className="mb-3 rounded-xl border border-gray-200 bg-raised p-3 text-sm flex flex-wrap items-center gap-3"><span className="text-gray-700">The connector is running. Check that your LinkedIn sign-in is still saved.</span><button onClick={() => run('get_my_profile', { sections: '' })} disabled={busy} className={primary}>Check sign-in</button></div>
       )}
 
       <div className="flex gap-1 overflow-x-auto border-b border-gray-200 mb-4 text-sm">
@@ -339,10 +339,10 @@ export default function LinkedInHubPage() {
       {!st ? <Loader2 className="w-5 h-5 animate-spin text-gray-400" /> : tab === 'overview' ? (
         <div className="w-full space-y-5">
           {/* The one thing most visits are for */}
-          <form onSubmit={e => { e.preventDefault(); if (quickText.trim()) run(quickDef.tool, { keywords: quickText.trim() }) }} className="rounded-xl border border-gray-200 bg-white shadow-sm p-4">
+          <form onSubmit={e => { e.preventDefault(); if (quickText.trim()) run(quickDef.tool, { keywords: quickText.trim() }) }} className="rounded-xl border border-gray-200 bg-raised shadow-sm p-4">
             <div className="text-sm font-semibold mb-2.5">Search LinkedIn</div>
             <div className="flex flex-wrap gap-1.5 mb-2.5">
-              {QUICK.map(x => <button type="button" key={x.key} onClick={() => setQuick(x.key)} className={`px-3 py-1.5 text-[13px] rounded-full border ${quick === x.key ? 'bg-gray-800 text-white border-gray-800' : 'border-gray-200 bg-white hover:border-gray-400'}`}>{x.label}</button>)}
+              {QUICK.map(x => <button type="button" key={x.key} onClick={() => setQuick(x.key)} className={`px-3 py-1.5 text-[13px] rounded-full border ${quick === x.key ? 'bg-gray-800 text-white border-gray-800' : 'border-gray-200 bg-raised hover:border-gray-400'}`}>{x.label}</button>)}
             </div>
             <div className="flex flex-wrap gap-2">
               <div className="relative flex-1 min-w-[220px]"><Search className="w-4 h-4 absolute left-3 top-2.5 text-gray-400" /><input value={quickText} onChange={e => setQuickText(e.target.value)} placeholder={quickDef.placeholder} className={`${field} pl-9 py-2`} /></div>
@@ -362,7 +362,7 @@ export default function LinkedInHubPage() {
                 ['prospecting', 'Find work emails', 'Paste names and companies; get email addresses.'],
                 ['jobs', 'Look at jobs', 'Postings by title and place. Shows who is hiring for what.'],
               ] as [Tab, string, string][]).map(([key, title, text]) => { const I = ICONS[key]; return (
-                <button key={key} onClick={() => go(key)} className="text-left rounded-xl border border-gray-200 bg-white p-3.5 hover:border-gray-400 transition flex gap-3">
+                <button key={key} onClick={() => go(key)} className="text-left rounded-xl border border-gray-200 bg-raised p-3.5 hover:border-gray-400 transition flex gap-3">
                   <I className="w-5 h-5 text-gray-500 shrink-0 mt-0.5" />
                   <span><span className="block text-sm font-semibold">{title}</span><span className="block text-[13px] text-gray-500 mt-0.5">{text}</span></span>
                 </button>
@@ -370,7 +370,7 @@ export default function LinkedInHubPage() {
             </div>
           </div>
 
-          <div className="rounded-xl border border-gray-200 bg-white p-3.5">
+          <div className="rounded-xl border border-gray-200 bg-raised p-3.5">
             <div className="flex items-center justify-between mb-2">
               <div className="text-xs font-semibold flex items-center gap-1.5"><ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />Done today</div>
               <div className="flex gap-3 text-xs"><button onClick={() => go('me')} className="text-blue-700 hover:underline">My profile</button><button onClick={() => go('activity')} className="text-blue-700 hover:underline">Full history</button></div>
@@ -385,7 +385,7 @@ export default function LinkedInHubPage() {
       ) : tab === 'prospecting' ? (
         <ProspectingPanel />
       ) : tab === 'activity' ? (
-        <div className="rounded-xl border border-gray-200 bg-white shadow-sm overflow-hidden">
+        <div className="rounded-xl border border-gray-200 bg-raised shadow-sm overflow-hidden">
           <div className="p-2.5 border-b border-gray-100 flex flex-wrap items-center gap-x-3 gap-y-2">
             <input value={aQ} onChange={e => { setAQ(e.target.value); setAPage(0) }} placeholder="Search history" className="text-[13px] border border-gray-200 rounded-md px-2.5 py-1.5 w-48 focus:outline-none focus:border-blue-500" />
             <span className="inline-flex flex-wrap items-center gap-1">
@@ -402,7 +402,7 @@ export default function LinkedInHubPage() {
         </div>
       ) : (
         <SplitPane id="hub-tools" initial={340}
-          left={<div className="rounded-xl border border-gray-200 bg-white shadow-sm overflow-hidden">
+          left={<div className="rounded-xl border border-gray-200 bg-raised shadow-sm overflow-hidden">
             {/* 1. choose what to do */}
             <div className="p-2 border-b border-gray-100">
               <div className="px-1.5 pt-1 pb-1.5 text-[11px] font-semibold uppercase tracking-wide text-gray-400">Look up</div>
@@ -425,8 +425,8 @@ export default function LinkedInHubPage() {
           </div>}
           right={<div className="min-w-0">
             {stack.length > 1 && <button onClick={() => setStack(s => s.slice(0, -1))} className={`${btn} mb-2`}><ChevronLeft className="w-3.5 h-3.5" />Back to the previous result</button>}
-            {!latest ? <div className="rounded-xl border border-dashed border-gray-300 bg-white/50 text-sm text-gray-500 p-10 text-center">{busy ? <Loader2 className="w-5 h-5 animate-spin mx-auto" /> : <>Choose what to look up on the left.<br />Results appear here.</>}</div> : (
-              <div className="rounded-xl border border-gray-200 bg-white shadow-sm p-3">
+            {!latest ? <div className="rounded-xl border border-dashed border-gray-300 bg-raised/50 text-sm text-gray-500 p-10 text-center">{busy ? <Loader2 className="w-5 h-5 animate-spin mx-auto" /> : <>Choose what to look up on the left.<br />Results appear here.</>}</div> : (
+              <div className="rounded-xl border border-gray-200 bg-raised shadow-sm p-3">
                 <div className="flex flex-wrap items-center gap-2 mb-3 text-xs">
                   <span className="text-sm font-semibold">{TOOLS.find(t => t.name === latest.tool)?.label}</span>
                   {latest.cached && <span className="px-1.5 py-0.5 rounded bg-gray-100 text-gray-600 text-xs" title="Shown from a copy saved in the last 10 minutes, so it did not use a lookup">saved copy</span>}
@@ -441,7 +441,7 @@ export default function LinkedInHubPage() {
 
       {confirm && (
         <div className="fixed inset-0 z-[10000] bg-black/40 flex items-center justify-center p-4" onClick={() => setConfirm(null)}>
-          <div className="bg-white rounded-xl shadow-xl max-w-md w-full p-5" onClick={e => e.stopPropagation()}>
+          <div className="bg-raised rounded-xl shadow-xl max-w-md w-full p-5" onClick={e => e.stopPropagation()}>
             <div className="text-base font-semibold mb-1">{confirm.tool.label}</div>
             <p className="text-[13px] text-gray-600 mb-3">This will change your LinkedIn account and cannot be taken back.</p>
             <dl className="rounded-lg bg-gray-50 border border-gray-100 p-3 text-[13px] space-y-1.5 mb-3 max-h-48 overflow-y-auto">
@@ -487,7 +487,7 @@ function MultiSelect({ f, v, set }: { f: Field; v: any; set: (v: any) => void })
         <span className={`truncate ${on.length ? 'text-gray-800' : 'text-gray-400'}`}>{on.length ? names.join(', ') : f.placeholder || 'Any'}</span><ChevronDown className="w-4 h-4 text-gray-400 shrink-0" />
       </button>
       {open && (
-        <div className="absolute z-20 mt-1 w-full rounded-md border border-gray-200 bg-white shadow-lg max-h-64 overflow-y-auto py-1">
+        <div className="absolute z-20 mt-1 w-full rounded-md border border-gray-200 bg-raised shadow-lg max-h-64 overflow-y-auto py-1">
           {f.options!.map(o => <label key={o.v} className="flex items-start gap-2 px-2.5 py-1.5 text-[13px] text-gray-700 hover:bg-gray-50 cursor-pointer"><input type="checkbox" className="mt-1" checked={on.includes(o.v)} onChange={() => toggle(o.v)} /><span>{o.l}</span></label>)}
           {on.length > 0 && <button type="button" onClick={() => set('')} className="w-full text-left px-2.5 py-1.5 text-xs text-gray-500 border-t border-gray-100 hover:bg-gray-50">Clear all</button>}
         </div>

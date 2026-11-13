@@ -7,6 +7,21 @@
  *   node scripts/contrast-check.mjs home ai-weekend contact        both looks
  *   node scripts/contrast-check.mjs --light resources/blog          one look
  *   SITE=https://www.gennoor.com node scripts/contrast-check.mjs home
+ *   node scripts/contrast-check.mjs --back-office admin/learners crm/queue crm/leads     the admin centre and the CRM
+ *
+ * --back-office is for pages behind the sign-in. Nobody is signed in: the script answers the page's question
+ * "who is signed in?" with a pretend person, answers every request for admin data with nothing (or with the
+ * made-up data of a file: FIXTURE=path/to/file.json, shaped { "/api/admin/leads": {...}, ... }), and sets the back
+ * office's own look ("light" is its paper, "dark" its dark look). No real lead, learner or payment is ever on
+ * the page. It works with `next dev`, which serves these pages to a pretend session; it proves nothing about
+ * who may sign in (that is scripts/access-check.ts).
+ *
+ *   REAL=1 node --env-file=.env.local scripts/contrast-check.mjs --back-office --dark admin admin/learners
+ *
+ * REAL=1 shows the pages with their real content instead, on this machine only: a session cookie is made here
+ * with the secret this machine already has (never printed), every request that would change something is
+ * answered by the script and never reaches the server, and NO word of the page is printed (a page of the admin
+ * centre holds names): a hard-to-read piece of text is reported by its colours and its place only.
  *
  * It lists text whose contrast is under 3 to 1 (hard to read for anyone) and counts text under 4.5 to 1
  * (the usual standard for small text). What is behind a word is taken from the nearest thing with a
@@ -17,7 +32,12 @@
  */
 import puppeteer from 'puppeteer-core'
 
+import { readFileSync } from 'fs'
+
 const args = process.argv.slice(2)
+const backOffice = args.includes('--back-office')
+const real = backOffice && process.env.REAL === '1'
+const fixture = backOffice && process.env.FIXTURE ? JSON.parse(readFileSync(process.env.FIXTURE, 'utf8')) : {}
 const themes = args.includes('--light') ? ['light'] : args.includes('--dark') ? ['dark'] : ['light', 'dark']
 const pages = args.filter((a) => !a.startsWith('--'))
 const base = process.env.SITE || 'http://localhost:3111'
@@ -29,7 +49,27 @@ for (const theme of themes) {
   const context = await browser.createBrowserContext()
   const page = await context.newPage()
   await page.setViewport({ width: 1366, height: 900, deviceScaleFactor: 1 })
-  await page.evaluateOnNewDocument((t) => { try { localStorage.setItem('gennoor.theme', t) } catch { /* no storage */ } }, theme)
+  await page.evaluateOnNewDocument((t, key) => { try { localStorage.setItem(key, t) } catch { /* no storage */ } }, theme, backOffice ? 'gennoor.admin.theme' : 'gennoor.theme')
+  if (real) {
+    const { encode } = await import('next-auth/jwt')
+    const name = 'authjs.session-token'
+    const value = await encode({ token: { email: 'admin@gennoor.com', sub: 'contrast-check', name: 'Contrast check' }, secret: process.env.NEXTAUTH_SECRET || process.env.AUTH_SECRET || 'dev-secret-change-in-production', salt: name })
+    await page.setCookie({ name, value, url: base, httpOnly: true })
+    await page.setRequestInterception(true)
+    // Looking only: anything that would change something is answered here and never reaches the server.
+    // (The dashboard asks for its figures with POST; those twelve questions are let through.)
+    const asks = ['academy', 'analytics', 'certificates', 'course-feedback', 'cowork-registrations', 'email-logs', 'gsc-coverage', 'gsc-keywords', 'insights', 'seo-health', 'setup-status', 'storage'].map((n) => `/api/admin/${n}`)
+    page.on('request', (req) => (req.method() === 'GET' || asks.includes(new URL(req.url()).pathname) ? req.continue() : req.respond({ status: 200, contentType: 'application/json', body: '{"success":true}' })))
+  } else if (backOffice) {
+    const json = (body) => ({ status: 200, contentType: 'application/json', body: JSON.stringify(body) })
+    await page.setRequestInterception(true)
+    page.on('request', (req) => {
+      const u = new URL(req.url())
+      if (u.pathname === '/api/auth/session') return req.respond(json({ user: { name: 'Pretend Person', email: 'admin@gennoor.com' }, expires: new Date(Date.now() + 86_400_000).toISOString() }))
+      if (u.pathname.startsWith('/api/') && !u.pathname.startsWith('/api/auth/')) return req.respond(json(req.method() === 'GET' ? (fixture[u.pathname] ?? {}) : { success: true }))
+      req.continue()
+    })
+  }
   for (const p of pages) {
     await page.goto(`${base}/${p === 'home' ? '' : p.replace(/^\/+/, '')}`, { waitUntil: 'domcontentloaded', timeout: 120000 }).catch((e) => console.log(`${p}: ${e.message}`))
     await new Promise((r) => setTimeout(r, 3000))
@@ -87,7 +127,7 @@ for (const theme of themes) {
         const worst = Math.min(...backs.map((b) => ratio(over(color, b), b)))
         const size = parseFloat(cs.fontSize)
         const big = size >= 24 || (size >= 18.66 && Number(cs.fontWeight) >= 700)
-        out.push({ ratio: +worst.toFixed(2), big, text: text.slice(0, 54), color: color.slice(0, 3).join(','), back: backs.map((b) => b.join(',')).join(' .. '), where: (el.closest('section,header,footer,nav,aside,main') || el).tagName.toLowerCase() })
+        out.push({ ratio: +worst.toFixed(2), big, text: text.slice(0, 54), color: color.slice(0, 3).join(','), back: backs.map((b) => b.join(',')).join(' .. '), where: (el.closest('section,header,footer,nav,aside,main') || el).tagName.toLowerCase(), cls: String(el.className || '').replace(/\s+/g, ' ').slice(0, 110) })
       }
       return out
     })
@@ -97,7 +137,7 @@ for (const theme of themes) {
     console.log(`${bad.length ? 'WRONG' : 'ok   '} ${theme.padEnd(5)} /${p.padEnd(34)} ${String(found.length).padStart(4)} pieces of text, ${bad.length} hard to read, ${weak.length} under the standard for small text`)
     const once = new Map()
     for (const f of bad) once.set(`${f.text}|${f.color}|${f.back}`, f)
-    for (const f of [...once.values()].slice(0, 12)) console.log(`        ${f.ratio}:1  "${f.text}"  words ${f.color} on ${f.back}  (in <${f.where}>)`)
+    for (const f of [...once.values()].slice(0, 12)) console.log(`        ${f.ratio}:1  ${real ? `(a piece of text, ${f.text.length} characters)` : `"${f.text}"`}  words ${f.color} on ${f.back}  (in <${f.where}>${real && f.cls ? `, classes: ${f.cls}` : ''})`)
   }
   await context.close()
 }

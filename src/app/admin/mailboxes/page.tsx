@@ -35,7 +35,7 @@ export default function MailboxesPage() {
         <section key={g.key} className="mt-6">
           <h2 className="text-base font-semibold text-gray-900">{g.title}</h2>
           <p className="text-sm text-gray-500 mb-3">{g.note}</p>
-          <div className="divide-y divide-gray-100 border border-gray-200 rounded-xl shadow-sm bg-white">
+          <div className="divide-y divide-gray-100 border border-gray-200 rounded-xl shadow-sm bg-raised">
             {rows.filter(r => r.group === g.key).map(r => (
               <div key={r.address} className="p-4">
                 <div className="flex flex-wrap items-center gap-x-3 gap-y-1">

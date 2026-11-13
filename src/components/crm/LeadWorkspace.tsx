@@ -78,7 +78,7 @@ export default function LeadWorkspace({ lead, canManage, onClose, onReload, noti
   }
 
   return (
-    <div className="bg-white h-full flex flex-col">
+    <div className="bg-surface h-full flex flex-col">
       <div className="border-b border-gray-200 px-3 sm:px-5 pt-3">
         <div className="flex flex-wrap items-center justify-between gap-y-2 gap-x-4">
           <div className="flex items-center gap-2.5 min-w-0">
@@ -211,7 +211,7 @@ function DetailsTab({ lead, canManage, canWork, onReload, onClose, notify }: { l
               <textarea value={form.notes || ''} onChange={(e) => setForm({ ...form, notes: e.target.value })} rows={3} className={inputCls} />
             </div>
             <div className="flex justify-end gap-2">
-              <button onClick={() => setEditing(false)} className="px-4 py-2 border border-gray-200 rounded-lg text-sm hover:bg-white">Cancel</button>
+              <button onClick={() => setEditing(false)} className="px-4 py-2 border border-gray-200 rounded-lg text-sm hover:bg-surface">Cancel</button>
               <button onClick={save} disabled={saving} className="px-4 py-2 bg-primary-600 text-white rounded-lg text-sm hover:bg-primary-700 disabled:opacity-50">{saving ? 'Saving…' : 'Save'}</button>
             </div>
           </div>
@@ -461,7 +461,7 @@ function EmailsTab({ lead, canWork, onReload, notify, intent }: { lead: Lead; ca
         {!loading && thread.length === 0 && <div className="bg-gray-50 rounded-lg p-8 text-center text-sm text-gray-400">Nothing sent yet. Start with email 1 of the series.</div>}
 
         {thread.map((item, i) => (
-          <div key={i} className={`rounded-lg border p-3 ${item.kind === 'received' ? 'border-green-200 bg-green-50' : 'border-gray-200 bg-white'}`}>
+          <div key={i} className={`rounded-lg border p-3 ${item.kind === 'received' ? 'border-green-200 bg-green-50' : 'border-gray-200 bg-raised'}`}>
             <div className="flex items-start justify-between gap-3">
               <button className="min-w-0 text-left flex-1" onClick={() => setExpanded(expanded === i ? null : i)}>
                 <div className="text-sm font-medium text-gray-900 truncate">{item.subject || '(no subject)'}</div>
@@ -474,7 +474,7 @@ function EmailsTab({ lead, canWork, onReload, notify, intent }: { lead: Lead; ca
               )}
             </div>
             {item.body && (expanded === i && item.html ? (
-              <div className="email-html-body text-sm text-gray-700 mt-2 break-words max-h-[28rem] overflow-y-auto bg-white rounded-lg border border-gray-100 p-3"
+              <div className="email-html-body text-sm text-gray-700 mt-2 break-words max-h-[28rem] overflow-y-auto bg-raised rounded-lg border border-gray-100 p-3"
                 dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(item.html, { FORBID_TAGS: ['style', 'form', 'input'], FORBID_ATTR: ['onerror', 'onclick'] }) }} />
             ) : (
               <p className={`text-sm text-gray-600 mt-2 break-words whitespace-pre-line ${expanded === i ? '' : 'line-clamp-2'}`}>{item.body}</p>
@@ -561,7 +561,7 @@ function EmailComposer({ lead, replyTo, onClose, onSent, notify }: { lead: Lead;
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-3">
-      <div className="bg-white rounded-xl w-full max-w-2xl max-h-[92vh] flex flex-col">
+      <div className="bg-raised rounded-xl w-full max-w-2xl max-h-[92vh] flex flex-col">
         <div className="px-5 py-3.5 border-b border-gray-200 flex items-center justify-between shrink-0">
           <div className="min-w-0">
             <h3 className="text-base font-semibold text-gray-900">{replyTo ? `Reply to ${lead.name}` : `Email ${lead.name}`}</h3>

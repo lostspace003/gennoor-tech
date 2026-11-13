@@ -11,7 +11,7 @@ interface Ev {
 }
 
 const field = 'w-full rounded-md border border-gray-200 px-3 py-2 text-sm'
-const btn = 'px-3 py-1.5 text-[13px] rounded-md border border-gray-200 bg-white disabled:opacity-40 hover:border-gray-400 whitespace-nowrap'
+const btn = 'px-3 py-1.5 text-[13px] rounded-md border border-gray-200 bg-raised disabled:opacity-40 hover:border-gray-400 whitespace-nowrap'
 
 export default function EventsPage() {
   const [events, setEvents] = useState<Ev[] | null>(null)
@@ -67,12 +67,12 @@ export default function EventsPage() {
       {notice && <div className="mb-3 rounded-md bg-emerald-50 border border-emerald-200 text-emerald-800 text-sm px-3 py-2">{notice}</div>}
       {!graph && <div className="mb-3 rounded-md bg-amber-50 border border-amber-200 text-amber-900 text-sm px-3 py-2">Microsoft Graph is not configured, so Teams links cannot be created.</div>}
 
-      <div className="rounded-lg border border-gray-200 bg-white p-3 mb-4 space-y-2">
+      <div className="rounded-lg border border-gray-200 bg-raised p-3 mb-4 space-y-2">
         <div className="font-medium text-sm">New event</div>
         <div className="flex flex-wrap gap-2">
           {kinds.map(k => (
             <button key={k.id} type="button" title={k.hint} onClick={() => setF({ ...f, kind: k.id })}
-              className={`px-3 py-1.5 text-[13px] rounded-md border ${f.kind === k.id ? 'bg-gray-800 text-white border-gray-800' : 'bg-white border-gray-200'}`}>{k.label}</button>
+              className={`px-3 py-1.5 text-[13px] rounded-md border ${f.kind === k.id ? 'bg-gray-800 text-white border-gray-800' : 'bg-raised border-gray-200'}`}>{k.label}</button>
           ))}
         </div>
         <div className="flex gap-2">
@@ -92,7 +92,7 @@ export default function EventsPage() {
 
       <div className="mb-2 flex flex-wrap items-center gap-2 text-xs text-gray-600">Schedule the LinkedIn buttons for<input type="datetime-local" className={`${field} !w-auto`} value={at} onChange={e => setAt(e.target.value)} />{at && <button className="underline" onClick={() => setAt('')}>post now instead</button>}</div>
       {!events ? <Loader2 className="w-5 h-5 animate-spin text-gray-400" /> : (
-        <ul className="divide-y divide-gray-100 rounded-lg border border-gray-200 bg-white">
+        <ul className="divide-y divide-gray-100 rounded-lg border border-gray-200 bg-raised">
           {events.length === 0 && <li className="px-3 py-4 text-sm text-gray-500">No events yet.</li>}
           {events.map(e => (
             <li key={e.id} className="px-3 py-2">

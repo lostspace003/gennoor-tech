@@ -11,7 +11,7 @@ import { ClaudePartnerBar } from '@/components/ClaudePartner'
 import { cn } from '@/lib/utils'
 import { isChromelessRoute } from '@/lib/chrome'
 import CustomTraining from '@/components/custom-training/CustomTraining'
-import { readTheme, saveTheme, showTheme, type Theme } from '@/lib/theme'
+import { isBackOffice, readAdminTheme, readTheme, saveTheme, showAdminTheme, showTheme, type Theme } from '@/lib/theme'
 
 const PIN_STORAGE_KEY = 'gennoor.portal.pinned'
 
@@ -50,10 +50,12 @@ export default function PortalShell({ children }: { children: React.ReactNode })
     setMobileOpen(false)
   }, [pathname])
 
-  // The look of the site. Pages with their own shell (admin, CRM, the lesson players) carry none.
+  // The look of the site. The lesson players carry none; the admin centre and the CRM carry their own choice
+  // (light unless the person there chose dark), which is not the public site's.
   useEffect(() => { setTheme(readTheme()) }, [])
   useEffect(() => {
-    showTheme(isChromelessRoute(pathname) ? 'none' : theme)
+    if (isBackOffice(pathname)) showAdminTheme(readAdminTheme())
+    else showTheme(isChromelessRoute(pathname) ? 'none' : theme)
   }, [pathname, theme])
   const changeTheme = (t: Theme) => { setTheme(t); saveTheme(t) }
 

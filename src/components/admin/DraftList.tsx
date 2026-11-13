@@ -58,11 +58,11 @@ export default function DraftList({ rows, filters, selectedId, onSelect, pageSiz
   const tabs = [{ key: 'all', label: 'All' }, ...filters].filter(f => f.key === 'all' || counts[f.key])
 
   return (
-    <div className="rounded-xl border border-gray-200 bg-white shadow-sm overflow-hidden">
+    <div className="rounded-xl border border-gray-200 bg-raised shadow-sm overflow-hidden">
       <div className="p-2 border-b border-gray-100 space-y-2">
         <div className="relative">
           <Search className="w-3.5 h-3.5 text-gray-400 absolute left-2.5 top-1/2 -translate-y-1/2" />
-          <input value={q} onChange={e => setQ(e.target.value)} placeholder={`Search ${noun}s`} className="w-full text-[13px] border border-gray-200 rounded-md pl-8 pr-7 py-1.5 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-200 bg-white" />
+          <input value={q} onChange={e => setQ(e.target.value)} placeholder={`Search ${noun}s`} className="w-full text-[13px] border border-gray-200 rounded-md pl-8 pr-7 py-1.5 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-200 bg-raised" />
           {q && <button onClick={() => setQ('')} aria-label="Clear search" className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-700"><X className="w-3.5 h-3.5" /></button>}
         </div>
         <div className="flex flex-wrap items-center gap-1">
@@ -107,7 +107,7 @@ export default function DraftList({ rows, filters, selectedId, onSelect, pageSiz
 }
 
 /** A small card whose body can fold away, so setup panels do not push the list down the page. */
-export function Fold({ title, icon, right, open, onToggle, children, tone = 'border-gray-200 bg-white' }: {
+export function Fold({ title, icon, right, open, onToggle, children, tone = 'border-gray-200 bg-surface' }: {
   title: React.ReactNode; icon?: React.ReactNode; right?: React.ReactNode; open: boolean; onToggle: () => void; children: React.ReactNode; tone?: string
 }) {
   return (

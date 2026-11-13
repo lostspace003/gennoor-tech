@@ -10,9 +10,9 @@ interface Settings { joinUrl: string; payment: string; kitUrl: string; invitedCo
 interface EmailInfo { kind: Kind; title: string; when: string; to: string; needs?: 'joinUrl' | 'payment' | 'kitUrl'; needsLabel?: string }
 interface Data { current: string; seats: number; fee: number; cohorts: { id: string; label: string }[]; settings: Record<string, Settings>; emails: EmailInfo[]; inviteLimit: number; online: boolean; testMode: boolean; registrations: Reg[] }
 
-const btn = 'inline-flex items-center gap-1.5 px-3.5 py-2 text-[13px] font-medium rounded-md border border-gray-200 bg-white hover:border-gray-400 disabled:opacity-40'
+const btn = 'inline-flex items-center gap-1.5 px-3.5 py-2 text-[13px] font-medium rounded-md border border-gray-200 bg-raised hover:border-gray-400 disabled:opacity-40'
 const primary = 'inline-flex items-center gap-1.5 px-3.5 py-2 text-[13px] font-medium bg-gray-800 text-white rounded-md hover:bg-gray-900 disabled:opacity-40'
-const field = 'w-full text-sm border border-gray-200 rounded-md px-2.5 py-2 bg-white focus:outline-none focus:border-blue-500'
+const field = 'w-full text-sm border border-gray-200 rounded-md px-2.5 py-2 bg-raised focus:outline-none focus:border-blue-500'
 const PAY: Record<Reg['payment'], string> = { pending: 'Not paid yet', paid: 'Paid', refunded: 'Refunded' }
 const SHORT: Record<Kind, string> = { invite: 'Invite', payment: 'Pay', reminder: 'Reminder', join: 'Link', kit: 'Kit' }
 const NEED_LABEL = { joinUrl: 'Teams joining link', payment: 'How to pay', kitUrl: 'Kit download link' }
@@ -132,7 +132,7 @@ export default function WeekendAdminPage() {
         <div className="flex flex-wrap items-center gap-2.5">
           <h1 className="text-xl font-semibold tracking-tight">AI Weekend</h1>
           {data && (
-            <select value={cohort} onChange={(e) => setCohort(e.target.value)} className="text-sm border border-gray-200 rounded-md px-2.5 py-1.5 bg-white" aria-label="Which weekend">
+            <select value={cohort} onChange={(e) => setCohort(e.target.value)} className="text-sm border border-gray-200 rounded-md px-2.5 py-1.5 bg-raised" aria-label="Which weekend">
               {data.cohorts.map((c) => <option key={c.id} value={c.id}>{c.label}{c.id === data.current ? ' (open now)' : ''}</option>)}
             </select>
           )}
@@ -159,7 +159,7 @@ export default function WeekendAdminPage() {
               [`${pending.length}`, 'still to pay'],
               [`₹${paid.reduce((n, r) => n + r.fee, 0).toLocaleString('en-IN')}`, 'received'],
             ].map(([big, small]) => (
-              <div key={small} className="rounded-xl border border-gray-200 bg-white px-4 py-3">
+              <div key={small} className="rounded-xl border border-gray-200 bg-raised px-4 py-3">
                 <div className="text-2xl font-semibold tracking-tight">{big}</div>
                 <div className="text-xs text-gray-500">{small}</div>
               </div>
@@ -179,7 +179,7 @@ export default function WeekendAdminPage() {
                 <span className="text-xs text-gray-500">{data.online ? 'Online payments are marked Paid by themselves. Change it by hand only for money received another way.' : 'Change Payment to Paid when the fee arrives.'}</span>
                 <button onClick={excel} disabled={!rows.length} className={`${btn} ml-auto`}><Download className="w-3.5 h-3.5" />Download Excel</button>
               </div>
-              <div className="rounded-xl border border-gray-200 bg-white overflow-auto">
+              <div className="rounded-xl border border-gray-200 bg-raised overflow-auto">
                 <table className="w-full text-[13px] min-w-[820px]">
                   <thead className="bg-gray-50 text-xs text-gray-500">
                     <tr>{['Person', 'Company', 'Phone', 'Came from', 'Registered', 'Payment', 'Emails sent', ''].map((h) => <th key={h} className="text-left px-3 py-2 font-medium">{h}</th>)}</tr>
@@ -223,7 +223,7 @@ export default function WeekendAdminPage() {
                   const sentTo = e.kind === 'invite' ? (saved?.invitedCount || 0) : live.filter((r) => r.emails?.[e.kind]).length
                   const on = kind === e.kind
                   return (
-                    <button key={e.kind} onClick={() => { setKind(e.kind); setAgain(false); setNotice('') }} className={`w-full text-left rounded-xl border px-3 py-2.5 ${on ? 'border-gray-800 bg-white' : 'border-gray-200 bg-white hover:border-gray-400'}`}>
+                    <button key={e.kind} onClick={() => { setKind(e.kind); setAgain(false); setNotice('') }} className={`w-full text-left rounded-xl border px-3 py-2.5 ${on ? 'border-gray-800 bg-raised' : 'border-gray-200 bg-raised hover:border-gray-400'}`}>
                       <div className="flex items-center justify-between gap-2">
                         <span className="text-sm font-semibold"><span className="text-gray-400 font-normal mr-1.5">{i + 1}</span>{e.title}</span>
                         <span className="text-[11px] text-gray-500">sent to {sentTo}</span>
@@ -237,7 +237,7 @@ export default function WeekendAdminPage() {
 
               {info && (
                 <div className="space-y-3 min-w-0">
-                  <div className="rounded-xl border border-gray-200 bg-white p-3.5 space-y-3">
+                  <div className="rounded-xl border border-gray-200 bg-raised p-3.5 space-y-3">
                     <div className="text-xs text-gray-500">Goes to: <span className="text-gray-800 font-medium">{info.to}</span></div>
 
                     {info.needs && (
@@ -274,7 +274,7 @@ export default function WeekendAdminPage() {
                     </div>
                   </div>
 
-                  <div className="rounded-xl border border-gray-200 bg-white overflow-hidden">
+                  <div className="rounded-xl border border-gray-200 bg-raised overflow-hidden">
                     <div className="px-3.5 py-2 border-b border-gray-100">
                       <div className="text-[11px] text-gray-400">Preview, shown with a sample name</div>
                       <div className="text-sm font-medium truncate">{preview?.subject || '…'}</div>

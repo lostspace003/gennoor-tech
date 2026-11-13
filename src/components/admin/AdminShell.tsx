@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { signOut } from 'next-auth/react'
 import RouteProgress from '@/components/portal/RouteProgress'
+import AdminThemeSwitch from '@/components/admin/AdminThemeSwitch'
 import {
   LayoutDashboard, Linkedin, Sparkles, GraduationCap, MessageSquare, Users, PhoneCall, Mail, Menu, X, ExternalLink, Wallet, PenLine, Bot, Network, History,
   ChevronLeft, ChevronRight, PanelLeftOpen, BarChart3, TrendingUp, Activity, BookOpen, Send, Calendar, Settings, HardDrive, Search, Globe, Lock, LogOut, Briefcase, MessageCircle,
@@ -76,7 +77,7 @@ const GROUPS = [
 // Same idiom as the website's own menu: a quiet panel with a hairline border, the logo on top,
 // monochrome icons, and a soft tinted pill on the current page.
 const ROW = 'flex items-center gap-[11px] rounded-lg px-3 py-2 text-[13.5px] transition-colors duration-100'
-const ROW_IDLE = 'text-gray-900 font-normal hover:bg-[#eaeaef]'
+const ROW_IDLE = 'text-gray-900 font-normal hover:bg-gray-100'
 const ROW_ACTIVE = 'bg-primary-100 text-primary-600 font-semibold'
 
 function Badge({ n }: { n?: number }) {
@@ -94,9 +95,9 @@ function RailLogo() {
       </svg>
       <div className="min-w-0">
         <div className="text-[20px] font-extrabold leading-none tracking-[-0.01em] whitespace-nowrap">
-          <span className="text-[#2D3748]">Ge</span><span className="text-[#2563EB]">nn</span><span className="text-[#F59E0B]">oo</span><span className="text-[#2563EB]">r</span><span className="text-[#2D3748]"> Tech</span>
+          <span className="text-gray-800">Ge</span><span className="text-primary-600">nn</span><span className="text-amber-500">oo</span><span className="text-primary-600">r</span><span className="text-gray-800"> Tech</span>
         </div>
-        <div className="mt-1 whitespace-nowrap text-[10.5px] font-bold uppercase tracking-[0.1em] text-[#475569]">Admin centre</div>
+        <div className="mt-1 whitespace-nowrap text-[10.5px] font-bold uppercase tracking-[0.1em] text-gray-500">Admin centre</div>
       </div>
     </Link>
   )
@@ -151,12 +152,12 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
 
       <aside
         aria-label="Admin navigation"
-        className={`fixed lg:static z-50 inset-y-0 left-0 w-[272px] max-w-[86vw] ${collapsed ? 'lg:w-[68px]' : 'lg:w-[248px]'} shrink-0 flex flex-col bg-[#f5f5f7] border-r border-[#e8e8ed] transition-[width,transform] duration-200 ease-out ${open ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}`}
+        className={`fixed lg:static z-50 inset-y-0 left-0 w-[272px] max-w-[86vw] ${collapsed ? 'lg:w-[68px]' : 'lg:w-[248px]'} shrink-0 flex flex-col bg-gray-50 border-r border-gray-200 transition-[width,transform] duration-200 ease-out ${open ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}`}
       >
         {/* Mobile header */}
-        <div className="flex items-center justify-between h-[52px] pl-4 pr-2 border-b border-[#e8e8ed] lg:hidden">
+        <div className="flex items-center justify-between h-[52px] pl-4 pr-2 border-b border-gray-200 lg:hidden">
           <span className="text-[15px] font-semibold">Admin centre</span>
-          <button onClick={() => setOpen(false)} className="p-2.5 rounded-lg text-gray-500 hover:bg-[#eaeaef]" aria-label="Close the menu"><X className="w-5 h-5" /></button>
+          <button onClick={() => setOpen(false)} className="p-2.5 rounded-lg text-gray-500 hover:bg-gray-100" aria-label="Close the menu"><X className="w-5 h-5" /></button>
         </div>
 
         {/* Logo + fold button (desktop) */}
@@ -165,12 +166,12 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
             <>
               <RailLogo />
               <button onClick={toggle} aria-label="Fold the menu to icons" title="Fold the menu to icons"
-                className="absolute -right-3 top-[30px] z-10 flex h-6 w-6 items-center justify-center rounded-full bg-white border border-[#d2d2d7] text-gray-600 shadow-sm hover:text-gray-900 hover:border-gray-400">
+                className="absolute -right-3 top-[30px] z-10 flex h-6 w-6 items-center justify-center rounded-full bg-raised border border-gray-300 text-gray-600 shadow-sm hover:text-gray-900 hover:border-gray-400">
                 <ChevronLeft className="w-[14px] h-[14px]" strokeWidth={2.25} />
               </button>
             </>
           ) : (
-            <button onClick={toggle} aria-label="Open the menu" title="Open the menu" className="w-full flex items-center justify-center p-2 rounded-lg text-gray-500 hover:bg-[#eaeaef]">
+            <button onClick={toggle} aria-label="Open the menu" title="Open the menu" className="w-full flex items-center justify-center p-2 rounded-lg text-gray-500 hover:bg-gray-100">
               <PanelLeftOpen className="w-[17px] h-[17px]" strokeWidth={1.75} />
             </button>
           )}
@@ -179,8 +180,8 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
         {/* One level: groups of pages. Every row is a page. */}
         <nav className="flex-1 overflow-y-auto px-3 py-1.5" aria-label="Admin sections">
           {GROUPS.map((g, gi) => (
-            <div key={g.title} className={gi > 0 ? 'mt-1.5 pt-1.5 border-t border-[#e8e8ed]' : ''}>
-              {labels && <div className="px-3 pt-1.5 pb-1 text-[11.5px] font-semibold uppercase tracking-[0.06em] text-[#86868b]">{g.title}</div>}
+            <div key={g.title} className={gi > 0 ? 'mt-1.5 pt-1.5 border-t border-gray-200' : ''}>
+              {labels && <div className="px-3 pt-1.5 pb-1 text-[11.5px] font-semibold uppercase tracking-[0.06em] text-gray-500">{g.title}</div>}
               <ul className="space-y-0.5">
                 {g.items.map(n => {
                   const on = n === current
@@ -188,7 +189,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
                     <li key={n.href}>
                       <Link href={n.href} title={labels ? undefined : n.label} aria-current={on ? 'page' : undefined}
                         className={`${ROW} ${on ? ROW_ACTIVE : ROW_IDLE} ${labels ? '' : 'justify-center px-0'}`}>
-                        <n.icon className={`w-[17px] h-[17px] shrink-0 ${on ? 'text-primary-600' : 'text-[#86868b]'}`} strokeWidth={1.7} />
+                        <n.icon className={`w-[17px] h-[17px] shrink-0 ${on ? 'text-primary-600' : 'text-gray-400'}`} strokeWidth={1.7} />
                         {labels && <span className="truncate">{n.label}</span>}
                       </Link>
                     </li>
@@ -199,19 +200,20 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
           ))}
         </nav>
 
-        <div className={`border-t border-[#e8e8ed] ${labels ? 'p-3' : 'p-2'} space-y-0.5`}>
+        <div className={`border-t border-gray-200 ${labels ? 'p-3' : 'p-2'} space-y-0.5`}>
+          <AdminThemeSwitch label={labels} className={`${ROW} ${ROW_IDLE} w-full text-left ${labels ? '' : 'justify-center px-0'}`} />
           <a href="/" target="_blank" rel="noreferrer" title="View site" className={`${ROW} ${ROW_IDLE} ${labels ? '' : 'justify-center px-0'}`}>
-            <ExternalLink className="w-[17px] h-[17px] shrink-0 text-[#86868b]" strokeWidth={1.7} />{labels && <span>View site</span>}
+            <ExternalLink className="w-[17px] h-[17px] shrink-0 text-gray-400" strokeWidth={1.7} />{labels && <span>View site</span>}
           </a>
           <button onClick={() => signOut({ callbackUrl: '/admin/login' })} title="Sign out" className={`${ROW} ${ROW_IDLE} w-full text-left ${labels ? '' : 'justify-center px-0'} hover:text-red-600`}>
-            <LogOut className="w-[17px] h-[17px] shrink-0 text-[#86868b]" strokeWidth={1.7} />{labels && <span>Sign out</span>}
+            <LogOut className="w-[17px] h-[17px] shrink-0 text-gray-400" strokeWidth={1.7} />{labels && <span>Sign out</span>}
           </button>
         </div>
       </aside>
 
       <div className="flex-1 min-w-0 flex flex-col">
         {/* Phone top bar: the three-line button opens the same menu as a drawer, and the bar says where you are */}
-        <header className="lg:hidden shrink-0 h-12 flex items-center gap-2 px-3 border-b border-gray-200 bg-white min-w-0">
+        <header className="lg:hidden shrink-0 h-12 flex items-center gap-2 px-3 border-b border-gray-200 bg-raised min-w-0">
           <button onClick={() => setOpen(true)} aria-label="Open the menu" aria-expanded={open} className="w-10 h-10 shrink-0 rounded-lg flex items-center justify-center text-gray-700 hover:bg-gray-100"><Menu className="w-5 h-5" /></button>
           {current && section ? (
             <span className="flex min-w-0 items-center gap-1.5 text-sm">
@@ -224,7 +226,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
 
         {/* Where you are (on a phone the top bar already says it) */}
         {current && section && (
-          <div className={`shrink-0 border-b border-gray-200 bg-white ${onDash ? '' : 'hidden lg:block'}`}>
+          <div className={`shrink-0 border-b border-gray-200 bg-raised ${onDash ? '' : 'hidden lg:block'}`}>
             <nav aria-label="Breadcrumb" className={`min-h-10 px-4 lg:px-5 py-2 items-center gap-1.5 text-[13px] text-gray-500 min-w-0 ${onDash ? 'hidden lg:flex' : 'flex'}`}>
               <span>{section.title}</span>
               <ChevronRight className="w-3.5 h-3.5 text-gray-300 shrink-0" />

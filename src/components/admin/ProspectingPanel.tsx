@@ -6,8 +6,8 @@ import InfoTip from '@/components/admin/InfoTip'
 import ProspectTable, { type ProspectRow } from '@/components/admin/ProspectTable'
 
 interface KeyInfo { fixed?: boolean; id: string; label: string; last4: string; active: boolean; ok: boolean; remaining?: number; allocated?: number; plan?: string; error?: string }
-const field = 'w-full text-sm border border-gray-200 rounded-md px-2.5 py-1.5 focus:outline-none focus:border-blue-500 bg-white'
-const btn = 'inline-flex items-center gap-1.5 px-3 py-1.5 text-[13px] font-medium rounded-md border border-gray-200 bg-white hover:border-gray-400 disabled:opacity-40'
+const field = 'w-full text-sm border border-gray-200 rounded-md px-2.5 py-1.5 focus:outline-none focus:border-blue-500 bg-raised'
+const btn = 'inline-flex items-center gap-1.5 px-3 py-1.5 text-[13px] font-medium rounded-md border border-gray-200 bg-raised hover:border-gray-400 disabled:opacity-40'
 const primary = 'inline-flex items-center gap-1.5 px-3.5 py-2 text-[13px] font-medium bg-gray-800 text-white rounded-md hover:bg-gray-900 disabled:opacity-40'
 
 /** One line per person: "Name, Company", or just a LinkedIn profile link. */
@@ -46,7 +46,7 @@ export default function ProspectingPanel() {
   return (
     <div className="grid lg:grid-cols-[360px_1fr] gap-4">
       <div className="space-y-3">
-        <div className="rounded-xl border border-gray-200 bg-white shadow-sm p-3">
+        <div className="rounded-xl border border-gray-200 bg-raised shadow-sm p-3">
           <div className="text-sm font-semibold flex items-center gap-1.5 mb-2"><KeyRound className="w-4 h-4 text-gray-500" />Prospecting keys<InfoTip text="Paste your Vibe Prospecting (Explorium) API key and it connects at once. Add several: the one marked In use runs first, and if it runs out of credits the next one takes over by itself. Keys are stored encrypted and never shown again, only the last 4 characters." /></div>
           {keys === null ? <Loader2 className="w-4 h-4 animate-spin text-gray-400" /> : keys.length === 0 ? <div className="text-[13px] text-gray-500 mb-2">No key yet. Add one below to start finding emails.</div> : (
             <ul className="space-y-2 mb-3">
@@ -75,7 +75,7 @@ export default function ProspectingPanel() {
         </div>
       </div>
       <div className="space-y-3">
-        <div className="rounded-xl border border-gray-200 bg-white shadow-sm p-3 space-y-2">
+        <div className="rounded-xl border border-gray-200 bg-raised shadow-sm p-3 space-y-2">
           <div className="text-sm font-semibold">Find emails for a list<InfoTip text="One person per line. Write Name, Company (for example Jane Smith, Infosys) or paste a LinkedIn profile link. Then press Show list, and use Find emails." /></div>
           <textarea value={text} onChange={e => setText(e.target.value)} rows={5} placeholder={'Jane Smith, Infosys\nhttps://www.linkedin.com/in/someone'} className={field} />
           <button onClick={() => setRows(parseList(text))} disabled={!text.trim()} className={primary}>Show list</button>

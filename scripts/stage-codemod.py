@@ -2,6 +2,7 @@
 
     python scripts/stage-codemod.py            shows what would change, file by file
     python scripts/stage-codemod.py --apply    changes the files
+    python scripts/stage-codemod.py --admin [--apply]   the same for the admin centre and the CRM only
 
 The public website is dark ("the stage") and the admin centre is light ("paper"); see
 docs/DESIGN.md. A class like `text-gray-500` is right on both, because its colour is a
@@ -20,7 +21,7 @@ light text on them, brand colours (the gold of the AI Weekend, Trustpilot green,
 green, LinkedIn blue), and the cream card behind the Claude Partner badge.
 
 It is safe to run again: a file with nothing fixed in it is not touched. Admin and CRM pages
-are skipped; they are always light and keep their own classes.
+are looked at only with `--admin`.
 """
 import re
 import sys
@@ -28,7 +29,12 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 APPLY = "--apply" in sys.argv
-SKIP = ("/admin/", "/crm/", "/api/", "_archive")
+# The admin centre and the CRM have a dark look too since 13 November 2026 (a switch in their top bar), so their
+# colours are written by name as well. `--admin` looks at those folders only; without it they are left alone,
+# as before, so a run for the public site cannot disturb them.
+ADMIN = "--admin" in sys.argv
+SKIP = ("/api/", "_archive") if ADMIN else ("/admin/", "/crm/", "/api/", "_archive")
+ONLY = ("/admin/", "/crm/", "src/app/admin", "src/app/crm") if ADMIN else ()
 
 # hex -> palette name. A tuple gives a different name by kind of class: (text, background, border and the rest)
 G = "gray"
@@ -110,6 +116,8 @@ for folder in ("src/app", "src/components"):
     for f in sorted((ROOT / folder).rglob("*.tsx")):
         rel = f.relative_to(ROOT).as_posix()
         if any(s in rel for s in SKIP):
+            continue
+        if ONLY and not any(s in rel for s in ONLY):
             continue
         text = f.read_text(encoding="utf-8")
         new = STRING.sub(in_string, text)

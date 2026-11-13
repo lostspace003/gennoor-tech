@@ -16,6 +16,7 @@ the films and the presentation (`scripts/show/`).
 | **Stage** (dark) | `stage` | Every public page. The site opens in this one. |
 | **Day** (light) | `day` | The same public pages when the visitor picks "Light". Soft grey paper, never pure white, and **no navy blocks**. |
 | **Paper** | none | The admin centre, the CRM, the lesson players. Light and compact. |
+| **Paper, dark** | `stage` | The admin centre and the CRM, when the person working there switches it on. The same pages with the stage's colour values. Light stays the default. |
 
 - A small script in `src/app/layout.tsx` puts the class on `<html>` before the page is drawn;
   `PortalShell` keeps it right while moving between pages; `ThemeSwitch` (foot of the menu, top bar on a
@@ -223,7 +224,28 @@ sideways (a carousel) may hide its own.
 
 ## 9. The admin centre (paper)
 
-Light and compact; it does not take the stage look. Content starts at the top left and uses the full
+Light and compact; it does not take the stage look.
+
+**It has a dark look of its own** (owner, November 2026: a dark theme for the admin, "light stays default").
+- The switch is `src/components/admin/AdminThemeSwitch.tsx`: a row at the foot of the admin menu, an icon button
+  in the CRM's top bar. The choice is kept in the browser under `gennoor.admin.theme` and is separate from the
+  public site's (`src/lib/theme.ts`, the end of the file). It is put on the page before anything is drawn.
+- Dark is the stage's own colour values (the class `stage` on `<html>`), nothing else of the stage. So there is
+  no second set of colours to keep: **a page of the back office must write every colour by name**, exactly as a
+  public page does (section 2). `python scripts/stage-codemod.py --admin` lists the ones that do not, and
+  `--admin --apply` converts them. Never `bg-white`, never a grey or a blue as a hex.
+- A solid button with white words (`bg-emerald-600 text-white`, `bg-blue-600 text-white`) is right in both
+  looks because `src/styles/stage.css` gives those backgrounds their dark-look colour by class name. A new solid
+  colour needs its line there, or its white words go pale on dark.
+- A chart library takes colours as plain values and cannot read a variable. Its grid, axis words and tooltip
+  are set for both looks in `src/styles/globals.css` (the `.recharts-` rules). Where the colour of a column is
+  chosen in the page, choose it by look with `useDarkLook()` (`src/hooks/useDarkLook.ts`), as
+  `src/app/admin/costs/page.tsx` does.
+- **Measure both looks** before saying a page is done:
+  `node scripts/contrast-check.mjs --back-office admin/learners crm/queue` (made-up data, see the file), or
+  with the pages' real content on this machine and no word printed:
+  `REAL=1 node --env-file=.env.local scripts/contrast-check.mjs --back-office admin admin/costs`.
+  Then look at it, at 1366 and at 390 wide. Content starts at the top left and uses the full
 width; long lists scroll inside themselves and have filters and pages; a list that is loading says so and
 never says "nothing yet" before the answer has arrived.
 
