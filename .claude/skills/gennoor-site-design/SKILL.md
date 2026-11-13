@@ -107,6 +107,17 @@ The admin centre keeps the light "paper" look; the rules are in `docs/DESIGN.md`
 - **A chat bubble stood in for WhatsApp.** Use `src/components/icons/WhatsAppIcon.tsx`.
 - **Justified text on a phone opened gaps between words.** `st-justify` justifies from tablet width up only.
 - **Menus inside menus** were removed on purpose (owner's request). Do not add a row that only opens a list.
+- **A video said "Play with sound" in words, and had no slider.** The owner: "just having that simple icon
+  can be good" and "we should be able to see the video slider ... the moment we hover over it". A button
+  on a video is a round icon with no words, and every player of ours uses the one bar,
+  `src/components/media/PlayerBar.tsx` (`docs/DESIGN.md`, section 3).
+- **The browser's own grey pop-up asked "Why archive this lead?"** (`prompt`, `confirm`). A question is a
+  small window of the page: in the CRM, `ask()` from `useCrm()`.
+- **An admin or CRM screen was checked with real people's details on it.** Look at it with made-up leads:
+  answer `/api/auth/session` and the page's data addresses from a puppeteer script (`docs/CRM.md`, section 7).
+  On 13 November 2026 `next dev` on the owner's machine did not run the sign-in check (`middleware.ts`) at
+  all, which makes this easy but proves nothing about access: for access, run `scripts/access-check.ts`
+  against the built site.
 
 ## What must not change when only the look changes
 

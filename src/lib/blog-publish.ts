@@ -77,11 +77,11 @@ export async function shareTexts(d: BlogDraft): Promise<{ page: string; profile:
   try {
     const j = await foundry('/openai/v1/responses', {
       model: TEXT_MODEL,
-      instructions: `You write short LinkedIn posts that bring readers to a new article. Do not "announce" it: lead with the problem the article solves. Write TWO versions as JSON only: {"page": string, "profile": string}.
+      instructions: `You write short LinkedIn posts that bring readers to a new article. Say plainly what the article explains and why a business should read it. Write TWO versions as JSON only: {"page": string, "profile": string}.
 ${HOOK_BULLETS_RULES}
 - Exception to the link rule: end both versions with the line "Read the full article: ${url}" just before the hashtags (the link also goes in the first comment).
 - "page": for the Gennoor Tech company page, 3-4 bullets taken from the article's key takeaways.
-- "profile": the founder's personal version, first person, a different hook on the same problem, same bullets reworded, same link line and hashtags.
+- "profile": a second version for a personal profile: a different first line on the same point, the same bullets reworded, the same link line and hashtags. Never the first person singular ("I", "my", "me").
 Never invent facts beyond the article summary. No hype words. Keep each under 1,300 characters.
 ${LINKEDIN_CRAFT}
 ${LINKEDIN_STYLE_GUIDE}`,

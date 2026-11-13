@@ -5,5 +5,6 @@ import { InboxView } from '@/components/crm/OtherViews'
 
 export default function InboxPage() {
   const router = useRouter()
-  return <InboxView onOpenLead={(id) => router.push(`/crm/leads/${encodeURIComponent(id)}`)} />
+  // A message opens its lead on the Emails tab; one still waiting for an answer opens the reply window too
+  return <InboxView onOpenLead={(id, reply) => router.push(`/crm/leads/${encodeURIComponent(id)}?tab=emails${reply ? '&reply=1' : ''}`)} />
 }

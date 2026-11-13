@@ -6,6 +6,8 @@ import { teamMember } from '@/lib/crm/team'
 import { SEQUENCE, stepById, stepNumber, sequenceProgress, isOpen } from '@/lib/crm/sequence'
 import { buildStepEmail } from '@/lib/crm/sequence-emails'
 import { newLead } from '@/lib/crm/types'
+import { needsAnswer, sendRoom, sentInLastHour, HOURLY_SEND_LIMIT } from '@/lib/crm/replies'
+import { syncRepliesBriefly } from '@/lib/crm/reply-sync'
 
 const ADMIN_CC = process.env.EMAIL_ADMIN || 'admin@gennoor.com'
 // Outreach always leaves as sales@gennoor.com
@@ -55,6 +57,9 @@ export async function POST(request: Request) {
     if (stepId && !stepById(stepId)) return NextResponse.json({ error: 'Unknown step' }, { status: 400 })
 
     const signer = teamMember(user.email)
+    // Look at the mailboxes first: someone who wrote back a minute ago must not get the next email of the series
+    // (for a few seconds at most: if Microsoft is slow, the send goes on with what is already known)
+    await syncRepliesBriefly()
     const all = await getLeads()
     const skipped: string[] = []
     const jobs: Array<{ leadId: string; to: string; step: string; subject: string; html: string; text: string }> = []
@@ -65,6 +70,7 @@ export async function POST(request: Request) {
       if (!canWorkLead(lead, user)) { skipped.push(`${lead.name}: held by ${lead.owner.split('@')[0]}`); continue }
       if (!isOpen(lead)) { skipped.push(`${lead.name}: archived or closed`); continue }
       if (!lead.email) { skipped.push(`${lead.name}: no email address`); continue }
+      if (needsAnswer(lead)) { skipped.push(`${lead.name}: they replied and are waiting for an answer`); continue }
       const progress = sequenceProgress(lead)
       if (progress.stopped) { skipped.push(`${lead.name}: emails stopped`); continue }
       const step = stepId ? stepById(stepId)! : progress.next
@@ -76,6 +82,18 @@ export async function POST(request: Request) {
 
     if (jobs.length === 0) {
       return NextResponse.json({ error: skipped.length ? `Nothing to send. ${skipped.slice(0, 4).join('; ')}` : 'Nothing to send' }, { status: 400 })
+    }
+
+    // The email service allows about 100 emails an hour for the whole site (sign-in codes included), so the CRM
+    // keeps to HOURLY_SEND_LIMIT. What does not fit now is left unsent and said so; it can go later.
+    const room = sendRoom(all)
+    if (room === 0) {
+      const freeAt = sentInLastHour(all).freeAt
+      const when = freeAt ? new Date(freeAt).toLocaleTimeString('en-IN', { hour: 'numeric', minute: '2-digit', timeZone: 'Asia/Kolkata' }) : 'a little later'
+      return NextResponse.json({ error: `${HOURLY_SEND_LIMIT} emails have gone in the last hour, which is all the email service safely allows. Send these after ${when} (India time).` }, { status: 429 })
+    }
+    if (jobs.length > room) {
+      for (const j of jobs.splice(room)) skipped.push(`${all.find((l) => l.id === j.leadId)?.name || 'A lead'}: held back, the hourly limit of ${HOURLY_SEND_LIMIT} emails is reached`)
     }
 
     // The catalogue workbook is read once and reused for every lead that needs it

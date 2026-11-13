@@ -106,6 +106,101 @@ export async function listInboundMessages(fromEmail?: string, top = 25): Promise
   return [...byId.values()].slice(0, top)
 }
 
+const OUR_DOMAIN = `@${(MAILBOX.split('@')[1] || 'gennoor.com').toLowerCase()}`
+
+/** A mailbox that does not answer in this time is left out of this look (it is read again at the next one). */
+const MAILBOX_WAIT_MS = 12_000
+const inTime = <T,>(work: Promise<T>): Promise<T> => Promise.race([work, new Promise<T>((_, no) => setTimeout(() => no(new Error('The mailbox took too long to answer')), MAILBOX_WAIT_MS))])
+
+/** sales@ is an address of the shared mailbox, not a mailbox of its own: asking for it always fails, and that is expected. */
+const notAMailbox = (e: any) => e?.statusCode === 404 || /ErrorInvalidUser|ResourceNotFound|MailboxNotEnabled|not found/i.test(`${e?.code || ''} ${e?.message || ''}`)
+/** One short line for the log: never the whole answer, which carries headers and ids. */
+const why = (e: any) => `${e?.statusCode || ''} ${e?.code || ''} ${String(e?.message || '').slice(0, 120)}`.trim() || 'no reason given'
+
+export interface ReceivedMail {
+  messages: InboundMessage[]
+  /** How many real mailboxes could not be read this time (Microsoft answering slowly or with an error). */
+  unread: number
+}
+
+/**
+ * Recent mail in every team inbox, light: who, subject, the first lines, when. No bodies, so a few hundred
+ * can be read at once. Mail from our own addresses is left out: every outreach email is copied to the admin
+ * mailbox and to its sender, and those copies used to crowd the lead's replies out of "the newest 50".
+ */
+export async function listRecentReceived(days = 45, top = 250): Promise<ReceivedMail> {
+  const client = await getGraphClient()
+  const since = new Date(Date.now() - days * 86_400_000).toISOString()
+  let unread = 0
+  const batches = await Promise.all(
+    INBOX_MAILBOXES.map(async (mailbox) => {
+      try {
+        const result = await inTime(client
+          .api(`/users/${mailbox}/mailFolders/inbox/messages`)
+          .filter(`receivedDateTime ge ${since}`)
+          .orderby('receivedDateTime desc')
+          .top(top)
+          .select('id,internetMessageId,from,subject,bodyPreview,receivedDateTime,isRead')
+          .get())
+        return (result.value || []).map((m: any): InboundMessage => ({
+          id: m.internetMessageId || m.id,
+          from: (m.from?.emailAddress?.address || '').toLowerCase(),
+          fromName: m.from?.emailAddress?.name || '',
+          subject: m.subject || '',
+          preview: m.bodyPreview || '',
+          body: '',
+          receivedAt: m.receivedDateTime || '',
+          isRead: Boolean(m.isRead),
+          mailboxes: [mailbox],
+        }))
+      } catch (e: any) {
+        if (!notAMailbox(e)) { unread++; console.error(`Inbox read failed for ${mailbox.split('@')[0]}: ${why(e)}`) }
+        return [] as InboundMessage[]
+      }
+    })
+  )
+  const byId = new Map<string, InboundMessage>()
+  for (const m of batches.flat()) {
+    if (!m.from || m.from.endsWith(OUR_DOMAIN)) continue
+    const seen = byId.get(m.id)
+    if (seen) seen.mailboxes = [...new Set([...seen.mailboxes, ...m.mailboxes])]
+    else byId.set(m.id, m)
+  }
+  return { messages: [...byId.values()].sort((a, b) => b.receivedAt.localeCompare(a.receivedAt)), unread }
+}
+
+/**
+ * When each outside address was last written to from any team mailbox (their Sent Items). A reply that someone
+ * answered from Outlook or a phone is then known to be answered, although the CRM did not send the answer.
+ */
+export async function listRecentSentTo(days = 45, top = 200): Promise<Record<string, string>> {
+  const client = await getGraphClient()
+  const since = new Date(Date.now() - days * 86_400_000).toISOString()
+  const latest: Record<string, string> = {}
+  await Promise.all(
+    INBOX_MAILBOXES.map(async (mailbox) => {
+      try {
+        const result = await inTime(client
+          .api(`/users/${mailbox}/mailFolders/sentitems/messages`)
+          .filter(`sentDateTime ge ${since}`)
+          .orderby('sentDateTime desc')
+          .top(top)
+          .select('toRecipients,sentDateTime')
+          .get())
+        for (const m of result.value || []) {
+          const at: string = m.sentDateTime || ''
+          if (!at) continue
+          for (const r of m.toRecipients || []) {
+            const address = (r.emailAddress?.address || '').toLowerCase()
+            if (address && !address.endsWith(OUR_DOMAIN) && at > (latest[address] || '')) latest[address] = at
+          }
+        }
+      } catch { /* a mailbox that cannot be read simply adds nothing */ }
+    })
+  )
+  return latest
+}
+
 export interface MeetingRequest {
   subject: string
   attendees: Array<{ email: string; name?: string }>

@@ -10,6 +10,7 @@ import {
   PanelLeftClose, PanelLeftOpen, ChevronDown,
 } from 'lucide-react'
 import { CrmProvider, useCrm } from '@/components/crm/CrmContext'
+import { needsAnswer } from '@/lib/crm/replies'
 
 // The everyday screens, in the order the work happens. The rest sit under "More".
 const NAV = [
@@ -68,10 +69,9 @@ function AuthGate({ children }: { children: React.ReactNode }) {
 function Frame({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
   const { data: session } = useSession()
-  const { leads, loading, loadError, reload, notify, isAdmin, isManager } = useCrm()
+  const { leads, loading, loadError, reload, notify, isAdmin, isManager, userEmail } = useCrm()
   const [drawerOpen, setDrawerOpen] = useState(false)
   const [collapsed, setCollapsed] = useState(false)
-  const [inboxUnseen, setInboxUnseen] = useState(0)
   const [moreOpen, setMoreOpen] = useState(false)
 
   useEffect(() => setDrawerOpen(false), [pathname])
@@ -88,32 +88,10 @@ function Frame({ children }: { children: React.ReactNode }) {
     })
   }
 
-  // Auto-pull replies: poll the inbox every 3 minutes while the CRM is open;
-  // badge counts messages newer than the last time the Inbox page was viewed.
-  useEffect(() => {
-    let stopped = false
-    const check = async () => {
-      if (document.hidden) return
-      try {
-        const res = await fetch('/api/admin/leads/inbox')
-        const data = await res.json()
-        if (stopped || !res.ok || !Array.isArray(data.messages)) return
-        const lastSeen = localStorage.getItem('crm.inbox.lastSeen') || ''
-        setInboxUnseen(data.messages.filter((m: any) => m.receivedAt > lastSeen).length)
-      } catch { /* polling is best-effort */ }
-    }
-    check()
-    const timer = setInterval(check, 180_000)
-    return () => { stopped = true; clearInterval(timer) }
-  }, [])
-
-  // Opening the Inbox marks everything seen
-  useEffect(() => {
-    if (pathname === '/crm/inbox') {
-      localStorage.setItem('crm.inbox.lastSeen', new Date().toISOString())
-      setInboxUnseen(0)
-    }
-  }, [pathname])
+  // Beside "Replies": the leads on this desk who wrote to us and are waiting for an answer. (The mailboxes are
+  // looked at by the provider, every three minutes; see CrmContext.)
+  const me = userEmail.toLowerCase()
+  const inboxUnseen = leads.filter((l) => needsAnswer(l) && (isManager || !l.owner || l.owner.toLowerCase() === me)).length
 
   const active = NAV.find((n) => pathname?.startsWith(n.href))
   const title = pathname?.match(/^\/crm\/leads\/./) ? 'Lead' : active?.label || 'CRM'
@@ -151,13 +129,13 @@ function Frame({ children }: { children: React.ReactNode }) {
                   <item.icon className={`w-4 h-4 ${isActive ? 'text-primary-600' : 'text-[#86868b]'}`} strokeWidth={1.75} />
                   {/* Collapsed: the count rides the icon so nothing is lost */}
                   {rail && item.href === '/crm/inbox' && inboxUnseen > 0 && (
-                    <span className="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-[#1d8348] border border-white" />
+                    <span className="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-[#c0392b] border border-white" />
                   )}
                 </span>
                 {!rail && <span className="text-[13px]">{item.label}</span>}
               </span>
               {!rail && badge !== null && (
-                <span className={`text-[10.5px] font-semibold px-[7px] py-px rounded-full ${item.href === '/crm/inbox' ? 'bg-[#1d8348] text-white' : 'bg-[#f0f0f2] text-[#6e6e73]'}`}>
+                <span className={`text-[10.5px] font-semibold px-[7px] py-px rounded-full ${item.href === '/crm/inbox' ? 'bg-[#c0392b] text-white' : 'bg-[#f0f0f2] text-[#6e6e73]'}`}>
                   {badge}
                 </span>
               )}

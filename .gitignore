@@ -120,3 +120,7 @@ scripts/catalog/.work/
 # Working files for the deck and the films (scripts/show)
 scripts/show/.work/
 scripts/.avatar/
+
+# Python leaves compiled copies beside the agent service; they are made again on every run
+__pycache__/
+*.pyc

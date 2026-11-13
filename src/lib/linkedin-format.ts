@@ -101,24 +101,25 @@ export function formatForLinkedIn(raw: string, opts: FormatOptions = {}): string
 /** The instructions given to every model that writes a LinkedIn post, so drafts arrive in the same shape. */
 /** Owner's house shape for every LinkedIn post (2026-11-08): problem hook, short bullets, compact, link in the first comment. */
 export const HOOK_BULLETS_RULES = `Shape of every post:
-- Line 1, the hook: the reader's PROBLEM or a sharp tension this post resolves ("Your agent passes every demo and fails in production."). Never open with "X launched / announced / released Y", never "Excited to share", never a company name as the first words.
+- Line 1: what this is about, in plain words a manager who is not technical understands. For news, say what happened ("OpenAI released a new model for security teams."); otherwise the reader's problem. Never "Excited to share", never a clever frame ("X is not a Y story, it is a Z story").
 - Optional line 2: one short sentence of context.
-- Then 3 to 5 short bullets (lines starting with "- "), each under 14 words, each one concrete point: what changed, what it means, what to do.
-- Then one short line: the takeaway or a specific question for practitioners.
+- Then 3 to 5 short bullets (lines starting with "- "), each under 14 words, each one concrete point in everyday words: what it is, what it means for a business, what to do. A technical word is explained in a few plain words.
+- Then one short line: the takeaway, or one specific question the reader can answer from their own work.
 - Then the hashtags. 50 to 110 words in total. No long paragraphs, no filler, no hype words.
 - Do not paste source links in the post body: the reference link goes in the first comment, which is posted automatically.`
 
 /**
- * How to write the post, apart from its shape: the short form of POST_CRAFT in services/studio-agents/agents.py
- * (the agents carry the long form). Added 13 November 2026 at the owner's request: every post unique, one clear
- * idea, the right tags. Keep the two in step.
+ * How to write a short post, apart from its shape. The full rules (who reads, plain language, the craft) are in
+ * src/lib/writing-rules.ts; this is their short form for the small jobs (the post that carries a blog link).
  */
 export const LINKEDIN_CRAFT = `How to write it:
+- The reader is a manager who is not technical: everyday words, short sentences, every technical word explained in a few plain words the first time.
 - One post, one idea: the single sentence a busy reader should still remember tomorrow. Leave the other ideas out.
-- Be specific: the tool, the step, the number from the source, the way it fails. Cut any sentence that could sit in any company's post.
+- Be specific: the tool, the step, the number from the source with what it means. Cut any sentence that could sit in any company's post.
 - Give the reader something to use: a check to run, a question to ask the team, a rule of thumb, a mistake to avoid.
-- End with the takeaway or one specific question a practitioner can answer from experience. Never "Thoughts?" or "Agree?".
-- Plain words, active voice. No hype ("game-changer", "unlock", "supercharge", "seamless", "leverage", "delve"), no three-part slogans.
+- End with the takeaway or one specific question the reader can answer from their own work. Never "Thoughts?" or "Agree?".
+- Active voice. No hype ("game-changer", "unlock", "supercharge", "seamless", "leverage", "delve"), no three-part slogans, no "X is not Y, it is Z".
+- Never the first person singular ("I", "my", "me").
 - Nothing is called "free", no price, no customer's name, no promised result.
 - Hashtags: 3 or 4, CamelCase, specific to the subject, at most one broad one.`
 

@@ -6,7 +6,8 @@ import { graphConfigured, listUpcomingMeetings } from '@/lib/crm/graph'
 import { emailShell } from '@/lib/crm/email-theme'
 import { CRM_USERS } from '@/lib/crm/access'
 import { formatIstCstTime } from '@/lib/format-time'
-import { isOpen, sequenceProgress } from '@/lib/crm/sequence'
+import { QUIET_DAYS, quietDays, todayLists } from '@/lib/crm/today'
+import { syncReplies } from '@/lib/crm/reply-sync'
 import { escapeHtml } from '@/lib/escape-html'
 
 const ADMIN = process.env.EMAIL_ADMIN || 'admin@gennoor.com'
@@ -41,27 +42,25 @@ export async function POST(req: NextRequest) {
   }
 
   try {
+    // The day's copy of the leads is taken first, before anything is changed by a machine
+    await backupLeads(await getLeads()).catch((e) => console.error('Backup failed:', e))
+    // Then the mailboxes are looked at, so a reply that came in overnight is in this email
+    await syncReplies(true).catch(() => null)
     const leads = await getLeads()
-    await backupLeads(leads).catch((e) => console.error('Backup failed:', e))
 
-    // Same rules as the Today page: what is unassigned, what has not started,
-    // and which email of the series is due now.
-    const open = leads.filter(isOpen)
-    const pool = open.filter((l) => !l.owner)
-    const held = open.filter((l) => l.owner)
-    const toStart = held.filter((l) => l.email && !l.sequence?.sent.length && !l.sequence?.stopped)
-    const emailsDue = held.filter((l) => {
-      const p = sequenceProgress(l)
-      return !!l.email && p.sentIds.length > 0 && p.due
-    })
+    // The same lists as the Today page (lib/crm/today.ts), so the email and the page never disagree
+    const all = todayLists(leads, '', true)
+    const quietOf = (list: typeof leads) => list.filter((l) => quietDays(l) >= QUIET_DAYS)
+    const pool = all.pool, toStart = all.toStart, emailsDue = all.due
 
     // Personal digests: each person with work waiting gets their own list
     const memberResults: Record<string, boolean> = {}
     for (const member of CRM_USERS.filter((u) => u !== ADMIN)) {
-      const mine = (arr: typeof held) => arr.filter((l) => l.owner?.toLowerCase() === member)
-      const mineStart = mine(toStart)
-      const mineDue = mine(emailsDue)
-      const total = mineStart.length + mineDue.length
+      const mine = todayLists(leads, member)
+      // Replies to leads nobody holds are for whoever picks them up: they are in the admin's email, not here
+      const replies = mine.replies.filter((l) => l.owner?.toLowerCase() === member)
+      const quiet = quietOf(mine.talking)
+      const total = replies.length + quiet.length + mine.toStart.length + mine.due.length
       if (total === 0) continue
       const li = (label: string, items: any[]) =>
         items.length ? `<li><strong>${items.length}</strong> ${label}: ${items.slice(0, 5).map((l) => escapeHtml(l.name)).join(', ')}${items.length > 5 ? '…' : ''}</li>` : ''
@@ -69,10 +68,12 @@ export async function POST(req: NextRequest) {
         to: member,
         from: FROM,
         fromName: 'Gennoor CRM',
-        subject: `Your CRM today: ${total} lead${total === 1 ? '' : 's'} to email`,
+        subject: replies.length
+          ? `Your CRM today: ${replies.length} repl${replies.length === 1 ? 'y' : 'ies'} to answer${total > replies.length ? `, ${total - replies.length} more to do` : ''}`
+          : `Your CRM today: ${total} lead${total === 1 ? '' : 's'} need you`,
         html: emailShell(`<h3 style="margin:0 0 10px;color:#0f172a">Good morning. Here is your list.</h3>
           <ul style="margin:0 0 16px;padding-left:18px;line-height:1.9">
-            ${li('ready for the first email', mineStart)}${li('next email due', mineDue)}
+            ${li('replied and waiting for your answer', replies)}${li(`in conversation, quiet for ${QUIET_DAYS} days or more`, quiet)}${li('ready for the first email', mine.toStart)}${li('next email due', mine.due)}
           </ul>
           <a href="https://www.gennoor.com/crm/queue" style="display:inline-block;background:#2563EB;color:#fff;text-decoration:none;padding:9px 20px;border-radius:8px;font-size:14px">Open Today</a>`),
       })
@@ -98,6 +99,8 @@ export async function POST(req: NextRequest) {
         <h2 style="margin:0 0 4px;color:#0f172a">Gennoor CRM — morning digest</h2>
         <p style="margin:0 0 14px;color:#64748b;font-size:13px">${new Date().toLocaleDateString('en-IN', { dateStyle: 'full', timeZone: 'Asia/Kolkata' })}</p>
         <table style="border-collapse:collapse;font-size:14px">
+          ${row('leads replied and are waiting for an answer', all.replies, '')}
+          ${row(`conversations quiet for ${QUIET_DAYS} days or more`, quietOf(all.talking), '')}
           ${row('unassigned leads waiting to be picked up', pool, '')}
           ${row('leads ready for the first email', toStart, '')}
           ${row('leads with the next email due', emailsDue, '')}
@@ -109,11 +112,11 @@ export async function POST(req: NextRequest) {
       to: ADMIN,
       from: FROM,
       fromName: 'Gennoor CRM',
-      subject: `CRM digest: ${pool.length} unassigned · ${toStart.length} to start · ${emailsDue.length} emails due`,
+      subject: `CRM digest: ${all.replies.length} to answer · ${pool.length} unassigned · ${toStart.length} to start · ${emailsDue.length} emails due`,
       html,
     })
 
-    return NextResponse.json({ success: result.success, pool: pool.length, toStart: toStart.length, emailsDue: emailsDue.length, memberDigests: memberResults, backedUp: true })
+    return NextResponse.json({ success: result.success, replies: all.replies.length, pool: pool.length, toStart: toStart.length, emailsDue: emailsDue.length, memberDigests: memberResults, backedUp: true })
   } catch (error) {
     console.error('Digest error:', error)
     return NextResponse.json({ error: 'Digest failed' }, { status: 500 })

@@ -1,7 +1,7 @@
-# LinkedIn: the film campaign, and how every post is written
+# LinkedIn and the blog: the film campaign, and how everything is written
 
-Read this before changing a post of the film campaign, its plan, or the instructions the writing
-agents follow.
+Read this before changing a post of the film campaign, its plan, the autopilot, the daily blog, or the
+instructions any writer or reviewer follows.
 
 ## 1. The film campaign
 
@@ -49,28 +49,87 @@ How it runs:
   company as "we".
 - The Claude Partner line word for word: "Gennoor is Certified in the Claude Partner Network."
 
-## 3. How a post is written
+## 3. How everything is written: for a reader who is not technical
 
-The shape is the house shape (`HOOK_BULLETS_RULES` in `src/lib/linkedin-format.ts`): a hook in bold on
-the first line, short lines, three to five bullets, the takeaway, the page address, three to five
-hashtags, 50 to 110 words. On a Saturday or Sunday the same thing is said more slowly: a thought, a
-short paragraph or two, then the invitation.
+The owner's words (13 November 2026): "very much repetitive and very boring style of writing. A user,
+when he reads, he never understands what is being written. I myself am not able to understand. Leave
+about non-technical people." And: "the way it is writing, it's so complicated."
 
-The craft, in ten lines, is `POST_CRAFT` in `services/studio-agents/agents.py` (the writing agents carry
-it), with a short form in `LINKEDIN_CRAFT` in `src/lib/linkedin-format.ts`. In brief: one post, one
-idea; earn the first line; be specific; write for the eye; give the reader something to use; end on
-purpose; plain words; different every time; three or four exact hashtags; true only.
+**One place holds the rules: `src/lib/writing-rules.ts`.** Read it; it is short. In brief:
 
-A blog article has its own ten lines, `BLOG_CRAFT`, in the same file: the argument first, an outline
-whose headings tell the story, a specific heading for every section, the reader's situation before the
-news, one usable checklist, the limits said plainly, a "next 30 days" close.
+- **Who reads:** a busy manager or business owner who is curious about AI and is NOT technical. If that
+  reader cannot follow a sentence, the sentence is wrong, however correct it is.
+- **Plain language:** say the point first (who did what); explain every technical word in a few plain
+  words the first time, one explanation to a sentence; short sentences; no insider shorthand; no clever
+  frame ("X is not a Y story, it is a Z story", "X turns Y into a Z problem"); a number comes with its
+  meaning, and never a row of figures; no hype; the test is "could the reader repeat this to a colleague?".
+- **A post:** one idea; for news the first line says what happened; then what it is, why it matters to a
+  business, what to do. **An article:** the news in the first paragraph, plain headings, 1,100 to 1,600
+  words, and never a word about the article itself.
+- **A reviewer** reads as that reader first (`READER_CHECK`) and sends back any unexplained word, any
+  sentence that must be read twice and any text that talks about its own drafting.
+
+Who is given these rules: the autopilot's posts and polls, the daily blog, "Draft with AI" and the agent
+team in Social Studio, the Blog Studio, the post that carries a blog link, the repost line and the first
+comment. The website sends them to the agent service with every request (`rules` and `review_rules`), so
+changing how we write needs **no redeploy** of the service. `agents.py` keeps a copy for a request that
+carries none: keep the two in step.
+
+The shape of the short post that carries a blog link is still `HOOK_BULLETS_RULES` in
+`src/lib/linkedin-format.ts`; the film campaign's posts (section 1) are written by hand to the same rules.
+
+### What the autopilot looks for, and what the writers are given
+
+- **The day's streams** come from `pillarsFor()` in `src/lib/autopilot/variety.ts` and change with the day
+  of the week. The first post of every day is **the top story**: the AI news people are talking about
+  today (a launch, a deal, a new rule, a study), explained plainly. The poll is the day's debate. The
+  other posts take turns between Microsoft, a real use case and something to try today. (The saved
+  setting `slotPillars` is no longer read: saved settings win over new defaults, so a release could not
+  change it.) The owner's words: "The hot news, the cake of the market needs to be found."
+- **Old news is dropped in code** (`freshEnough()`): the research must give the day a story happened; a
+  top story older than three days, or with no date, is not used, whatever the model called it.
+- **The writers get the story, not a headline.** They have no web access. The research returns five to
+  eight facts for each idea (who, what, when, the numbers and what they measure, one limit) and the words
+  a reader would need explained, and those travel to the writers as the reference material
+  (`sourcesText()` in `src/lib/autopilot/live.ts`). For an article there is a second search for that one
+  story (`dossier()` in `src/lib/blog-auto-live.ts`). Before this, a writer had a title and a line; the
+  article was padding, and a reviewer with no web access cut out whatever it could not trace. That is how
+  the article on Claude 5.2 became an article about not being able to check the news, although the launch
+  was real.
+- **A post has two steps, not four.** Autopilot posts have no picture, so the service runs its `text`
+  mode: the writer, then the reviewer. (The four-step team with a researcher and a designer is still what
+  Social Studio's "agent team" button runs.)
+- **If the agent service does not answer, the website writes the post itself** (`writeDirect()`), with the
+  same rules. A slot is no longer held because one service is down.
+
+### An article must never talk about itself
+
+On 13 November 2026 six published articles were found to describe their own revision ("What changed in
+this revision", "the earlier draft stated...", "the source set provided for this article does not
+support..."). The reviser had been told to "apply the reviewer's notes" and wrote about doing so. Now:
+the reviser is told never to mention a draft, a reviewer, notes or what was removed (`NO_SELF_TALK` in
+`src/lib/blog-studio.ts`); a review that passes is not accepted while `selfTalk()` finds such words; and
+the last look before publishing holds the article if it still does.
+
+### To read what it would write today, before it does
+
+```bash
+npx tsx scripts/autopilot-check.ts                                        # the rules and the plan, no network
+npx tsx --env-file=.env.local scripts/autopilot-live-check.ts --fresh     # research now, one post written, nothing saved
+npx tsx --env-file=.env.local scripts/autopilot-live-check.ts --fresh use-case --direct
+npx tsx --env-file=.env.local scripts/blog-live-check.ts                  # one whole article written, nothing saved
+```
+
+Read the result as the reader would. If you would not understand it over lunch, change the rules, not the post.
 
 ## 4. The agent service is put out by hand
 
 `services/studio-agents` is a separate service (the container app `ca-gennoor-studio`). A change to
-`agents.py` does nothing until it is put out again; the steps are in
-`docs/studio-agent-terminated-issue.md`. The website sends the list of emoji the blog can draw with
-every request, so that part works without it.
+`agents.py` or `app.py` does nothing until it is put out again; the steps are in
+`docs/studio-agent-terminated-issue.md`. The website sends the writing rules and the list of emoji the
+blog can draw with every request, so those work without it. Put the service out BEFORE merging a website
+change that sends it something new (a new mode, a new field): the service takes what an older website
+sends, but an older service refuses a mode it does not know.
 
 After putting it out, try the real thing: `npx tsx --env-file=.env.local scripts/autopilot-live-check.ts`
 builds the autopilot's own request for the newest planned post, sends it to the live service and prints

@@ -10,6 +10,7 @@ import { jobsTick } from '@/lib/linkedin-queue'
 import { blogScheduleTick, socialScheduleTick } from '@/lib/scheduled-publish'
 import { videoSeriesTick } from '@/lib/video-series'
 import { campaignTick } from '@/lib/promo-campaign'
+import { replyTick } from '@/lib/crm/reply-sync'
 
 let running = false
 
@@ -25,6 +26,8 @@ export async function runHeartbeat(): Promise<void> {
     const run = async (name: string, fn: () => Promise<string[]>) => {
       try { console.log(`[${name}]`, (await fn()).join(' | ')) } catch (e) { console.error(`[${name}] failed`, e) }
     }
+    // Replies from leads: a reply moves the lead to Talking and a "stop" stops the emails, whether or not anyone has the CRM open
+    await run('crm-replies', () => replyTick())
     await run('autopilot', () => tick(liveDeps()))
     await run('blog-pipeline', () => pipelineTick(liveBlogPipelineDeps()))
     await run('social-scheduled', () => socialScheduleTick())

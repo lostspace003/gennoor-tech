@@ -1,93 +1,73 @@
 'use client'
 
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import Link from 'next/link'
-import { Reply, Hand, Send, Clock, UserPlus, ArrowRight } from 'lucide-react'
-import { Lead } from '@/lib/crm/types'
-import { SEQUENCE, sequenceProgress, isOpen, stepNumber } from '@/lib/crm/sequence'
-import { timeAgo, api } from './shared'
+import { Reply, Hand, Send, Clock, UserPlus, ArrowRight, MessagesSquare, Flag } from 'lucide-react'
+import { Lead, LEAD_STEPS, STEP_LABELS } from '@/lib/crm/types'
+import { SEQUENCE, sequenceProgress, stepNumber } from '@/lib/crm/sequence'
+import { QUIET_DAYS, needsYou, quietDays, todayLists } from '@/lib/crm/today'
+import { timeAgo, api, StepStrip } from './shared'
 import { useCrm } from './CrmContext'
 import SendStepModal from './SendStep'
 
-const leadHref = (l: Lead, tab?: string) => `/crm/leads/${encodeURIComponent(l.id)}${tab ? `?tab=${tab}` : ''}`
+const leadHref = (l: Lead, query = '') => `/crm/leads/${encodeURIComponent(l.id)}${query ? `?${query}` : ''}`
 
 /**
  * Today: the whole job on one page, top to bottom.
- *   1. Replies            answer these first
- *   2. Unassigned leads   pick some up
- *   3. Send today         the next email of the series is due
- *   4. Waiting            nothing to do yet
- * Every lead that is being worked sits in exactly one of these.
+ *   They replied        answer these first
+ *   In conversation     Talking and Proposal: follow up the quiet ones
+ *   New leads           pick some up
+ *   Send                the next email of the series
+ *   Series finished     no reply after the last email: close, or keep in touch by hand
+ *   Waiting             nothing to do yet
+ * The lists are worked out in lib/crm/today.ts, which the morning email uses too.
+ * Every lead that needs someone sits in exactly one of them.
  */
 export default function QueueView({ leads }: { leads: Lead[] }) {
-  const { userEmail, isManager, reload, notify } = useCrm()
-  const [replied, setReplied] = useState<Lead[]>([])
+  const { userEmail, isManager, reload, notify, ask, mailNote } = useCrm()
   const [sendTo, setSendTo] = useState<Lead[] | null>(null)
   const [everyone, setEveryone] = useState(false)
+  const [busy, setBusy] = useState('')
   const me = userEmail.toLowerCase()
 
-  // A lead whose latest reply is newer than our last email needs an answer
-  useEffect(() => {
-    fetch('/api/admin/leads/inbox')
-      .then((r) => r.json())
-      .then((data) => {
-        if (!Array.isArray(data.messages)) return
-        const latest = new Map<string, string>()
-        for (const m of data.messages) {
-          if (m.leadId && (!latest.has(m.leadId) || m.receivedAt > latest.get(m.leadId)!)) latest.set(m.leadId, m.receivedAt)
-        }
-        setReplied(leads.filter((l) => {
-          const rec = latest.get(l.id)
-          if (!rec || l.dumped) return false
-          return rec > (l.emailHistory.find((e) => e.status === 'sent')?.at || '')
-        }))
-      })
-      .catch(() => {})
-  }, [leads])
-
-  const { pool, mine, toStart, due, waiting, noEmail } = useMemo(() => {
-    const open = leads.filter(isOpen)
-    const pool = open.filter((l) => !l.owner)
-    const mine = open.filter((l) => l.owner && (everyone || l.owner.toLowerCase() === me))
-    const inSeries = mine.filter((l) => l.status === 'new' || l.status === 'contacted')
-    const noEmail = inSeries.filter((l) => !l.email)
-    const withEmail = inSeries.filter((l) => l.email)
-    const toStart: Lead[] = []
-    const due: Lead[] = []
-    const waiting: Lead[] = []
-    for (const l of withEmail) {
-      const p = sequenceProgress(l)
-      if (p.stopped || !p.next) continue
-      if (p.sentIds.length === 0) toStart.push(l)
-      else if (p.due) due.push(l)
-      else waiting.push(l)
-    }
-    return { pool, mine, toStart, due, waiting, noEmail }
+  const t = useMemo(() => todayLists(leads, me, everyone), [leads, me, everyone])
+  const total = needsYou(t)
+  // Where every lead on this desk stands, in one row
+  const counts = useMemo(() => {
+    const mineOrAll = leads.filter((l) => !l.dumped && (everyone || !l.owner || l.owner.toLowerCase() === me))
+    return Object.fromEntries(LEAD_STEPS.map((s) => [s, mineOrAll.filter((l) => l.status === s).length]))
   }, [leads, me, everyone])
 
-  const myReplies = replied.filter((l) => everyone || !l.owner || l.owner.toLowerCase() === me)
-
-  const pickUp = async (ids: string[]) => {
-    try {
-      await api('/api/admin/leads/claim', { method: 'POST', body: JSON.stringify({ leadIds: ids, action: 'claim' }) })
-      await reload()
-      notify(`${ids.length} lead${ids.length === 1 ? '' : 's'} picked up`)
-    } catch (e: any) { notify(e.message, true) }
+  const act = async (key: string, work: () => Promise<void>, done: string) => {
+    setBusy(key)
+    try { await work(); await reload(); notify(done) } catch (e: any) { notify(e.message, true) } finally { setBusy('') }
+  }
+  const pickUp = (ids: string[]) => act(`pick-${ids[0]}`, () => api('/api/admin/leads/claim', { method: 'POST', body: JSON.stringify({ leadIds: ids, action: 'claim' }) }), `${ids.length} lead${ids.length === 1 ? '' : 's'} picked up`)
+  const noAnswer = (l: Lead) => act(`handled-${l.id}`, () => api('/api/admin/leads/inbox', { method: 'POST', body: JSON.stringify({ leadIds: [l.id], action: 'handled' }) }), 'Taken off the list')
+  const close = async (list: Lead[]) => {
+    const one = list.length === 1
+    const go = await ask({
+      title: one ? `Close ${list[0].name}?` : `Close these ${list.length} leads?`,
+      text: 'They move to Closed and leave your lists. A closed lead can be moved back at any time, and you will still see it if they write again.',
+      confirm: one ? 'Close lead' : `Close ${list.length} leads`,
+    })
+    if (go === null) return
+    await act(`close-${list[0].id}`, async () => { for (const l of list) await api('/api/admin/leads', { method: 'PUT', body: JSON.stringify({ id: l.id, status: 'lost' }) }) }, one ? 'Closed' : `${list.length} leads closed`)
   }
 
   // Due emails grouped by which email it is, so one send covers one group
-  const dueGroups = SEQUENCE.map((s) => ({ step: s, leads: due.filter((l) => sequenceProgress(l).next?.id === s.id) })).filter((g) => g.leads.length)
-
-  const nothing = myReplies.length + pool.length + toStart.length + due.length + waiting.length + noEmail.length === 0
+  const dueGroups = SEQUENCE.map((s) => ({ step: s, leads: t.due.filter((l) => sequenceProgress(l).next?.id === s.id) })).filter((g) => g.leads.length)
+  const nothing = t.replies.length + t.talking.length + t.pool.length + t.toStart.length + t.due.length + t.noEmail.length + t.finished.length + t.waiting.length === 0
+  const quiet = t.talking.filter((l) => quietDays(l) >= QUIET_DAYS).length
 
   return (
     <div className="p-3 sm:p-5 space-y-4 max-w-4xl">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div>
           <h2 className="text-base font-semibold text-gray-900">
-            {myReplies.length + toStart.length + due.length === 0 ? 'Nothing to send right now' : `${myReplies.length + toStart.length + due.length} lead${myReplies.length + toStart.length + due.length === 1 ? '' : 's'} need you today`}
+            {total === 0 ? 'Nothing needs you right now' : `${total} lead${total === 1 ? '' : 's'} need${total === 1 ? 's' : ''} you today`}
           </h2>
-          <p className="text-xs text-gray-500">Work down the page: answer replies, pick up new leads, send what is due.</p>
+          <p className="text-xs text-gray-500">Work down the page: answer replies, follow up conversations, pick up new leads, send what is due.</p>
         </div>
         {isManager && (
           <label className="text-xs text-gray-600 flex items-center gap-1.5 cursor-pointer">
@@ -96,68 +76,111 @@ export default function QueueView({ leads }: { leads: Lead[] }) {
         )}
       </div>
 
-      {nothing && (
+      {/* Where every lead stands, in one row. Each step opens the list of its leads. */}
+      {leads.length > 0 && <StepStrip counts={counts} hrefFor={(s) => `/crm/leads?step=${s}${everyone ? '' : '&scope=mine'}`} />}
+
+      {mailNote && <p className="text-xs bg-amber-50 border border-amber-200 text-amber-800 rounded-lg px-3 py-2">{mailNote} Replies from leads will not show here until this is put right.</p>}
+
+      {leads.length === 0 ? (
         <div className="bg-white border border-gray-200 rounded-xl p-8 text-center space-y-3">
           <p className="text-sm text-gray-600">No leads yet. Add your first ones to begin.</p>
           <Link href="/crm/leads" className="inline-flex items-center gap-1.5 px-4 py-2 bg-primary-600 text-white text-sm rounded-lg hover:bg-primary-700">
             <UserPlus className="w-4 h-4" /> Go to Leads
           </Link>
         </div>
-      )}
+      ) : nothing ? (
+        <div className="bg-white border border-gray-200 rounded-xl p-8 text-center space-y-3">
+          <p className="text-sm text-gray-600">You hold no open leads at the moment. Pick some up from the Leads page, or add new ones.</p>
+          <Link href="/crm/leads" className="inline-flex items-center gap-1.5 px-4 py-2 bg-primary-600 text-white text-sm rounded-lg hover:bg-primary-700">
+            <UserPlus className="w-4 h-4" /> Go to Leads
+          </Link>
+        </div>
+      ) : null}
 
-      {/* 1. Replies */}
-      {myReplies.length > 0 && (
-        <Section n={1} icon={Reply} tone="red" title="They replied" hint="Answer these first" count={myReplies.length}>
-          {myReplies.map((l) => (
-            <Row key={l.id} lead={l} sub={l.owner ? l.owner.split('@')[0] : 'unassigned'}>
-              <Link href={leadHref(l, 'emails')} className="px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white text-xs rounded-lg flex items-center gap-1.5 shrink-0">
-                Read and reply <ArrowRight className="w-3.5 h-3.5" />
-              </Link>
-            </Row>
-          ))}
+      {/* They replied */}
+      {t.replies.length > 0 && (
+        <Section icon={Reply} tone="red" title="They replied" hint="Answer these first" count={t.replies.length}>
+          {t.replies.map((l) => {
+            const stop = l.reply?.kind === 'stop'
+            return (
+              <Row
+                key={l.id} lead={l}
+                sub={`${stop ? 'Asked us to stop. The emails have stopped. ' : ''}${l.reply?.preview ? `“${l.reply.preview.slice(0, 110)}” · ` : ''}${timeAgo(l.reply?.at || '').toLowerCase()}${l.owner ? '' : ' · unassigned'}`}
+              >
+                {stop ? (
+                  <>
+                    <Link href={leadHref(l, 'tab=emails')} className="px-2.5 py-1.5 text-gray-500 hover:text-gray-800 text-xs shrink-0">Read</Link>
+                    <button onClick={() => close([l])} disabled={!!busy} className="px-3 py-1.5 bg-gray-800 hover:bg-gray-900 text-white text-xs rounded-lg shrink-0 disabled:opacity-50">Close lead</button>
+                  </>
+                ) : (
+                  <>
+                    <button onClick={() => noAnswer(l)} disabled={!!busy} className="px-2.5 py-1.5 text-gray-500 hover:text-gray-800 text-xs shrink-0 disabled:opacity-50" title="Their message needs no answer: take it off this list">No reply needed</button>
+                    <Link href={leadHref(l, 'tab=emails&reply=1')} className="px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white text-xs rounded-lg flex items-center gap-1.5 shrink-0">
+                      Read and reply <ArrowRight className="w-3.5 h-3.5" />
+                    </Link>
+                  </>
+                )}
+              </Row>
+            )
+          })}
         </Section>
       )}
 
-      {/* 2. Unassigned */}
-      {pool.length > 0 && (
+      {/* In conversation */}
+      {t.talking.length > 0 && (
+        <Section icon={MessagesSquare} tone="blue" title="In conversation" hint={quiet ? `${quiet} quiet for ${QUIET_DAYS} days or more: follow up` : 'Talking, or with a proposal'} count={t.talking.length}>
+          {t.talking.slice(0, 8).map((l) => {
+            const days = quietDays(l)
+            return (
+              <Row key={l.id} lead={l} sub={`${STEP_LABELS[l.status]} · ${days === 0 ? 'in touch today' : `quiet for ${days} day${days === 1 ? '' : 's'}`}`} flag={days >= QUIET_DAYS ? 'follow up' : ''}>
+                <Link href={leadHref(l, 'tab=emails&write=1')} className={`px-3 py-1.5 text-xs rounded-lg shrink-0 ${days >= QUIET_DAYS ? 'bg-primary-600 hover:bg-primary-700 text-white' : 'border border-primary-200 text-primary-700 hover:bg-primary-50'}`}>Follow up</Link>
+              </Row>
+            )
+          })}
+          {t.talking.length > 8 && <More text={`${t.talking.length - 8} more`} href={`/crm/leads?step=qualified${everyone ? '' : '&scope=mine'}`} />}
+        </Section>
+      )}
+
+      {/* Unassigned */}
+      {t.pool.length > 0 && (
         <Section
-          n={2} icon={Hand} tone="green" title="New leads, not yet picked up" hint="Pick up the ones you will work" count={pool.length}
-          action={<button onClick={() => pickUp(pool.slice(0, 25).map((l) => l.id))} className="text-xs font-medium text-green-700 hover:underline">Pick up {Math.min(25, pool.length)}</button>}
+          icon={Hand} tone="green" title="New leads, not yet picked up" hint="Pick up the ones you will work" count={t.pool.length}
+          action={<button onClick={() => pickUp(t.pool.slice(0, 25).map((l) => l.id))} disabled={!!busy} className="text-xs font-medium text-green-700 hover:underline disabled:opacity-50">Pick up {Math.min(25, t.pool.length)}</button>}
         >
-          {pool.slice(0, 6).map((l) => (
-            <Row key={l.id} lead={l} sub={[l.designation, l.country].filter(Boolean).join(' · ') || `added ${timeAgo(l.createdAt)}`}>
-              <button onClick={() => pickUp([l.id])} className="px-3 py-1.5 bg-green-600 hover:bg-green-700 text-white text-xs rounded-lg flex items-center gap-1.5 shrink-0">
+          {t.pool.slice(0, 6).map((l) => (
+            <Row key={l.id} lead={l} sub={[l.designation, l.country].filter(Boolean).join(' · ') || `added ${timeAgo(l.createdAt).toLowerCase()}`}>
+              <button onClick={() => pickUp([l.id])} disabled={!!busy} className="px-3 py-1.5 bg-green-600 hover:bg-green-700 text-white text-xs rounded-lg flex items-center gap-1.5 shrink-0 disabled:opacity-50">
                 <Hand className="w-3.5 h-3.5" /> Pick up
               </button>
             </Row>
           ))}
-          {pool.length > 6 && <More text={`${pool.length - 6} more`} href="/crm/leads?scope=pool" />}
+          {t.pool.length > 6 && <More text={`${t.pool.length - 6} more`} href="/crm/leads?scope=pool" />}
         </Section>
       )}
 
-      {/* 3. Send today */}
-      {toStart.length > 0 && (
+      {/* Send */}
+      {t.toStart.length > 0 && (
         <Section
-          n={3} icon={Send} tone="blue" title="Start the email series" hint={`Email 1 of ${SEQUENCE.length}: the introduction`} count={toStart.length}
-          action={<button onClick={() => setSendTo(toStart)} className="px-3 py-1.5 bg-primary-600 hover:bg-primary-700 text-white text-xs rounded-lg">Review and send to all {toStart.length}</button>}
+          icon={Send} tone="blue" title="Start the email series" hint={`Email 1 of ${SEQUENCE.length}: the introduction`} count={t.toStart.length}
+          action={<button onClick={() => setSendTo(t.toStart)} className="px-3 py-1.5 bg-primary-600 hover:bg-primary-700 text-white text-xs rounded-lg">Review and send to all {t.toStart.length}</button>}
         >
-          {toStart.slice(0, 6).map((l) => (
+          {t.toStart.slice(0, 6).map((l) => (
             <Row key={l.id} lead={l} sub={l.email}>
               <button onClick={() => setSendTo([l])} className="px-3 py-1.5 border border-primary-200 text-primary-700 hover:bg-primary-50 text-xs rounded-lg shrink-0">Send email 1</button>
             </Row>
           ))}
-          {toStart.length > 6 && <More text={`${toStart.length - 6} more are included when you send to all`} />}
+          {t.toStart.length > 6 && <More text={`${t.toStart.length - 6} more are included when you send to all`} />}
         </Section>
       )}
 
       {dueGroups.map((g) => (
         <Section
           key={g.step.id}
-          n={3} icon={Send} tone="blue" title={`Email ${stepNumber(g.step.id)} is due: ${g.step.title}`} hint={g.step.purpose} count={g.leads.length}
+          icon={Send} tone="blue" title={`Email ${stepNumber(g.step.id)} is due: ${g.step.title}`} hint={g.step.purpose} count={g.leads.length}
           action={<button onClick={() => setSendTo(g.leads)} className="px-3 py-1.5 bg-primary-600 hover:bg-primary-700 text-white text-xs rounded-lg">Review and send to all {g.leads.length}</button>}
         >
           {g.leads.slice(0, 6).map((l) => (
-            <Row key={l.id} lead={l} sub={`last email ${timeAgo(l.sequence?.sent[l.sequence.sent.length - 1]?.at || '')}`}>
+            <Row key={l.id} lead={l} sub={`last email ${timeAgo(l.sequence?.sent[l.sequence.sent.length - 1]?.at || '').toLowerCase()}`}>
               <button onClick={() => setSendTo([l])} className="px-3 py-1.5 border border-primary-200 text-primary-700 hover:bg-primary-50 text-xs rounded-lg shrink-0">Send</button>
             </Row>
           ))}
@@ -165,40 +188,46 @@ export default function QueueView({ leads }: { leads: Lead[] }) {
         </Section>
       ))}
 
-      {noEmail.length > 0 && (
-        <Section n={3} icon={UserPlus} tone="amber" title="Missing an email address" hint="Add one, or reach them on LinkedIn" count={noEmail.length}>
-          {noEmail.slice(0, 5).map((l) => (
+      {t.noEmail.length > 0 && (
+        <Section icon={UserPlus} tone="amber" title="Missing an email address" hint="Add one, or reach them on LinkedIn" count={t.noEmail.length}>
+          {t.noEmail.slice(0, 5).map((l) => (
             <Row key={l.id} lead={l} sub={l.linkedin ? 'has a LinkedIn profile' : 'no contact details yet'}>
               <Link href={leadHref(l)} className="px-3 py-1.5 border border-gray-200 text-gray-700 hover:bg-gray-50 text-xs rounded-lg shrink-0">Open</Link>
             </Row>
           ))}
-          {noEmail.length > 5 && <More text={`${noEmail.length - 5} more`} href="/crm/leads" />}
+          {t.noEmail.length > 5 && <More text={`${t.noEmail.length - 5} more`} href="/crm/leads" />}
         </Section>
       )}
 
-      {/* 4. Waiting */}
-      {waiting.length > 0 && (
-        <Section n={4} icon={Clock} tone="gray" title="Waiting" hint="Sent. The next email is not due yet." count={waiting.length}>
-          {waiting
-            .slice()
-            .sort((a, b) => sequenceProgress(a).daysUntil - sequenceProgress(b).daysUntil)
-            .slice(0, 6)
-            .map((l) => {
-              const p = sequenceProgress(l)
-              return (
-                <Row key={l.id} lead={l} sub={`email ${stepNumber(p.next!.id)} in ${p.daysUntil} day${p.daysUntil === 1 ? '' : 's'}`}>
-                  <Link href={leadHref(l)} className="px-3 py-1.5 text-gray-500 hover:text-gray-800 text-xs shrink-0">View</Link>
-                </Row>
-              )
-            })}
-          {waiting.length > 6 && <More text={`${waiting.length - 6} more`} href="/crm/leads" />}
+      {/* The series is over and they never wrote back */}
+      {t.finished.length > 0 && (
+        <Section
+          icon={Flag} tone="gray" title="Series finished, no reply" hint="Close them, or keep in touch by hand" count={t.finished.length}
+          action={t.finished.length > 1 ? <button onClick={() => close(t.finished)} disabled={!!busy} className="text-xs font-medium text-gray-700 hover:underline disabled:opacity-50">Close all {t.finished.length}</button> : undefined}
+        >
+          {t.finished.slice(0, 5).map((l) => (
+            <Row key={l.id} lead={l} sub={l.sequence?.stopped ? `emails stopped: ${l.sequence.stopped.reason.toLowerCase()}` : `all ${SEQUENCE.length} emails sent, the last ${timeAgo(l.sequence?.sent[l.sequence.sent.length - 1]?.at || '').toLowerCase()}`}>
+              <Link href={leadHref(l, 'tab=emails&write=1')} className="px-2.5 py-1.5 text-gray-500 hover:text-gray-800 text-xs shrink-0">Write</Link>
+              <button onClick={() => close([l])} disabled={!!busy} className="px-3 py-1.5 border border-gray-300 text-gray-700 hover:bg-gray-50 text-xs rounded-lg shrink-0 disabled:opacity-50">Close</button>
+            </Row>
+          ))}
+          {t.finished.length > 5 && <More text={`${t.finished.length - 5} more are included when you close all`} />}
         </Section>
       )}
 
-      {mine.length > 0 && (
-        <p className="text-[11px] text-gray-400 pt-1">
-          {mine.filter((l) => l.status === 'qualified').length} talking · {mine.filter((l) => l.status === 'proposal').length} with a proposal. Those are worked from the lead page, not the email series.
-        </p>
+      {/* Waiting */}
+      {t.waiting.length > 0 && (
+        <Section icon={Clock} tone="gray" title="Waiting" hint="Sent. The next email is not due yet." count={t.waiting.length}>
+          {t.waiting.slice(0, 6).map((l) => {
+            const p = sequenceProgress(l)
+            return (
+              <Row key={l.id} lead={l} sub={`email ${stepNumber(p.next!.id)} in ${p.daysUntil} day${p.daysUntil === 1 ? '' : 's'}`}>
+                <Link href={leadHref(l)} className="px-3 py-1.5 text-gray-500 hover:text-gray-800 text-xs shrink-0">View</Link>
+              </Row>
+            )
+          })}
+          {t.waiting.length > 6 && <More text={`${t.waiting.length - 6} more`} href={`/crm/leads?step=contacted${everyone ? '' : '&scope=mine'}`} />}
+        </Section>
       )}
 
       {sendTo && (
@@ -221,44 +250,44 @@ const TONES: Record<string, { border: string; bg: string; text: string }> = {
   gray: { border: 'border-gray-200', bg: 'bg-gray-50', text: 'text-gray-600' },
 }
 
-function Section({ n, icon: Icon, tone, title, hint, count, action, children }: {
-  n: number; icon: any; tone: string; title: string; hint: string; count: number; action?: React.ReactNode; children: React.ReactNode
+function Section({ icon: Icon, tone, title, hint, count, action, children }: {
+  icon: any; tone: string; title: string; hint: string; count: number; action?: React.ReactNode; children: React.ReactNode
 }) {
   const t = TONES[tone]
   return (
-    <div className={`rounded-xl border ${t.border} overflow-hidden bg-white`}>
+    <section className={`rounded-xl border ${t.border} overflow-hidden bg-white`}>
       <div className={`${t.bg} px-4 py-2.5 flex flex-wrap items-center justify-between gap-2`}>
         <div className="flex items-center gap-2 min-w-0">
-          <span className={`w-5 h-5 rounded-full bg-white text-[11px] font-bold flex items-center justify-center shrink-0 ${t.text}`}>{n}</span>
           <Icon className={`w-4 h-4 shrink-0 ${t.text}`} />
-          <span className={`text-sm font-semibold ${t.text}`}>{title}</span>
+          <h3 className={`text-sm font-semibold ${t.text}`}>{title}</h3>
+          <span className={`text-xs font-semibold rounded-full bg-white px-1.5 py-0.5 leading-none ${t.text}`}>{count}</span>
           <span className="text-xs text-gray-500 hidden sm:inline truncate">{hint}</span>
         </div>
-        <div className="flex items-center gap-3">
-          {action}
-          <span className={`text-xs font-semibold ${t.text}`}>{count}</span>
-        </div>
+        {action}
       </div>
       <div className="divide-y divide-gray-100">{children}</div>
-    </div>
+    </section>
   )
 }
 
-function Row({ lead, sub, children }: { lead: Lead; sub: string; children: React.ReactNode }) {
+function Row({ lead, sub, flag, children }: { lead: Lead; sub: string; flag?: string; children: React.ReactNode }) {
   return (
-    <div className="px-4 py-2.5 flex items-center justify-between gap-3">
-      <Link href={leadHref(lead)} className="min-w-0 hover:text-primary-700">
-        <div className="text-sm font-medium text-gray-900 truncate">{lead.name} <span className="text-gray-400 font-normal">· {lead.company || 'no organization'}</span></div>
-        <div className="text-xs text-gray-400 truncate">{sub}</div>
+    <div className="px-4 py-2.5 flex flex-wrap items-center justify-between gap-x-3 gap-y-1.5">
+      <Link href={leadHref(lead)} className="min-w-0 flex-1 basis-56 hover:text-primary-700">
+        <div className="flex items-center gap-2 min-w-0">
+          <span className="text-sm font-medium text-gray-900 truncate">{lead.name} <span className="text-gray-400 font-normal">· {lead.company || 'no organization'}</span></span>
+          {flag && <span className="shrink-0 text-[10.5px] font-semibold rounded-full bg-amber-100 text-amber-800 px-1.5 py-0.5">{flag}</span>}
+        </div>
+        <div className="text-xs text-gray-500 truncate">{sub}</div>
       </Link>
-      {children}
+      <div className="flex items-center gap-1.5 ml-auto">{children}</div>
     </div>
   )
 }
 
 function More({ text, href }: { text: string; href?: string }) {
   return (
-    <div className="px-4 py-2 text-xs text-gray-400 bg-gray-50">
+    <div className="px-4 py-2 text-xs text-gray-500 bg-gray-50">
       {href ? <Link href={href} className="hover:text-primary-600 hover:underline">{text}</Link> : text}
     </div>
   )

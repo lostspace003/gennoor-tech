@@ -1,28 +1,29 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { requireCrmUser } from '@/lib/crm/access'
-import { getLeads } from '@/lib/crm/store'
+import { requireCrmUser, canWorkLead } from '@/lib/crm/access'
+import { getLeads, mutateLeads, touch } from '@/lib/crm/store'
 import { graphConfigured, listInboundMessages } from '@/lib/crm/graph'
+import { mailProblem, syncReplies } from '@/lib/crm/reply-sync'
 
-// Inbound email for the CRM: reads the admin mailbox via Microsoft Graph and
-// matches senders to leads. ?leadId= filters to one lead's thread.
+/**
+ * Mail from leads, read from the team's mailboxes.
+ *   GET                 every recent message from a lead's address, each marked: a reply, a request to stop, or
+ *                       automatic; and whether the lead is waiting for an answer. Reading it also brings the
+ *                       leads in step (a reply moves a lead to Talking; see lib/crm/replies.ts).
+ *   GET ?leadId=        one lead's messages, with their full text, for the conversation on the lead page.
+ *   POST { leadIds, action: 'handled' | 'unhandled' }   "no reply needed", or put it back on the list.
+ */
 export async function GET(req: NextRequest) {
   const user = await requireCrmUser()
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   if (!graphConfigured()) {
-    return NextResponse.json({
-      configured: false,
-      messages: [],
-      note: 'Microsoft Graph is not configured — inbound email unavailable.',
-    })
+    return NextResponse.json({ configured: false, messages: [], note: 'Reading replies is not set up on this site yet.' })
   }
 
   try {
     const leadId = req.nextUrl.searchParams.get('leadId')
-    const leads = await getLeads()
-
     if (leadId) {
-      const lead = leads.find((l) => l.id === leadId)
+      const lead = (await getLeads()).find((l) => l.id === leadId)
       if (!lead) return NextResponse.json({ error: 'Lead not found' }, { status: 404 })
       // Match replies from the primary address AND any saved alternates
       const addresses = [lead.email, ...(lead.altEmails || [])].filter(Boolean)
@@ -32,31 +33,42 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ configured: true, messages })
     }
 
-    // Whole-CRM inbox: recent messages from any known lead address (incl. alternates)
-    const byEmail = new Map<string, (typeof leads)[number]>()
-    for (const l of leads) {
-      for (const a of [l.email, ...(l.altEmails || [])]) {
-        if (a) byEmail.set(a.toLowerCase(), l)
-      }
-    }
-    const recent = await listInboundMessages(undefined, 50)
-    const matched = recent
-      .filter((m) => byEmail.has(m.from.toLowerCase()))
-      .map((m) => {
-        const lead = byEmail.get(m.from.toLowerCase())!
-        return { ...m, leadId: lead.id, leadName: lead.name, leadCompany: lead.company }
-      })
-    return NextResponse.json({ configured: true, messages: matched })
-  } catch (error: any) {
+    const result = await syncReplies(req.nextUrl.searchParams.get('fresh') === '1')
+    return NextResponse.json({ configured: true, messages: result.messages, changed: result.changes.length, ...(result.error ? { error: result.error } : {}), ...(result.note ? { note: result.note } : {}) })
+  } catch (error) {
     console.error('Inbox error:', error)
-    const detail = String(error?.message || '')
-    const permissionIssue = /Access.*denied|Authorization|Forbidden|ErrorAccessDenied/i.test(detail)
-    return NextResponse.json({
-      configured: true,
-      messages: [],
-      error: permissionIssue
-        ? 'Graph app lacks Mail.Read permission on the mailbox. Grant Mail.Read (application) to the Graph app in Entra ID.'
-        : 'Failed to read inbox.',
+    return NextResponse.json({ configured: true, messages: [], error: mailProblem(error) })
+  }
+}
+
+export async function POST(request: Request) {
+  const user = await requireCrmUser()
+  if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+
+  try {
+    const { leadIds, action } = await request.json()
+    if (!Array.isArray(leadIds) || !['handled', 'unhandled'].includes(action)) return NextResponse.json({ error: 'leadIds and action required' }, { status: 400 })
+    const now = new Date().toISOString()
+    const done = await mutateLeads((leads) => {
+      let n = 0
+      for (const lead of leads) {
+        if (!leadIds.includes(lead.id) || !lead.reply || !canWorkLead(lead, user)) continue
+        if (action === 'handled') {
+          lead.reply.handledAt = now
+          lead.reply.handledBy = user.email
+          touch(lead, { at: now, by: user.email, type: 'email', description: 'Their reply needs no answer' })
+        } else {
+          delete lead.reply.handledAt
+          delete lead.reply.handledBy
+          touch(lead, { at: now, by: user.email, type: 'email', description: 'Their reply is waiting for an answer again' })
+        }
+        n++
+      }
+      return n
     })
+    return NextResponse.json({ success: true, done })
+  } catch (error) {
+    console.error('Inbox update error:', error)
+    return NextResponse.json({ error: 'That could not be saved. Try again.' }, { status: 500 })
   }
 }

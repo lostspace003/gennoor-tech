@@ -11,11 +11,11 @@ async function ask(instructions: string, input: string, spendId: string, label: 
   return textOf(j)
 }
 
-/** The short line the personal profile puts on top of a repost of the company page post: 1-2 sentences, first person. */
+/** The short line the personal profile puts on top of a repost of the company page post: 1-2 sentences, never "I". */
 export async function repostLine(post: string, spendId: string): Promise<string> {
   const fallback = 'Sharing this from the Gennoor Tech page. Worth a read if this is on your roadmap.'
   try {
-    const t = await ask('Write the short note a founder puts on top of a repost of their company\'s LinkedIn post. First person, 1-2 sentences, under 220 characters, plain and specific to the post (say why it matters to IT teams). No hashtags, no emojis, no links, no hype words. Return the note only.', post.slice(0, 2500), spendId, 'Repost line')
+    const t = await ask('Write the short note a founder puts on top of a repost of their company\'s LinkedIn post. 1-2 sentences, under 220 characters, in everyday words a manager who is not technical understands, specific to the post: say why it matters to a business. Never the first person singular ("I", "my", "me"). No hashtags, no emojis, no links, no hype words, no jargon. Return the note only.', post.slice(0, 2500), spendId, 'Repost line')
     return t.length >= 20 && t.length <= 300 ? t : fallback
   } catch { return fallback }
 }
@@ -24,7 +24,7 @@ export async function repostLine(post: string, spendId: string): Promise<string>
 export async function firstComment(post: string, spendId: string, extra = ''): Promise<string> {
   const fallback = 'What is the first place your team would try this? Curious how others are approaching it.'
   try {
-    const t = await ask('Write the FIRST COMMENT for this LinkedIn post, written by its author. It must be meaningful on its own: add one concrete extra detail, a practical next step, or a specific question that practitioners can answer from experience. 1-3 sentences, under 280 characters, plain text, no hashtags, no emojis, no "great post"-style filler, no repeating the post. Return the comment only.', `${extra ? `${extra}\n\n` : ''}${post.slice(0, 2500)}`, spendId, 'First comment')
+    const t = await ask('Write the FIRST COMMENT for this LinkedIn post, written by its author. It must be meaningful on its own: add one concrete extra detail, a practical next step, or a specific question the reader can answer from their own work. Everyday words, any technical word explained; never the first person singular. 1-3 sentences, under 280 characters, plain text, no hashtags, no emojis, no "great post"-style filler, no repeating the post. Return the comment only.', `${extra ? `${extra}\n\n` : ''}${post.slice(0, 2500)}`, spendId, 'First comment')
     return t.length >= 25 && t.length <= 600 ? t : fallback
   } catch { return fallback }
 }

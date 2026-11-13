@@ -36,7 +36,10 @@ export interface Config {
   companyWeeklyMax: number
   /** Companies exempt from that cap because they are the business's core (Microsoft has its own daily slot). */
   coreVendors: string[]
-  /** The content pillar of each slot, in slot order (see PILLARS in variety.ts); repeats if there are more slots. */
+  /**
+   * No longer read. The stream of each slot now comes from `pillarsFor()` in variety.ts, which changes with the day of
+   * the week; this saved list could not be changed by a new release, because the saved settings win over the defaults.
+   */
   slotPillars: string[]
 }
 
@@ -81,7 +84,20 @@ export const DEFAULT_CONFIG: Config = {
   slotPillars: ['microsoft', 'debate', 'use-case', 'hands-on'],
 }
 
-export interface TopicIdea { title: string; angle: string; hook?: string; vendor?: string; heat?: number; why?: string; format?: string; pillar?: string; company?: string; sources: { title: string; url: string }[] }
+/**
+ * One idea from the research. `facts` and `terms` are what the writers work from (they have no web access):
+ * the story in five to eight plain sentences, and the technical words a reader who is not technical needs
+ * explained. `date` is the day it happened, so a stale idea can be dropped.
+ */
+export interface TopicIdea {
+  title: string; angle: string; hook?: string; vendor?: string; heat?: number; why?: string; format?: string; pillar?: string; company?: string
+  date?: string
+  facts?: string[]
+  terms?: { term: string; plain: string }[]
+  /** What nobody has said yet, for an article to state plainly ("Microsoft has not said when ..."). */
+  unknown?: string[]
+  sources: { title: string; url: string }[]
+}
 
 export interface TargetState {
   status: 'pending' | 'publishing' | 'done' | 'manual' | 'skipped' | 'failed' | 'held'

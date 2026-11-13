@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
+import Link from 'next/link'
 import { LeadStatus, LEAD_STEPS, STEP_LABELS, STEP_HINTS } from '@/lib/crm/types'
 import { IST, istInstant, leadTimeZone, formatInZone } from '@/lib/crm/timezones'
 
@@ -34,6 +35,35 @@ export function StatusBadge({ status }: { status: LeadStatus }) {
       {STEP_LABELS[status] || status}
     </span>
   )
+}
+
+/**
+ * Where the leads stand, in one row: a count under each step, in the order a lead moves through them.
+ * The owner asked to "track those users in a single frame" (13 November 2026): this is that frame, on Today
+ * and on the Leads page. A step is a link (`hrefFor`) or a button that filters the list (`onPick`).
+ */
+export function StepStrip({ counts, active = [], onPick, hrefFor }: {
+  counts: Record<string, number>
+  active?: string[]
+  onPick?: (step: LeadStatus) => void
+  hrefFor?: (step: LeadStatus) => string
+}) {
+  const tile = (s: LeadStatus) => {
+    const on = active.includes(s)
+    const cls = `flex-1 min-w-[5.5rem] rounded-lg border px-3 py-2 text-left transition-colors ${on ? 'border-primary-400 bg-primary-50' : 'border-gray-200 bg-white hover:border-primary-300'}`
+    const inner = (
+      <>
+        <span className="flex items-center gap-1.5 text-[11px] text-gray-500">
+          <span className={`w-1.5 h-1.5 rounded-full ${STATUS_DOTS[s]}`} />{STEP_LABELS[s]}
+        </span>
+        <span className="block text-lg font-semibold leading-tight text-gray-900 tabular-nums">{counts[s] || 0}</span>
+      </>
+    )
+    return hrefFor
+      ? <Link key={s} href={hrefFor(s)} className={cls} title={STEP_HINTS[s]}>{inner}</Link>
+      : <button key={s} type="button" onClick={() => onPick?.(s)} aria-pressed={on} className={cls} title={STEP_HINTS[s]}>{inner}</button>
+  }
+  return <div className="flex flex-wrap gap-2" role="group" aria-label="Leads at each step">{LEAD_STEPS.map(tile)}</div>
 }
 
 /** The step as a dropdown: the one control that moves a lead along. */
@@ -83,7 +113,8 @@ export async function api<T = any>(url: string, init?: RequestInit): Promise<T> 
     headers: { 'Content-Type': 'application/json', ...(init?.headers || {}) },
   })
   const data = await res.json().catch(() => ({}))
-  if (!res.ok) throw new Error(data.error || `Request failed (${res.status})`)
+  // The server's own words when it gave any; otherwise something a person can act on
+  if (!res.ok) throw new Error(data.error || (res.status === 401 ? 'You are signed out. Refresh the page and sign in again.' : `That did not work (${res.status}). Try again in a moment.`))
   return data as T
 }
 

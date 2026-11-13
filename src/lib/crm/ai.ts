@@ -1,6 +1,7 @@
 import type { Lead } from './types'
 import { STEP_LABELS } from './types'
 import { teamMember, signOffText } from './team'
+import { greetingOf } from './greeting'
 import { safeJson } from '@/lib/safe-text'
 
 // Real Azure OpenAI calls — same endpoint pattern the ai-readiness feature
@@ -152,7 +153,7 @@ export async function draftEmail(lead: Lead, instructions?: string, senderEmail?
         content: `${GENNOOR_CONTEXT}
 
 Write ${isReply ? 'a reply to the email from this lead that is quoted below' : 'a short email to this lead'}. Requirements:
-- Address the person by first name.
+- ${greetingOf(lead) ? `Greet them as "${greetingOf(lead)}".` : 'Begin with "Hello," and use no name: the name on file is not clearly a first name.'}
 - ${isReply ? 'Answer what they actually asked, first. If they asked about cost, say it depends on team size and scope and offer a short call.' : 'One purpose only, taken from the instructions.'}
 - Mention only offerings that are relevant to what they said. Do not list everything.
 - End with one clear next step.
