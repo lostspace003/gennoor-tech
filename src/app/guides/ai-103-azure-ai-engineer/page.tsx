@@ -1,34 +1,19 @@
 import { Metadata } from 'next'
+import { pageMeta } from '@/lib/seo'
 import Link from 'next/link'
 import { BookOpen, CheckCircle, Clock, Award, Target, Lightbulb, HelpCircle, ArrowRight, AlertTriangle } from 'lucide-react'
 
-export const metadata: Metadata = {
-  title: 'Azure AI-103 Certification: Complete Study Guide 2026 | Gennoor Tech',
+export const metadata: Metadata = pageMeta({
+  title: 'Azure AI-103 certification: complete study guide 2026',
   description:
     'Comprehensive AI-103 Azure AI Engineer study guide for 2026 — Developing AI Apps and Agents on Azure. Exam overview, skills measured, Microsoft Foundry coverage, and expert tips from an MCT.',
-  keywords: [
-    'AI-103',
-    'AI-103 Azure AI Engineer',
-    'AI-103 study guide',
-    'AI-103 exam prep',
-    'Developing AI Apps and Agents on Azure',
-    'Microsoft Foundry',
-    'Azure AI agents certification',
-    'AI-102 retirement',
-    'Microsoft AI certification 2026',
-  ],
-  openGraph: {
-    title: 'Azure AI-103 Certification: Complete Study Guide 2026',
-    description:
-      'Master the AI-103 exam — Developing AI Apps and Agents on Azure. Skills measured, Microsoft Foundry coverage, and expert preparation tips from the Gennoor technical team.',
-    url: 'https://gennoor.com/guides/ai-103-azure-ai-engineer',
-    siteName: 'Gennoor Tech',
-    type: 'article',
-  },
-  alternates: {
-    canonical: 'https://gennoor.com/guides/ai-103-azure-ai-engineer',
-  },
-}
+  shareDescription:
+    'Master the AI-103 exam — Developing AI Apps and Agents on Azure. Skills measured, Microsoft Foundry coverage, and expert preparation tips from the Gennoor technical team.',
+  keywords: ['AI-103', 'AI-103 Azure AI Engineer', 'AI-103 study guide', 'AI-103 exam prep', 'Developing AI Apps and Agents on Azure', 'Microsoft Foundry', 'Azure AI agents certification', 'AI-102 retirement', 'Microsoft AI certification 2026'],
+  path: '/guides/ai-103-azure-ai-engineer',
+  image: 'guides',
+  type: 'article',
+})
 
 const faqData = [
   {

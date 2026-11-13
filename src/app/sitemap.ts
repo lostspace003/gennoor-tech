@@ -5,21 +5,24 @@ import { getAllPrograms } from '@/data/training-programs'
 import { getAllCertifications } from '@/data/certification-prep'
 import { allCoursePdfs } from '@/data/course-pdfs'
 import { listLmsCourses } from '@/lib/lms'
+import { tocCourses } from '@/lib/toc-courses'
 
 // Rebuilt at most hourly, so a newly published course is listed without a deploy.
 export const revalidate = 3600
 
-const FALLBACK_UPDATED = new Date('2026-10-01')
-
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = 'https://gennoor.com'
-  const page = (path: string, priority: number, changeFrequency: MetadataRoute.Sitemap[number]['changeFrequency'] = 'monthly', lastModified: Date = new Date()) => ({
+  // "Last changed" is given only where it is known (a blog post's date, a course's last update).
+  // It used to be the minute the sitemap was read, for nearly every page; a search engine that
+  // sees dates it cannot trust stops trusting the true ones too.
+  const page = (path: string, priority: number, changeFrequency: MetadataRoute.Sitemap[number]['changeFrequency'] = 'monthly', lastModified?: Date) => ({
     url: `${baseUrl}${path}`,
-    lastModified,
+    ...(lastModified && !Number.isNaN(lastModified.getTime()) ? { lastModified } : null),
     changeFrequency,
     priority,
   })
 
+  const newestPost = new Date(blogPostsMeta.map(p => p.date).sort().pop() || '')
   const staticPages: MetadataRoute.Sitemap = [
     page('', 1.0, 'weekly'),
     page('/claude', 0.9),
@@ -44,7 +47,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     page('/ai-weekend', 0.8, 'weekly'),
     page('/workshops/claude-cowork', 0.6, 'monthly', new Date('2026-05-10')),
     page('/webinars', 0.5, 'weekly'),
-    page('/resources/blog', 0.6, 'daily'),
+    page('/resources/blog', 0.6, 'daily', newestPost),
+    page('/resources/calendar', 0.5),
     page('/guides/ai-103-azure-ai-engineer', 0.6),
     page('/guides/ai-102-azure-ai-engineer', 0.5),
     page('/guides/pl-300-power-bi-analyst', 0.5),
@@ -64,7 +68,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   }
   if (studioCourses.length === 0) studioCourses = [{ slug: 'ai-103' }, { slug: 'ai-500' }]
   const studioPages: MetadataRoute.Sitemap = studioCourses.map(c =>
-    page(`/studio/${c.slug}`, 0.8, 'weekly', c.updatedAt ? new Date(c.updatedAt) : FALLBACK_UPDATED),
+    page(`/studio/${c.slug}`, 0.8, 'weekly', c.updatedAt ? new Date(c.updatedAt) : undefined),
   )
 
   // AI Essentials: interactive courses and their chapters
@@ -78,6 +82,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const trainingPages: MetadataRoute.Sitemap = getAllPrograms().map(p => page(`/services/training/${p.slug}`, 0.6))
   const curriculumPages: MetadataRoute.Sitemap = allCoursePdfs.map(c => page(`/services/training/curriculum/${c.slug}`, 0.6))
   const certPages: MetadataRoute.Sitemap = getAllCertifications().map(c => page(`/services/certifications/${c.slug}`, 0.6))
+  // The Claude courses for organizations (the cards on /claude): each has its own page
+  const claudeCoursePages: MetadataRoute.Sitemap = tocCourses.map(c => page(`/claude/courses/${c.slug}`, 0.6))
 
-  return [...staticPages, ...studioPages, ...essentialsPages, ...blogPages, ...trainingPages, ...curriculumPages, ...certPages]
+  return [...staticPages, ...studioPages, ...essentialsPages, ...blogPages, ...trainingPages, ...curriculumPages, ...certPages, ...claudeCoursePages]
 }

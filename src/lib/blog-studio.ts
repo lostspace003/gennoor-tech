@@ -1,4 +1,5 @@
 import { randomBytes } from 'crypto'
+import { knownEmoji } from '@/lib/blog-icon'
 import { blogPostsMeta } from '@/data/blog-posts'
 import { readBlob, writeBlob, foundry, recordSpend, textUsd, tokensOf } from '@/lib/social/studio'
 
@@ -95,8 +96,8 @@ export async function createBlogDraft(topic: string, agent: { body?: string; met
       title: String(m.title || topic).slice(0, 140), slug, excerpt: String(m.excerpt || ''), tldr: String(m.tldr || ''),
       keyTakeaways: (m.keyTakeaways || []).map(String), faqs: (m.faqs || []).map(f => ({ question: String(f.question), answer: String(f.answer) })),
       references: (m.references || []).filter(r => /^https?:\/\//.test(r.url)).map(r => ({ title: String(r.title), url: String(r.url), source: String(r.source || '') })),
-      category: String(m.category || 'AI Strategy'), tags: (m.tags || []).map(String), hashtags: (m.hashtags || []).map(h => (String(h).startsWith('#') ? String(h) : `#${h}`)),
-      readTime: readTimeOf(body), coverColor: /^#[0-9a-f]{6}$/i.test(m.coverColor || '') ? m.coverColor! : '#1D4ED8', icon: m.icon || '📝', date: now.slice(0, 10),
+      category: String(m.category || 'AI Strategy'), tags: [...new Set((m.tags || []).map(t => String(t).trim()).filter(Boolean))].slice(0, 8), hashtags: (m.hashtags || []).map(h => (String(h).startsWith('#') ? String(h) : `#${h}`)),
+      readTime: readTimeOf(body), coverColor: /^#[0-9a-f]{6}$/i.test(m.coverColor || '') ? m.coverColor! : '#1D4ED8', icon: knownEmoji(m.icon), date: now.slice(0, 10),
     },
     createdAt: now, updatedAt: now,
   }

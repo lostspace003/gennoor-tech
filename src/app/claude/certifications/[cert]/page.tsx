@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { pageMeta, metaDescription } from '@/lib/seo'
 import { notFound } from 'next/navigation'
 import { CLAUDE_CERTS, getCert } from '@/data/claude-certifications'
 import certMeta from '@/data/claude-cert-meta.json'
@@ -19,11 +20,12 @@ export async function generateMetadata({ params }: { params: Promise<{ cert: str
   const { cert: slug } = await params
   const cert = getCert(slug)
   if (!cert) return {}
-  return {
+  return pageMeta({
     title: `${cert.code} — ${cert.name}`,
-    description: `${cert.tagline} Story-driven prep for the ${cert.name} exam: interactive chapters, step-through diagrams, and a ${cert.examFacts.questions}-question practice exam with discussion.`,
-    alternates: { canonical: `https://gennoor.com/claude/certifications/${cert.slug}` },
-  }
+    description: metaDescription(`${cert.tagline} Story-driven prep for the ${cert.name} exam: interactive chapters, step-through diagrams, and a ${cert.examFacts.questions}-question practice exam with discussion.`),
+    path: `/claude/certifications/${cert.slug}`,
+    image: 'claude-certifications',
+  })
 }
 
 export default async function CertPage({ params }: { params: Promise<{ cert: string }> }) {

@@ -1,4 +1,5 @@
 import { notFound } from 'next/navigation'
+import { metaDescription } from '@/lib/seo'
 import type { Metadata } from 'next'
 import { getCourseById, courses } from '@/config/courses'
 import CourseDetailClient from './CourseDetailClient'
@@ -21,7 +22,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   // Fallback to the global brand OG image for now.
   return {
     title: `${course.title} — Learning Studio`,
-    description: course.description,
+    description: metaDescription(course.description),
     alternates: { canonical: url },
     openGraph: {
       type: 'website',

@@ -33,7 +33,7 @@ export default function AuthorByline({ author, date, readTime, variant = 'hero' 
     <div className="flex items-center gap-3">
       <Avatar author={author} size={44} onDark />
       <div className="min-w-0">
-        <p className="text-sm font-semibold" style={{ color: '#fff' }}>
+        <p className="text-sm font-semibold" style={{ color: 'rgb(var(--gray-900))' }}>
           <Link
             href={author.links.about || '/about'}
             className="hover:underline"
@@ -41,10 +41,10 @@ export default function AuthorByline({ author, date, readTime, variant = 'hero' 
             {author.name}
           </Link>
         </p>
-        <p className="text-xs" style={{ color: 'rgba(255,255,255,0.75)' }}>
+        <p className="text-xs" style={{ color: 'rgb(var(--gray-600))' }}>
           {author.credentials}
         </p>
-        <p className="text-xs mt-0.5" style={{ color: 'rgba(255,255,255,0.6)' }}>
+        <p className="text-xs mt-0.5" style={{ color: 'rgb(var(--gray-500))' }}>
           {formattedDate} · {readTime}
         </p>
       </div>

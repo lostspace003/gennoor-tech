@@ -1,11 +1,14 @@
 import type { Metadata } from 'next'
+import { pageMeta } from '@/lib/seo'
 import Link from 'next/link'
 
-export const metadata: Metadata = {
-  title: 'Founder — Gennoor Tech',
+export const metadata: Metadata = pageMeta({
+  title: 'Jalal Ahmed Khan, founder of Gennoor Tech',
+  absoluteTitle: true,
   description: 'Jalal Ahmed Khan founded Gennoor Tech in Mumbai. He is a Microsoft Certified Trainer.',
-  alternates: { canonical: 'https://gennoor.com/about/founder' },
-}
+  path: '/about/founder',
+  image: 'about',
+})
 
 export default function FounderPage() {
   return (

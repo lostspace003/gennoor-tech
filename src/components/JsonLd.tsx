@@ -247,6 +247,10 @@ export function CourseJsonLd({
   )
 }
 
+/**
+ * A blog post, as search engines read it. The picture is the post's share picture; the author
+ * is the company when the post is signed by the team (a team is not a person).
+ */
 export function ArticleJsonLd({
   title,
   description,
@@ -254,7 +258,11 @@ export function ArticleJsonLd({
   datePublished,
   dateModified,
   authorName,
+  authorIsTeam,
   image,
+  section,
+  keywords,
+  wordCount,
 }: {
   title: string
   description: string
@@ -262,27 +270,35 @@ export function ArticleJsonLd({
   datePublished: string
   dateModified?: string
   authorName: string
+  authorIsTeam?: boolean
   image?: string
+  section?: string
+  keywords?: string[]
+  wordCount?: number
 }) {
+  const publisher = {
+    '@type': 'Organization',
+    name: 'Gennoor Tech',
+    url: 'https://gennoor.com',
+    logo: { '@type': 'ImageObject', url: 'https://gennoor.com/media/logos/gennoor-tech-icon-white_180x180_apple-touch-icon.png' },
+  }
   const data = {
     '@context': 'https://schema.org',
-    '@type': 'Article',
+    '@type': 'BlogPosting',
     headline: title,
     description,
     url,
+    inLanguage: 'en',
     datePublished,
     dateModified: dateModified || datePublished,
-    author: {
-      '@type': 'Person',
-      name: authorName,
-      url: 'https://gennoor.com/about/founder',
-    },
-    publisher: {
-      '@type': 'Organization',
-      name: 'Gennoor Tech',
-      url: 'https://gennoor.com',
-    },
-    ...(image && { image }),
+    author: authorIsTeam
+      ? { '@type': 'Organization', name: 'Gennoor Tech', url: 'https://gennoor.com/about' }
+      : { '@type': 'Person', name: authorName, url: 'https://gennoor.com/about/founder' },
+    publisher,
+    ...(image && { image: [image] }),
+    ...(section && { articleSection: section }),
+    ...(keywords && keywords.length > 0 && { keywords: keywords.join(', ') }),
+    ...(wordCount && { wordCount }),
     mainEntityOfPage: {
       '@type': 'WebPage',
       '@id': url,

@@ -1,4 +1,5 @@
 import { notFound } from 'next/navigation'
+import { pageMeta, metaDescription } from '@/lib/seo'
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { Check } from 'lucide-react'
@@ -16,11 +17,12 @@ interface PageProps { params: Promise<{ slug: string }> }
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const c = getTocCourse((await params).slug)
   if (!c) return {}
-  return {
-    title: `${c.title} | Gennoor Tech`,
-    description: `${c.tagline}. ${c.days} days (${c.hours} hours) with instructor-led training, online or at your destination.`.slice(0, 300),
-    alternates: { canonical: `https://gennoor.com/claude/courses/${c.slug}` },
-  }
+  return pageMeta({
+    title: c.title,
+    description: metaDescription(`${c.tagline}. ${c.days} days (${c.hours} hours) with instructor-led training, online or at your destination.`),
+    path: `/claude/courses/${c.slug}`,
+    image: 'claude',
+  })
 }
 
 export default async function TocCoursePage({ params }: PageProps) {

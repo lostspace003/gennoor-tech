@@ -1,33 +1,18 @@
 import { Metadata } from 'next'
+import { pageMeta } from '@/lib/seo'
 import Link from 'next/link'
 import { BlogIllustration } from '@/components/illustrations/Illustrations'
 import { blogPostsMeta, blogCategories } from '@/data/blog-posts'
-import { siteConfig, BLOB_URL } from '@/lib/site-config'
 import BlogListClient from './BlogListClient'
 
-export const metadata: Metadata = {
-  title: 'Blog — AI Insights & Enterprise Implementation Strategies',
+export const metadata: Metadata = pageMeta({
+  title: 'Blog: practical notes on enterprise AI',
   description: 'Practitioner insights on enterprise AI, agentic systems, Microsoft Copilot, Azure AI, and real-world implementation strategies from an MCT with 14+ years experience.',
   keywords: ['AI blog', 'enterprise AI', 'agentic AI', 'Microsoft Copilot', 'Azure AI', 'AI training insights', 'AI implementation'],
-  openGraph: {
-    type: 'website',
-    title: 'Blog — AI Insights & Enterprise Implementation Strategies | Gennoor Tech',
-    description: 'Practitioner insights on enterprise AI, agentic systems, and real-world implementation strategies.',
-    url: `${siteConfig.url}/resources/blog`,
-    siteName: siteConfig.name,
-    images: [
-      {
-        url: `${BLOB_URL}/logos/gennoor-tech-banner-linkedin-1584x396.png`,
-        width: 1584,
-        height: 396,
-        alt: 'Gennoor Tech Blog',
-      },
-    ],
-  },
-  alternates: {
-    canonical: `${siteConfig.url}/resources/blog`,
-  },
-}
+  path: '/resources/blog',
+  image: 'blog',
+  feed: true,
+})
 
 export default function BlogPage() {
   // Sort posts for SSR — Google sees the full list in correct order

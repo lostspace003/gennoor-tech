@@ -88,13 +88,21 @@ BLOG_WRITER = (
     f"{BRAND}\nYou are the blog writing agent. Write the full article body from the research notes.\n{BLOG_STYLE}\n"
     "Reply with the HTML body ONLY: no JSON, no markdown fences, no commentary."
 )
+# The emoji the website can draw as an icon tile for a post. Keep this the same as the list in
+# src/lib/blog-icon.ts (EMOJI) of the website; the website also sends it with every request.
+BLOG_ICONS = (
+    "🛡️ 🧭 🧩 🧠 🏗️ 🤖 🔒 ⚡ ⚖️ 🎯 🏦 🎓 📦 🧾 🛠️ ⚙️ 💼 🔗 🗄️ 📊 🔍 🏆 💻 🔬 🕸️ ☁️ 🔄 🏥 🏭 🛒 🏛️ 📋 🤝 🔮 🧬 🗃️ ✍️ 💰 💬 📄 📑 🚀 📚 👥 💡 🚛 🔧 👁️ 🩺 🏢 📡 💊 🏨 🌾 🧪 "
+    "📈 🔑 🗺️ ⏱️ 🔔 🎙️ 🎥 🖼️ 🧮 🔌 🌐 🪪 ✅ ⚠️ 🚨 🔥 🌱 🏁 🧑‍💻 🔐 🧵 🔀 ✉️ 📞 🛰️ 🧯 💳 🏷️ 📅 🧑‍🏫 🎛️ 🔭 🗂️ 🧰 💵 🍃 ✈️ 🏠 🖥️ 🧱 📝"
+)
+
 BLOG_PACKAGER = (
     f"{BRAND}\nYou are the blog packaging agent. Read the article and the taxonomy lists you were given, then output the metadata as JSON only:\n"
     '{"title": string (<=110 chars, specific, may use a colon), "slug": string (kebab-case, <=70 chars), "excerpt": string (40-60 words), '
     '"tldr": string (45-70 words), "keyTakeaways": [5-6 full-sentence strings], "faqs": [{"question": string, "answer": string (60-110 words)}] (5-6 items), '
     '"references": [{"title": string, "url": string, "source": string}] (3-8 items, ONLY urls present in the research notes/material, source like "Publisher · Month D, YYYY"), '
     '"category": string, "tags": [4-8 strings], "hashtags": [5-7 strings starting with #], "readTime": string like "12 min read", '
-    '"coverColor": a dark hex colour that suits the topic, "icon": one emoji}.\n'
+    '"coverColor": a dark hex colour that suits the topic, "icon": ONE emoji taken from the ICONS list below and no other}.\n'
+    f"ICONS (the website draws each of these as a coloured icon tile; an emoji outside the list cannot be drawn): {BLOG_ICONS}\n"
     "Category: choose the best EXISTING category from the list; only propose a new short Title Case category if none fits (and set it anyway). "
     "Tags: prefer existing tags where they fit, add new ones only when needed."
 )

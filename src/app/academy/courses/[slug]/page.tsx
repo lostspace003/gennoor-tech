@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { pageMeta, metaDescription } from '@/lib/seo'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import {
@@ -42,9 +43,9 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   if (!course) {
     return { title: 'Course not found — Learning Studio' }
   }
-  return {
+  return pageMeta({
     title: `${course.title} — Learning Studio`,
-    description: course.subtitle,
+    description: metaDescription(course.subtitle),
     keywords: [
       course.title,
       'AI course',
@@ -52,15 +53,9 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       ...(course.functions?.map((f) => functionLabels[f]) ?? []),
       ...(course.industries?.map((i) => industryLabels[i]) ?? []),
     ],
-    alternates: {
-      canonical: `https://gennoor.com/academy/courses/${course.slug}`,
-    },
-    openGraph: {
-      title: `${course.title} — Learning Studio`,
-      description: course.subtitle,
-      url: `https://gennoor.com/academy/courses/${course.slug}`,
-    },
-  }
+    path: `/academy/courses/${course.slug}`,
+    image: 'ai-essentials',
+  })
 }
 
 export default async function CourseDetailPage({ params }: PageProps) {

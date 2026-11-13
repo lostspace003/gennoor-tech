@@ -1,19 +1,21 @@
 import { offerOf, previewIds, priceOf } from '@/lib/lms-access'
+import { pageMeta } from '@/lib/seo'
 import type { Metadata } from 'next'
 import { listLmsCourses, toCard } from '@/lib/lms'
 import { ratingSummaries } from '@/lib/lms-community'
 import AcademyBar from '@/components/academy/AcademyBar'
-import AcademySwitch, { STUDIO_NAME } from '@/components/academy/AcademySwitch'
+import AcademySwitch from '@/components/academy/AcademySwitch'
 import WalkthroughVideo from '@/components/WalkthroughVideo'
 import { getCustomTaxonomy } from '@/lib/lms-taxonomy-store'
 import LabsCatalog from '@/components/academy/LabsCatalog'
 
-export const metadata: Metadata = {
-  title: `${STUDIO_NAME} - Hands-on certification and project courses`,
+export const metadata: Metadata = pageMeta({
+  title: 'Learning Studio: certification and project courses',
   description:
     'Hands-on video courses and real projects for Microsoft, Google, AWS and Claude. Labs run on camera, quizzes check you as you go, and your progress follows you to any device.',
-  alternates: { canonical: 'https://gennoor.com/studio' },
-}
+  path: '/studio',
+  image: 'studio',
+})
 
 export const dynamic = 'force-dynamic'
 

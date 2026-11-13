@@ -10,6 +10,7 @@ import AuthorByline from '@/components/blog/AuthorByline'
 import KeyTakeaways from '@/components/blog/KeyTakeaways'
 import PostFAQ from '@/components/blog/PostFAQ'
 import References from '@/components/blog/References'
+import BlogArt from '@/components/blog/BlogArt'
 import { resolveAuthor } from '@/config/authors'
 
 const BlogComments = dynamic(() => import('@/components/BlogComments'), { ssr: false })
@@ -188,7 +189,7 @@ function ShareBar({ post, slug }: { post: BlogPost; slug: string }) {
     {
       name: 'X',
       href: `https://twitter.com/intent/tweet?url=${encodeURIComponent(url)}&text=${encodeURIComponent(post.title)}&hashtags=${post.hashtags.map(h => h.replace('#', '')).join(',')}`,
-      bg: 'rgb(var(--gray-900))',
+      bg: '#000',
       icon: <svg className="h-3.5 w-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>,
     },
   ]
@@ -198,7 +199,7 @@ function ShareBar({ post, slug }: { post: BlogPost; slug: string }) {
       {channels.map(ch => (
         <a key={ch.name} href={ch.href} target="_blank" rel="noopener noreferrer"
           className="p-2 rounded-lg transition-all duration-200 hover:scale-110 hover:opacity-90"
-          style={{ backgroundColor: ch.bg, color: '#fff' }}
+          style={{ backgroundColor: ch.bg, color: '#fff', boxShadow: ch.name === 'X' ? 'inset 0 0 0 1px rgba(255,255,255,0.3)' : undefined }}
           title={`Share on ${ch.name}`}>
           {ch.icon}
         </a>
@@ -275,19 +276,19 @@ export default function BlogPostClient({ post, slug, relatedPosts }: {
         <article className="rounded-2xl shadow-xl overflow-hidden" style={{ backgroundColor: 'rgb(var(--raised))', border: '1px solid rgb(var(--gray-200))' }}>
 
           {/* Header */}
-          <header className="relative overflow-hidden px-6 sm:px-10 py-8 lg:py-10" style={{ backgroundColor: post.coverColor }}>
+          <header className="st-deep relative overflow-hidden px-6 sm:px-10 py-8 lg:py-10 grid gap-6 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-center" style={{ borderWidth: '0 0 1px' }}>
             <div className="relative max-w-2xl" style={{ zIndex: 1 }}>
               <Link href="/resources/blog" className="inline-flex items-center gap-1.5 text-sm mb-5 transition-colors"
-                style={{ color: 'rgba(255,255,255,0.7)' }}>
+                style={{ color: 'rgb(var(--gray-500))' }}>
                 <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
                 All Posts
               </Link>
               <div className="flex items-center gap-3 mb-4">
                 <span className="px-3 py-1 text-xs font-bold rounded-full tracking-wide uppercase"
-                  style={{ backgroundColor: 'rgba(255,255,255,0.2)', color: '#fff' }}>{post.category}</span>
-                <span className="text-sm" style={{ color: 'rgba(255,255,255,0.7)' }}>{post.readTime}</span>
+                  style={{ backgroundColor: 'rgb(var(--raised))', color: 'rgb(var(--primary-700))', border: '1px solid rgb(var(--gray-200))' }}>{post.category}</span>
+                <span className="text-sm" style={{ color: 'rgb(var(--gray-500))' }}>{post.readTime}</span>
               </div>
-              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold leading-tight mb-5" style={{ color: '#fff' }}>
+              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold leading-tight mb-5" style={{ color: 'rgb(var(--gray-900))' }}>
                 {post.title}
               </h1>
               <AuthorByline
@@ -296,11 +297,8 @@ export default function BlogPostClient({ post, slug, relatedPosts }: {
                 readTime={post.readTime}
               />
             </div>
-            <svg className="absolute right-6 lg:right-12 top-1/2 -translate-y-1/2 w-28 h-28 lg:w-40 lg:h-40" viewBox="0 0 200 200" fill="none" style={{ opacity: 0.08 }} aria-hidden="true">
-              <circle cx="100" cy="100" r="80" stroke="white" strokeWidth="2"/>
-              <circle cx="100" cy="100" r="40" stroke="white" strokeWidth="2"/>
-              <circle cx="100" cy="100" r="10" fill="white"/>
-            </svg>
+            {/* The picture of the post: its icon tile, in the colour of what it is about */}
+            <BlogArt post={post} main={88} className="h-[170px] w-full rounded-2xl lg:h-[190px] lg:w-[300px]" />
           </header>
 
           {/* Share Bar */}
@@ -462,16 +460,15 @@ export default function BlogPostClient({ post, slug, relatedPosts }: {
                 <Link key={rp.slug} href={`/resources/blog/${rp.slug}`}
                   className="group rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300"
                   style={{ backgroundColor: 'rgb(var(--raised))', border: '1px solid rgb(var(--gray-200))' }}>
-                  <div className="h-28 flex flex-col justify-end p-4" style={{ backgroundColor: rp.coverColor }}>
-                    <span className="text-[10px] font-bold uppercase tracking-wider mb-1" style={{ color: 'rgba(255,255,255,0.7)' }}>
+                  <BlogArt post={rp} main={46} className="h-24" />
+                  <div className="p-4">
+                    <span className="block text-[10px] font-bold uppercase tracking-wider mb-1" style={{ color: 'rgb(var(--primary-600))' }}>
                       {rp.category}
                     </span>
-                    <h4 className="text-sm font-bold leading-snug line-clamp-2" style={{ color: '#fff' }}>
+                    <h4 className="text-sm font-bold leading-snug line-clamp-3" style={{ color: 'rgb(var(--gray-900))' }}>
                       {rp.title}
                     </h4>
-                  </div>
-                  <div className="p-4">
-                    <p className="text-xs line-clamp-2" style={{ color: 'rgb(var(--gray-500))' }}>{rp.excerpt}</p>
+                    <p className="text-xs line-clamp-2 mt-2" style={{ color: 'rgb(var(--gray-500))' }}>{rp.excerpt}</p>
                   </div>
                 </Link>
               ))}

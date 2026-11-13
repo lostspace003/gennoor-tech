@@ -1,4 +1,5 @@
 import { blogPostsMeta } from '@/data/blog-posts'
+import { briefWithIconRule } from '@/lib/blog-icon'
 import { researchIdeas, loadState as loadLinkedInAutopilot } from '@/lib/autopilot/live'
 import { DEFAULT_CONFIG, type TopicIdea } from '@/lib/autopilot/types'
 import { BLOG_FORMATS, formatOf } from '@/lib/autopilot/variety'
@@ -27,9 +28,9 @@ async function writeDraft(topic: TopicIdea): Promise<{ draftId: string; review: 
   const t = taxonomy()
   const today = new Date().toISOString().slice(0, 10)
   const res = await agentFetch('/blog', {
-    topic: topic.title, brief: `Audience: enterprise IT and AI leaders. Take: ${topic.angle}
+    topic: topic.title, brief: briefWithIconRule(`Audience: enterprise IT and AI leaders. Take: ${topic.angle}
 ${formatOf(BLOG_FORMATS, topic.format) ? `Article format: ${formatOf(BLOG_FORMATS, topic.format)!.label}. ${formatOf(BLOG_FORMATS, topic.format)!.guide} Let this format shape the sections instead of the default section list.
-` : ''}Opening: start with a hook about the reader's problem or a sharp tension (what goes wrong, what it costs, what they get wrong), never with "X launched / announced Y". The news is evidence inside the argument, not the headline. Keep paragraphs short, use bullet lists for steps and takeaways, and vary the rhythm so the piece does not read as a press summary.`, references: sourcesText(topic).slice(0, 30_000),
+` : ''}Opening: start with a hook about the reader's problem or a sharp tension (what goes wrong, what it costs, what they get wrong), never with "X launched / announced Y". The news is evidence inside the argument, not the headline. Keep paragraphs short, use bullet lists for steps and takeaways, and vary the rhythm so the piece does not read as a press summary.`), references: sourcesText(topic).slice(0, 30_000),
     context: { date: today, dateLabel: dateLabel(today), categories: t.categories.map(c => c.name), tags: t.tags.slice(0, 150).map(x => x.name), posts: t.posts.slice(0, 60) },
   })
   if (!res.ok || !res.body) throw new Error(`Agent service returned ${res.status}`)

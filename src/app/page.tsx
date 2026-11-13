@@ -1,4 +1,7 @@
+import type { Metadata } from 'next'
 import Link from 'next/link'
+import { pageMeta } from '@/lib/seo'
+import { siteConfig } from '@/lib/site-config'
 import { Award, BotMessageSquare, Ear, FlaskConical, ListChecks, PencilRuler, Play, Presentation, Rocket, Sparkles, Workflow } from 'lucide-react'
 import { PersonJsonLd } from '@/components/JsonLd'
 import { ClaudePartnerInline } from '@/components/ClaudePartner'
@@ -17,6 +20,14 @@ import { Ring } from '@/components/stage/Ring'
 
 // Preview links are signed for 2 hours; rebuild the page well inside that.
 export const revalidate = 1800
+
+export const metadata: Metadata = pageMeta({
+  title: `${siteConfig.name} - ${siteConfig.tagline}`,
+  absoluteTitle: true,
+  description: siteConfig.description,
+  path: '/',
+  image: 'site',
+})
 
 /** What every course has, in the order the film says it. The tone of each tile is its meaning (see Ico.tsx). */
 const IN_A_COURSE = [

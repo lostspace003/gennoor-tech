@@ -1,17 +1,16 @@
 import { Metadata } from 'next'
+import { pageMeta } from '@/lib/seo'
 import { ServiceJsonLd, BreadcrumbJsonLd, FAQJsonLd } from '@/components/JsonLd'
 
-export const metadata: Metadata = {
-  title: 'Certification Preparation — Microsoft AI, Power BI & GitHub',
-  description: 'Structured certification preparation for Azure AI-103 (replaces AI-102 on 2026-06-30), PL-300 Power BI, MS-4004 Copilot, GitHub certifications and more. Hands-on labs, practice exams, and expert guidance from a Microsoft Certified Trainer.',
+// The pages under this one (a certification) write their own: see their generateMetadata.
+export const metadata: Metadata = pageMeta({
+  forLayout: true,
+  title: 'Microsoft certification preparation',
+  description: 'Preparation for Microsoft certifications: Azure AI-103, PL-300 Power BI, MS-4004 Copilot, GitHub and more. Hands-on labs, practice exams and guidance from a Microsoft Certified Trainer.',
   keywords: ['Microsoft certification prep', 'AI-103 training', 'AI-103 Azure AI Engineer', 'PL-300 preparation', 'Azure certification course', 'Microsoft exam prep'],
-  alternates: { canonical: 'https://gennoor.com/services/certifications' },
-  openGraph: {
-    title: 'Certification Preparation — Microsoft AI, Power BI & GitHub | Gennoor Tech',
-    description: 'Structured Microsoft certification prep with hands-on labs and expert guidance.',
-    url: 'https://gennoor.com/services/certifications',
-  },
-}
+  path: '/services/certifications',
+  image: 'certifications',
+})
 
 const certFaqs = [
   { question: 'What certifications does Gennoor Tech offer preparation for?', answer: 'We offer preparation for Microsoft (Azure AI, Power BI, Copilot, Power Platform, Agentic AI), AWS (Cloud Practitioner, AI Practitioner, ML Engineer), Google Cloud (Cloud Digital Leader, ML Engineer, Data Engineer), and GitHub (Foundations, Actions, Copilot, Advanced Security) certifications.' },

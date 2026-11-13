@@ -32,6 +32,21 @@ Pages are named without the leading slash, and the home page is `home` (Git Bash
 `/training` into a file path). Open the pictures and look at them: both themes, both widths.
 A page is not finished because it compiles.
 
+## A new page, or a page whose words for search change
+
+The rules are in `docs/SEO.md`. In short:
+
+1. The page's title, description, address and share picture come from `pageMeta` (`src/lib/seo.ts`).
+   Never write `openGraph` by hand, and never write "Gennoor Tech" in a title: the site adds it.
+2. Its share picture is a card in `src/lib/og-pages.ts` (light, with the page's icon tile). Plain and
+   true words, no price, nothing called "free".
+3. Add the page to `src/app/sitemap.ts` if a visitor should find it.
+4. Check: `node scripts/seo-head.mjs http://localhost:3111 <page>`, and open `/og/<key>` to look at
+   the picture.
+
+A blog post needs none of this: its picture, share picture, description, structured data, sitemap
+line and feed line all come from the post itself (`docs/SEO.md`, section 4).
+
 ## An admin page
 
 The admin centre keeps the light "paper" look; the rules are in `docs/DESIGN.md`, section 9.
@@ -58,6 +73,13 @@ The admin centre keeps the light "paper" look; the rules are in `docs/DESIGN.md`
   each heading its size.
 - **Records named a course in two ways** (its address, and its code in small letters), so one course showed
   as two. Check real records for old spellings before trusting a grouping.
+
+- **A link shared in a chat showed a black banner with a small logo**, and the owner called it
+  "very blackish" and unappealing. Share pictures are light and coloured (`src/lib/og-card.tsx`).
+- **A page that wrote `openGraph` by hand shared with no picture at all**, and about twenty pages had
+  the site's name in the title twice. `pageMeta` prevents both.
+- **A blog picture hidden with `hidden lg:flex` still showed on a phone**, because `st-art` sets its own
+  `display`. Size a `<BlogArt>` for the phone too instead of hiding it.
 
 - **A white button on a film went dark** because `bg-white` was renamed to a theme colour. Something that
   must be white on every theme is written `bg-[#fff]`.

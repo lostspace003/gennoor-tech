@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { pageMeta } from '@/lib/seo'
 import Link from 'next/link'
 import { BadgeCheck, BookOpen, Building2, CloudCog, Ear, PencilRuler, Presentation, Users, Workflow } from 'lucide-react'
 import ProgramCarousel from '@/components/training/ProgramCarousel'
@@ -8,11 +9,12 @@ import { OpenCustomTraining } from '@/components/custom-training/CustomTraining'
 import Ground from '@/components/stage/Ground'
 import { Ico, SparkIco } from '@/components/stage/Ico'
 
-export const metadata: Metadata = {
-  title: 'Training — Gennoor Tech',
+export const metadata: Metadata = pageMeta({
+  title: 'AI training for teams: Claude and Microsoft AI',
   description: 'Live training for teams, built around the work they do: Claude, Microsoft AI and custom automation courses.',
-  alternates: { canonical: 'https://gennoor.com/training' },
-}
+  path: '/training',
+  image: 'training',
+})
 
 const AUDIENCES = [
   { icon: Users, tone: 'blue', title: 'Smaller teams', body: 'One tool or one process. A short course on what they will use on Monday.' },

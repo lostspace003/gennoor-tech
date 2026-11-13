@@ -1,13 +1,16 @@
 import type { Metadata } from 'next'
+import { pageMeta } from '@/lib/seo'
 import Link from 'next/link'
 import { ClaudePartnerSection } from '@/components/ClaudePartner'
 import { CloudAiIllustration, ExamplesIllustration, PlatformIllustration } from '@/components/illustrations/Illustrations'
 
-export const metadata: Metadata = {
-  title: 'About — Gennoor Tech',
+export const metadata: Metadata = pageMeta({
+  title: 'About Gennoor Tech: practical AI training from Mumbai',
+  absoluteTitle: true,
   description: 'Gennoor Tech gives people practical AI and cloud knowledge through certification courses, real projects and interactive learning. Mumbai, India.',
-  alternates: { canonical: 'https://gennoor.com/about' },
-}
+  path: '/about',
+  image: 'about',
+})
 
 const PILLARS = [
   {

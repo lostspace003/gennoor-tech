@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { pageMeta } from '@/lib/seo'
 import { CalendarDays, Clock, Video, Check, Hammer, Award, ShieldCheck, Package } from 'lucide-react'
 import { WEEKEND, DAYS, FOR_YOU, INCLUDED, HOW_YOU_LEARN, KIT, TOOLS, FAQS, nextCohort, timeLabel } from '@/data/ai-weekend'
 import RegisterForm, { StickyRegister } from './RegisterForm'
@@ -10,17 +11,14 @@ import films from '@/data/films.json'
 // The dates roll forward and the seat count moves, so the page is rebuilt every few minutes.
 export const revalidate = 300
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMeta({
   title: `${WEEKEND.name}: ${WEEKEND.tagline}`,
+  // The fee is named here because this is the page where it is paid; the words a shared link shows leave it out.
   description: `A live two-day workshop on the last weekend of every month. Eight hours with a trainer, six demos built live, and the full kit to repeat them yourself. ₹${WEEKEND.fee}.`,
-  alternates: { canonical: 'https://www.gennoor.com/ai-weekend' },
-  openGraph: {
-    title: `${WEEKEND.name}: ${WEEKEND.tagline}`,
-    description: `Live, last weekend of every month. Eight hours, six demos, and the full kit to repeat them. ₹${WEEKEND.fee}.`,
-    url: 'https://www.gennoor.com/ai-weekend',
-    type: 'website',
-  },
-}
+  shareDescription: 'Live online on the last weekend of every month, Saturday & Sunday. Eight hours with a trainer, six demos built live, and the full kit to repeat them yourself.',
+  path: '/ai-weekend',
+  image: 'ai-weekend',
+})
 
 const wrap = 'mx-auto w-full max-w-6xl px-4 sm:px-6'
 
@@ -327,9 +325,9 @@ export default async function AiWeekendPage() {
             endDate: `${cohort.sunday}T${WEEKEND.endTime}:00+05:30`,
             eventAttendanceMode: 'https://schema.org/OnlineEventAttendanceMode',
             eventStatus: 'https://schema.org/EventScheduled',
-            location: { '@type': 'VirtualLocation', url: 'https://www.gennoor.com/ai-weekend' },
-            organizer: { '@type': 'Organization', name: 'Gennoor Tech', url: 'https://www.gennoor.com' },
-            offers: { '@type': 'Offer', price: WEEKEND.fee, priceCurrency: 'INR', url: 'https://www.gennoor.com/ai-weekend', availability: 'https://schema.org/InStock' },
+            location: { '@type': 'VirtualLocation', url: 'https://gennoor.com/ai-weekend' },
+            organizer: { '@type': 'Organization', name: 'Gennoor Tech', url: 'https://gennoor.com' },
+            offers: { '@type': 'Offer', price: WEEKEND.fee, priceCurrency: 'INR', url: 'https://gennoor.com/ai-weekend', availability: 'https://schema.org/InStock' },
           }),
         }}
       />
