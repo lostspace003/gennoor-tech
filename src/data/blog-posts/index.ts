@@ -44,6 +44,20 @@ export interface BlogPost extends BlogPostMeta {
 
 export const blogPostsMeta: BlogPostMeta[] = [
   {
+    slug: 'mcp-security-checklist-enterprises-live-tool-access',
+    title: 'The MCP Security Checklist Enterprises Need Before Agents Get Live Tool Access',
+    excerpt: 'As MCP moves from experimentation into enterprise deployment, the main risk is no longer protocol adoption. It is preserving identity, separating discovery from authorization, and maintaining data boundaries when agents call live tools. This field guide turns recent AWS guidance into a practical checklist IT and AI leaders can apply before exposing internal systems.',
+    tldr: 'MCP changes enterprise risk because agents now reach live tools, knowledge stores, and workflows. The core controls are not exotic: preserve end-user identity, separate discovery from authorization, place tools behind gateways, isolate high-risk systems, and treat evaluation as a release gate. Recent AWS guidance makes these patterns concrete enough to turn into a production readiness checklist without relying on date-specific claims that may change.',
+    author: 'Gennoor Tech',
+    date: '2026-11-13',
+    readTime: '12 min read',
+    category: 'AI Security',
+    tags: ['Enterprise AI', 'AI Security', 'MCP', 'AI Agents', 'AI Governance', 'Enterprise Architecture', 'Evaluation', 'Production AI'],
+    hashtags: ['#AISecurity', '#MCP', '#AIAgents', '#EnterpriseAI', '#AIGovernance', '#EnterpriseArchitecture'],
+    coverColor: '#2B1F24',
+    icon: '🛡️',
+  },
+  {
     slug: 'mcp-agents-tool-layer-hallucinations-failure-wall',
     title: 'MCP Agents Face a New Failure Wall: Hallucinations Inside the Tool Layer',
     excerpt: 'Enterprise teams should stop treating MCP agent quality as one aggregate score. In production, many failures emerge inside the tool layer through reasoning over metadata, malformed execution, stale memory, and unsafe trust in tool descriptions. That creates a more practical testing agenda built around telemetry, governance, and regression testing rather than broad benchmark claims.',
@@ -1112,6 +1126,7 @@ export function getRelatedPostsMeta(currentSlug: string, category: string, limit
 
 // Load full blog post content on demand (only for individual post pages)
 const contentImports: Record<string, () => Promise<{ post: BlogPost }>> = {
+  'mcp-security-checklist-enterprises-live-tool-access': () => import('./content/mcp-security-checklist-enterprises-live-tool-access'),
   'mcp-agents-tool-layer-hallucinations-failure-wall': () => import('./content/mcp-agents-tool-layer-hallucinations-failure-wall'),
   'openai-aws-marketplace-enterprise-ai-procurement': () => import('./content/openai-aws-marketplace-enterprise-ai-procurement'),
   'claude-5-2-enterprise-upgrade-bar-faster-cheaper-stricter': () => import('./content/claude-5-2-enterprise-upgrade-bar-faster-cheaper-stricter'),
