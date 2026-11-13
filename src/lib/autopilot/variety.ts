@@ -1,4 +1,6 @@
 import type { TopicIdea } from './types'
+import { toPlain } from '@/lib/linkedin-format'
+import { cut } from '@/lib/safe-text'
 
 // Variety rules shared by the LinkedIn and blog autopilots: post formats that rotate, a wider pool of research
 // sources than vendor press releases, a repeat check that compares meaning (not just title words), a per-vendor
@@ -221,7 +223,12 @@ export function planSlots(ideas: TopicIdea[], slots: { kind: string }[], o: { la
 
 // ---- Opening lines -------------------------------------------------------------------------------------------------
 
-export const firstLine = (text: string) => (text.split('\n').map(l => l.replace(/[*_#]/g, '').trim()).find(Boolean) || '').slice(0, 200)
+/**
+ * The opening line of a post, in plain letters. Published posts keep their first line in Unicode bold, where
+ * one letter is two units: compared as written they match nothing, and cut at "200" they can end on half a
+ * letter (that stopped every draft on 12 and 13 November 2026; see lib/safe-text.ts).
+ */
+export const firstLine = (text: string) => cut(toPlain(text).split('\n').map(l => l.replace(/[*_#]/g, '').trim()).find(Boolean) || '', 200)
 
 /** The recent opening line that the new one echoes, or null. Catches same-shape hooks like "Your agent passes every demo…". */
 export function echoedHook(text: string, recentHooks: string[]): string | null {
@@ -229,6 +236,31 @@ export function echoedHook(text: string, recentHooks: string[]): string | null {
   if (!h) return null
   const lead = (s: string) => s.toLowerCase().split(/\s+/).slice(0, 4).join(' ')
   return recentHooks.find(r => r && (wordSimilarity(r, h) >= 0.45 || (lead(r).length > 10 && lead(r) === lead(h)))) ?? null
+}
+
+/**
+ * The editor's notes sent with a post, never longer than `max` (the agent service refuses a longer brief) and
+ * never holding half a letter. What must be there is kept whole: the rules, the format, what to avoid and the
+ * problems to fix from the last attempt. The recent openings fill the room that is left, newest first.
+ */
+export function buildBrief(p: { rules: string; format?: string; weekend?: string; avoid?: string[]; notes?: string[]; openings?: string[] }, max: number): string {
+  const fixes = (p.notes || []).map(n => cut(n.replace(/\s+/g, ' ').trim(), 300)).filter(Boolean).slice(0, 6)
+  const tail = [
+    p.weekend ? `Weekend flavour: ${p.weekend}` : '',
+    p.avoid?.length ? `Never mention: ${p.avoid.join('; ')}.` : '',
+    fixes.length ? `\nFix these problems from the last attempt:\n- ${fixes.join('\n- ')}` : '',
+  ].filter(Boolean).join('\n')
+  const head = [p.rules.trim(), (p.format || '').trim()].filter(Boolean).join('\n')
+  let room = max - head.length - tail.length - HOOK_RULES.length - 8
+  const lines: string[] = []
+  for (const h of [...(p.openings || [])].reverse()) {
+    const line = `- ${cut(h.replace(/\s+/g, ' ').trim(), 140)}`
+    if (lines.length >= 12 || line.length + 1 > room) break
+    lines.unshift(line)
+    room -= line.length + 1
+  }
+  const openings = lines.length ? `${HOOK_RULES}\n${lines.join('\n')}` : ''
+  return cut([head, openings, tail].filter(Boolean).join('\n\n'), max)
 }
 
 export const HOOK_RULES = `Opening line: before writing, draft five different hooks of different types (the reader's problem, one striking number, a contrarian claim, a specific question, the outcome the reader gets) and use the strongest. It must not open with "X launched / announced", and must not resemble these recent openings in wording or shape:`

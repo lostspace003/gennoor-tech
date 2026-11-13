@@ -192,7 +192,10 @@ export async function tick(d: Deps, opts: { force?: boolean } = {}): Promise<str
         if (now.getTime() > slotAt + cfg.missedGraceMinutes * 60_000) { slot.status = 'skipped'; slot.reason = 'missed its window before it was ready'; continue }
         slot.status = 'drafting'
         const notes: string[] = []
-        const recentHooks = [...s.history.map(h => h.hook || ''), ...(d.pastPosts ? (await d.pastPosts().catch(() => [])).map(p => p.hook || '') : [])].filter(Boolean).slice(-30)
+        // Oldest first, newest last, each opening once: the writer is shown the newest of these (it used to get the oldest).
+        const openings = [...s.history.map(h => ({ at: h.at, hook: h.hook || '' })), ...(d.pastPosts ? (await d.pastPosts().catch(() => [])).map(p => ({ at: p.at, hook: p.hook || '' })) : [])]
+          .filter(x => x.hook).sort((a, b) => a.at.localeCompare(b.at))
+        const recentHooks = [...new Set(openings.map(x => x.hook))].slice(-30)
         let result: Awaited<ReturnType<Deps['generate']>> | null = null
         try {
           for (let r = 0; r <= cfg.maxRegens; r++) {

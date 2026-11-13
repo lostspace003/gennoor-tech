@@ -46,4 +46,13 @@ python scripts/stage-codemod.py                        # lists colours written a
 node scripts/seo-head.mjs http://localhost:3111 home training   # what a search engine and a shared link read
 node scripts/contrast-check.mjs home ai-weekend        # can every word be read, in light and in dark
 npx tsx scripts/campaign-check.ts                      # the LinkedIn film campaign: the plan and all its posts
+npx tsx scripts/autopilot-check.ts                     # what the autopilot sends to its writers is whole and fits (no network)
+npx tsx --env-file=.env.local scripts/autopilot-live-check.ts   # the autopilot's real request, tried on the live agent service
 ```
+
+## Who may sign in
+
+One file: `src/lib/crm/users.ts`. `ADMIN_USERS` open the admin centre and the CRM; `CRM_USERS` adds the
+people who work leads only (they are taken to the CRM if they open `/admin`, and the admin centre's
+addresses refuse them). A new colleague needs a Microsoft 365 account first, then a line in that file,
+then a merge. Add their name for email signatures in `src/lib/crm/team.ts`.

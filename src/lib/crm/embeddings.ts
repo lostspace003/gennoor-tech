@@ -1,6 +1,8 @@
 // Text embeddings from Azure AI Foundry. Used by the site and course indexes
 // and the blog/LinkedIn automation to compare texts. (The CRM itself no longer
 // uses embeddings: lead search is a plain text match.)
+import { safeJson } from '@/lib/safe-text'
+
 const DEPLOYMENT = 'text-embedding-3-small'
 const BASE = process.env.FOUNDRY_OPENAI_BASE || 'https://admin-5924-resource.openai.azure.com'
 
@@ -13,7 +15,7 @@ export async function embedTexts(texts: string[]): Promise<number[][]> {
     const res = await fetch(`${BASE}/openai/deployments/${DEPLOYMENT}/embeddings?api-version=2023-05-15`, {
       method: 'POST',
       headers: { ...authHeader, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ input: texts }),
+      body: safeJson({ input: texts }),
     })
     if (res.status === 429) {
       const retryAfter = Number(res.headers.get('retry-after')) || 20

@@ -33,7 +33,7 @@ ${formatOf(BLOG_FORMATS, topic.format) ? `Article format: ${formatOf(BLOG_FORMAT
 ` : ''}Opening: start with a hook about the reader's problem or a sharp tension (what goes wrong, what it costs, what they get wrong), never with "X launched / announced Y". The news is evidence inside the argument, not the headline. Keep paragraphs short, use bullet lists for steps and takeaways, and vary the rhythm so the piece does not read as a press summary.`), references: sourcesText(topic).slice(0, 30_000),
     context: { date: today, dateLabel: dateLabel(today), categories: t.categories.map(c => c.name), tags: t.tags.slice(0, 150).map(x => x.name), posts: t.posts.slice(0, 60) },
   })
-  if (!res.ok || !res.body) throw new Error(`Agent service returned ${res.status}`)
+  if (!res.ok || !res.body) throw new Error(`Agent service returned ${res.status}${res.ok ? '' : `: ${(await res.text().catch(() => '')).replace(/\s+/g, ' ').slice(0, 160)}`}`)
   const reader = res.body.getReader(), dec = new TextDecoder()
   let buf = '', result: any = null
   const trace: BlogDraft['trace'] = []

@@ -1,6 +1,7 @@
 import type { Lead } from './types'
 import { STEP_LABELS } from './types'
 import { teamMember, signOffText } from './team'
+import { safeJson } from '@/lib/safe-text'
 
 // Real Azure OpenAI calls — same endpoint pattern the ai-readiness feature
 // uses in production. When not configured we fail honestly instead of
@@ -56,7 +57,7 @@ async function callCandidate(
   let response = await fetch(url, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', 'api-key': c.key },
-    body: JSON.stringify({ ...payload, max_completion_tokens: options?.maxTokens ?? 1500 }),
+    body: safeJson({ ...payload, max_completion_tokens: options?.maxTokens ?? 1500 }),
   })
   if (response.status === 429) {
     const retryAfter = Math.min(Number(response.headers.get('retry-after')) || 12, 30)
@@ -64,7 +65,7 @@ async function callCandidate(
     response = await fetch(url, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'api-key': c.key },
-      body: JSON.stringify({ ...payload, max_completion_tokens: options?.maxTokens ?? 1500 }),
+      body: safeJson({ ...payload, max_completion_tokens: options?.maxTokens ?? 1500 }),
     })
   }
   if (!response.ok) {
@@ -73,7 +74,7 @@ async function callCandidate(
       response = await fetch(url, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'api-key': c.key },
-        body: JSON.stringify({ ...payload, max_tokens: options?.maxTokens ?? 1500 }),
+        body: safeJson({ ...payload, max_tokens: options?.maxTokens ?? 1500 }),
       })
       if (!response.ok) throw new Error(`Azure OpenAI error ${response.status}: ${(await response.text()).slice(0, 300)}`)
     } else {

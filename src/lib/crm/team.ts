@@ -30,6 +30,8 @@ const SALES: Array<{ email: string; name: string; phone: string }> = [
 
 const DIRECTORY: TeamMember[] = [
   ...SALES.map((m) => ({ email: m.email, name: m.name, phones: [m.phone, GENNOOR_OFFICE_PHONE] })),
+  // Signs with his own name and address, on the office line until a direct number is given (then move him to SALES)
+  { email: 'luthermarak@gennoor.com', name: 'Luther C Marak', phones: [GENNOOR_OFFICE_PHONE] },
   // Jalal and the shared mailboxes all sign as the office
   { email: 'jalalkhan@gennoor.com', ...ADMIN_SIGNATURE },
   { email: 'admin@gennoor.com', ...ADMIN_SIGNATURE },

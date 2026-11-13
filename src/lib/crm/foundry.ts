@@ -1,4 +1,5 @@
 import { ConfidentialClientApplication } from '@azure/msal-node'
+import { safeJson } from '@/lib/safe-text'
 
 // Foundry built-in Web Search: calls the Azure OpenAI v1 Responses API with
 // the zero-setup web_search tool (Bing managed by Microsoft — no separate
@@ -53,7 +54,7 @@ export async function webGroundedCompletion(instructions: string, input: string,
     const response = await fetch(`${BASE}/openai/v1/responses`, {
       method: 'POST',
       headers: { ...(await foundryAuthHeader()), 'Content-Type': 'application/json' },
-      body: JSON.stringify({
+      body: safeJson({
         model: MODEL,
         instructions,
         input,

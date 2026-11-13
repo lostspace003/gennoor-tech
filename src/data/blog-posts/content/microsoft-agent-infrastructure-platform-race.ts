@@ -4,19 +4,18 @@ export const post: BlogPost = {
     slug: 'microsoft-agent-infrastructure-platform-race',
     title: 'Microsoft Turns Agent Infrastructure Into the Next Enterprise AI Platform Battle',
     excerpt: 'Microsoft’s Copilot positioning, together with GitHub’s enterprise administration and policy signals, suggests enterprise AI evaluation is moving below the interface. For CIOs, architects, and engineering leaders, the practical focus should be runtime governance, enforceable settings, model policy, and operational consistency rather than demo quality alone.',
-    tldr: 'Recent Microsoft and GitHub enterprise AI announcements suggest buyers should evaluate copilots less as standalone apps and more as governed operating layers. The practical enterprise lens is runtime behavior, model governance, settings enforcement, tool boundaries, and operational consistency. Because some earlier date-specific sourcing was not safely verifiable for editorial review, this revised article avoids over-claiming chronology and focuses on what the announcements support more broadly.',
+    tldr: 'Recent Microsoft and GitHub enterprise AI announcements suggest buyers should evaluate copilots less as standalone apps and more as governed operating layers. The practical enterprise lens is runtime behavior, model governance, settings enforcement, tool boundaries, and operational consistency.',
     keyTakeaways: [
       'Enterprise AI evaluation is shifting from interface quality toward runtime, governance, and operational control.',
       'Microsoft’s Copilot positioning around multi-model agentic work suggests a direction toward managed orchestration, but buyers should avoid inferring unstated mechanics.',
       'GitHub’s enterprise administration and policy signals reinforce the importance of enforceable settings and model governance.',
       'CIOs and architects should evaluate copilots as governed platform capabilities, not only as productivity applications.',
       'Vendor scorecards should separate user value, runtime fit, governance, operations, and portfolio fit.',
-      'Date-specific chronology should only be emphasized when exact announcement records are independently confirmed.',
     ],
     faqs: [
       {
         question: 'What is the main enterprise signal in Microsoft’s Copilot announcement?',
-        answer: 'The main signal is Microsoft’s emphasis on multi-model agentic work, which encourages buyers to look beyond a single assistant interface and toward the managed layer that supports AI-assisted work. In practice, that means evaluating runtime behavior, governance, and operational fit. This article treats that as an architectural interpretation, not as proof of every underlying mechanism.',
+        answer: 'The main signal is Microsoft’s emphasis on multi-model agentic work, which encourages buyers to look beyond a single assistant interface and toward the managed layer that supports AI-assisted work. In practice, that means evaluating runtime behavior, governance, and operational fit. That is an architectural interpretation, not proof of every underlying mechanism.',
       },
       {
         question: 'Why do GitHub’s enterprise Copilot updates matter to CIOs and architects?',
@@ -47,15 +46,13 @@ export const post: BlogPost = {
 
 <p>Microsoft’s latest Copilot and GitHub announcements are not just product updates. Taken together, they suggest a broader shift in enterprise AI: the competitive layer may be moving below the chatbot interface and toward the managed infrastructure that runs, governs, and standardizes AI-assisted work at scale.</p>
 
-<p>The editorial challenge here is straightforward. Several source links and date-specific claims in the earlier draft were not safely verifiable for review. So this revised version keeps the core architectural argument, but avoids over-claiming chronology or intent where the cited announcements are not confirmed in a way an editor can independently verify from the materials provided.</p>
-
-<p>For enterprise IT and AI leaders, the practical takeaway remains useful: stop evaluating copilots only as standalone apps. Start evaluating the <strong>agent control plane</strong> underneath them, including runtime behavior, model governance, tool access, policy, and operational consistency.</p>
+<p>For enterprise IT and AI leaders, the practical takeaway is clear: stop evaluating copilots only as standalone apps. Start evaluating the <strong>agent control plane</strong> underneath them, including runtime behavior, model governance, tool access, policy, and operational consistency.</p>
 
 <p>That phrase, <strong>agent control plane</strong>, is our editorial shorthand for the management layer around agent execution. It is not presented here as an official Microsoft or GitHub product term. We use it as an architecture lens, not as a vendor label.</p>
 
-<h2>Why this still matters even after softening the sourcing claims</h2>
+<h2>Why the managed operating layer matters</h2>
 
-<p>The strategic point does not depend on a rigid day-by-day chronology. Even without over-interpreting sequence, the mix of Microsoft Copilot positioning and GitHub enterprise administration updates still supports a practical conclusion: enterprise buyers should look beyond the interface and spend more time on the managed operating layer.</p>
+<p>The mix of Microsoft Copilot positioning and GitHub enterprise administration updates supports a practical conclusion: enterprise buyers should look beyond the interface and spend more time on the managed operating layer.</p>
 
 <p>That layer includes questions such as:</p>
 

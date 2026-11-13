@@ -1,19 +1,13 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
-import { Maximize, Minimize, Pause, Play, Volume2 } from 'lucide-react'
+import { Play, VolumeX } from 'lucide-react'
 import { useBoostedVolume } from '@/hooks/useBoostedVolume'
-import VolumeControl from '@/components/media/VolumeControl'
-
-function fmt(sec: number): string {
-  if (!isFinite(sec) || sec < 0) sec = 0
-  const s = Math.floor(sec)
-  return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`
-}
+import PlayerBar from '@/components/media/PlayerBar'
 
 /**
  * Course promo: starts by itself as the page opens (muted, as browsers require)
- * with an always-visible control bar: play or pause, time, seek, sound (a slider from 0 to 200 percent), full screen.
+ * with an always-visible control bar (components/media/PlayerBar): a slider to move through it, play or pause, sound (0 to 200 percent), the time, full screen.
  * framed={false} drops the rounded frame and shadow so it fills a course card's picture area.
  */
 export default function PromoPlayer({ src, poster, startMuted = true, framed = true, autoPlay = true, resumeKey }: { src: string; poster?: string | null; startMuted?: boolean; framed?: boolean; autoPlay?: boolean; resumeKey?: string }) {
@@ -110,13 +104,16 @@ export default function PromoPlayer({ src, poster, startMuted = true, framed = t
         onVolumeChange={e => setMuted(e.currentTarget.muted)}
       />
 
+      {/* Playing without sound: one round button, no words (owner, 13 November 2026) */}
       {muted && playing && (
         <button
           type="button"
           onClick={() => soundTo(false)}
-          className="absolute left-4 top-4 inline-flex items-center gap-2 rounded-full bg-black/60 backdrop-blur px-4 py-2 text-[13px] font-semibold text-white hover:bg-black/75 transition-colors"
+          aria-label="Turn on the sound"
+          title="Turn on the sound"
+          className="absolute left-3 top-3 sm:left-4 sm:top-4 grid h-10 w-10 place-items-center rounded-full bg-black/60 backdrop-blur text-[#fff] hover:bg-black/75 transition-colors"
         >
-          <Volume2 className="w-4 h-4" /> Turn on sound
+          <VolumeX className="w-[18px] h-[18px]" aria-hidden="true" />
         </button>
       )}
 
@@ -126,35 +123,12 @@ export default function PromoPlayer({ src, poster, startMuted = true, framed = t
         </button>
       )}
 
-      <div className="absolute inset-x-0 bottom-0 px-3 pb-2.5 pt-10 bg-gradient-to-t from-black/80 to-transparent text-white">
-        <input
-          type="range"
-          min={0}
-          max={dur || 1}
-          step={0.1}
-          disabled={!dur}
-          value={dur ? Math.min(cur, dur) : 0}
-          aria-label="Seek"
-          onChange={e => { const v = ref.current; if (v) { v.currentTime = Number(e.target.value); setCur(v.currentTime) } }}
-          className="w-full h-1 accent-[#2f8bff] cursor-pointer"
-        />
-        <div className="flex items-center gap-1 mt-1.5">
-          <button type="button" aria-label={playing ? 'Pause' : 'Play'} onClick={toggle} className="w-9 h-9 rounded-md flex items-center justify-center hover:bg-white/15 transition-colors">
-            {playing ? <Pause className="w-5 h-5 fill-white" /> : <Play className="w-5 h-5 fill-white" />}
-          </button>
-          <VolumeControl level={loud.level} max={loud.max} muted={muted} onLevel={loud.setLevel} onMuted={soundTo} align="left" />
-          <span className="text-[13px] tabular-nums px-1">{fmt(cur)} <span className="text-white/60">/ {fmt(dur)}</span></span>
-          <span className="flex-1" />
-          <button
-            type="button"
-            aria-label={full ? 'Exit full screen' : 'Full screen'}
-            onClick={fullScreen}
-            className="w-9 h-9 rounded-md flex items-center justify-center hover:bg-white/15 transition-colors"
-          >
-            {full ? <Minimize className="w-5 h-5" /> : <Maximize className="w-5 h-5" />}
-          </button>
-        </div>
-      </div>
+      <PlayerBar
+        playing={playing} muted={muted} cur={cur} dur={dur} full={full} level={loud.level} max={loud.max}
+        onToggle={toggle}
+        onSeek={(to) => { const v = ref.current; if (v) { v.currentTime = to; setCur(v.currentTime) } }}
+        onLevel={loud.setLevel} onMuted={soundTo} onFull={fullScreen}
+      />
     </div>
   )
 }
