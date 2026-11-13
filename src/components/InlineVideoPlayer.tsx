@@ -2,7 +2,9 @@
 
 import { useRef, useState, useCallback, useEffect } from 'react'
 import Image from 'next/image'
-import { Play, Pause, Maximize2, Minimize2, Volume2, VolumeX } from 'lucide-react'
+import { Play, Pause, Maximize2, Minimize2 } from 'lucide-react'
+import { useBoostedVolume } from '@/hooks/useBoostedVolume'
+import VolumeControl from '@/components/media/VolumeControl'
 
 const SPEEDS = [1, 1.1, 1.2, 1.25]
 
@@ -31,7 +33,7 @@ export default function InlineVideoPlayer({
   const [isPlaying, setIsPlaying] = useState(false)
   const [hasStarted, setHasStarted] = useState(false)
   const [isMuted, setIsMuted] = useState(false)
-  const [volume, setVolume] = useState(1)
+  const loud = useBoostedVolume(videoRef)
   const [isFullscreen, setIsFullscreen] = useState(false)
   const [showControls, setShowControls] = useState(true)
   const [currentTime, setCurrentTime] = useState(0)
@@ -115,21 +117,11 @@ export default function InlineVideoPlayer({
     }
   }, [])
 
-  const toggleMute = () => {
+  const soundTo = (off: boolean) => {
     if (!videoRef.current) return
-    const newMuted = !isMuted
-    videoRef.current.muted = newMuted
-    setIsMuted(newMuted)
-  }
-
-  const handleVolumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const val = parseFloat(e.target.value)
-    if (videoRef.current) {
-      videoRef.current.volume = val
-      videoRef.current.muted = val === 0
-      setVolume(val)
-      setIsMuted(val === 0)
-    }
+    videoRef.current.muted = off
+    setIsMuted(off)
+    if (!off) loud.prime()
   }
 
   const handleSpeedChange = (s: number) => {
@@ -266,26 +258,10 @@ export default function InlineVideoPlayer({
                   }
                 </button>
 
-                <div className="flex items-center group/vol">
-                  <button onClick={toggleMute} className="p-1.5 hover:bg-white/15 rounded-full transition-colors duration-200" type="button" aria-label={isMuted ? 'Unmute' : 'Mute'}>
-                    {isMuted || volume === 0
-                      ? <VolumeX className="w-4 h-4 text-white" />
-                      : <Volume2 className="w-4 h-4 text-white" />
-                    }
-                  </button>
-                  <div className="w-0 overflow-hidden group-hover/vol:w-16 transition-all duration-300">
-                    <input
-                      type="range"
-                      min="0"
-                      max="1"
-                      step="0.05"
-                      value={isMuted ? 0 : volume}
-                      onChange={handleVolumeChange}
-                      aria-label="Volume"
-                      className="w-14 h-1 ml-1 appearance-none bg-white/40 rounded-full cursor-pointer vol-slider"
-                    />
-                  </div>
-                </div>
+                <VolumeControl
+                  level={loud.level} max={loud.max} muted={isMuted} onLevel={loud.setLevel} onMuted={soundTo} align="left"
+                  buttonClassName="p-1.5 hover:bg-white/15 rounded-full transition-colors duration-200 text-white" iconClassName="w-4 h-4"
+                />
 
                 <span className="text-white/80 text-[11px] font-medium tabular-nums ml-1 select-none">
                   {formatTime(currentTime)} / {formatTime(duration)}

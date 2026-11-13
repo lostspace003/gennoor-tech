@@ -2,9 +2,11 @@
 
 import { createContext, useCallback, useContext, useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { Check, Loader2, Maximize, Pause, Play, PlayCircle, Volume2, VolumeX, X } from 'lucide-react'
+import { Check, Loader2, Maximize, Pause, Play, X } from 'lucide-react'
 import { useLearnerAuth } from '@/hooks/useLearnerAuth'
 import type { LmsKind } from '@/lib/lms-kind'
+import { useBoostedVolume } from '@/hooks/useBoostedVolume'
+import VolumeControl from '@/components/media/VolumeControl'
 import LearnerAuthModal from './LearnerAuthModal'
 import { LessonLine } from './LessonLine'
 import { OfferPill } from './Offer'
@@ -315,6 +317,7 @@ function PreviewPlayer({ slug, id, title, all, onPick, onClose }: { slug: string
   const [ended, setEnded] = useState(false)
   const [playing, setPlaying] = useState(false)
   const [muted, setMuted] = useState(false)
+  const loud = useBoostedVolume(video)
   const [time, setTime] = useState(0)
   const [length, setLength] = useState(0)
   // While the slider is being dragged it shows where the finger is, not where the video is
@@ -416,9 +419,13 @@ function PreviewPlayer({ slug, id, title, all, onPick, onClose }: { slug: string
             style={{ ['--done' as string]: `${length ? ((dragTo ?? time) / length) * 100 : 0}%` }}
           />
           <span className="text-[12.5px] tabular-nums text-[#aab6c8] shrink-0 w-10">{clock(length)}</span>
-          <button type="button" onClick={() => setMuted((m) => !m)} aria-label={muted ? 'Turn sound on' : 'Turn sound off'} className="p-2 rounded-full hover:bg-white/10 shrink-0">
-            {muted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
-          </button>
+          <VolumeControl
+            level={loud.level} max={loud.max} muted={muted}
+            onLevel={loud.setLevel}
+            onMuted={(off) => { setMuted(off); if (!off) loud.prime() }}
+            align="right" className="shrink-0"
+            buttonClassName="p-2 rounded-full hover:bg-white/10" iconClassName="w-4 h-4"
+          />
           <button type="button" onClick={() => video.current?.requestFullscreen?.().catch(() => {})} aria-label="Full screen" className="p-2 rounded-full hover:bg-white/10 shrink-0">
             <Maximize className="w-4 h-4" />
           </button>

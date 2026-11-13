@@ -497,6 +497,12 @@ html:is(.stage, .day)::-webkit-scrollbar-thumb:hover { background: var(--st-scro
   mask-image: radial-gradient(75% 85% at var(--mx, 50%) var(--my, 40%), #000 10%, transparent 75%);
 }
 
+/* ── The volume slider of a video player (src/components/media/VolumeControl.tsx). It sits on video: fixed colours. ── */
+.gn-vol-pop .gn-vol-mute { all: unset; box-sizing: border-box; display: grid; place-items: center; flex: none; width: 28px; height: 28px; border-radius: 6px; color: #fff; cursor: pointer; }
+.gn-vol-pop .gn-vol-mute:hover { background: rgba(255, 255, 255, 0.15); color: #fff; }
+.gn-vol-pop .gn-vol-mute:focus-visible { outline: 2px solid #7dbcf7; outline-offset: 2px; }
+.gn-vol-pop .gn-vol-mute svg { width: 16px; height: 16px; }
+
 /* ── Type helpers ───────────────────────────────────────────────────────── */
 /* Reading text of more than a line or two: both edges straight, words broken at the syllable so no gaps open up.
    Not on a phone: a narrow column set this way opens wide gaps between the words. */

@@ -7,11 +7,13 @@ import ReviewPrompt from './ReviewPrompt'
 import { useRouter } from 'next/navigation'
 import {
   Award, CheckCircle2, ChevronDown, ChevronRight, Download, FileText, Info, ListVideo, Loader2, Maximize, Maximize2, Minimize, Minimize2,
-  Pause, Play, RotateCcw, RotateCw, Subtitles, Volume2, VolumeX, X, ZoomIn, ZoomOut,
+  Pause, Play, RotateCcw, RotateCw, Subtitles, X, ZoomIn, ZoomOut,
 } from 'lucide-react'
 import type { LmsCourse, LmsItem, LmsProgressEntry } from '@/lib/lms'
 import { KIND_COLOR, kindOf } from '@/lib/lms-kind'
 import { CourseStrip, longestLesson } from './CourseStrip'
+import { useBoostedVolume } from '@/hooks/useBoostedVolume'
+import VolumeControl from '@/components/media/VolumeControl'
 import { RichInline, RichText, paragraphize } from './RichText'
 
 type Lecture = Extract<LmsItem, { type: 'lecture' }>
@@ -482,8 +484,10 @@ function LecturePane({
   const [cur, setCur] = useState(0)
   const [dur, setDur] = useState(lecture.durationSec || 0)
   const [buffered, setBuffered] = useState(0)
-  const [vol, setVol] = useState(1)
+  const loud = useBoostedVolume(videoRef)
   const [muted, setMuted] = useState(false)
+  // The sound button, the M key and the slider all go through this one switch
+  useEffect(() => { const v = videoRef.current; if (v) v.muted = muted }, [muted])
   const [rate, setRate] = useState(1)
   const [rateOpen, setRateOpen] = useState(false)
   const [cc, setCc] = useState(true)
@@ -711,7 +715,6 @@ function LecturePane({
               setDur(v.duration)
               v.playbackRate = rate
               v.muted = muted
-              v.volume = vol
               if (resumeAt.current > 5 && resumeAt.current < v.duration - 10) v.currentTime = resumeAt.current
               if (!wasPlaying.current) v.pause()
             }}
@@ -790,14 +793,13 @@ function LecturePane({
             <CtlBtn label="Forward 10 seconds" onClick={() => skip(10)}><RotateCw className="w-5 h-5" /></CtlBtn>
             <span className="text-[13px] tabular-nums px-1 whitespace-nowrap">{fmt(cur)} <span className="text-white/60">/ {fmt(dur)}</span></span>
             <span className="flex-1" />
-            <div className="hidden sm:flex items-center gap-1">
-              <CtlBtn label={muted || vol === 0 ? 'Unmute' : 'Mute'} onClick={() => setMuted(m => !m)}>{muted || vol === 0 ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}</CtlBtn>
-              <input
-                type="range" min={0} max={1} step={0.05} value={muted ? 0 : vol} aria-label="Volume"
-                className="gnr-range !w-20"
-                onChange={e => { const n = Number(e.target.value); setVol(n); setMuted(n === 0); const v = videoRef.current; if (v) { v.volume = n; v.muted = n === 0 } }}
-              />
-            </div>
+            <VolumeControl
+              level={loud.level} max={loud.max} muted={muted}
+              onLevel={loud.setLevel}
+              onMuted={(off) => { setMuted(off); if (!off) loud.prime() }}
+              align="right"
+              buttonClassName="w-9 h-9 rounded-md flex items-center justify-center hover:bg-white/15 transition-colors"
+            />
             <div className="relative">
               <button type="button" onClick={() => setRateOpen(o => !o)} className="px-2 h-9 rounded-md text-[13px] font-semibold tabular-nums hover:bg-white/15 transition-colors" aria-label="Playback speed">{rate}x</button>
               {rateOpen && (
