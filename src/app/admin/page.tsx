@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import { useSession, signOut } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import GennoorCareTile from '@/components/admin/GennoorCareTile'
@@ -251,9 +251,15 @@ export default function AdminDashboard() {
     finally { setLoading(false) }
   }, [router])
 
+  // The first load, once. If it fails, the page shows the fault and a Retry button;
+  // it must not ask again by itself, or a fault becomes an endless stream of requests.
+  const firstLoad = useRef(false)
   useEffect(() => {
-    if (status === 'authenticated' && !data && !loading) { fetchAll(days) }
+    if (status === 'authenticated' && !data && !loading && !firstLoad.current) { firstLoad.current = true; fetchAll(days) }
   }, [status, data, loading, days, fetchAll])
+
+  // No longer signed in: go to the sign-in page. From an effect, never while the page is being drawn.
+  useEffect(() => { if (status === 'unauthenticated') router.push('/admin/login') }, [status, router])
 
   useEffect(() => {
     if (!autoRefresh || status !== 'authenticated') return
@@ -534,10 +540,7 @@ export default function AdminDashboard() {
     )
   }
 
-  if (status === 'unauthenticated') {
-    router.push('/admin/login')
-    return null
-  }
+  if (status === 'unauthenticated') return null
 
   // Load failure: without this branch the page would sit on the loading
   // spinner forever (error is set but `data` never becomes truthy).
