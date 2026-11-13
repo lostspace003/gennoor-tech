@@ -112,11 +112,11 @@ export default function SitemapIndexPage() {
   const totalLinks = sections.reduce((n, s) => n + s.links.length, 0)
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-surface">
       <section className="relative py-10 lg:py-10 overflow-hidden">
-        <div className="absolute inset-0 bg-white" />
+        <div className="absolute inset-0 bg-surface" />
         <div className="absolute inset-0" />
-        <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-white to-transparent" />
+        <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-surface to-transparent" />
         <div className="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <span className="inline-flex items-center rounded-full px-3 py-1 mb-5 text-xs font-semibold text-primary-600 bg-primary-50/80 border border-primary-100/60">
             Sitemap

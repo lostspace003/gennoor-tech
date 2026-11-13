@@ -43,7 +43,7 @@ export default function CertificateViewerModal({ isOpen, onClose, pdfUrl, certNa
       onClick={onClose}
     >
       <div
-        className="relative w-full max-w-4xl bg-white rounded-2xl shadow-2xl overflow-hidden animate-slideUp"
+        className="relative w-full max-w-4xl bg-raised rounded-2xl shadow-2xl overflow-hidden animate-slideUp"
         style={{ maxHeight: '90vh' }}
         onClick={(e) => e.stopPropagation()}
       >

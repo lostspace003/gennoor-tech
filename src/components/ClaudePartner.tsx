@@ -23,7 +23,7 @@ function Badge({ kind, width }: { kind: 'horizontal' | 'vertical' | 'chip'; widt
 /** Homepage trust strip - sits under the metrics, above "trusted by". */
 export function ClaudePartnerStrip() {
   return (
-    <section className="py-8 border-y border-[#e8e8ed] bg-white">
+    <section className="py-8 border-y border-gray-200 bg-surface">
       <div className="container mx-auto px-4 flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 text-center">
         <Badge kind="horizontal" width={200} />
         <p className="text-[15px] font-medium text-gray-800">{TIER_LINE}</p>
@@ -67,12 +67,24 @@ export function ClaudePartnerFooterLine() {
 /** Partner line at the top of every inner page: a clear pill, centred above the page. */
 export function ClaudePartnerBar() {
   return (
-    <div className="flex justify-center px-4 pt-5 pb-1">
+    <div className="flex justify-center px-4 pt-14 lg:pt-5 pb-1">
       <div className="inline-flex flex-wrap items-center justify-center gap-x-4 gap-y-2 rounded-[14px] bg-[#f0eee6] pl-0 pr-5 py-0 shadow-[0_2px_10px_rgba(20,20,19,0.07)]">
         <Badge kind="horizontal" width={150} />
         <p className="text-[14.5px] font-semibold text-[#141413]">{TIER_LINE}</p>
       </div>
     </div>
+  )
+}
+
+/** The badge and the approved line as one small card, to sit above a headline. It does not centre itself. */
+export function ClaudePartnerInline() {
+  return (
+    <a href={PROGRAM_URL} target="_blank" rel="noopener noreferrer" className="group inline-flex items-center gap-3.5 text-left">
+      <span className="shrink-0 rounded-[12px] bg-[#f0eee6] leading-[0] shadow-[0_10px_30px_-12px_rgba(0,0,0,0.6)] transition-transform group-hover:-translate-y-0.5">
+        <Badge kind="horizontal" width={132} />
+      </span>
+      <span className="max-w-[210px] text-[13.5px] font-medium leading-[1.4] text-gray-600">{TIER_LINE}</span>
+    </a>
   )
 }
 

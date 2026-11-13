@@ -11,7 +11,7 @@ export function Stars({ value, size = 16, className = '' }: { value: number; siz
         const fill = Math.max(0, Math.min(1, value - (i - 1)))
         return (
           <span key={i} className="relative inline-block" style={{ width: size, height: size }}>
-            <Star width={size} height={size} className="absolute inset-0 text-[#d2d2d7]" fill="currentColor" strokeWidth={0} />
+            <Star width={size} height={size} className="absolute inset-0 text-gray-300" fill="currentColor" strokeWidth={0} />
             <span className="absolute inset-0 overflow-hidden" style={{ width: `${fill * 100}%` }}>
               <Star width={size} height={size} className="text-[#f5a524]" fill="currentColor" strokeWidth={0} />
             </span>
@@ -34,7 +34,7 @@ export function StarInput({ value, onChange, size = 30 }: { value: number; onCha
           onMouseEnter={() => setHover(i)} onClick={() => onChange(i)}
           className="p-0.5 rounded focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-600"
         >
-          <Star width={size} height={size} strokeWidth={0} fill="currentColor" className={i <= shown ? 'text-[#f5a524]' : 'text-[#d2d2d7]'} />
+          <Star width={size} height={size} strokeWidth={0} fill="currentColor" className={i <= shown ? 'text-[#f5a524]' : 'text-gray-300'} />
         </button>
       ))}
     </div>

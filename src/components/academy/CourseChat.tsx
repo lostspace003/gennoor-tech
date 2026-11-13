@@ -150,28 +150,28 @@ export default function CourseChat({ slug, itemId, courseTitle }: { slug: string
     <aside
       role="dialog" aria-label="Ask about this course"
       style={{ width: `min(${shown}px, 100vw)` }}
-      className="fixed z-40 left-0 top-12 bottom-0 flex flex-col bg-white shadow-[8px_0_30px_-12px_rgba(0,0,0,.35)] border-r border-[#e2e5ec]"
+      className="fixed z-40 left-0 top-12 bottom-0 flex flex-col bg-surface shadow-[8px_0_30px_-12px_rgba(0,0,0,.35)] border-r border-gray-200"
     >
       <div onPointerDown={startResize} title="Drag to resize" className="hidden lg:block absolute right-0 top-0 bottom-0 w-1.5 z-10 cursor-col-resize hover:bg-primary-400/40 active:bg-primary-500/50 transition-colors" />
-      <div className="flex items-center gap-2 px-4 py-3 border-b border-[#e8e8ed] shrink-0">
+      <div className="flex items-center gap-2 px-4 py-3 border-b border-gray-200 shrink-0">
         <MessageCircle className="w-[18px] h-[18px] text-primary-600" />
         <div className="min-w-0">
           <div className="font-semibold text-[14.5px] text-gray-900 leading-tight">Ask about this course</div>
-          <div className="text-[11.5px] text-[#86868b]">Course questions only. Lab problems go to the discussion.</div>
+          <div className="text-[11.5px] text-gray-400">Course questions only. Lab problems go to the discussion.</div>
         </div>
         <div className="ml-auto flex items-center gap-0.5">
           <ExportChatMenu msgs={msgs} courseTitle={courseTitle || slug} />
-          <button type="button" onClick={() => setMode('min')} aria-label="Minimise" title="Minimise" className="p-1.5 rounded-lg text-[#6e6e73] hover:bg-gray-100"><Minus className="w-4 h-4" /></button>
-          <button type="button" onClick={() => setMode(wide ? 'open' : 'max')} aria-label={wide ? 'Make smaller' : 'Make bigger'} title={wide ? 'Make smaller' : 'Make bigger'} className="p-1.5 rounded-lg text-[#6e6e73] hover:bg-gray-100">
+          <button type="button" onClick={() => setMode('min')} aria-label="Minimise" title="Minimise" className="p-1.5 rounded-lg text-gray-500 hover:bg-gray-100"><Minus className="w-4 h-4" /></button>
+          <button type="button" onClick={() => setMode(wide ? 'open' : 'max')} aria-label={wide ? 'Make smaller' : 'Make bigger'} title={wide ? 'Make smaller' : 'Make bigger'} className="p-1.5 rounded-lg text-gray-500 hover:bg-gray-100">
             {wide ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
           </button>
-          <button type="button" onClick={closeChat} aria-label="Close" title="Close (starts fresh next time)" className="p-1.5 rounded-lg text-[#6e6e73] hover:bg-gray-100"><X className="w-4 h-4" /></button>
+          <button type="button" onClick={closeChat} aria-label="Close" title="Close (starts fresh next time)" className="p-1.5 rounded-lg text-gray-500 hover:bg-gray-100"><X className="w-4 h-4" /></button>
         </div>
       </div>
 
       <div className="flex-1 overflow-y-auto px-4 py-4 space-y-4">
         {msgs.length === 0 && !busy && (
-          <p className="text-[14px] leading-relaxed text-[#6e6e73]">Ask about this lesson or the topics this course teaches. For lab problems or code, the discussion is the best place: other learners and the team can help.</p>
+          <p className="text-[14px] leading-relaxed text-gray-500">Ask about this lesson or the topics this course teaches. For lab problems or code, the discussion is the best place: other learners and the team can help.</p>
         )}
         {msgs.map((m, i) => (
           m.role === 'learner' ? (
@@ -180,25 +180,25 @@ export default function CourseChat({ slug, itemId, courseTitle }: { slug: string
             </div>
           ) : (
             <div key={m.id} className="flex">
-              <div className={`max-w-full rounded-2xl rounded-bl-md px-3.5 py-2.5 text-[14px] leading-relaxed break-words ${m.role === 'team' ? 'bg-emerald-50 border border-emerald-200 text-gray-900' : 'bg-[#f5f5f7] text-gray-900'}`}>
+              <div className={`max-w-full rounded-2xl rounded-bl-md px-3.5 py-2.5 text-[14px] leading-relaxed break-words ${m.role === 'team' ? 'bg-emerald-50 border border-emerald-200 text-gray-900' : 'bg-gray-50 text-gray-900'}`}>
                 {m.role === 'team' && <div className="text-[11.5px] font-semibold text-emerald-700 mb-1">Reply from the Gennoor team</div>}
                 <ChatMarkdown text={m.text} />
-                {m.attachments?.length ? <div className="text-xs text-[#6e6e73] mt-2">Files sent to your email: {m.attachments.join(', ')}</div> : null}
+                {m.attachments?.length ? <div className="text-xs text-gray-500 mt-2">Files sent to your email: {m.attachments.join(', ')}</div> : null}
                 <div><CopyPairButton msgs={msgs} index={i} /></div>
               </div>
             </div>
           )
         ))}
-        {busy && <p className="text-[13px] text-[#86868b] flex items-center gap-2"><Loader2 className="w-4 h-4 animate-spin" /> Looking that up…</p>}
+        {busy && <p className="text-[13px] text-gray-400 flex items-center gap-2"><Loader2 className="w-4 h-4 animate-spin" /> Looking that up…</p>}
         <div ref={endRef} />
       </div>
 
-      <form onSubmit={send} className="flex items-end gap-2 p-3 border-t border-[#e8e8ed] shrink-0">
+      <form onSubmit={send} className="flex items-end gap-2 p-3 border-t border-gray-200 shrink-0">
         <textarea
           ref={inputRef} value={text} onChange={e => setText(e.target.value)} rows={1} maxLength={2000}
           onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); send(e as unknown as FormEvent) } }}
           placeholder="Type your question" aria-label="Your question"
-          className="flex-1 resize-none border border-[#d2d2d7] rounded-xl px-3.5 py-2.5 text-[14px] focus:outline-none focus:border-primary-600 max-h-28"
+          className="flex-1 resize-none border border-gray-300 rounded-xl px-3.5 py-2.5 text-[14px] focus:outline-none focus:border-primary-600 max-h-28"
         />
         <button type="submit" disabled={busy || !text.trim()} aria-label="Send" className="w-10 h-10 rounded-full bg-primary-600 text-white flex items-center justify-center disabled:opacity-40"><Send className="w-4 h-4" /></button>
       </form>

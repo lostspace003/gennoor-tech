@@ -97,9 +97,9 @@ export default function PL300StudyGuidePage() {
 
       {/* Hero Section */}
       <section className="relative py-10 lg:py-10 overflow-hidden">
-        <div className="absolute inset-0 bg-white" />
+        <div className="absolute inset-0 bg-surface" />
         <div className="absolute inset-0" />
-        <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-white to-transparent" />
+        <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-surface to-transparent" />
         <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <span className="inline-flex items-center rounded-full px-3 py-1 mb-5 text-xs font-semibold text-primary-600 bg-primary-50/80 border border-primary-100/60">
             PL-300 Study Guide
@@ -132,7 +132,7 @@ export default function PL300StudyGuidePage() {
       <div className="section-divider" />
 
       {/* Exam Overview */}
-      <section className="py-10 bg-white">
+      <section className="py-10 bg-surface">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl font-bold text-gray-900 mb-6">Exam Overview</h2>
           <p className="text-lg text-gray-600 mb-6 leading-relaxed">
@@ -178,7 +178,7 @@ export default function PL300StudyGuidePage() {
       <div className="section-divider" />
 
       {/* Skills Measured */}
-      <section className="py-10 bg-white">
+      <section className="py-10 bg-surface">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl font-bold text-gray-900 mb-4">Skills Measured</h2>
           <p className="text-lg text-gray-600 mb-8">
@@ -329,7 +329,7 @@ export default function PL300StudyGuidePage() {
       <div className="section-divider" />
 
       {/* Study Resources */}
-      <section className="py-10 bg-white">
+      <section className="py-10 bg-surface">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl font-bold text-gray-900 mb-4">Recommended Study Resources</h2>
           <p className="text-lg text-gray-600 mb-8">
@@ -402,7 +402,7 @@ export default function PL300StudyGuidePage() {
       <div className="section-divider" />
 
       {/* Exam Tips */}
-      <section className="py-10 bg-white">
+      <section className="py-10 bg-surface">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl font-bold text-gray-900 mb-4">
             Expert Exam Tips from an MCT
@@ -413,7 +413,7 @@ export default function PL300StudyGuidePage() {
           </p>
 
           <div className="grid md:grid-cols-2 gap-6">
-            <div className="bg-white rounded-xl p-6 shadow-sm">
+            <div className="bg-raised rounded-xl p-6 shadow-sm">
               <Lightbulb className="w-6 h-6 text-primary-600 mb-3" />
               <h3 className="font-semibold text-gray-900 mb-2">Master CALCULATE and Filter Context</h3>
               <p className="text-gray-600 text-sm">
@@ -423,7 +423,7 @@ export default function PL300StudyGuidePage() {
                 measures from scratch.
               </p>
             </div>
-            <div className="bg-white rounded-xl p-6 shadow-sm">
+            <div className="bg-raised rounded-xl p-6 shadow-sm">
               <Lightbulb className="w-6 h-6 text-primary-600 mb-3" />
               <h3 className="font-semibold text-gray-900 mb-2">Know Power Query Inside Out</h3>
               <p className="text-gray-600 text-sm">
@@ -433,7 +433,7 @@ export default function PL300StudyGuidePage() {
                 write it fluently.
               </p>
             </div>
-            <div className="bg-white rounded-xl p-6 shadow-sm">
+            <div className="bg-raised rounded-xl p-6 shadow-sm">
               <Lightbulb className="w-6 h-6 text-primary-600 mb-3" />
               <h3 className="font-semibold text-gray-900 mb-2">Star Schema is Non-Negotiable</h3>
               <p className="text-gray-600 text-sm">
@@ -443,7 +443,7 @@ export default function PL300StudyGuidePage() {
                 CROSSFILTER in DAX.
               </p>
             </div>
-            <div className="bg-white rounded-xl p-6 shadow-sm">
+            <div className="bg-raised rounded-xl p-6 shadow-sm">
               <Lightbulb className="w-6 h-6 text-primary-600 mb-3" />
               <h3 className="font-semibold text-gray-900 mb-2">Do Not Ignore Deployment Topics</h3>
               <p className="text-gray-600 text-sm">
@@ -453,7 +453,7 @@ export default function PL300StudyGuidePage() {
                 them.
               </p>
             </div>
-            <div className="bg-white rounded-xl p-6 shadow-sm">
+            <div className="bg-raised rounded-xl p-6 shadow-sm">
               <Lightbulb className="w-6 h-6 text-primary-600 mb-3" />
               <h3 className="font-semibold text-gray-900 mb-2">Understand Performance Optimization</h3>
               <p className="text-gray-600 text-sm">
@@ -463,7 +463,7 @@ export default function PL300StudyGuidePage() {
                 visuals.
               </p>
             </div>
-            <div className="bg-white rounded-xl p-6 shadow-sm">
+            <div className="bg-raised rounded-xl p-6 shadow-sm">
               <Lightbulb className="w-6 h-6 text-primary-600 mb-3" />
               <h3 className="font-semibold text-gray-900 mb-2">Read Case Studies Carefully</h3>
               <p className="text-gray-600 text-sm">
@@ -480,7 +480,7 @@ export default function PL300StudyGuidePage() {
       <div className="section-divider" />
 
       {/* FAQ Section */}
-      <section className="py-10 bg-white">
+      <section className="py-10 bg-surface">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl font-bold text-gray-900 mb-8 flex items-center gap-3">
             <HelpCircle className="w-8 h-8 text-primary-600" />
@@ -500,7 +500,7 @@ export default function PL300StudyGuidePage() {
       <div className="section-divider" />
 
       {/* CTA Section */}
-      <section className="py-10 bg-white">
+      <section className="py-10 bg-surface">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-3xl font-bold text-gray-900 mb-4">Ready to Pass the PL-300 Exam?</h2>
           <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">

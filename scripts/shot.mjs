@@ -4,6 +4,7 @@
  *   npx next dev -p 3111                                  (in another terminal)
  *   node scripts/shot.mjs <folder> home studio training   one picture per page, 1366 wide and 390 wide
  *   node scripts/shot.mjs <folder> --full about           the whole page, top to bottom
+ *   node scripts/shot.mjs <folder> --light home           in the light look (the site opens dark)
  *
  * Pages are named without the leading slash (studio/ai-103), and the home page is "home":
  * Git Bash on Windows rewrites anything that starts with a slash into a file path.
@@ -17,18 +18,30 @@ import path from 'path'
 
 const [out, ...rest] = process.argv.slice(2)
 const full = rest.includes('--full')
+const light = rest.includes('--light')
 const pages = rest.filter((a) => !a.startsWith('--')).map((a) => (a === 'home' ? '/' : `/${a.replace(/^\/+/, '')}`))
 const base = process.env.SITE || 'http://localhost:3111'
 mkdirSync(out, { recursive: true })
 
 const browser = await puppeteer.launch({ executablePath: process.env.CHROME || 'C:/Program Files/Google/Chrome/Application/chrome.exe', headless: true })
 const page = await browser.newPage()
+if (light) await page.evaluateOnNewDocument(() => { try { localStorage.setItem('gennoor.theme', 'light') } catch { /* no storage */ } })
 for (const p of pages) {
   const name = p === '/' ? 'home' : p.replace(/^\//, '').replace(/[^a-z0-9]+/gi, '-')
   for (const width of [1366, 390]) {
     await page.setViewport({ width, height: width > 600 ? 768 : 800, deviceScaleFactor: 1 })
     await page.goto(base + p, { waitUntil: 'networkidle2', timeout: 180000 }).catch((e) => console.log(`${p}: ${e.message}`))
-    await new Promise((r) => setTimeout(r, 1800))
+    await new Promise((r) => setTimeout(r, 1200))
+    if (full) {
+      // Walk down the page and back, as a reader would: pictures that load late and things that
+      // arrive when they come into view are then in the photograph.
+      await page.evaluate(async () => {
+        const step = Math.round(window.innerHeight * 0.7)
+        for (let y = 0; y < document.documentElement.scrollHeight; y += step) { window.scrollTo(0, y); await new Promise((r) => setTimeout(r, 140)) }
+        window.scrollTo(0, 0)
+      })
+      await new Promise((r) => setTimeout(r, 1500))
+    }
     await page.screenshot({ path: path.join(out, `${name}-${width}.png`), fullPage: full })
   }
   console.log(`${p} -> ${name}-1366.png, ${name}-390.png`)

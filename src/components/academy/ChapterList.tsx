@@ -36,7 +36,7 @@ export default function ChapterList({ courseId, chapters, progress }: ChapterLis
           <Link
             key={chapter.id}
             href={`/ai-academy/${courseId}/${chapter.slug}`}
-            className="group flex items-center gap-4 p-4 bg-white rounded-xl ring-1 ring-gray-100 hover:ring-primary-200 hover:shadow-md transition-all duration-200 hover:translate-x-1"
+            className="group flex items-center gap-4 p-4 bg-raised rounded-xl ring-1 ring-gray-100 hover:ring-primary-200 hover:shadow-md transition-all duration-200 hover:translate-x-1"
           >
             {/* Chapter number */}
             <div className={`flex-shrink-0 w-12 h-12 rounded-xl flex items-center justify-center font-heading font-bold text-sm ${

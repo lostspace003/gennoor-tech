@@ -17,7 +17,7 @@ export function CopyPairButton({ msgs, index }: { msgs: ChatLine[]; index: numbe
   }
   return (
     <button type="button" onClick={copy} aria-label="Copy this question and answer" title="Copy question and answer"
-      className="mt-1.5 inline-flex items-center gap-1 text-[11.5px] text-[#86868b] hover:text-gray-900 transition-colors">
+      className="mt-1.5 inline-flex items-center gap-1 text-[11.5px] text-gray-400 hover:text-gray-900 transition-colors">
       {done ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Copy className="w-3.5 h-3.5" />}
       <span aria-live="polite">{done ? 'Copied' : 'Copy'}</span>
     </button>
@@ -48,12 +48,12 @@ export function ExportChatMenu({ msgs, courseTitle }: { msgs: ChatLine[]; course
     <div ref={box} className="relative">
       <button type="button" disabled={empty} onClick={() => setOpen(o => !o)} aria-haspopup="menu" aria-expanded={open}
         aria-label="Export chat" title={empty ? 'Ask a question first' : 'Export chat'}
-        className="p-1.5 rounded-lg text-[#6e6e73] hover:bg-gray-100 disabled:opacity-35 disabled:hover:bg-transparent">
+        className="p-1.5 rounded-lg text-gray-500 hover:bg-gray-100 disabled:opacity-35 disabled:hover:bg-transparent">
         <Download className="w-4 h-4" />
       </button>
       {open && (
-        <div role="menu" className="absolute right-0 top-full mt-1 z-50 w-44 rounded-xl border border-[#e2e5ec] bg-white p-1 shadow-lg">
-          <p className="px-3 pt-1.5 pb-1 text-[11px] font-semibold uppercase tracking-wide text-[#86868b]">Export chat as</p>
+        <div role="menu" className="absolute right-0 top-full mt-1 z-50 w-44 rounded-xl border border-gray-200 bg-raised p-1 shadow-lg">
+          <p className="px-3 pt-1.5 pb-1 text-[11px] font-semibold uppercase tracking-wide text-gray-400">Export chat as</p>
           <button type="button" role="menuitem" onClick={() => run('pdf')} className="w-full text-left rounded-lg px-3 py-2 text-[13.5px] text-gray-900 hover:bg-gray-100">PDF file</button>
           <button type="button" role="menuitem" onClick={() => run('txt')} className="w-full text-left rounded-lg px-3 py-2 text-[13.5px] text-gray-900 hover:bg-gray-100">Text file</button>
         </div>

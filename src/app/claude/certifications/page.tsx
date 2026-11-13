@@ -24,13 +24,13 @@ const PATHS = [
 
 export default function ClaudeCertificationsPage() {
   return (
-    <main className="bg-white">
+    <main className="bg-raised">
       {/* ===== Hero: compact, left-anchored ===== */}
       <section className="hero-backdrop px-4 sm:px-6 lg:px-8 pt-6 lg:pt-8 pb-8">
         <div className="max-w-[1080px]">
           <p className="kicker">Claude certification prep</p>
           <h1 className="display-card mt-2">Get Claude certified.</h1>
-          <p className="text-[16px] leading-[1.5] text-[#6e6e73] max-w-[640px] mt-3">
+          <p className="text-[16px] leading-[1.5] text-gray-500 max-w-[640px] mt-3">
             Four official Anthropic certifications. Four courses, each told as one story you follow from the
             first chapter to exam day: step-through diagrams, worked examples, knowledge checks, and a practice
             exam with a discussion thread under every question.
@@ -42,11 +42,11 @@ export default function ClaudeCertificationsPage() {
                 <Link
                   key={p.slug}
                   href={`/claude/certifications/${p.slug}`}
-                  className="group inline-flex items-center gap-3 rounded-full bg-white border border-[#d2d2d7] pl-1.5 pr-4 py-1.5 hover:border-[#0071e3] transition"
+                  className="group inline-flex items-center gap-3 rounded-full bg-raised border border-gray-300 pl-1.5 pr-4 py-1.5 hover:border-primary-600 transition"
                 >
                   <span className="text-[10.5px] font-mono font-bold tracking-[0.12em] text-white px-2.5 py-1 rounded-full" style={{ background: cert.accent }}>{cert.code}</span>
                   <span className="text-[13.5px] font-semibold text-gray-900">{p.who}</span>
-                  <span className="text-[12px] text-[#86868b] hidden sm:inline">· {p.detail}</span>
+                  <span className="text-[12px] text-gray-400 hidden sm:inline">· {p.detail}</span>
                 </Link>
               )
             })}
@@ -55,10 +55,10 @@ export default function ClaudeCertificationsPage() {
       </section>
 
       {/* ===== The four courses ===== */}
-      <section className="bg-[#f5f5f7] px-4 sm:px-6 lg:px-8 py-10 lg:py-8">
+      <section className="bg-gray-50 px-4 sm:px-6 lg:px-8 py-10 lg:py-8">
         <div className="max-w-[1080px]">
           <h2 className="font-heading text-[22px] font-bold tracking-[-0.02em] text-gray-900">One course, one story.</h2>
-          <p className="text-[14.5px] text-[#6e6e73] max-w-[680px] mt-1.5">
+          <p className="text-[14.5px] text-gray-500 max-w-[680px] mt-1.5">
             Every course follows a single storyline, so the concepts arrive the way they do at work — as the next
             problem to solve. The first chapters are free; one free sign-in (an email code, no password) unlocks the
             rest, saves your progress and exam scores, and works across all of Gennoor.
@@ -68,19 +68,19 @@ export default function ClaudeCertificationsPage() {
               const m = META[cert.slug]
               const stories = m ? m.chapters.filter(c => c.kind === 'story').length : 0
               return (
-                <div key={cert.slug} className="rounded-[18px] bg-white border border-[#e2e5ec] p-5 lg:p-6 flex flex-col">
+                <div key={cert.slug} className="rounded-[18px] bg-raised border border-gray-200 p-5 lg:p-6 flex flex-col">
                   <div className="flex items-center justify-between gap-3">
                     <span className="text-[11px] font-mono font-bold tracking-[0.12em] px-2.5 py-1 rounded-full text-white" style={{ background: cert.accent }}>{cert.code}</span>
-                    <span className="text-[11.5px] font-semibold text-[#86868b] uppercase tracking-[0.1em]">{cert.level}</span>
+                    <span className="text-[11.5px] font-semibold text-gray-400 uppercase tracking-[0.1em]">{cert.level}</span>
                   </div>
                   <h3 className="font-heading text-[18px] font-bold text-gray-900 mt-3 leading-snug">{cert.name}</h3>
-                  <p className="text-[14px] leading-[1.5] text-[#6e6e73] mt-1">{cert.tagline}</p>
-                  <p className="text-[13px] leading-[1.55] text-[#86868b] mt-2.5 flex-1">
-                    <span className="font-semibold text-[#545458]">The story:</span> {cert.storyline.arc}
+                  <p className="text-[14px] leading-[1.5] text-gray-500 mt-1">{cert.tagline}</p>
+                  <p className="text-[13px] leading-[1.55] text-gray-400 mt-2.5 flex-1">
+                    <span className="font-semibold text-gray-600">The story:</span> {cert.storyline.arc}
                   </p>
-                  <div className="flex flex-wrap gap-x-4 gap-y-1 text-[12px] text-[#86868b] mt-3 pt-3 border-t border-[#f0f0f3]">
-                    <span><b className="text-[#545458]">{stories}</b> story chapters</span>
-                    <span><b className="text-[#545458]">{m ? m.questions : cert.examFacts.questions}</b> practice questions</span>
+                  <div className="flex flex-wrap gap-x-4 gap-y-1 text-[12px] text-gray-400 mt-3 pt-3 border-t border-gray-100">
+                    <span><b className="text-gray-600">{stories}</b> story chapters</span>
+                    <span><b className="text-gray-600">{m ? m.questions : cert.examFacts.questions}</b> practice questions</span>
                     <span>{cert.audience}</span>
                   </div>
                   <div className="flex flex-wrap items-center gap-3 mt-4">
@@ -95,7 +95,7 @@ export default function ClaudeCertificationsPage() {
       </section>
 
       {/* ===== Beyond the exam ===== */}
-      <section className="bg-white px-4 sm:px-6 lg:px-8 py-10 lg:py-8">
+      <section className="bg-raised px-4 sm:px-6 lg:px-8 py-10 lg:py-8">
         <div className="max-w-[1080px]">
           <h2 className="font-heading text-[22px] font-bold tracking-[-0.02em] text-gray-900 mb-5">After the badge, the real work.</h2>
           <div className="grid md:grid-cols-3 gap-4">
@@ -104,9 +104,9 @@ export default function ClaudeCertificationsPage() {
               { t: 'Train your team', p: 'Live, instructor-led Claude training built around your team’s actual processes.', href: '/training', l: 'Custom training ›' },
               { t: 'Build a POC', p: 'Have a workflow in mind? We build working proof-of-concepts with Claude.', href: '/automation', l: 'POC projects ›' },
             ].map(x => (
-              <div key={x.t} className="rounded-[16px] border border-[#e8e8ed] p-5">
+              <div key={x.t} className="rounded-[16px] border border-gray-200 p-5">
                 <h3 className="font-heading text-[16.5px] font-bold text-gray-900">{x.t}</h3>
-                <p className="text-[14px] leading-[1.5] text-[#6e6e73] mt-1.5">{x.p}</p>
+                <p className="text-[14px] leading-[1.5] text-gray-500 mt-1.5">{x.p}</p>
                 <Link href={x.href} className="link-arrow !text-[14px] mt-3 inline-block">{x.l}</Link>
               </div>
             ))}

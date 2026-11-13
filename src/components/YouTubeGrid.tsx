@@ -29,7 +29,7 @@ export function VideoCard({ video }: { video: YouTubeVideo }) {
   const [playing, setPlaying] = useState(false)
 
   return (
-    <div className="group rounded-[18px] overflow-hidden transition-colors duration-200 bg-white border border-[#e8e8ed] hover:border-[#d2d2d7]">
+    <div className="group rounded-[18px] overflow-hidden transition-colors duration-200 bg-raised border border-gray-200 hover:border-gray-300">
       <div className="relative aspect-video bg-gray-100">
         {playing ? (
           <iframe
@@ -45,7 +45,7 @@ export function VideoCard({ video }: { video: YouTubeVideo }) {
               <Image src={video.thumbnail} alt={video.title} fill className="object-cover" />
             )}
             <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300" />
-            <div className="absolute bottom-2 right-2.5 bg-[#1d1d1f]/85 text-white text-[11px] font-semibold px-[7px] py-0.5 rounded-[5px]">
+            <div className="absolute bottom-2 right-2.5 bg-gray-900/85 text-white text-[11px] font-semibold px-[7px] py-0.5 rounded-[5px]">
               {video.duration}
             </div>
             <button
@@ -54,7 +54,7 @@ export function VideoCard({ video }: { video: YouTubeVideo }) {
               className="absolute inset-0 flex items-center justify-center cursor-pointer"
               aria-label={`Play ${video.title}`}
             >
-              <div className="w-11 h-11 bg-[#1d1d1f]/85 rounded-full flex items-center justify-center opacity-90 group-hover:opacity-100 transition-opacity duration-200">
+              <div className="w-11 h-11 bg-gray-900/85 rounded-full flex items-center justify-center opacity-90 group-hover:opacity-100 transition-opacity duration-200">
                 <Play className="w-4 h-4 text-white ml-0.5 fill-white" />
               </div>
             </button>
@@ -123,7 +123,7 @@ function FilterPill({ active, onClick, children }: { active: boolean; onClick: (
       className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all duration-200 whitespace-nowrap border ${
         active
           ? 'bg-primary-600 text-white border-primary-600'
-          : 'bg-white text-[#6e6e73] border-[#d2d2d7] hover:text-gray-900'
+          : 'bg-raised text-gray-500 border-gray-300 hover:text-gray-900'
       }`}
     >
       {children}
@@ -159,7 +159,7 @@ function PlaylistDropdown({ playlists, selected, onChange }: { playlists: string
         className={`flex items-center gap-1.5 px-3 py-2 rounded-lg border text-xs font-medium transition-all duration-200 ${
           selected.length > 0
             ? 'border-primary-300 bg-primary-50 text-primary-700'
-            : 'border-gray-200 bg-white text-gray-600 hover:border-gray-300'
+            : 'border-gray-200 bg-raised text-gray-600 hover:border-gray-300'
         }`}
       >
         <ListVideo className="w-3.5 h-3.5" />
@@ -167,7 +167,7 @@ function PlaylistDropdown({ playlists, selected, onChange }: { playlists: string
         <ChevronDown className={`w-3 h-3 transition-transform duration-200 ${open ? 'rotate-180' : ''}`} />
       </button>
       {open && (
-        <div className="absolute right-0 top-full mt-1 w-72 bg-white rounded-lg border border-gray-200 shadow-lg z-50 py-1 max-h-64 overflow-y-auto">
+        <div className="absolute right-0 top-full mt-1 w-72 bg-raised rounded-lg border border-gray-200 shadow-lg z-50 py-1 max-h-64 overflow-y-auto">
           {playlists.map((pl) => {
             const isSelected = selected.includes(pl)
             return (
@@ -289,7 +289,7 @@ export default function YouTubeGrid({ videos }: { videos: YouTubeVideo[] }) {
   return (
     <div>
       {/* Sticky filter bar */}
-      <div className="sticky top-[52px] lg:top-0 z-40 bg-white/85 backdrop-blur-md -mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8 py-4 border-b border-[#e8e8ed]">
+      <div className="sticky top-[52px] lg:top-0 z-40 bg-surface/85 backdrop-blur-md -mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8 py-4 border-b border-gray-200">
         {/* Top row: Search + Series + Results */}
         <div className="flex items-center gap-3 mb-3">
           <div className="relative flex-1">
@@ -299,7 +299,7 @@ export default function YouTubeGrid({ videos }: { videos: YouTubeVideo[] }) {
               placeholder="Search videos..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full pl-9 pr-4 py-2 rounded-full border border-[#d2d2d7] bg-white text-sm text-gray-900 placeholder:text-[#86868b] focus:outline-none focus:ring-0 focus:border-primary-600 transition-colors duration-200"
+              className="w-full pl-9 pr-4 py-2 rounded-full border border-gray-300 bg-raised text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-0 focus:border-primary-600 transition-colors duration-200"
             />
           </div>
           {allPlaylists.length > 0 && (
@@ -373,7 +373,7 @@ export default function YouTubeGrid({ videos }: { videos: YouTubeVideo[] }) {
                 <button
                   onClick={() => { setCurrentPage(safeCurrentPage - 1); window.scrollTo({ top: 0, behavior: 'smooth' }) }}
                   disabled={safeCurrentPage === 1}
-                  className="px-3.5 py-2 text-sm font-medium rounded-full border border-[#d2d2d7] text-[#6e6e73] hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                  className="px-3.5 py-2 text-sm font-medium rounded-full border border-gray-300 text-gray-500 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
                 >
                   Previous
                 </button>
@@ -384,7 +384,7 @@ export default function YouTubeGrid({ videos }: { videos: YouTubeVideo[] }) {
                     className={`w-9 h-9 text-sm font-medium rounded-full transition-colors ${
                       page === safeCurrentPage
                         ? 'bg-primary-600 text-white'
-                        : 'border border-[#d2d2d7] text-[#6e6e73] hover:bg-gray-50'
+                        : 'border border-gray-300 text-gray-500 hover:bg-gray-50'
                     }`}
                   >
                     {page}
@@ -393,7 +393,7 @@ export default function YouTubeGrid({ videos }: { videos: YouTubeVideo[] }) {
                 <button
                   onClick={() => { setCurrentPage(safeCurrentPage + 1); window.scrollTo({ top: 0, behavior: 'smooth' }) }}
                   disabled={safeCurrentPage === totalPages}
-                  className="px-3.5 py-2 text-sm font-medium rounded-full border border-[#d2d2d7] text-[#6e6e73] hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                  className="px-3.5 py-2 text-sm font-medium rounded-full border border-gray-300 text-gray-500 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
                 >
                   Next
                 </button>

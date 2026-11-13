@@ -36,14 +36,14 @@ export default function BlogPage() {
   )
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-surface">
       {/* Masthead — server-rendered for SEO */}
       <header className="px-8 pt-8 lg:pt-10 pb-8 text-center">
         <BlogIllustration className="w-[112px] h-[112px] mx-auto mb-6" />
         <h1 className="text-[clamp(40px,4.8vw,64px)] leading-[1.06] tracking-[-0.03em] font-bold text-gray-900">
           Field notes.
         </h1>
-        <p className="text-[clamp(18px,1.8vw,22px)] leading-[1.45] text-[#6e6e73] max-w-[540px] mx-auto mt-5">
+        <p className="text-[clamp(18px,1.8vw,22px)] leading-[1.45] text-gray-500 max-w-[540px] mx-auto mt-5">
           Practical notes on AI, written plainly.
         </p>
       </header>

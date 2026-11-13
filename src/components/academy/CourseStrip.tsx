@@ -87,7 +87,7 @@ export function StripLegend({ sections, dark = false }: { sections: StripSection
   const counts: Partial<Record<LmsKind, number>> = {}
   for (const s of sections) for (const i of s.items) counts[kindOf(i)] = (counts[kindOf(i)] || 0) + 1
   return (
-    <ul className={`flex flex-wrap gap-x-6 gap-y-2 text-[13px] ${dark ? 'text-[#a9b4c4]' : 'text-[#6e6e73]'}`}>
+    <ul className={`flex flex-wrap gap-x-6 gap-y-2 text-[13px] ${dark ? 'text-[#a9b4c4]' : 'text-gray-500'}`}>
       {(Object.keys(KIND_LABEL) as LmsKind[]).filter(k => counts[k]).map(k => (
         <li key={k} className="flex items-center gap-2">
           <span className="w-2.5 h-2.5 rounded-[2px]" style={{ background: KIND_COLOR[k] }} />

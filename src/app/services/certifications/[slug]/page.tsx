@@ -76,10 +76,10 @@ export default async function CertificationGuidePage({ params }: Props) {
     .slice(0, 3)
 
   const providerColor: Record<string, string> = {
-    Microsoft: 'from-primary-600 to-primary-800',
-    Google: 'from-red-600 to-red-800',
-    AWS: 'from-amber-600 to-amber-800',
-    GitHub: 'from-gray-700 to-gray-900',
+    Microsoft: 'from-[#0a62f0] to-[#062a7a]',
+    Google: 'from-[#c0392b] to-[#5a1410]',
+    AWS: 'from-[#b36b00] to-[#4a2c00]',
+    GitHub: 'from-[#2c3550] to-[#0b1124]',
   }
 
   const levelColor: Record<string, string> = {
@@ -106,7 +106,7 @@ export default async function CertificationGuidePage({ params }: Props) {
 
       <main className="min-h-screen pt-12">
         {/* Hero */}
-        <section className={`bg-gradient-to-br ${providerColor[cert.provider] || 'from-primary-600 to-primary-800'} py-10 lg:py-10 relative overflow-hidden`}>
+        <section className={`bg-gradient-to-br ${providerColor[cert.provider] || 'from-[#0a62f0] to-[#062a7a]'} py-10 lg:py-10 relative overflow-hidden`}>
           <div className="absolute inset-0 bg-grid-white/10"></div>
           <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
             <Link href="/services/certifications" className="inline-flex items-center text-white/90 hover:text-white mb-8">
@@ -154,7 +154,7 @@ export default async function CertificationGuidePage({ params }: Props) {
 
               <Link
                 href="/contact#book"
-                className="inline-flex items-center px-8 py-4 bg-white text-gray-800 font-semibold rounded-xl hover:bg-gray-100 transition-colors"
+                className="inline-flex items-center px-8 py-4 bg-raised text-gray-800 font-semibold rounded-xl hover:bg-gray-100 transition-colors"
               >
                 <Phone className="w-5 h-5 mr-2" />
                 Start Preparation
@@ -192,14 +192,14 @@ export default async function CertificationGuidePage({ params }: Props) {
               {cert.prerequisites.length > 0 ? (
                 <div className="space-y-3">
                   {cert.prerequisites.map((prereq, index) => (
-                    <div key={index} className="flex items-start gap-3 p-4 bg-white rounded-lg border border-gray-200/70">
+                    <div key={index} className="flex items-start gap-3 p-4 bg-raised rounded-lg border border-gray-200/70">
                       <CheckCircle className="w-5 h-5 text-primary-600 flex-shrink-0 mt-0.5" />
                       <p className="text-gray-700">{prereq}</p>
                     </div>
                   ))}
                 </div>
               ) : (
-                <div className="bg-white rounded-lg p-6 border border-gray-200/70">
+                <div className="bg-raised rounded-lg p-6 border border-gray-200/70">
                   <p className="text-gray-600">No formal prerequisites are required. This certification is suitable for beginners with basic IT knowledge.</p>
                 </div>
               )}
@@ -213,7 +213,7 @@ export default async function CertificationGuidePage({ params }: Props) {
             <div className="max-w-4xl mx-auto">
               <h2 className="text-3xl font-bold text-gray-900 mb-8">Our Preparation Approach</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="flex items-start gap-4 p-6 bg-white rounded-2xl shadow-sm border border-gray-200/70">
+                <div className="flex items-start gap-4 p-6 bg-raised rounded-2xl shadow-sm border border-gray-200/70">
                   <div className="w-10 h-10 bg-primary-100 rounded-lg flex items-center justify-center flex-shrink-0">
                     <BookOpen className="w-5 h-5 text-primary-600" />
                   </div>
@@ -222,7 +222,7 @@ export default async function CertificationGuidePage({ params }: Props) {
                     <p className="text-sm text-gray-600 mt-1">Aligned with latest exam objectives and updated for current exam patterns</p>
                   </div>
                 </div>
-                <div className="flex items-start gap-4 p-6 bg-white rounded-2xl shadow-sm border border-gray-200/70">
+                <div className="flex items-start gap-4 p-6 bg-raised rounded-2xl shadow-sm border border-gray-200/70">
                   <div className="w-10 h-10 bg-primary-100 rounded-lg flex items-center justify-center flex-shrink-0">
                     <Zap className="w-5 h-5 text-primary-600" />
                   </div>
@@ -231,7 +231,7 @@ export default async function CertificationGuidePage({ params }: Props) {
                     <p className="text-sm text-gray-600 mt-1">Practical exercises using real cloud environments and enterprise scenarios</p>
                   </div>
                 </div>
-                <div className="flex items-start gap-4 p-6 bg-white rounded-2xl shadow-sm border border-gray-200/70">
+                <div className="flex items-start gap-4 p-6 bg-raised rounded-2xl shadow-sm border border-gray-200/70">
                   <div className="w-10 h-10 bg-primary-100 rounded-lg flex items-center justify-center flex-shrink-0">
                     <Target className="w-5 h-5 text-primary-600" />
                   </div>
@@ -240,7 +240,7 @@ export default async function CertificationGuidePage({ params }: Props) {
                     <p className="text-sm text-gray-600 mt-1">Mock exams modeled on real questions with detailed answer explanations</p>
                   </div>
                 </div>
-                <div className="flex items-start gap-4 p-6 bg-white rounded-2xl shadow-sm border border-gray-200/70">
+                <div className="flex items-start gap-4 p-6 bg-raised rounded-2xl shadow-sm border border-gray-200/70">
                   <div className="w-10 h-10 bg-primary-100 rounded-lg flex items-center justify-center flex-shrink-0">
                     <Award className="w-5 h-5 text-primary-600" />
                   </div>
@@ -260,7 +260,7 @@ export default async function CertificationGuidePage({ params }: Props) {
             <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">Frequently Asked Questions</h2>
             <div className="max-w-3xl mx-auto space-y-6">
               {faqs.map((faq) => (
-                <div key={faq.question} className="bg-white rounded-2xl p-6 shadow-sm border border-gray-200/70">
+                <div key={faq.question} className="bg-raised rounded-2xl p-6 shadow-sm border border-gray-200/70">
                   <h3 className="text-lg font-semibold text-gray-900 mb-2">{faq.question}</h3>
                   <p className="text-gray-600">{faq.answer}</p>
                 </div>
@@ -279,7 +279,7 @@ export default async function CertificationGuidePage({ params }: Props) {
                   <Link
                     key={rc.slug}
                     href={`/services/certifications/${rc.slug}`}
-                    className="bg-white rounded-2xl p-6 shadow-sm border border-gray-200/70 hover:shadow-md transition-shadow group"
+                    className="bg-raised rounded-2xl p-6 shadow-sm border border-gray-200/70 hover:shadow-md transition-shadow group"
                   >
                     <div className="flex items-center gap-2 mb-3">
                       <span className="text-xl font-bold text-primary-600">{rc.code}</span>
@@ -316,7 +316,7 @@ export default async function CertificationGuidePage({ params }: Props) {
               </Link>
               <Link
                 href="/services/certifications"
-                className="inline-flex items-center px-8 py-4 bg-white ring-1 ring-gray-200 text-gray-700 font-semibold rounded-xl hover:ring-primary-300 hover:text-primary-700 transition-all"
+                className="inline-flex items-center px-8 py-4 bg-raised ring-1 ring-gray-200 text-gray-700 font-semibold rounded-xl hover:ring-primary-300 hover:text-primary-700 transition-all"
               >
                 View All Certifications
               </Link>

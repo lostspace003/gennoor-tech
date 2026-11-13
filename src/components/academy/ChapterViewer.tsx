@@ -1047,7 +1047,7 @@ export default function ChapterViewer({ courseId, chapter: initialChapter, allCh
 
               <button
                 onClick={() => nextChapter && swapChapter(nextChapter)}
-                className="relative inline-flex items-center gap-3 px-8 py-4 bg-white text-gray-900 font-bold rounded-2xl hover:bg-gray-100 transition-colors mb-4"
+                className="relative inline-flex items-center gap-3 px-8 py-4 bg-raised text-gray-900 font-bold rounded-2xl hover:bg-gray-100 transition-colors mb-4"
               >
                 <PlayCircle className="w-5 h-5" />
                 Play now

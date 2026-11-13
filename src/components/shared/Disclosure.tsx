@@ -30,7 +30,7 @@ export default function Disclosure({
     <details
       open={defaultOpen}
       className={cn(
-        'group rounded-2xl bg-white transition-all duration-300',
+        'group rounded-2xl bg-raised transition-all duration-300',
         'border border-gray-200/70 open:border-primary-200/80',
         'shadow-[0_1px_2px_rgba(15,23,42,0.04)] open:shadow-[0_2px_4px_rgba(15,23,42,0.05),0_16px_36px_-14px_rgba(15,23,42,0.1)]',
         className

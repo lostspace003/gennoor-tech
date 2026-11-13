@@ -287,7 +287,7 @@ export default function DashboardClient() {
   }
 
   return (
-    <main className="min-h-screen bg-[#f5f5f7]">
+    <main className="min-h-screen bg-gray-50">
       <LearnerAuthModal
         isOpen={authOpen}
         onClose={() => setAuthOpen(false)}
@@ -300,19 +300,19 @@ export default function DashboardClient() {
       {isLoggedIn && <ProfileSetupGate />}
 
       {/* Header */}
-      <section className="bg-white border-b border-[#e8e8ed]">
+      <section className="bg-surface border-b border-gray-200">
         <div className="mx-auto px-6 lg:px-10 py-10 max-w-[1040px]">
           <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
             <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[#86868b] mb-2">
+              <p className="text-xs font-semibold uppercase tracking-[0.14em] text-gray-400 mb-2">
                 Learning Studio · Learner dashboard
               </p>
               <h1 className="text-[30px] font-bold tracking-[-0.02em] text-gray-900">
                 Welcome back{session?.name ? `, ${session.name.split(' ')[0]}` : ''}.
               </h1>
-              <p className="text-sm text-[#6e6e73] mt-1">
+              <p className="text-sm text-gray-500 mt-1">
                 Here is everything you have started, completed, and earned.
-                {!isLoggedIn && <span className="text-[#86868b]"> Progress is saved on this device.</span>}
+                {!isLoggedIn && <span className="text-gray-400"> Progress is saved on this device.</span>}
               </p>
             </div>
             {isLoggedIn ? (
@@ -320,7 +320,7 @@ export default function DashboardClient() {
             ) : (
               <button
                 onClick={() => setAuthOpen(true)}
-                className="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-primary-600 hover:bg-[#0077ed] text-white text-[14px] font-medium rounded-full transition-colors self-start sm:self-auto"
+                className="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-primary-600 hover:bg-primary-500 text-white text-[14px] font-medium rounded-full transition-colors self-start sm:self-auto"
               >
                 <UserCircle2 className="w-[18px] h-[18px]" />
                 Sign in
@@ -333,12 +333,12 @@ export default function DashboardClient() {
       {/* Sign-in prompt for device-only learners */}
       {!isLoggedIn && (
         <section className="mx-auto px-6 lg:px-10 pt-8 max-w-[1040px]">
-          <div className="bg-white border border-[#e8e8ed] rounded-2xl px-6 py-6 sm:px-8 flex flex-col sm:flex-row sm:items-center gap-4">
+          <div className="bg-raised border border-gray-200 rounded-2xl px-6 py-6 sm:px-8 flex flex-col sm:flex-row sm:items-center gap-4">
             <div className="flex-1">
               <h2 className="text-[17px] font-bold tracking-[-0.01em] text-gray-900">
                 Keep your progress everywhere.
               </h2>
-              <p className="text-[13.5px] text-[#6e6e73] mt-1 leading-[1.5]">
+              <p className="text-[13.5px] text-gray-500 mt-1 leading-[1.5]">
                 Create a learner account with Microsoft, Google, or any email —
                 your chapters, certificates, and analytics sync across every device.
                 Right now they live only in this browser.
@@ -346,7 +346,7 @@ export default function DashboardClient() {
             </div>
             <button
               onClick={() => setAuthOpen(true)}
-              className="inline-flex items-center justify-center gap-1.5 px-5 py-2.5 bg-primary-600 hover:bg-[#0077ed] text-white text-[14px] font-medium rounded-full transition-colors shrink-0"
+              className="inline-flex items-center justify-center gap-1.5 px-5 py-2.5 bg-primary-600 hover:bg-primary-500 text-white text-[14px] font-medium rounded-full transition-colors shrink-0"
             >
               Create account or sign in
               <ArrowRight className="w-4 h-4" />
@@ -357,7 +357,7 @@ export default function DashboardClient() {
 
       {/* Mode switch — the two jobs this page does, kept apart */}
       <section className="mx-auto px-6 lg:px-10 pt-6 max-w-[1040px]">
-        <div className="inline-flex gap-1 p-1 bg-white border border-[#e8e8ed] rounded-xl">
+        <div className="inline-flex gap-1 p-1 bg-raised border border-gray-200 rounded-xl">
           {([
             ['learning', 'My learning', stats.started],
             ['browse', 'Browse courses', courseSummaries.length],
@@ -366,7 +366,7 @@ export default function DashboardClient() {
               key={value}
               onClick={() => setView(value)}
               className={`px-4 py-2 text-[13.5px] font-medium rounded-lg whitespace-nowrap transition-colors ${
-                view === value ? 'bg-gray-900 text-white' : 'text-[#6e6e73] hover:text-gray-900 hover:bg-[#f5f5f7]'
+                view === value ? 'bg-gray-900 text-white' : 'text-gray-500 hover:text-gray-900 hover:bg-gray-50'
               }`}
             >
               {label} <span className="tabular-nums opacity-60">{count}</span>
@@ -381,7 +381,7 @@ export default function DashboardClient() {
           {resumeCourses.length > 0 && (
             <section className="mx-auto px-6 lg:px-10 pt-6 max-w-[1040px]">
               <h2 className="text-[22px] font-bold tracking-[-0.02em] text-gray-900 mb-1">Pick up where you left off</h2>
-              <p className="text-sm text-[#6e6e73] mb-5">{resumeCourses.length === 1 ? 'One course in progress.' : `${resumeCourses.length} courses in progress.`}</p>
+              <p className="text-sm text-gray-500 mb-5">{resumeCourses.length === 1 ? 'One course in progress.' : `${resumeCourses.length} courses in progress.`}</p>
               <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 {resumeCourses.map(s => {
                   const accent = s.course.theme?.accent || '#F97316'
@@ -390,15 +390,15 @@ export default function DashboardClient() {
                     <Link
                       key={s.course.id}
                       href={href}
-                      className="group bg-white border border-[#e8e8ed] rounded-2xl p-5 hover:border-gray-300 hover:shadow-md transition-all flex flex-col"
+                      className="group bg-raised border border-gray-200 rounded-2xl p-5 hover:border-gray-300 hover:shadow-md transition-all flex flex-col"
                     >
                       <p className="text-[15px] font-bold text-gray-900 leading-snug line-clamp-2">{s.course.title}</p>
-                      <div className="mt-3 h-1.5 rounded-full bg-[#f0f0f2] overflow-hidden">
+                      <div className="mt-3 h-1.5 rounded-full bg-gray-100 overflow-hidden">
                         <div className="h-full rounded-full transition-all" style={{ width: `${s.percentComplete}%`, background: accent }} />
                       </div>
-                      <p className="text-[11.5px] text-[#86868b] mt-1.5 tabular-nums">{s.percentComplete}% complete</p>
+                      <p className="text-[11.5px] text-gray-400 mt-1.5 tabular-nums">{s.percentComplete}% complete</p>
                       {s.nextChapter && (
-                        <p className="text-[12.5px] text-[#6e6e73] mt-2 line-clamp-1">
+                        <p className="text-[12.5px] text-gray-500 mt-2 line-clamp-1">
                           Up next: <span className="text-gray-900 font-medium">{s.nextChapter.title}</span>
                         </p>
                       )}
@@ -415,9 +415,9 @@ export default function DashboardClient() {
           {/* Nothing started yet — sell the thing rather than show four zeros */}
           {stats.started === 0 && (
             <section className="mx-auto px-6 lg:px-10 pt-6 max-w-[1040px]">
-              <div className="bg-white border border-[#e8e8ed] rounded-2xl px-6 py-8 sm:px-8">
+              <div className="bg-raised border border-gray-200 rounded-2xl px-6 py-8 sm:px-8">
                 <h2 className="text-[20px] font-bold tracking-[-0.01em] text-gray-900">Start your first course.</h2>
-                <p className="text-[14px] text-[#6e6e73] mt-1.5 leading-[1.55] max-w-[620px]">
+                <p className="text-[14px] text-gray-500 mt-1.5 leading-[1.55] max-w-[620px]">
                   {courseSummaries.length} interactive courses — narrated slides, chapter quizzes and a
                   certificate at the end. Your progress saves as you go.
                 </p>
@@ -426,7 +426,7 @@ export default function DashboardClient() {
                     <Link
                       key={s.course.id}
                       href={`/ai-academy/${s.course.id}`}
-                      className="group border border-[#e8e8ed] rounded-xl p-4 hover:border-gray-300 hover:shadow-sm transition-all"
+                      className="group border border-gray-200 rounded-xl p-4 hover:border-gray-300 hover:shadow-sm transition-all"
                     >
                       <p className="text-[13.5px] font-semibold text-gray-900 leading-snug line-clamp-2">{s.course.title}</p>
                       <span className="mt-2 inline-flex items-center gap-1 text-[12px] font-semibold text-primary-600">
@@ -435,7 +435,7 @@ export default function DashboardClient() {
                     </Link>
                   ))}
                 </div>
-                <button onClick={() => setView('browse')} className="mt-5 text-[13px] font-semibold text-primary-600 hover:text-[#0077ed]">
+                <button onClick={() => setView('browse')} className="mt-5 text-[13px] font-semibold text-primary-600 hover:text-primary-500">
                   Browse all {courseSummaries.length} courses ›
                 </button>
               </div>
@@ -451,9 +451,9 @@ export default function DashboardClient() {
                 { label: 'Certificates earned', value: String(stats.certs) },
                 { label: 'Minutes invested', value: String(stats.minutes) },
               ].map(s => (
-                <div key={s.label} className="bg-white border border-[#e8e8ed] rounded-2xl px-5 py-4">
+                <div key={s.label} className="bg-raised border border-gray-200 rounded-2xl px-5 py-4">
                   <p className="text-[30px] font-bold tracking-[-0.02em] text-gray-900 leading-none">{s.value}</p>
-                  <p className="text-xs text-[#86868b] mt-1.5">{s.label}</p>
+                  <p className="text-xs text-gray-400 mt-1.5">{s.label}</p>
                 </div>
               ))}
             </div>
@@ -462,7 +462,7 @@ export default function DashboardClient() {
       {/* Live sessions — same event source as /webinars, Academy-filtered */}
       <section className="mx-auto px-6 lg:px-10 pt-10 max-w-[1040px]">
         <h2 className="text-[22px] font-bold tracking-[-0.02em] text-gray-900 mb-1">Live sessions</h2>
-        <p className="text-sm text-[#6e6e73] mb-5">
+        <p className="text-sm text-gray-500 mb-5">
           Cohort sessions and Q&amp;A clinics you can join live — recordings follow.
         </p>
         <AcademyLiveSessions
@@ -474,7 +474,7 @@ export default function DashboardClient() {
       {/* Analytics */}
       <section className="mx-auto px-6 lg:px-10 pt-8 max-w-[1040px]">
         <h2 className="text-[22px] font-bold tracking-[-0.02em] text-gray-900 mb-1">Your analytics</h2>
-        <p className="text-sm text-[#6e6e73] mb-5">
+        <p className="text-sm text-gray-500 mb-5">
           A live view of your learning — updated every time you open a chapter.
         </p>
         <LearnerAnalytics progressRows={progressRows} statusCounts={statusCounts} />
@@ -484,7 +484,7 @@ export default function DashboardClient() {
       {certificates.length > 0 && (
         <section className="mx-auto px-6 lg:px-10 pt-10 max-w-[1040px]">
           <h2 className="text-[22px] font-bold tracking-[-0.02em] text-gray-900 mb-1">Your certificates</h2>
-          <p className="text-sm text-[#6e6e73] mb-5">Download the PDF, add to LinkedIn, or share the verification link.</p>
+          <p className="text-sm text-gray-500 mb-5">Download the PDF, add to LinkedIn, or share the verification link.</p>
           <div className="grid sm:grid-cols-2 gap-4">
             {certificates.map(c => (
               <Link
@@ -492,7 +492,7 @@ export default function DashboardClient() {
                 href={`/verify/${c.certId}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="group flex flex-col gap-2 p-5 rounded-2xl bg-white border border-[#e8e8ed] hover:border-amber-300 hover:shadow-md transition-all"
+                className="group flex flex-col gap-2 p-5 rounded-2xl bg-raised border border-gray-200 hover:border-amber-300 hover:shadow-md transition-all"
               >
                 <div className="flex items-center gap-2">
                   <Award className="w-5 h-5 text-amber-500" />
@@ -518,7 +518,7 @@ export default function DashboardClient() {
       {view === 'browse' && (
       <section className="mx-auto px-6 lg:px-10 py-10 max-w-[1040px]">
         <h2 className="text-[22px] font-bold tracking-[-0.02em] text-gray-900 mb-1">All courses</h2>
-        <p className="text-sm text-[#6e6e73] mb-5">Search the full catalogue, or filter by where you are with each one.</p>
+        <p className="text-sm text-gray-500 mb-5">Search the full catalogue, or filter by where you are with each one.</p>
 
         {error && (
           <div className="mb-4 p-3 rounded-lg bg-red-50 text-red-700 text-sm ring-1 ring-red-200">
@@ -529,25 +529,25 @@ export default function DashboardClient() {
         {/* Search + status filter */}
         <div className="flex flex-col sm:flex-row gap-3 mb-5">
           <div className="relative flex-1">
-            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[#a1a1a6] pointer-events-none" />
+            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
             <input
               value={courseQuery}
               onChange={e => setCourseQuery(e.target.value)}
               placeholder="Search courses, topics, or chapters…"
               aria-label="Search courses"
-              className="w-full pl-10 pr-9 py-2.5 bg-white border border-[#e8e8ed] rounded-xl text-[14px] text-gray-900 placeholder:text-[#a1a1a6] focus:outline-none focus:ring-2 focus:ring-primary-600/30 focus:border-primary-600 transition-colors"
+              className="w-full pl-10 pr-9 py-2.5 bg-raised border border-gray-200 rounded-xl text-[14px] text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-600/30 focus:border-primary-600 transition-colors"
             />
             {courseQuery && (
               <button
                 onClick={() => setCourseQuery('')}
                 aria-label="Clear search"
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-[#a1a1a6] hover:text-gray-900"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-900"
               >
                 <X className="w-4 h-4" />
               </button>
             )}
           </div>
-          <div className="flex gap-1 p-1 bg-white border border-[#e8e8ed] rounded-xl overflow-x-auto">
+          <div className="flex gap-1 p-1 bg-raised border border-gray-200 rounded-xl overflow-x-auto">
             {([
               ['all', 'All', courseSummaries.length],
               ['in-progress', 'In progress', statusCounts.inProgress],
@@ -560,7 +560,7 @@ export default function DashboardClient() {
                 className={`px-3 py-1.5 text-[12.5px] font-medium rounded-lg whitespace-nowrap transition-colors ${
                   statusFilter === value
                     ? 'bg-gray-900 text-white'
-                    : 'text-[#6e6e73] hover:text-gray-900 hover:bg-[#f5f5f7]'
+                    : 'text-gray-500 hover:text-gray-900 hover:bg-gray-50'
                 }`}
               >
                 {label} <span className="tabular-nums opacity-60">{count}</span>
@@ -583,14 +583,14 @@ export default function DashboardClient() {
         />
 
         {visibleCourses.length === 0 ? (
-          <div className="bg-white border border-[#e8e8ed] rounded-2xl px-6 py-8 text-center">
+          <div className="bg-raised border border-gray-200 rounded-2xl px-6 py-8 text-center">
             <p className="text-[15px] font-semibold text-gray-900">No courses match that.</p>
-            <p className="text-[13.5px] text-[#6e6e73] mt-1">
+            <p className="text-[13.5px] text-gray-500 mt-1">
               Try a different word, or clear the filters.
             </p>
             <button
               onClick={() => { setCourseQuery(''); setStatusFilter('all'); resetCatalogFilters() }}
-              className="mt-4 text-[13px] font-semibold text-primary-600 hover:text-[#0077ed]"
+              className="mt-4 text-[13px] font-semibold text-primary-600 hover:text-primary-500"
             >
               Clear filters
             </button>
@@ -615,7 +615,7 @@ export default function DashboardClient() {
               <Link
                 key={s.course.id}
                 href={ctaHref}
-                className="group flex flex-col bg-white rounded-2xl ring-1 ring-gray-200 hover:ring-gray-300 hover:shadow-md transition-all overflow-hidden"
+                className="group flex flex-col bg-raised rounded-2xl ring-1 ring-gray-200 hover:ring-gray-300 hover:shadow-md transition-all overflow-hidden"
               >
                 {/* Accent keeps courses visually distinguishable at a glance */}
                 <div className="h-1" style={{ backgroundColor: accent }} />
@@ -697,7 +697,7 @@ export default function DashboardClient() {
       {isLoggedIn && (
         <section className="mx-auto px-6 lg:px-10 pb-10 max-w-[1040px]">
           <h2 className="text-[22px] font-bold tracking-[-0.02em] text-gray-900 mb-1">Profile &amp; security</h2>
-          <p className="text-sm text-[#6e6e73] mb-5">
+          <p className="text-sm text-gray-500 mb-5">
             Your details, your password, your account — all in one place.
           </p>
           <LearnerProfileCard onSignOut={handleSignOut} />

@@ -203,7 +203,7 @@ export function CouponBox({ className = '' }: { className?: string }) {
         <input
           value={code} onChange={(e) => { setCode(e.target.value.toUpperCase()); setProblem('') }} autoFocus maxLength={24}
           aria-label="Coupon code" placeholder="Coupon code" autoComplete="off" spellCheck={false}
-          className="w-44 rounded-full border border-white/25 bg-white/10 px-4 py-2 text-[14px] font-medium tracking-wide text-white placeholder:font-normal placeholder:tracking-normal placeholder:text-[#8d9bb0] focus:border-[#5aa9f3] focus:ring-0"
+          className="w-44 rounded-full border border-white/25 bg-white/10 px-4 py-2 text-[14px] font-medium tracking-wide text-white placeholder:font-normal placeholder:tracking-normal placeholder:text-[#8d9bb0] focus:border-primary-400 focus:ring-0"
         />
         <button type="submit" disabled={!code.trim() || checking} className="inline-flex items-center gap-1.5 rounded-full border border-white/30 px-4 py-2 text-[13.5px] font-semibold text-white hover:bg-white/10 disabled:opacity-50">
           {checking && <Loader2 className="w-3.5 h-3.5 animate-spin" />}Apply
@@ -226,7 +226,7 @@ export function BuyButton({ className = '', label }: { className?: string; label
       type="button"
       onClick={b.buy}
       disabled={b.busy}
-      className={`inline-flex items-center justify-center gap-2 px-7 py-3 bg-primary-600 hover:bg-[#0077ed] text-white text-sm font-semibold rounded-full transition-colors disabled:opacity-60 ${className}`}
+      className={`inline-flex items-center justify-center gap-2 px-7 py-3 bg-primary-600 hover:bg-primary-500 text-white text-sm font-semibold rounded-full transition-colors disabled:opacity-60 ${className}`}
     >
       {b.busy && <Loader2 className="w-4 h-4 animate-spin" />}
       {free ? 'Get the full course' : label || 'Buy the full course'} · {shown}
@@ -258,7 +258,7 @@ export function PreviewList() {
     <div id="previews" className="scroll-mt-24 mb-8 rounded-2xl border border-primary-200 bg-primary-50/50 p-5">
       <div className="flex flex-wrap items-baseline justify-between gap-2">
         <h3 className="font-heading text-[18px] font-semibold text-gray-900">Watch free: {ctx.all.length} preview lessons</h3>
-        <span className="text-[13px] text-[#6e6e73]">No sign-in needed</span>
+        <span className="text-[13px] text-gray-500">No sign-in needed</span>
       </div>
       <ol className="mt-3 grid grid-cols-1 xl:grid-cols-2 gap-2">
         {ctx.all.map((p, i) => (
@@ -266,12 +266,12 @@ export function PreviewList() {
             <button
               type="button"
               onClick={() => ctx.open(p.id, p.title)}
-              className="w-full h-full flex items-start gap-3 rounded-xl bg-white border border-[#e2e5ec] px-3.5 py-3 text-left hover:border-primary-400 transition-colors"
+              className="w-full h-full flex items-start gap-3 rounded-xl bg-raised border border-gray-200 px-3.5 py-3 text-left hover:border-primary-400 transition-colors"
             >
               <PlayCircle className="w-5 h-5 mt-0.5 shrink-0 text-primary-600" />
               <span className="min-w-0">
                 <span className="block text-[14.5px] font-medium leading-snug text-gray-900">{p.title}</span>
-                <span className="block text-[12.5px] text-[#6e6e73] mt-0.5 truncate">Preview {i + 1}{p.minutes ? ` · ${p.minutes} min` : ''} · {p.module}</span>
+                <span className="block text-[12.5px] text-gray-500 mt-0.5 truncate">Preview {i + 1}{p.minutes ? ` · ${p.minutes} min` : ''} · {p.module}</span>
               </span>
             </button>
           </li>
@@ -290,14 +290,14 @@ export function LessonRow({ id, title, color, preview }: { id: string; title: st
       type="button"
       onClick={() => (preview ? openPreview?.(id, title) : b?.buy())}
       title={preview ? 'Watch this lesson now' : 'Included in the full course'}
-      className={`w-full flex items-start gap-3 py-1.5 text-left text-[14.5px] leading-snug transition-colors ${preview ? 'text-[#1d1d1f] hover:text-primary-600' : 'text-[#6e6e73] hover:text-[#424245]'}`}
+      className={`w-full flex items-start gap-3 py-1.5 text-left text-[14.5px] leading-snug transition-colors ${preview ? 'text-gray-900 hover:text-primary-600' : 'text-gray-500 hover:text-gray-700'}`}
     >
       <span className="w-1.5 h-4 rounded-[1px] mt-0.5 shrink-0" style={{ background: color, opacity: preview ? 1 : 0.45 }} />
       <span className="flex-1">{title}</span>
       {preview ? (
         <span className="shrink-0 inline-flex items-center gap-1 text-[12.5px] font-semibold text-primary-600"><PlayCircle className="w-4 h-4" /> Preview</span>
       ) : (
-        <Lock className="w-3.5 h-3.5 mt-1 shrink-0 text-[#a1a1a6]" aria-label="In the full course" />
+        <Lock className="w-3.5 h-3.5 mt-1 shrink-0 text-gray-400" aria-label="In the full course" />
       )}
     </button>
   )
@@ -451,9 +451,9 @@ function PreviewPlayer({ slug, id, title, all, onPick, onClose }: { slug: string
                     aria-current={p.id === id ? 'true' : undefined}
                     className={`w-full flex items-start gap-2.5 rounded-lg px-3 py-2 text-left text-[13.5px] leading-snug transition-colors ${p.id === id ? 'bg-white/15 text-white' : 'text-[#c9d2e0] hover:bg-white/10'}`}
                   >
-                    <span className={`shrink-0 tabular-nums ${p.id === id ? 'text-[#7dbcf7]' : 'text-[#8d9bb0]'}`}>{i + 1}</span>
+                    <span className={`shrink-0 tabular-nums ${p.id === id ? 'text-primary-300' : 'text-[#8d9bb0]'}`}>{i + 1}</span>
                     <span className="min-w-0 flex-1">{p.title}</span>
-                    {p.id === id && <span className="shrink-0 text-[11px] font-semibold text-[#7dbcf7]">Playing</span>}
+                    {p.id === id && <span className="shrink-0 text-[11px] font-semibold text-primary-300">Playing</span>}
                   </button>
                 </li>
               ))}

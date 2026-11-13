@@ -131,9 +131,9 @@ export default function ClaudeCoworkRecapPage() {
     <>
       {/* Hero */}
       <section className="relative py-10 lg:py-10 overflow-hidden">
-        <div className="absolute inset-0 bg-white" />
+        <div className="absolute inset-0 bg-surface" />
         <div className="absolute inset-0" />
-        <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-white to-transparent" />
+        <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-surface to-transparent" />
 
         <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center gap-2 text-gray-500 text-sm mb-4">
@@ -216,7 +216,7 @@ export default function ClaudeCoworkRecapPage() {
       </section>
 
       {/* Stats */}
-      <section className="py-10 bg-white">
+      <section className="py-10 bg-surface">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-3 sm:grid-cols-6 gap-3">
             {eventStats.map((stat) => (
@@ -236,7 +236,7 @@ export default function ClaudeCoworkRecapPage() {
       <div className="section-divider" />
 
       {/* What Was Covered */}
-      <section className="py-10 bg-white">
+      <section className="py-10 bg-surface">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-2xl font-bold text-gray-900 mb-2">What Was Covered</h2>
           <p className="text-gray-600 mb-6">
@@ -287,7 +287,7 @@ export default function ClaudeCoworkRecapPage() {
       </section>
 
       {/* Engagement Highlights */}
-      <section className="py-10 bg-white">
+      <section className="py-10 bg-surface">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="glass-card rounded-2xl p-6">
             <div className="flex items-center gap-3 mb-4">
@@ -315,7 +315,7 @@ export default function ClaudeCoworkRecapPage() {
               </div>
               <div className="flex flex-wrap gap-2">
                 {['Farhan Khan — 21 reactions', 'Adnan Shaikh — 19 reactions', 'Kazim Salmani — 16 reactions', 'Ameer Sheikh — 15 reactions'].map((name) => (
-                  <span key={name} className="text-xs bg-white border border-gray-200 text-gray-600 px-3 py-1.5 rounded-full">
+                  <span key={name} className="text-xs bg-raised border border-gray-200 text-gray-600 px-3 py-1.5 rounded-full">
                     {name}
                   </span>
                 ))}
@@ -328,7 +328,7 @@ export default function ClaudeCoworkRecapPage() {
       <div className="section-divider" />
 
       {/* Trustpilot Reviews */}
-      <section className="py-10 bg-white">
+      <section className="py-10 bg-surface">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-3">
             <div>
@@ -375,7 +375,7 @@ export default function ClaudeCoworkRecapPage() {
       <div className="section-divider" />
 
       {/* CTA */}
-      <section className="py-8 bg-white">
+      <section className="py-8 bg-surface">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-2xl font-bold text-gray-900 mb-3">Want to Attend the Next One?</h2>
           <p className="text-gray-600 mb-6 max-w-xl mx-auto">
@@ -391,7 +391,7 @@ export default function ClaudeCoworkRecapPage() {
             </Link>
             <Link
               href="/contact"
-              className="inline-flex items-center justify-center gap-2 bg-white text-gray-700 ring-1 ring-gray-200 px-6 py-3 rounded-xl font-semibold hover:ring-primary-300 hover:text-primary-700 transition-all duration-300"
+              className="inline-flex items-center justify-center gap-2 bg-raised text-gray-700 ring-1 ring-gray-200 px-6 py-3 rounded-xl font-semibold hover:ring-primary-300 hover:text-primary-700 transition-all duration-300"
             >
               Contact Us
             </Link>

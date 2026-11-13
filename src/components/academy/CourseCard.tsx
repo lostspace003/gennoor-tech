@@ -20,13 +20,13 @@ export default function CourseCard({ course, overallProgress = 0 }: CourseCardPr
   return (
     <Link
       href={`/ai-academy/${course.id}`}
-      className="group flex flex-col h-full bg-white rounded-[18px] border border-[#e8e8ed] hover:border-[#d2d2d7] transition-colors duration-200 overflow-hidden"
+      className="group flex flex-col h-full bg-raised rounded-[18px] border border-gray-200 hover:border-gray-300 transition-colors duration-200 overflow-hidden"
     >
       {/* Thumbnail */}
-      <div className="relative aspect-video bg-[#eef1f6] overflow-hidden">
+      <div className="relative aspect-video bg-gray-100 overflow-hidden">
         {imageFailed ? (
           <div
-            className={`w-full h-full p-6 flex items-end ${course.theme ? '' : 'bg-[#1d1d1f]'}`}
+            className={`w-full h-full p-6 flex items-end ${course.theme ? '' : 'bg-gray-900'}`}
             style={headerStyle}
           >
             <span className="text-white font-bold tracking-[-0.01em] text-[22px] leading-tight">{course.shortTitle}</span>
@@ -51,9 +51,9 @@ export default function CourseCard({ course, overallProgress = 0 }: CourseCardPr
       {/* Body */}
       <div className="p-6 flex flex-col flex-1">
         {/* Micro-meta line */}
-        <div className="text-[11px] font-semibold tracking-[0.1em] uppercase text-[#1d8348] mb-2.5">
+        <div className="text-[11px] font-semibold tracking-[0.1em] uppercase text-green-600 mb-2.5">
           Interactive
-          <span className="text-[#86868b] font-medium normal-case tracking-normal">
+          <span className="text-gray-400 font-medium normal-case tracking-normal">
             {' '}· {course.totalChapters} chapters · audio included
           </span>
         </div>
@@ -83,20 +83,20 @@ export default function CourseCard({ course, overallProgress = 0 }: CourseCardPr
         </div>
 
         {/* Tags */}
-        <div className="text-xs text-[#86868b] mb-5 truncate">
+        <div className="text-xs text-gray-400 mb-5 truncate">
           {course.tags.slice(0, 4).join(' · ')}
         </div>
 
         {/* Open-access signal */}
         {overallProgress === 0 && (
-          <p className="text-xs text-[#86868b] mb-4">
+          <p className="text-xs text-gray-400 mb-4">
             Sign in to start · certificate on completion
           </p>
         )}
 
         {/* CTA */}
-        <div className="flex items-center justify-between pt-3.5 border-t border-[#f0f0f2]">
-          <span className="text-[13px] font-semibold text-primary-600 group-hover:text-[#0077ed] transition-colors">
+        <div className="flex items-center justify-between pt-3.5 border-t border-gray-100">
+          <span className="text-[13px] font-semibold text-primary-600 group-hover:text-primary-500 transition-colors">
             {overallProgress > 0 ? 'Continue learning ›' : 'Start learning ›'}
           </span>
         </div>

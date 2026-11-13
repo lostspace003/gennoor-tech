@@ -3,7 +3,7 @@ import { claudeCards } from '@/lib/catalogue'
 import { TOC_DOMAINS } from '@/lib/toc-courses'
 
 /** The instructor-led Claude courses, one carousel per domain. Used on /claude and /training so the two always match. */
-export default function ClaudeCourseCarousels({ className = 'bg-white' }: { className?: string }) {
+export default function ClaudeCourseCarousels({ className = 'bg-surface' }: { className?: string }) {
   return (
     <section id="courses" className={`${className} px-6 py-10 lg:py-10`}>
       <div className="max-w-[1080px] mx-auto">

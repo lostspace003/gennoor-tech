@@ -14,7 +14,7 @@ import type { UpcomingWebinar } from '@/data/webinars'
  */
 
 const FIELD =
-  'w-full box-border text-[14px] px-3.5 py-[11px] border border-[#d2d2d7] rounded-xl bg-white text-gray-900 placeholder:text-[#86868b] outline-none focus:border-primary-600 focus:ring-0 transition-colors'
+  'w-full box-border text-[14px] px-3.5 py-[11px] border border-gray-300 rounded-xl bg-raised text-gray-900 placeholder:text-gray-400 outline-none focus:border-primary-600 focus:ring-0 transition-colors'
 
 export default function WebinarRegisterModal({
   webinar,
@@ -59,12 +59,12 @@ export default function WebinarRegisterModal({
   return (
     <div className="fixed inset-0 z-[70] flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={onClose} />
-      <div className="relative bg-white rounded-3xl w-full max-w-md p-7 border border-[#e8e8ed]">
+      <div className="relative bg-raised rounded-3xl w-full max-w-md p-7 border border-gray-200">
         {status === 'success' ? (
           <div className="text-center py-6">
-            <div className="text-[44px] font-bold text-[#1d8348] mb-3">✓</div>
+            <div className="text-[44px] font-bold text-green-600 mb-3">✓</div>
             <h3 className="text-[20px] font-bold text-gray-900 mb-2">You&rsquo;re registered.</h3>
-            <p className="text-[14px] text-[#6e6e73] mb-6">
+            <p className="text-[14px] text-gray-500 mb-6">
               Confirmation sent to your email. The joining link arrives before
               the session.
             </p>
@@ -74,16 +74,16 @@ export default function WebinarRegisterModal({
           </div>
         ) : (
           <>
-            <div className="text-[11px] font-semibold tracking-[0.12em] uppercase text-[#86868b] mb-1.5">
+            <div className="text-[11px] font-semibold tracking-[0.12em] uppercase text-gray-400 mb-1.5">
               Register free · {webinar.type}
             </div>
             <h3 className="text-[19px] font-bold text-gray-900 mb-1">{webinar.title}</h3>
-            <p className="text-[12.5px] text-[#86868b] mb-5">
+            <p className="text-[12.5px] text-gray-400 mb-5">
               {webinar.month} {webinar.day} · {webinar.meta}
             </p>
             <form onSubmit={submit} className="space-y-3">
               {status === 'error' && (
-                <p className="text-sm text-[#9b2c21] border border-[#eaa59d] bg-[#fdf4f3] rounded-xl px-4 py-3">
+                <p className="text-sm text-red-700 border border-red-300 bg-red-50 rounded-xl px-4 py-3">
                   Something went wrong — please try again or email webinar@gennoor.com.
                 </p>
               )}
@@ -117,7 +117,7 @@ export default function WebinarRegisterModal({
                 <button
                   type="submit"
                   disabled={status === 'submitting'}
-                  className="inline-flex items-center gap-2 bg-primary-600 hover:bg-[#0077ed] text-white text-[14px] font-semibold px-6 py-2.5 rounded-full transition-colors disabled:opacity-50"
+                  className="inline-flex items-center gap-2 bg-primary-600 hover:bg-primary-500 text-white text-[14px] font-semibold px-6 py-2.5 rounded-full transition-colors disabled:opacity-50"
                 >
                   {status === 'submitting' ? (
                     <>
@@ -130,7 +130,7 @@ export default function WebinarRegisterModal({
                 <button
                   type="button"
                   onClick={onClose}
-                  className="text-[13px] font-medium text-[#6e6e73] hover:text-gray-900"
+                  className="text-[13px] font-medium text-gray-500 hover:text-gray-900"
                 >
                   Cancel
                 </button>

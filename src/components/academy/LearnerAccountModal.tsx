@@ -5,10 +5,10 @@ import { X, Loader2, Check, ShieldCheck, UserRound } from 'lucide-react'
 import { fetchLearnerProfile, type LearnerProfileSnapshot } from './LearnerProfileSetupForm'
 
 const inputCls =
-  'w-full px-3.5 py-2.5 bg-white border border-[#d2d2d7] rounded-xl text-[14px] text-gray-900 placeholder:text-[#a1a1a6] focus:outline-none focus:ring-2 focus:ring-primary-600/40 focus:border-primary-600 transition-colors'
-const labelCls = 'block text-[11.5px] font-semibold text-[#6e6e73] mb-1.5'
+  'w-full px-3.5 py-2.5 bg-raised border border-gray-300 rounded-xl text-[14px] text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-600/40 focus:border-primary-600 transition-colors'
+const labelCls = 'block text-[11.5px] font-semibold text-gray-500 mb-1.5'
 const btnCls =
-  'inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-primary-600 hover:bg-[#0077ed] text-white text-[14px] font-medium rounded-full transition-colors disabled:opacity-50'
+  'inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-primary-600 hover:bg-primary-500 text-white text-[14px] font-medium rounded-full transition-colors disabled:opacity-50'
 
 type Tab = 'details' | 'password'
 
@@ -201,43 +201,43 @@ export default function LearnerAccountModal({
 
   const tabCls = (t: Tab) =>
     `flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 text-[13px] font-medium rounded-lg transition-colors ${
-      tab === t ? 'bg-white text-gray-900 shadow-sm' : 'text-[#6e6e73] hover:text-gray-900'
+      tab === t ? 'bg-surface text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-900'
     }`
 
   return (
     <div className="fixed inset-0 z-[80] flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={onClose} />
-      <div className="relative bg-white rounded-[22px] shadow-2xl w-full max-w-[440px] max-h-[92vh] overflow-y-auto animate-fade-in">
+      <div className="relative bg-raised rounded-[22px] shadow-2xl w-full max-w-[440px] max-h-[92vh] overflow-y-auto animate-fade-in">
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 w-8 h-8 inline-flex items-center justify-center rounded-full text-[#86868b] hover:text-gray-900 hover:bg-[#f5f5f7] transition-colors"
+          className="absolute top-4 right-4 w-8 h-8 inline-flex items-center justify-center rounded-full text-gray-400 hover:text-gray-900 hover:bg-gray-50 transition-colors"
           aria-label="Close"
         >
           <X className="w-[18px] h-[18px]" />
         </button>
 
         <div className="px-6 pt-7 pb-6">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[#86868b] mb-2">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-gray-400 mb-2">
             Learning Studio
           </p>
           <h2 className="text-[20px] font-bold tracking-[-0.02em] text-gray-900 leading-tight">
             Your account
           </h2>
-          <p className="text-[13px] text-[#6e6e73] mt-1 mb-5 truncate">
+          <p className="text-[13px] text-gray-500 mt-1 mb-5 truncate">
             {profile?.email || 'Loading…'}
           </p>
 
           {loading ? (
-            <div className="py-10 flex items-center justify-center gap-2 text-[#86868b] text-sm">
+            <div className="py-10 flex items-center justify-center gap-2 text-gray-400 text-sm">
               <Loader2 className="w-4 h-4 animate-spin" /> Loading…
             </div>
           ) : !profile ? (
-            <p className="py-8 text-center text-sm text-[#86868b]">
+            <p className="py-8 text-center text-sm text-gray-400">
               Could not load your account. Refresh the page to try again.
             </p>
           ) : (
             <>
-              <div className="flex gap-1 p-1 bg-[#f5f5f7] rounded-xl mb-5">
+              <div className="flex gap-1 p-1 bg-gray-50 rounded-xl mb-5">
                 <button onClick={() => setTab('details')} className={tabCls('details')}>
                   <UserRound className="w-4 h-4" /> Details
                 </button>
@@ -261,7 +261,7 @@ export default function LearnerAccountModal({
                       maxLength={24}
                       spellCheck={false}
                     />
-                    <p className="text-[11.5px] text-[#a1a1a6] mt-1.5 leading-snug">
+                    <p className="text-[11.5px] text-gray-400 mt-1.5 leading-snug">
                       Sign in with this if you forget which email you used.
                     </p>
                   </div>
@@ -286,7 +286,7 @@ export default function LearnerAccountModal({
               {tab === 'password' && (
                 <div className="space-y-3.5">
                   {resetSent && !pwSaved && (
-                    <div className="px-3.5 py-2.5 bg-[#f0f7ff] border border-[#d6e8ff] text-primary-600 text-[13px] rounded-xl">
+                    <div className="px-3.5 py-2.5 bg-primary-50 border border-primary-200 text-primary-600 text-[13px] rounded-xl">
                       {resetSent}
                     </div>
                   )}
@@ -356,7 +356,7 @@ export default function LearnerAccountModal({
                     <button
                       onClick={sendResetCode}
                       disabled={sendingCode}
-                      className="w-full text-[13px] text-primary-600 hover:text-[#0077ed] disabled:opacity-50"
+                      className="w-full text-[13px] text-primary-600 hover:text-primary-500 disabled:opacity-50"
                     >
                       {sendingCode ? 'Sending code…' : 'Forgot your current password? Email me a code'}
                     </button>
@@ -364,7 +364,7 @@ export default function LearnerAccountModal({
                   {resetting && (
                     <button
                       onClick={() => { setResetting(false); setResetSent(''); setPwError('') }}
-                      className="w-full text-[13px] text-[#6e6e73] hover:text-gray-900"
+                      className="w-full text-[13px] text-gray-500 hover:text-gray-900"
                     >
                       Back to changing it with my current password
                     </button>

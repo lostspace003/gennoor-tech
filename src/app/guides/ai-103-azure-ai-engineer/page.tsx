@@ -138,7 +138,7 @@ export default function AI103StudyGuidePage() {
       </section>
 
       {/* Exam Overview */}
-      <section className="py-10 lg:py-10 bg-white">
+      <section className="py-10 lg:py-10 bg-surface">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl font-bold text-gray-900 mb-5">Exam Overview</h2>
           <p className="text-base text-gray-600 mb-5 leading-relaxed">
@@ -251,7 +251,7 @@ export default function AI103StudyGuidePage() {
       </section>
 
       {/* Study plan */}
-      <section className="py-10 lg:py-10 bg-white">
+      <section className="py-10 lg:py-10 bg-surface">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl font-bold text-gray-900 mb-6 flex items-center gap-3">
             <Target className="w-7 h-7 text-primary-600" />
@@ -308,7 +308,7 @@ export default function AI103StudyGuidePage() {
               'Don\'t skip the cost, scaling, and security domain — it\'s 25-30% of the exam but candidates routinely under-prepare it.',
               'AI-102 holders: focus your 30 hours on the agentic + Foundry-positioning material. The vision/NLP/extraction topics overlap heavily with what you already know.',
             ].map((tip, i) => (
-              <li key={i} className="flex items-start gap-3 bg-white rounded-xl p-4 ring-1 ring-gray-200">
+              <li key={i} className="flex items-start gap-3 bg-raised rounded-xl p-4 ring-1 ring-gray-200">
                 <CheckCircle className="w-5 h-5 text-primary-600 flex-shrink-0 mt-0.5" />
                 <span className="text-sm text-gray-700 leading-relaxed">{tip}</span>
               </li>
@@ -318,7 +318,7 @@ export default function AI103StudyGuidePage() {
       </section>
 
       {/* FAQ */}
-      <section className="py-10 lg:py-10 bg-white">
+      <section className="py-10 lg:py-10 bg-surface">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl font-bold text-gray-900 mb-8 flex items-center gap-3">
             <HelpCircle className="w-7 h-7 text-primary-600" />
@@ -358,7 +358,7 @@ export default function AI103StudyGuidePage() {
             </Link>
             <Link
               href="/services/training"
-              className="inline-flex items-center justify-center gap-2 px-7 py-3.5 text-sm font-semibold rounded-xl text-gray-700 bg-white/80 backdrop-blur-sm ring-1 ring-gray-200 hover:ring-primary-300 hover:text-primary-700 transition-all"
+              className="inline-flex items-center justify-center gap-2 px-7 py-3.5 text-sm font-semibold rounded-xl text-gray-700 bg-surface/80 backdrop-blur-sm ring-1 ring-gray-200 hover:ring-primary-300 hover:text-primary-700 transition-all"
             >
               See the Foundry Workshop
             </Link>
@@ -371,7 +371,7 @@ export default function AI103StudyGuidePage() {
 
 function SkillBlock({ weight, title, items }: { weight: string; title: string; items: string[] }) {
   return (
-    <div className="rounded-xl bg-white ring-1 ring-gray-200 p-5">
+    <div className="rounded-xl bg-raised ring-1 ring-gray-200 p-5">
       <div className="flex items-start justify-between gap-3 mb-3">
         <h3 className="text-lg font-semibold text-gray-900">{title}</h3>
         <span className="text-[10px] font-bold tracking-widest text-primary-700 bg-primary-50 ring-1 ring-primary-100 px-2 py-0.5 rounded-full uppercase whitespace-nowrap">
@@ -392,7 +392,7 @@ function SkillBlock({ weight, title, items }: { weight: string; title: string; i
 
 function PlanStep({ num, title, body }: { num: string; title: string; body: string }) {
   return (
-    <div className="flex items-start gap-4 bg-white rounded-xl p-5 ring-1 ring-gray-200">
+    <div className="flex items-start gap-4 bg-raised rounded-xl p-5 ring-1 ring-gray-200">
       <div className="flex-shrink-0 w-9 h-9 rounded-lg bg-primary-50 text-primary-700 font-bold text-sm flex items-center justify-center">
         {num}
       </div>

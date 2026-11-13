@@ -29,12 +29,12 @@ export default function RichEditor({ value, onChange, placeholder, minHeight = 1
 
   const Btn = ({ title, onClick, children }: { title: string; onClick: () => void; children: React.ReactNode }) => (
     <button type="button" title={title} aria-label={title} onMouseDown={e => e.preventDefault()} onClick={onClick}
-      className="p-1.5 rounded-md text-[#6e6e73] hover:bg-white hover:text-gray-900 transition-colors">{children}</button>
+      className="p-1.5 rounded-md text-gray-500 hover:bg-surface hover:text-gray-900 transition-colors">{children}</button>
   )
 
   return (
-    <div className="border border-[#d2d2d7] rounded-xl bg-white focus-within:border-primary-600 overflow-hidden">
-      <div className="flex items-center gap-0.5 px-2 py-1.5 bg-[#f5f6f8] border-b border-[#e8e8ed]">
+    <div className="border border-gray-300 rounded-xl bg-raised focus-within:border-primary-600 overflow-hidden">
+      <div className="flex items-center gap-0.5 px-2 py-1.5 bg-gray-50 border-b border-gray-200">
         <Btn title="Bold" onClick={() => run('bold')}><Bold className="w-4 h-4" /></Btn>
         <Btn title="Italic" onClick={() => run('italic')}><Italic className="w-4 h-4" /></Btn>
         <Btn title="Heading" onClick={() => run('formatBlock', 'h3')}><Heading3 className="w-4 h-4" /></Btn>
@@ -54,7 +54,7 @@ export default function RichEditor({ value, onChange, placeholder, minHeight = 1
         onInput={() => onChange(ref.current?.innerHTML ?? '')}
         onPaste={e => { e.preventDefault(); document.execCommand('insertText', false, e.clipboardData.getData('text/plain')) }}
         style={{ minHeight }}
-        className="rich-body px-3.5 py-2.5 text-[14.5px] text-gray-900 focus:outline-none empty:before:content-[attr(data-placeholder)] empty:before:text-[#86868b]"
+        className="rich-body px-3.5 py-2.5 text-[14.5px] text-gray-900 focus:outline-none empty:before:content-[attr(data-placeholder)] empty:before:text-gray-400"
       />
     </div>
   )

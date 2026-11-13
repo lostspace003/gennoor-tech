@@ -130,7 +130,7 @@ export default function CertificateClaimForm({ courseId, onClaimed }: Props) {
   }
 
   return (
-    <div className="bg-white rounded-2xl">
+    <div className="bg-raised rounded-2xl">
       <div className="flex items-center justify-center gap-2 mb-2">
         <Award className="w-4 h-4 text-primary-600" />
         <p className="text-xs font-bold text-gray-500 uppercase tracking-widest text-center">

@@ -29,17 +29,17 @@ export default function ContactPage() {
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusinessSchema) }} />
 
-      <main className="min-h-screen bg-white">
+      <main className="min-h-screen bg-surface">
         <section className="hero-backdrop px-8 pt-8 lg:pt-10 pb-10 text-center">
           <h1 className="display-hero max-w-[820px] mx-auto">Let&rsquo;s talk.</h1>
-          <p className="text-[clamp(18px,1.8vw,22px)] leading-[1.45] text-[#6e6e73] max-w-[560px] mx-auto mt-6">
+          <p className="text-[clamp(18px,1.8vw,22px)] leading-[1.45] text-gray-500 max-w-[560px] mx-auto mt-6">
             Tell us what you want your team to be able to do, or which process costs you time.
           </p>
         </section>
 
-        <section id="proposal" className="scroll-mt-16 bg-[#f5f5f7] px-8 pt-10 pb-14">
+        <section id="proposal" className="scroll-mt-16 bg-gray-50 px-8 pt-10 pb-14">
           <div className="max-w-[1000px] mx-auto grid lg:grid-cols-[minmax(0,1fr)_300px] gap-10 lg:gap-14 items-start">
-            <div className="bg-white rounded-3xl p-7 sm:p-10">
+            <div className="bg-raised rounded-3xl p-7 sm:p-10">
               <ContactForm />
             </div>
             <div className="space-y-8 text-[15px]">
@@ -53,7 +53,7 @@ export default function ContactPage() {
               </div>
               <div>
                 <p className="font-semibold text-gray-900">Where we are</p>
-                <p className="text-[#6e6e73]">Mumbai, India</p>
+                <p className="text-gray-500">Mumbai, India</p>
               </div>
               <div>
                 <p className="font-semibold text-gray-900">Elsewhere</p>
@@ -66,7 +66,7 @@ export default function ContactPage() {
         <section id="book" className="scroll-mt-16 px-8 py-10 lg:py-14">
           <div className="max-w-[760px] mx-auto text-center mb-10">
             <h2 className="display-card">Prefer to talk first?</h2>
-            <p className="text-[17px] text-[#6e6e73] mt-3">Pick a time for a call. Times are shown in your own time zone.</p>
+            <p className="text-[17px] text-gray-500 mt-3">Pick a time for a call. Times are shown in your own time zone.</p>
           </div>
           <BookingCalendar />
         </section>

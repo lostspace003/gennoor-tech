@@ -142,7 +142,7 @@ export default function LabsCatalog({ courses, custom = EMPTY_CUSTOM }: { course
                   {group.items.map(c => (
                     <div
                       key={c.slug}
-                      className="group relative bg-white rounded-2xl overflow-hidden border border-[#e2e5ec] flex flex-col transition duration-300 hover:-translate-y-1 hover:shadow-[0_18px_40px_-18px_rgba(15,24,36,.35)] focus-within:outline focus-within:outline-2 focus-within:outline-offset-4 focus-within:outline-primary-600"
+                      className="group relative bg-raised rounded-2xl overflow-hidden border border-gray-200 flex flex-col transition duration-300 hover:-translate-y-1 hover:shadow-[0_18px_40px_-18px_rgba(15,24,36,.35)] focus-within:outline focus-within:outline-2 focus-within:outline-offset-4 focus-within:outline-primary-600"
                     >
                       <div className="relative aspect-video bg-[#0f1824] overflow-hidden">
                         {preview === c.slug && c.promoUrl ? (
@@ -167,33 +167,33 @@ export default function LabsCatalog({ courses, custom = EMPTY_CUSTOM }: { course
                         <button
                           type="button"
                           onClick={() => setPreview(preview === c.slug ? null : c.slug)}
-                          className="relative z-10 flex items-center justify-center gap-2 py-2.5 border-b border-[#eef0f4] bg-[#f8f9fb] text-[13.5px] font-semibold text-gray-900 hover:bg-primary-50 hover:text-primary-700 transition-colors"
+                          className="relative z-10 flex items-center justify-center gap-2 py-2.5 border-b border-gray-100 bg-gray-50 text-[13.5px] font-semibold text-gray-900 hover:bg-primary-50 hover:text-primary-700 transition-colors"
                         >
                           {preview === c.slug ? <><X className="w-4 h-4" /> Close preview</> : <><Play className="w-4 h-4 fill-current" /> Watch preview</>}
                         </button>
                       )}
                       <div className="p-6 sm:p-7 flex flex-col flex-1">
-                        <p className="text-[12.5px] text-[#6e6e73]">{KIND_LABEL[c.kind] || c.kind}, {c.level.toLowerCase()}</p>
+                        <p className="text-[12.5px] text-gray-500">{KIND_LABEL[c.kind] || c.kind}, {c.level.toLowerCase()}</p>
                         <h4 className="font-heading font-bold text-[19px] leading-[1.3] tracking-[-0.01em] text-gray-900 mt-2.5">
                           <Link href={`/studio/${c.slug}`} className="after:absolute after:inset-0 focus:outline-none">{c.title}</Link>
                         </h4>
-                        <p className="text-[14.5px] leading-[1.6] text-[#6e6e73] mt-3 line-clamp-3">{c.subtitle}</p>
+                        <p className="text-[14.5px] leading-[1.6] text-gray-500 mt-3 line-clamp-3">{c.subtitle}</p>
                         {c.rating && (
-                          <p className="mt-3 flex items-center gap-1.5 text-[13px] text-[#6e6e73]">
+                          <p className="mt-3 flex items-center gap-1.5 text-[13px] text-gray-500">
                             <span className="font-semibold text-gray-900 tabular-nums">{c.rating.average.toFixed(1)}</span>
                             <Stars value={c.rating.average} size={13} />
                             <span>({c.rating.count})</span>
                           </p>
                         )}
-                        <p className="text-[13.5px] text-[#86868b] mt-auto pt-6 tabular-nums">
+                        <p className="text-[13.5px] text-gray-400 mt-auto pt-6 tabular-nums">
                           {c.lectures} lessons{c.hours ? `, ${c.hours} hours` : ''}
                         </p>
                         {/* What it costs, and what can be watched before paying */}
-                        <div className="mt-4 pt-4 border-t border-[#eef0f4] flex flex-wrap items-center justify-between gap-x-3 gap-y-2">
+                        <div className="mt-4 pt-4 border-t border-gray-100 flex flex-wrap items-center justify-between gap-x-3 gap-y-2">
                           {c.priceUsd ? (
                             <span className="flex items-baseline gap-2">
                               <span className="text-[20px] font-bold tracking-tight text-gray-900 tabular-nums">${c.priceUsd.toFixed(2)}</span>
-                              {c.offer && <s className="text-[14px] text-[#86868b] tabular-nums">${c.offer.regularUsd.toFixed(2)}</s>}
+                              {c.offer && <s className="text-[14px] text-gray-400 tabular-nums">${c.offer.regularUsd.toFixed(2)}</s>}
                             </span>
                           ) : (
                             <span className="text-[15px] font-semibold text-emerald-700">Free</span>

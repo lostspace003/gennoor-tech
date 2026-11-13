@@ -108,7 +108,7 @@ export default function NextStepsPage() {
                   className={`bg-gradient-to-br ${opt.accent} rounded-2xl ring-1 ${opt.accentRing} p-6 sm:p-8 transition-all duration-300 hover:shadow-xl flex flex-col`}
                 >
                   <div className="flex items-start justify-between mb-4">
-                    <div className="w-12 h-12 rounded-xl bg-white/80 backdrop-blur-sm flex items-center justify-center shadow-sm">
+                    <div className="w-12 h-12 rounded-xl bg-surface/80 backdrop-blur-sm flex items-center justify-center shadow-sm">
                       <Icon className={`w-6 h-6 ${opt.accentText}`} />
                     </div>
                     <span className={`text-[11px] font-bold uppercase tracking-widest ${opt.accentText} font-mono`}>
@@ -138,7 +138,7 @@ export default function NextStepsPage() {
                     </Link>
                     <Link
                       href={opt.secondaryCta.href}
-                      className={`w-full inline-flex items-center justify-center gap-2 px-5 py-3 bg-white/70 hover:bg-white text-gray-900 text-sm font-semibold rounded-lg ring-1 ring-gray-200 transition-all duration-200`}
+                      className={`w-full inline-flex items-center justify-center gap-2 px-5 py-3 bg-surface/70 hover:bg-surface text-gray-900 text-sm font-semibold rounded-lg ring-1 ring-gray-200 transition-all duration-200`}
                     >
                       {opt.secondaryCta.label}
                     </Link>

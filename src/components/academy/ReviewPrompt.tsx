@@ -47,8 +47,8 @@ export default function ReviewPrompt({ course, progress }: { course: LmsCourse; 
 
   if (!show && !thanks) return null
   return (
-    <div role="dialog" aria-label="Rate this course" className="fixed z-50 bottom-5 left-5 right-5 sm:left-auto sm:right-6 sm:w-[400px] bg-white rounded-2xl shadow-[0_20px_50px_-12px_rgba(0,0,0,.35)] border border-[#e2e5ec] p-5">
-      <button type="button" aria-label="Close" onClick={() => { setShow(false); setThanks(false) }} className="absolute top-3 right-3 p-1 rounded-lg text-[#86868b] hover:bg-gray-100"><X className="w-4 h-4" /></button>
+    <div role="dialog" aria-label="Rate this course" className="fixed z-50 bottom-5 left-5 right-5 sm:left-auto sm:right-6 sm:w-[400px] bg-raised rounded-2xl shadow-[0_20px_50px_-12px_rgba(0,0,0,.35)] border border-gray-200 p-5">
+      <button type="button" aria-label="Close" onClick={() => { setShow(false); setThanks(false) }} className="absolute top-3 right-3 p-1 rounded-lg text-gray-400 hover:bg-gray-100"><X className="w-4 h-4" /></button>
       {thanks ? (
         <p className="text-[15px] font-medium text-gray-900 pr-6">Thank you for your review. You can change it any time on the course page.</p>
       ) : (

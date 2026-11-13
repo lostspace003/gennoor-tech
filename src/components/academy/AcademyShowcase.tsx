@@ -21,7 +21,7 @@ const AUTO_ADVANCE_MS = 6000
 
 function DashboardMock() {
   return (
-    <div className="bg-white rounded-2xl p-5 sm:p-6 w-full max-w-[400px] select-none" aria-hidden="true">
+    <div className="bg-raised rounded-2xl p-5 sm:p-6 w-full max-w-[400px] select-none" aria-hidden="true">
       <div className="text-[13px] font-bold text-gray-900 mb-3">Welcome back 👋</div>
       <div className="grid grid-cols-3 gap-2 mb-4">
         {[
@@ -29,27 +29,27 @@ function DashboardMock() {
           [String(tracks.length), 'Tracks'],
           ['Certificate', 'On completion'],
         ].map(([v, l]) => (
-          <div key={l} className="bg-[#f5f5f7] rounded-xl px-2 py-2.5 text-center">
+          <div key={l} className="bg-gray-50 rounded-xl px-2 py-2.5 text-center">
             <div className="text-[17px] font-bold tracking-[-0.02em] text-gray-900 leading-none">{v}</div>
-            <div className="text-[10px] text-[#86868b] mt-1">{l}</div>
+            <div className="text-[10px] text-gray-400 mt-1">{l}</div>
           </div>
         ))}
       </div>
-      <div className="text-[10.5px] font-semibold tracking-[0.1em] uppercase text-[#86868b] mb-1.5">
+      <div className="text-[10.5px] font-semibold tracking-[0.1em] uppercase text-gray-400 mb-1.5">
         Continue learning
       </div>
-      <div className="border border-[#e8e8ed] rounded-xl px-3.5 py-3 mb-3">
+      <div className="border border-gray-200 rounded-xl px-3.5 py-3 mb-3">
         <div className="flex items-center justify-between gap-3">
           <div className="text-[12px] font-semibold text-gray-900 truncate">AB-100 · Agentic AI Architect</div>
           <span className="text-[10px] font-semibold text-primary-600 whitespace-nowrap">Continue ›</span>
         </div>
-        <div className="mt-2 h-1 bg-[#f0f0f2] rounded-full overflow-hidden">
+        <div className="mt-2 h-1 bg-gray-100 rounded-full overflow-hidden">
           <div className="h-full w-[68%] bg-primary-600 rounded-full" />
         </div>
       </div>
       <div className="flex gap-1.5 flex-wrap">
         {['✓ Chapter quizzes', '🎧 Narrated', '🏅 Certificate'].map(chip => (
-          <span key={chip} className="text-[10px] font-medium text-[#6e6e73] bg-[#f5f5f7] rounded-full px-2 py-1">
+          <span key={chip} className="text-[10px] font-medium text-gray-500 bg-gray-50 rounded-full px-2 py-1">
             {chip}
           </span>
         ))}
@@ -60,9 +60,9 @@ function DashboardMock() {
 
 function PlayerMock() {
   return (
-    <div className="bg-[#1d1d1f] rounded-2xl overflow-hidden w-full max-w-[400px] select-none" aria-hidden="true">
+    <div className="bg-gray-900 rounded-2xl overflow-hidden w-full max-w-[400px] select-none" aria-hidden="true">
       <div className="px-5 pt-5 pb-4">
-        <div className="text-[9px] font-semibold tracking-[0.14em] uppercase text-[#86868b] mb-2">
+        <div className="text-[9px] font-semibold tracking-[0.14em] uppercase text-gray-400 mb-2">
           Ch 03 · Develop AI strategy
         </div>
         <div className="text-[15px] font-bold text-white leading-snug mb-3">
@@ -75,7 +75,7 @@ function PlayerMock() {
         </div>
       </div>
       <div className="bg-black/40 px-4 py-3 flex items-center gap-2.5">
-        <span className="w-7 h-7 rounded-full bg-white flex items-center justify-center flex-shrink-0">
+        <span className="w-7 h-7 rounded-full bg-raised flex items-center justify-center flex-shrink-0">
           <Play className="w-3 h-3 text-gray-900 ml-px fill-current" />
         </span>
         <div className="relative flex-1 h-1 bg-white/20 rounded-full">
@@ -93,15 +93,15 @@ function PlayerMock() {
 
 function CertificateMock() {
   return (
-    <div className="bg-white rounded-2xl border border-[#e8e8ed] p-5 sm:p-6 w-full max-w-[400px] text-center select-none" aria-hidden="true">
+    <div className="bg-raised rounded-2xl border border-gray-200 p-5 sm:p-6 w-full max-w-[400px] text-center select-none" aria-hidden="true">
       <div className="w-12 h-12 mx-auto rounded-full border-2 border-primary-600 flex items-center justify-center mb-3">
         <span className="text-[16px]">🏅</span>
       </div>
-      <div className="text-[10px] font-semibold tracking-[0.16em] uppercase text-[#86868b]">
+      <div className="text-[10px] font-semibold tracking-[0.16em] uppercase text-gray-400">
         Certificate of completion
       </div>
       <div className="text-[16px] font-bold text-gray-900 mt-1.5">Your Name Here</div>
-      <div className="text-[11px] text-[#6e6e73] mt-0.5 mb-3.5">AB-100 · Agentic AI Architect</div>
+      <div className="text-[11px] text-gray-500 mt-0.5 mb-3.5">AB-100 · Agentic AI Architect</div>
       <div className="inline-block text-[10px] font-medium text-primary-600 bg-primary-100 rounded-full px-3 py-1">
         gennoor.com/verify/GT-████-████
       </div>
@@ -134,7 +134,7 @@ const SLIDES: Slide[] = [
     points: ['Progress saved automatically', 'All courses, one place', 'Certificates in your pocket'],
     cta: { label: 'Open the dashboard', href: '/academy/dashboard' },
     secondary: { label: 'Browse courses ›', href: '/studio' },
-    panel: 'bg-[#1d1d1f]',
+    panel: 'bg-gray-900',
     dark: true,
     Mock: DashboardMock,
   },
@@ -146,7 +146,7 @@ const SLIDES: Slide[] = [
     points: ['Human-quality narration', 'Scrub like YouTube', 'Fullscreen, distraction-free'],
     cta: { label: 'Try a chapter', href: '/ai-academy/ab-100/course-introduction' },
     secondary: { label: 'All courses ›', href: '/studio' },
-    panel: 'bg-[#f5f5f7]',
+    panel: 'bg-gray-50',
     Mock: PlayerMock,
   },
   {
@@ -157,7 +157,7 @@ const SLIDES: Slide[] = [
     points: ['OTP-verified claim', 'Public verification page', 'LinkedIn-ready'],
     cta: { label: 'Start a course', href: '/studio' },
     secondary: { label: 'How the Academy works ›', href: '/studio' },
-    panel: 'bg-white border border-[#e8e8ed]',
+    panel: 'bg-surface border border-gray-200',
     Mock: CertificateMock,
   },
 ]
@@ -212,7 +212,7 @@ export default function AcademyShowcase() {
                     >
                       {slide.title}
                     </h3>
-                    <p className={`text-[15px] leading-[1.55] mt-3 ${slide.dark ? 'text-[#a1a1a6]' : 'text-[#6e6e73]'}`}>
+                    <p className={`text-[15px] leading-[1.55] mt-3 ${slide.dark ? 'text-gray-400' : 'text-gray-500'}`}>
                       {slide.body}
                     </p>
                     <ul className="mt-4 space-y-1.5">
@@ -231,7 +231,7 @@ export default function AcademyShowcase() {
                         <Link
                           href={slide.secondary.href}
                           className={`text-[14px] font-medium ${
-                            slide.dark ? 'text-[#2997ff] hover:text-[#52a8ff]' : 'text-primary-600 hover:text-[#0077ed]'
+                            slide.dark ? 'text-primary-400 hover:text-primary-400' : 'text-primary-600 hover:text-primary-500'
                           }`}
                         >
                           {slide.secondary.label}
@@ -241,7 +241,7 @@ export default function AcademyShowcase() {
                   </div>
                   <div className="flex flex-col items-center gap-2">
                     <Mock />
-                    <span className={`text-[10px] ${slide.dark ? 'text-white/40' : 'text-[#86868b]'}`}>
+                    <span className={`text-[10px] ${slide.dark ? 'text-white/40' : 'text-gray-400'}`}>
                       Product preview
                     </span>
                   </div>
@@ -256,7 +256,7 @@ export default function AcademyShowcase() {
       <div className="flex items-center justify-center gap-3 mt-5">
         <button
           onClick={() => go(index - 1)}
-          className="p-2 rounded-full text-gray-400 hover:text-gray-700 hover:bg-[#f5f5f7] transition-colors"
+          className="p-2 rounded-full text-gray-400 hover:text-gray-700 hover:bg-gray-50 transition-colors"
           aria-label="Previous slide"
         >
           <ChevronLeft className="w-4 h-4" />
@@ -267,7 +267,7 @@ export default function AcademyShowcase() {
               key={s.key}
               onClick={() => go(i)}
               className={`h-1.5 rounded-full transition-all duration-300 ${
-                i === index ? 'w-5 bg-gray-900' : 'w-1.5 bg-[#d2d2d7] hover:bg-[#a1a1a6]'
+                i === index ? 'w-5 bg-gray-900' : 'w-1.5 bg-gray-300 hover:bg-gray-400'
               }`}
               aria-label={`Go to slide ${i + 1}: ${s.kicker}`}
               aria-current={i === index}
@@ -276,7 +276,7 @@ export default function AcademyShowcase() {
         </div>
         <button
           onClick={() => go(index + 1)}
-          className="p-2 rounded-full text-gray-400 hover:text-gray-700 hover:bg-[#f5f5f7] transition-colors"
+          className="p-2 rounded-full text-gray-400 hover:text-gray-700 hover:bg-gray-50 transition-colors"
           aria-label="Next slide"
         >
           <ChevronRight className="w-4 h-4" />

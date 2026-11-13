@@ -253,7 +253,7 @@ export default function AudioPlayer({ audioDir, currentSlide, totalSlides, steps
             <Info className="w-3.5 h-3.5 text-white/60" />
           </button>
           {showInfo && (
-            <div className="absolute right-0 top-full mt-1 w-56 bg-white text-gray-700 rounded-lg shadow-xl p-3 z-50 text-xs space-y-1.5">
+            <div className="absolute right-0 top-full mt-1 w-56 bg-raised text-gray-700 rounded-lg shadow-xl p-3 z-50 text-xs space-y-1.5">
               <div className="flex justify-between mb-2">
                 <span className="font-semibold text-gray-900">Audio Controls</span>
                 <button onClick={() => setShowInfo(false)}><X className="w-3 h-3" /></button>

@@ -21,7 +21,7 @@ export default function FeedbackModal({ onSubmit, onClose }: FeedbackModalProps)
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={onClose} />
-      <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-md p-6 sm:p-8 animate-fade-in">
+      <div className="relative bg-raised rounded-2xl shadow-2xl w-full max-w-md p-6 sm:p-8 animate-fade-in">
         <button onClick={onClose} className="absolute top-4 right-4 p-1.5 hover:bg-gray-100 rounded-full transition-colors">
           <X className="w-4 h-4 text-gray-400" />
         </button>

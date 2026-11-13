@@ -46,7 +46,7 @@ export default function HomeCourses({ courses }: { courses: LmsCourseCard[] }) {
         <div key={c.slug}>
           <LazyPromo c={c} />
           <h3 className="font-heading text-[19px] font-bold tracking-[-0.01em] text-gray-900 mt-5 leading-snug">{c.title}</h3>
-          <p className="text-[14px] text-[#6e6e73] mt-1.5 tabular-nums">
+          <p className="text-[14px] text-gray-500 mt-1.5 tabular-nums">
             {c.lectures} lessons{c.hours ? `, ${c.hours} hours` : ''}
           </p>
         </div>

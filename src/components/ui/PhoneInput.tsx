@@ -197,7 +197,7 @@ export default function PhoneInput({ label, id, value, onChange, required = true
           </button>
 
           {isOpen && (
-            <div className="absolute top-full left-0 mt-1 w-72 bg-white border border-gray-200 rounded-lg shadow-xl z-50 max-h-64 flex flex-col">
+            <div className="absolute top-full left-0 mt-1 w-72 bg-raised border border-gray-200 rounded-lg shadow-xl z-50 max-h-64 flex flex-col">
               {/* Search */}
               <div className="p-2 border-b border-gray-100">
                 <div className="relative">

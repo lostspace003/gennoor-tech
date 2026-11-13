@@ -33,7 +33,7 @@ export default function AuthorByline({ author, date, readTime, variant = 'hero' 
     <div className="flex items-center gap-3">
       <Avatar author={author} size={44} onDark />
       <div className="min-w-0">
-        <p className="text-sm font-semibold" style={{ color: '#ffffff' }}>
+        <p className="text-sm font-semibold" style={{ color: '#fff' }}>
           <Link
             href={author.links.about || '/about'}
             className="hover:underline"

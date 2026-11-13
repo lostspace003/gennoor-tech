@@ -98,7 +98,7 @@ export default function EnquiryFormModal({
 
       {/* Modal - Scrollable container */}
       <div className="relative z-10 w-full max-w-md my-8">
-        <div className="bg-white rounded-lg shadow-xl max-h-[90vh] flex flex-col overflow-hidden">
+        <div className="bg-raised rounded-lg shadow-xl max-h-[90vh] flex flex-col overflow-hidden">
           {/* Header - Fixed */}
           <div className="flex items-center justify-between p-6 border-b flex-shrink-0 bg-primary-50">
             <div>

@@ -34,15 +34,15 @@ export default function ProfileSetupGate({ onComplete }: { onComplete?: () => vo
   return (
     <div className="fixed inset-0 z-[70] flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-black/45 backdrop-blur-sm" />
-      <div className="relative bg-white rounded-[22px] shadow-2xl w-full max-w-[440px] max-h-[92vh] overflow-y-auto animate-fade-in">
+      <div className="relative bg-raised rounded-[22px] shadow-2xl w-full max-w-[440px] max-h-[92vh] overflow-y-auto animate-fade-in">
         <div className="px-7 pt-8 pb-7">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[#86868b] mb-2">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-gray-400 mb-2">
             Learning Studio
           </p>
           <h2 className="text-[22px] font-bold tracking-[-0.02em] text-gray-900 leading-tight">
             Complete your profile
           </h2>
-          <p className="text-[13.5px] leading-[1.5] text-[#6e6e73] mt-1.5 mb-5">
+          <p className="text-[13.5px] leading-[1.5] text-gray-500 mt-1.5 mb-5">
             One quick step before you start. These details appear on your certificates
             and let you sign back in from any device.
           </p>

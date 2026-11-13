@@ -32,9 +32,9 @@ export default function AcademyPage() {
       {/* Hero — leads with the Academy's positioning, same promise as
           /academy, before narrowing to the interactive format below. */}
       <section className="relative py-6 lg:py-8 overflow-hidden">
-        <div className="absolute inset-0 bg-white" />
+        <div className="absolute inset-0 bg-raised" />
         <div className="absolute inset-0" />
-        <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-white to-transparent" />
+        <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-surface to-transparent" />
         <div className="relative container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-3xl mx-auto text-center">
             <div className="mb-6 flex justify-center"><AcademySwitch active="essentials" /></div>
@@ -100,7 +100,7 @@ export default function AcademyPage() {
                 description: 'Every course ends in a capstone — a one-page roadmap, plan, or production-grade artifact applied to your context.',
               },
             ].map(item => (
-              <div key={item.step} className="text-center p-6 rounded-2xl bg-white border border-gray-200/70 shadow-sm">
+              <div key={item.step} className="text-center p-6 rounded-2xl bg-raised border border-gray-200/70 shadow-sm">
                 <div className="relative inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-primary-100 mb-4">
                   <item.icon className="w-7 h-7 text-primary-600" />
                   <span className="absolute -top-2 -right-2 w-7 h-7 bg-gray-400 text-gray-900 text-xs font-bold rounded-full flex items-center justify-center">

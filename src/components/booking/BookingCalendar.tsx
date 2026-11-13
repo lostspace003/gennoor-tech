@@ -450,7 +450,7 @@ export default function BookingCalendar() {
                         ${
                           selectedSlot === slot
                             ? 'bg-primary-600 text-white border-primary-600'
-                            : 'bg-white text-gray-700 border-gray-200 hover:border-primary-400 hover:text-primary-700'
+                            : 'bg-surface text-gray-700 border-gray-200 hover:border-primary-400 hover:text-primary-700'
                         }
                       `}
                     >

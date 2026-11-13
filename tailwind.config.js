@@ -1,81 +1,42 @@
 /** @type {import('tailwindcss').Config} */
 
 /**
- * ── Gennoor "iCloud-calm" palette ───────────────────────────────────────────
+ * ── Gennoor palette ─────────────────────────────────────────────────────────
  *
- * One neutral ramp + one accent. Everything else is a *muted* semantic ramp
- * that exists only so genuine status text stays legible — never so a page can
- * be decorated with it.
+ * Every colour here is a CSS variable, not a fixed value. The values live in
+ * src/styles/globals.css, twice:
  *
- * The source now names only five families: gray, primary, green, amber, red.
- * The decorative families below (purple, teal, indigo, pink, …) are no longer
- * referenced anywhere — they are kept, re-pointed at the system, purely as a
- * **guardrail**. Delete them and Tailwind's own vivid defaults come back, so a
- * stray `bg-purple-500` would silently punch a hole in the palette instead of
- * quietly resolving to grey.
+ *   :root    "paper": the light values. The admin centre, the CRM and the
+ *            lesson players use these.
+ *   .stage   "the stage": the dark values of the public website, the same look
+ *            as the presentation and the films (see docs/DESIGN.md).
  *
- * Adding a new colour here should feel like a big decision. It is.
+ * So `text-gray-900` is near-black on paper and near-white on the stage, and
+ * `bg-gray-50` is a soft panel in both. A page never has to know which one it
+ * is on. Two rules follow from that:
+ *
+ *  1. Write colours with these names (`text-gray-500`), never as a hex in
+ *     square brackets (`text-[#6e6e73]`): a hex cannot change with the theme.
+ *  2. `gray` is a ramp of roles, not of lightness: 50/100 are panels, 200/300
+ *     hairlines, 400-600 secondary text, 900 primary text. For a surface use
+ *     `bg-surface` (the page) or `bg-raised` (a card); for a block that stays
+ *     dark on both themes use `bg-inverse`.
+ *
+ * The source names only five families: gray, primary, green, amber, red. The
+ * other names (purple, teal, indigo, pink, ...) are kept, pointed at the system,
+ * as a guardrail: delete them and Tailwind's own vivid defaults come back.
  */
+const STEPS = [50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950]
+const v = (name) => `rgb(var(--${name}) / <alpha-value>)`
+const ramp = (family) => Object.fromEntries(STEPS.map((step) => [step, v(`${family}-${step}`)]))
 
-/**
- * Apple system neutrals.
- *
- * Two constraints drove the exact values, and both are easy to break:
- *
- *  1. `gray-50` is the panel surface (~185 usages: heroes, alternating
- *     sections, soft cards). It must be *visible* against white. At #fbfbfd
- *     it was a 1.03 contrast ratio — imperceptible — and the whole page
- *     collapsed into one flat white blur. #f5f5f7 is iCloud's actual sidebar
- *     grey and reads as a panel. Do not lighten it.
- *  2. `gray-400` is tertiary text (~285 usages). Below #8e8e93 it drops
- *     under 3:1 on white and stops being legible.
- */
-const neutral = {
-  50: '#f5f5f7',   // panel — the iCloud surface
-  100: '#ebebef',  // deeper panel / row hover
-  200: '#e0e0e5',  // hairline
-  300: '#c7c7cc',  // strong hairline
-  400: '#8e8e93',  // tertiary ink  (3.5:1 on white)
-  500: '#6e6e73',  // secondary ink (5.1:1)
-  600: '#545458',  // body ink      (7.4:1)
-  700: '#3a3a3c',
-  800: '#2c2c2e',
-  900: '#1d1d1f',  // primary ink
-  950: '#000000',
-}
-
-// The single accent. Used for links, active nav, and primary buttons. Nothing else.
-const accentBlue = {
-  50: '#f0f7ff',
-  100: '#e8f0fe',
-  200: '#cfe3fd',
-  300: '#a6cbfa',
-  400: '#5aa9f3',
-  500: '#1a8cf0',
-  600: '#0071e3',
-  700: '#0058b0',
-  800: '#004488',
-  900: '#00336b',
-  950: '#002450',
-}
-
-// Muted semantics. Tints (50/100) sit a hair off white so old `bg-green-50`
-// panels read as paper, while 600/700 stays dark enough for accessible text.
-const ok = {
-  50: '#f3f8f4', 100: '#e4efe8', 200: '#c6dfcf', 300: '#98c6a7',
-  400: '#5fa77a', 500: '#318f56', 600: '#1d8348', 700: '#17663a',
-  800: '#14512f', 900: '#113f27', 950: '#0b2a1a',
-}
-const warn = {
-  50: '#fbf8f0', 100: '#f5eeda', 200: '#e9dcb3', 300: '#d8c283',
-  400: '#c2a455', 500: '#a98634', 600: '#9a6700', 700: '#7c5400',
-  800: '#63430a', 900: '#52380c', 950: '#372408',
-}
-const err = {
-  50: '#fdf4f3', 100: '#fbe7e5', 200: '#f4cbc7', 300: '#eaa59d',
-  400: '#d9746a', 500: '#ca4d41', 600: '#c0392b', 700: '#9b2c21',
-  800: '#7d251c', 900: '#682019', 950: '#3f120e',
-}
+const neutral = ramp('gray')
+// The single accent: links, the selected row in the menu, the main button.
+const accentBlue = ramp('primary')
+// Muted meanings: done, take care, something is wrong.
+const ok = ramp('green')
+const warn = ramp('amber')
+const err = ramp('red')
 
 module.exports = {
   content: [
@@ -124,6 +85,12 @@ module.exports = {
         success: ok[600],
         warning: warn[600],
         error: err[600],
+
+        // ── Surfaces ────────────────────────────────────────────────
+        // The page itself, a card lifted off it, and a block that is dark on both themes.
+        surface: v('surface'),
+        raised: v('raised'),
+        inverse: v('inverse'),
       },
       fontFamily: {
         // Apple system stack — the whole site sets type in the platform's own face.
@@ -134,8 +101,8 @@ module.exports = {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
         'gradient-conic': 'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
         // Flattened: the old brand gradients now resolve to solid accent/paper.
-        'gradient-primary': accentBlue[600],
-        'gradient-glass': neutral[50],
+        'gradient-primary': 'linear-gradient(rgb(var(--primary-600)), rgb(var(--primary-600)))',
+        'gradient-glass': 'linear-gradient(rgb(var(--gray-50)), rgb(var(--gray-50)))',
         'gradient-glow': 'none',
         'gradient-ambient': 'none',
         'gradient-mesh': 'none',

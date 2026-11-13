@@ -55,10 +55,10 @@ export default function FilmPlayer({ src, poster, title, transcript, seconds, to
 
   const length = seconds ? `${Math.floor(seconds / 60)}:${String(Math.round(seconds % 60)).padStart(2, '0')}` : ''
   const glow = tone === 'gold' ? 'shadow-[0_30px_80px_-24px_rgba(245,166,35,.55)]' : 'shadow-[0_30px_80px_-24px_rgba(10,108,255,.55)]'
-  const button = tone === 'gold' ? 'bg-[#ffc24b] text-[#2a1a00] hover:bg-[#ffd06b]' : 'bg-white text-[#0b1220] hover:bg-[#eef4ff]'
+  const button = tone === 'gold' ? 'bg-[#ffc24b] text-[#2a1a00] hover:bg-[#ffd06b]' : 'bg-[#fff] text-[#0b1220] hover:bg-[#e8f1ff]'
 
   return (
-    <div className={`relative aspect-video overflow-hidden rounded-[22px] bg-[#060914] ring-1 ring-black/10 ${glow} ${className}`}>
+    <div className={`relative aspect-video overflow-hidden rounded-[22px] bg-[#060914] ring-1 ring-white/15 ${glow} ${className}`}>
       <video
         ref={video}
         src={src}

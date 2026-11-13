@@ -58,5 +58,5 @@ export default function CircleTransition() {
 
   useEffect(() => { if (waiting.current) setTimeout(reveal, 60) }, [path])
 
-  return <div ref={veil} aria-hidden style={{ visibility: 'hidden', clipPath: 'circle(0px at 0 0)' }} className="fixed inset-0 z-[9999] pointer-events-none bg-[#f5f5f7]" />
+  return <div ref={veil} aria-hidden style={{ visibility: 'hidden', clipPath: 'circle(0px at 0 0)' }} className="fixed inset-0 z-[9999] pointer-events-none bg-gray-50" />
 }

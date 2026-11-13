@@ -643,7 +643,7 @@ const ChapterAudioControls = forwardRef<ChapterAudioControlsHandle, ChapterAudio
           disabled={!audioReady}
           className={`h-9 min-w-9 sm:pr-3 sm:pl-2 rounded-full flex items-center justify-center gap-1.5 flex-shrink-0 text-[13px] font-semibold transition-colors ${
             audioReady
-              ? 'bg-white text-gray-900 hover:bg-[#e8e8ed]'
+              ? 'bg-surface text-gray-900 hover:bg-gray-100'
               : 'bg-white/20 text-white/40 cursor-not-allowed'
           }`}
           title={isPlaying ? 'Pause (Space)' : 'Play (Space)'}
@@ -704,7 +704,7 @@ const ChapterAudioControls = forwardRef<ChapterAudioControlsHandle, ChapterAudio
               />
             ))}
             <span
-              className={`absolute top-1/2 -translate-y-1/2 w-3 h-3 rounded-full bg-white shadow transition-opacity ${
+              className={`absolute top-1/2 -translate-y-1/2 w-3 h-3 rounded-full bg-raised shadow transition-opacity ${
                 scrubbing ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'
               }`}
               style={{ left: `calc(${progressRatio * 100}% - 6px)` }}
@@ -732,7 +732,7 @@ const ChapterAudioControls = forwardRef<ChapterAudioControlsHandle, ChapterAudio
             {muted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
           </button>
           {showVolume && !muted && (
-            <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-2.5 rounded-lg bg-[#1d1d1f] shadow-xl border border-white/10 flex flex-col items-center gap-1.5 z-50">
+            <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-2.5 rounded-lg bg-gray-900 shadow-xl border border-white/10 flex flex-col items-center gap-1.5 z-50">
               <span className="text-[10px] text-white/70 tabular-nums whitespace-nowrap">{volume}%</span>
               <input
                 type="range"

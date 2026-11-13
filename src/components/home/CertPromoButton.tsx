@@ -39,13 +39,13 @@ export default function CertPromoButton() {
           try { sessionStorage.setItem('cert-promo-dismissed', '1') } catch { /* ignore */ }
           setHidden(true)
         }}
-        className="absolute -top-1.5 -left-1.5 z-10 w-5 h-5 rounded-full bg-white border border-[#d2d2d7] text-[#86868b] text-[10px] leading-none items-center justify-center shadow-sm hidden group-hover:flex hover:text-[#1d1d1f]"
+        className="absolute -top-1.5 -left-1.5 z-10 w-5 h-5 rounded-full bg-raised border border-gray-300 text-gray-400 text-[10px] leading-none items-center justify-center shadow-sm hidden group-hover:flex hover:text-gray-900"
       >
         ✕
       </button>
       <Link
         href="/claude/certifications"
-        className="flex items-center gap-0 rounded-full bg-white border border-[#e0e0e5] shadow-lg pl-1.5 pr-1.5 py-1.5 group-hover:pr-5 transition-all duration-300"
+        className="flex items-center gap-0 rounded-full bg-raised border border-gray-200 shadow-lg pl-1.5 pr-1.5 py-1.5 group-hover:pr-5 transition-all duration-300"
         aria-label="Claude certification prep"
       >
         {/* Rotating ring + spark core */}
@@ -68,9 +68,9 @@ export default function CertPromoButton() {
         </span>
         {/* Label: hidden until hover/focus */}
         <span className="max-w-0 group-hover:max-w-[230px] overflow-hidden transition-all duration-300 whitespace-nowrap">
-          <span className="pl-3 text-[13.5px] font-semibold text-[#1d1d1f]">
+          <span className="pl-3 text-[13.5px] font-semibold text-gray-900">
             Claude Certification Prep
-            <span className="block text-[11px] font-normal text-[#86868b]">4 exams · free courses ›</span>
+            <span className="block text-[11px] font-normal text-gray-400">4 exams · free courses ›</span>
           </span>
         </span>
       </Link>

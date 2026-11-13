@@ -111,10 +111,10 @@ export default async function TrainingProgramPage({ params }: Props) {
                 <span className="inline-flex items-center px-3 py-1 bg-primary-50 text-primary-700 ring-1 ring-primary-100 rounded-full text-xs font-semibold">
                   {program.category === 'bootcamp' ? 'Bootcamp' : 'Course'}
                 </span>
-                <span className="inline-flex items-center px-3 py-1 bg-white/80 ring-1 ring-gray-200 text-gray-700 rounded-full text-xs font-semibold">
+                <span className="inline-flex items-center px-3 py-1 bg-surface/80 ring-1 ring-gray-200 text-gray-700 rounded-full text-xs font-semibold">
                   {program.level}
                 </span>
-                <span className="inline-flex items-center px-3 py-1 bg-white/80 ring-1 ring-gray-200 text-gray-700 rounded-full text-xs font-semibold">
+                <span className="inline-flex items-center px-3 py-1 bg-surface/80 ring-1 ring-gray-200 text-gray-700 rounded-full text-xs font-semibold">
                   {program.technology}
                 </span>
               </div>
@@ -127,22 +127,22 @@ export default async function TrainingProgramPage({ params }: Props) {
               </p>
 
               <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-8">
-                <div className="bg-white/80 backdrop-blur-sm ring-1 ring-gray-200 rounded-xl p-4 text-center">
+                <div className="bg-surface/80 backdrop-blur-sm ring-1 ring-gray-200 rounded-xl p-4 text-center">
                   <Clock className="w-5 h-5 text-primary-600 mx-auto mb-2" />
                   <div className="text-sm font-bold text-gray-900">{program.duration}</div>
                   <div className="text-gray-500 text-xs">Duration</div>
                 </div>
-                <div className="bg-white/80 backdrop-blur-sm ring-1 ring-gray-200 rounded-xl p-4 text-center">
+                <div className="bg-surface/80 backdrop-blur-sm ring-1 ring-gray-200 rounded-xl p-4 text-center">
                   <Users className="w-5 h-5 text-primary-600 mx-auto mb-2" />
                   <div className="text-sm font-bold text-gray-900">5-15</div>
                   <div className="text-gray-500 text-xs">Batch Size</div>
                 </div>
-                <div className="bg-white/80 backdrop-blur-sm ring-1 ring-gray-200 rounded-xl p-4 text-center">
+                <div className="bg-surface/80 backdrop-blur-sm ring-1 ring-gray-200 rounded-xl p-4 text-center">
                   <Award className="w-5 h-5 text-primary-600 mx-auto mb-2" />
                   <div className="text-sm font-bold text-gray-900">{program.certification === 'No' ? 'Practical' : (program.certCode ?? 'Cert-Aligned')}</div>
                   <div className="text-gray-500 text-xs">Certification</div>
                 </div>
-                <div className="bg-white/80 backdrop-blur-sm ring-1 ring-gray-200 rounded-xl p-4 text-center">
+                <div className="bg-surface/80 backdrop-blur-sm ring-1 ring-gray-200 rounded-xl p-4 text-center">
                   <Globe className="w-5 h-5 text-primary-600 mx-auto mb-2" />
                   <div className="text-sm font-bold text-gray-900">Global</div>
                   <div className="text-gray-500 text-xs">Delivery</div>
@@ -188,19 +188,19 @@ export default async function TrainingProgramPage({ params }: Props) {
             <div className="max-w-4xl mx-auto">
               <h2 className="text-3xl font-bold text-gray-900 mb-8">Program Details</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-200/70">
+                <div className="bg-raised rounded-2xl p-6 shadow-sm border border-gray-200/70">
                   <h3 className="text-lg font-semibold text-gray-900 mb-4">Target Audience</h3>
                   <p className="text-gray-600">{program.audience}</p>
                 </div>
-                <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-200/70">
+                <div className="bg-raised rounded-2xl p-6 shadow-sm border border-gray-200/70">
                   <h3 className="text-lg font-semibold text-gray-900 mb-4">Skill Level</h3>
                   <p className="text-gray-600">{program.level} — {program.level === 'Executive' ? 'No technical prerequisites' : program.level === 'Beginner' ? 'Basic IT knowledge' : program.level === 'Intermediate' ? 'Foundational knowledge in the domain' : 'Strong technical background required'}</p>
                 </div>
-                <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-200/70">
+                <div className="bg-raised rounded-2xl p-6 shadow-sm border border-gray-200/70">
                   <h3 className="text-lg font-semibold text-gray-900 mb-4">Technology Platform</h3>
                   <p className="text-gray-600">{program.technology}</p>
                 </div>
-                <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-200/70">
+                <div className="bg-raised rounded-2xl p-6 shadow-sm border border-gray-200/70">
                   <h3 className="text-lg font-semibold text-gray-900 mb-4">Industry Focus</h3>
                   <p className="text-gray-600">{program.industry}</p>
                 </div>
@@ -215,21 +215,21 @@ export default async function TrainingProgramPage({ params }: Props) {
             <div className="max-w-4xl mx-auto">
               <h2 className="text-3xl font-bold text-gray-900 mb-8">Delivery Format</h2>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div className="text-center p-6 bg-white rounded-2xl shadow-sm border border-gray-200/70">
+                <div className="text-center p-6 bg-raised rounded-2xl shadow-sm border border-gray-200/70">
                   <div className="w-14 h-14 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-4">
                     <Users className="w-7 h-7 text-primary-600" />
                   </div>
                   <h3 className="font-semibold text-gray-900 mb-2">On-Site Training</h3>
                   <p className="text-sm text-gray-600">Instructor-led classroom sessions at your location or ours</p>
                 </div>
-                <div className="text-center p-6 bg-white rounded-2xl shadow-sm border border-gray-200/70">
+                <div className="text-center p-6 bg-raised rounded-2xl shadow-sm border border-gray-200/70">
                   <div className="w-14 h-14 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-4">
                     <Globe className="w-7 h-7 text-primary-600" />
                   </div>
                   <h3 className="font-semibold text-gray-900 mb-2">Live Virtual</h3>
                   <p className="text-sm text-gray-600">Interactive online sessions with hands-on labs and breakout rooms</p>
                 </div>
-                <div className="text-center p-6 bg-white rounded-2xl shadow-sm border border-gray-200/70">
+                <div className="text-center p-6 bg-raised rounded-2xl shadow-sm border border-gray-200/70">
                   <div className="w-14 h-14 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-4">
                     <Zap className="w-7 h-7 text-primary-600" />
                   </div>
@@ -285,7 +285,7 @@ export default async function TrainingProgramPage({ params }: Props) {
             <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">Frequently Asked Questions</h2>
             <div className="max-w-3xl mx-auto space-y-6">
               {faqs.map((faq) => (
-                <div key={faq.question} className="bg-white rounded-2xl p-6 shadow-sm border border-gray-200/70">
+                <div key={faq.question} className="bg-raised rounded-2xl p-6 shadow-sm border border-gray-200/70">
                   <h3 className="text-lg font-semibold text-gray-900 mb-2">{faq.question}</h3>
                   <p className="text-gray-600">{faq.answer}</p>
                 </div>
@@ -304,7 +304,7 @@ export default async function TrainingProgramPage({ params }: Props) {
                   <Link
                     key={rp.slug}
                     href={`/services/training/${rp.slug}`}
-                    className="bg-white rounded-2xl p-6 shadow-sm border border-gray-200/70 hover:shadow-md transition-shadow group"
+                    className="bg-raised rounded-2xl p-6 shadow-sm border border-gray-200/70 hover:shadow-md transition-shadow group"
                   >
                     <div className="flex items-center gap-2 mb-3">
                       <span className="px-2 py-1 bg-primary-50 text-primary-700 text-xs font-medium rounded-full">

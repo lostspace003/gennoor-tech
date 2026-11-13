@@ -26,7 +26,7 @@ const ago = (iso: string) => {
 }
 
 const KIND_LABEL: Record<Kind, { label: string; Icon: typeof Megaphone; cls: string }> = {
-  topic: { label: 'Topic', Icon: MessageSquare, cls: 'bg-[#f5f5f7] text-[#6e6e73]' },
+  topic: { label: 'Topic', Icon: MessageSquare, cls: 'bg-gray-50 text-gray-500' },
   announcement: { label: 'Announcement', Icon: Megaphone, cls: 'bg-amber-50 text-amber-800' },
   poll: { label: 'Poll', Icon: BarChart3, cls: 'bg-primary-50 text-primary-700' },
   quiz: { label: 'Quiz', Icon: HelpCircle, cls: 'bg-emerald-50 text-emerald-800' },
@@ -44,7 +44,7 @@ function Author({ p }: { p: Post }) {
       <span className={`w-7 h-7 rounded-full flex items-center justify-center text-[12px] font-semibold ${p.isTeam ? 'bg-primary-600 text-white' : 'bg-primary-50 text-primary-700'}`}>{p.author.charAt(0)}</span>
       <span className="text-[13.5px] font-semibold text-gray-900">{p.author}</span>
       {p.isTeam && <span className="text-[11px] font-semibold text-primary-700 bg-primary-50 rounded-full px-2 py-0.5">Team</span>}
-      <span className="text-[12.5px] text-[#86868b]">{ago(p.createdAt)}</span>
+      <span className="text-[12.5px] text-gray-400">{ago(p.createdAt)}</span>
     </span>
   )
 }
@@ -68,22 +68,22 @@ function Choices({ p, canVote, onVote }: { p: Post; canVote: boolean; onVote: (o
           <button
             key={i} type="button" disabled={!canVote || (quiz && answered) || p.closed} onClick={() => onVote(i)}
             className={`relative w-full text-left rounded-xl border px-4 py-2.5 text-[14.5px] overflow-hidden transition-colors ${
-              right ? 'border-emerald-500 bg-emerald-50' : wrong ? 'border-red-400 bg-red-50' : mine ? 'border-primary-600 bg-primary-50' : 'border-[#d2d2d7] bg-white hover:border-primary-600'} disabled:cursor-default`}
+              right ? 'border-emerald-500 bg-emerald-50' : wrong ? 'border-red-400 bg-red-50' : mine ? 'border-primary-600 bg-primary-50' : 'border-gray-300 bg-raised hover:border-primary-600'} disabled:cursor-default`}
           >
             {showBars && !quiz && <span className="absolute inset-y-0 left-0 bg-primary-100/70" style={{ width: `${pct}%` }} aria-hidden />}
             <span className="relative flex items-center justify-between gap-3">
               <span className="flex items-center gap-2 text-gray-900">
                 {right && <Check className="w-4 h-4 text-emerald-600" />}{wrong && <X className="w-4 h-4 text-red-500" />}{o}
               </span>
-              {showBars && <span className="text-[12.5px] text-[#6e6e73]">{pct}%</span>}
+              {showBars && <span className="text-[12.5px] text-gray-500">{pct}%</span>}
             </span>
           </button>
         )
       })}
-      <p className="text-[12.5px] text-[#86868b]">
+      <p className="text-[12.5px] text-gray-400">
         {r.total} {r.total === 1 ? 'answer' : 'answers'}{p.closed ? ' · closed' : quiz && !answered ? ' · pick one to see the answer' : !quiz && answered ? ' · you can change your vote' : ''}
       </p>
-      {quiz && answered && r.explanation && <p className="text-[14px] text-[#3a3a3f] bg-[#f5f6f8] rounded-xl px-4 py-3">{r.explanation}</p>}
+      {quiz && answered && r.explanation && <p className="text-[14px] text-gray-700 bg-gray-50 rounded-xl px-4 py-3">{r.explanation}</p>}
     </div>
   )
 }
@@ -177,7 +177,7 @@ export default function Discussion({ scope, emptyText, signedIn = true }: { scop
   }
   const Like = ({ p }: { p: Post }) => (
     <button type="button" onClick={e => { e.stopPropagation(); like(p.id) }} aria-pressed={!!p.liked} aria-label={p.liked ? 'Unlike' : 'Like'}
-      className={`inline-flex items-center gap-1 text-[13px] ${p.liked ? 'text-rose-600' : 'text-[#86868b] hover:text-gray-900'}`}>
+      className={`inline-flex items-center gap-1 text-[13px] ${p.liked ? 'text-rose-600' : 'text-gray-400 hover:text-gray-900'}`}>
       <Heart className="w-4 h-4" fill={p.liked ? 'currentColor' : 'none'} strokeWidth={1.8} />{p.likes ? p.likes : ''}
     </button>
   )
@@ -186,10 +186,10 @@ export default function Discussion({ scope, emptyText, signedIn = true }: { scop
   )
   // Posts written before the editor existed have plain text only.
   const Body = ({ p, big }: { p: Post; big?: boolean }) => p.html
-    ? <RichText html={p.html} className={`${big ? 'text-[15.5px] leading-[1.65]' : 'text-[15px] leading-[1.6]'} text-[#3a3a3f]`} />
-    : <p className={`${big ? 'text-[15.5px] leading-[1.65]' : 'text-[15px] leading-[1.6]'} text-[#3a3a3f] whitespace-pre-line`}>{p.body}</p>
+    ? <RichText html={p.html} className={`${big ? 'text-[15.5px] leading-[1.65]' : 'text-[15px] leading-[1.6]'} text-gray-700`} />
+    : <p className={`${big ? 'text-[15.5px] leading-[1.65]' : 'text-[15px] leading-[1.6]'} text-gray-700 whitespace-pre-line`}>{p.body}</p>
 
-  const FIELD = 'w-full border border-[#d2d2d7] rounded-xl px-3.5 py-2.5 text-[14.5px] text-gray-900 focus:outline-none focus:border-primary-600'
+  const FIELD = 'w-full border border-gray-300 rounded-xl px-3.5 py-2.5 text-[14.5px] text-gray-900 focus:outline-none focus:border-primary-600'
 
   const authModal = (
     <LearnerAuthModal
@@ -209,18 +209,18 @@ export default function Discussion({ scope, emptyText, signedIn = true }: { scop
         <article className="mt-4">
           <div className="flex items-center gap-2"><KindBadge kind={t.kind} /></div>
           <h2 className="font-heading text-[24px] font-bold tracking-[-0.02em] text-gray-900 mt-1">{t.title}</h2>
-          <div className="mt-3 flex items-center justify-between"><Author p={t} /><span className="inline-flex items-center gap-2"><Like p={t} />{(t.mine || isAdmin) && <button type="button" aria-label="Delete topic" onClick={() => remove(t.id, true)} className="p-1.5 text-[#86868b] hover:text-red-600"><Trash2 className="w-4 h-4" /></button>}</span></div>
+          <div className="mt-3 flex items-center justify-between"><Author p={t} /><span className="inline-flex items-center gap-2"><Like p={t} />{(t.mine || isAdmin) && <button type="button" aria-label="Delete topic" onClick={() => remove(t.id, true)} className="p-1.5 text-gray-400 hover:text-red-600"><Trash2 className="w-4 h-4" /></button>}</span></div>
           <div className="mt-3"><Body p={t} big /></div>
           <Choices p={t} canVote={signedIn} onVote={o => vote(t.id, o)} />
-          {!signedIn && (t.kind === 'poll' || t.kind === 'quiz') && <p className="mt-2 text-[13px] text-[#6e6e73]">Sign in to answer.</p>}
+          {!signedIn && (t.kind === 'poll' || t.kind === 'quiz') && <p className="mt-2 text-[13px] text-gray-500">Sign in to answer.</p>}
           {isAdmin && (
-            <div className="mt-4 max-w-[560px] rounded-xl border border-dashed border-primary-300 bg-primary-50/40 px-4 py-3 text-[13px] text-[#3a3a3f]">
+            <div className="mt-4 max-w-[560px] rounded-xl border border-dashed border-primary-300 bg-primary-50/40 px-4 py-3 text-[13px] text-gray-700">
               <p className="inline-flex items-center gap-1.5 font-semibold text-primary-700"><ShieldCheck className="w-3.5 h-3.5" />Admin</p>
               <div className="mt-2 flex flex-wrap gap-2">
                 {(t.kind === 'poll' || t.kind === 'quiz') && (
-                  <button type="button" onClick={() => adminAct(t.id, t.closed ? 'reopen' : 'close')} className="inline-flex items-center gap-1 rounded-full border border-[#d2d2d7] bg-white px-3 py-1 hover:border-primary-600"><Lock className="w-3.5 h-3.5" />{t.closed ? 'Reopen' : 'Close'}</button>
+                  <button type="button" onClick={() => adminAct(t.id, t.closed ? 'reopen' : 'close')} className="inline-flex items-center gap-1 rounded-full border border-gray-300 bg-raised px-3 py-1 hover:border-primary-600"><Lock className="w-3.5 h-3.5" />{t.closed ? 'Reopen' : 'Close'}</button>
                 )}
-                <button type="button" onClick={() => adminAct(t.id, 'hide')} className="inline-flex items-center gap-1 rounded-full border border-[#d2d2d7] bg-white px-3 py-1 hover:border-primary-600"><EyeOff className="w-3.5 h-3.5" />Hide</button>
+                <button type="button" onClick={() => adminAct(t.id, 'hide')} className="inline-flex items-center gap-1 rounded-full border border-gray-300 bg-raised px-3 py-1 hover:border-primary-600"><EyeOff className="w-3.5 h-3.5" />Hide</button>
               </div>
               {open.adminResults && open.adminResults.voters.length > 0 && (
                 <ul className="mt-3 space-y-0.5">
@@ -232,16 +232,16 @@ export default function Discussion({ scope, emptyText, signedIn = true }: { scop
           {error && <p className="mt-3 text-[13px] text-red-600">{error}</p>}
         </article>
         <h3 className="mt-10 mb-2 text-[14px] font-semibold text-gray-900">{open.replies.length} {open.replies.length === 1 ? 'reply' : 'replies'}</h3>
-        <ul className="divide-y divide-[#e8e8ed] border-t border-[#e8e8ed]">
+        <ul className="divide-y divide-gray-200 border-t border-gray-200">
           {open.replies.map(p => (
             <li key={p.id} className={`py-4 ${p.isTeam ? 'bg-primary-50/50 -mx-3 px-3 rounded-lg' : ''}`}>
-              <div className="flex items-center justify-between"><Author p={p} /><span className="inline-flex items-center gap-2"><Like p={p} />{(p.mine || isAdmin) && <button type="button" aria-label="Delete reply" onClick={() => remove(p.id, false)} className="p-1.5 text-[#86868b] hover:text-red-600"><Trash2 className="w-4 h-4" /></button>}</span></div>
+              <div className="flex items-center justify-between"><Author p={p} /><span className="inline-flex items-center gap-2"><Like p={p} />{(p.mine || isAdmin) && <button type="button" aria-label="Delete reply" onClick={() => remove(p.id, false)} className="p-1.5 text-gray-400 hover:text-red-600"><Trash2 className="w-4 h-4" /></button>}</span></div>
               <div className="mt-2"><Body p={p} /></div>
             </li>
           ))}
         </ul>
         {!signedIn ? (
-          <div className="mt-6 rounded-2xl bg-[#f5f6f8] p-5 flex flex-wrap items-center gap-4">
+          <div className="mt-6 rounded-2xl bg-gray-50 p-5 flex flex-wrap items-center gap-4">
             <p className="text-[14.5px] text-gray-900">Sign in to Learning Studio to reply or like.</p>
             <SignInButton label="Sign in" />
           </div>
@@ -263,13 +263,13 @@ export default function Discussion({ scope, emptyText, signedIn = true }: { scop
   return (
     <div>
       {!signedIn ? (
-        <div className="rounded-2xl bg-[#f5f6f8] p-5 flex flex-wrap items-center gap-4 max-w-[640px]">
+        <div className="rounded-2xl bg-gray-50 p-5 flex flex-wrap items-center gap-4 max-w-[640px]">
           <SignInButton label="Sign in to join" />
         </div>
       ) : !composing ? (
         <div className="flex flex-wrap gap-3">
           <button type="button" onClick={() => setComposing('topic')} className="pill-primary">Start a topic</button>
-          <button type="button" onClick={() => setComposing('poll')} className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-full border border-[#d2d2d7] text-[14.5px] font-medium text-gray-900 hover:border-primary-600"><BarChart3 className="w-4 h-4" />Create a poll</button>
+          <button type="button" onClick={() => setComposing('poll')} className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-full border border-gray-300 text-[14.5px] font-medium text-gray-900 hover:border-primary-600"><BarChart3 className="w-4 h-4" />Create a poll</button>
           {isAdmin && (
             <>
               <button type="button" onClick={() => setComposing('announcement')} className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-full border border-amber-300 bg-amber-50 text-[14.5px] font-medium text-amber-900 hover:border-amber-500"><Megaphone className="w-4 h-4" />Announcement</button>
@@ -279,7 +279,7 @@ export default function Discussion({ scope, emptyText, signedIn = true }: { scop
           )}
         </div>
       ) : (
-        <form onSubmit={newTopic} className="rounded-2xl bg-[#f5f6f8] p-5 space-y-3 max-w-[680px]">
+        <form onSubmit={newTopic} className="rounded-2xl bg-gray-50 p-5 space-y-3 max-w-[680px]">
           <input value={title} onChange={e => setTitle(e.target.value)} maxLength={140} placeholder={composing === 'poll' || composing === 'quiz' ? 'Your question' : composing === 'announcement' ? 'Announcement title' : 'Topic title'} aria-label="Title" className={FIELD} />
           <RichEditor value={html} onChange={setHtml} placeholder={composing === 'poll' || composing === 'quiz' ? 'Add some context (optional)' : composing === 'announcement' ? 'Write the announcement' : 'What would you like to discuss?'} minHeight={composing === 'poll' || composing === 'quiz' ? 70 : 130} />
           {(composing === 'poll' || composing === 'quiz') && (
@@ -297,21 +297,21 @@ export default function Discussion({ scope, emptyText, signedIn = true }: { scop
           {error && <p className="text-[13px] text-red-600">{error}</p>}
           <div className="flex items-center gap-3">
             <button type="submit" disabled={busy || !canPost} className="pill-primary inline-flex items-center gap-2 disabled:opacity-50">{busy && <Loader2 className="w-4 h-4 animate-spin" />} Post</button>
-            <button type="button" onClick={resetComposer} className="text-[14px] text-[#6e6e73] hover:text-gray-900">Cancel</button>
+            <button type="button" onClick={resetComposer} className="text-[14px] text-gray-500 hover:text-gray-900">Cancel</button>
           </div>
         </form>
       )}
 
-      {threads === null && <p className="mt-8 text-[#86868b] flex items-center gap-2"><Loader2 className="w-4 h-4 animate-spin" /> Loading…</p>}
+      {threads === null && <p className="mt-8 text-gray-400 flex items-center gap-2"><Loader2 className="w-4 h-4 animate-spin" /> Loading…</p>}
       {error && !composing && threads?.length === 0 && <p className="mt-6 text-[14px] text-red-600">{error}</p>}
-      {threads && threads.length === 0 && !error && <p className="mt-8 text-[#6e6e73]">{emptyText || 'No topics yet. Start the first one.'}</p>}
+      {threads && threads.length === 0 && !error && <p className="mt-8 text-gray-500">{emptyText || 'No topics yet. Start the first one.'}</p>}
       {threads && threads.length > 0 && (
-        <ul className="mt-8 divide-y divide-[#e8e8ed] border-t border-[#e8e8ed]">
+        <ul className="mt-8 divide-y divide-gray-200 border-t border-gray-200">
           {threads.map(t => (
             <li key={t.id}>
-              <button type="button" onClick={() => openThread(t.id)} className={`w-full text-left py-4 hover:bg-[#fafafa] -mx-3 px-3 rounded-lg transition-colors ${t.kind === 'announcement' ? 'bg-amber-50/40' : ''}`}>
+              <button type="button" onClick={() => openThread(t.id)} className={`w-full text-left py-4 hover:bg-gray-50 -mx-3 px-3 rounded-lg transition-colors ${t.kind === 'announcement' ? 'bg-amber-50/40' : ''}`}>
                 <div className="flex items-center gap-2"><KindBadge kind={t.kind} /><span className="text-[16px] font-semibold text-gray-900">{t.title}</span></div>
-                <div className="mt-1 flex items-center gap-3 text-[13px] text-[#86868b]">
+                <div className="mt-1 flex items-center gap-3 text-[13px] text-gray-400">
                   <span>{t.author}{t.isTeam ? ' (team)' : ''}</span>
                   <span className="inline-flex items-center gap-1"><MessageSquare className="w-3.5 h-3.5" />{t.replies}</span>
                   <span className="inline-flex items-center gap-1"><Heart className="w-3.5 h-3.5" />{t.likes ?? 0}</span>

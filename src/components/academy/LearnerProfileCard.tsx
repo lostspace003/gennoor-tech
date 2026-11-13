@@ -23,10 +23,10 @@ const PROVIDER_LABEL: Record<string, string> = {
 }
 
 const inputCls =
-  'w-full px-4 py-2.5 bg-white border border-[#d2d2d7] rounded-xl text-[14px] text-gray-900 placeholder:text-[#a1a1a6] focus:outline-none focus:ring-2 focus:ring-primary-600/40 focus:border-primary-600 transition-colors'
-const labelCls = 'block text-[12px] font-semibold text-[#6e6e73] mb-1.5'
+  'w-full px-4 py-2.5 bg-raised border border-gray-300 rounded-xl text-[14px] text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-600/40 focus:border-primary-600 transition-colors'
+const labelCls = 'block text-[12px] font-semibold text-gray-500 mb-1.5'
 const saveBtnCls =
-  'inline-flex items-center gap-2 px-5 py-2.5 bg-primary-600 hover:bg-[#0077ed] text-white text-[14px] font-medium rounded-full transition-colors disabled:opacity-50'
+  'inline-flex items-center gap-2 px-5 py-2.5 bg-primary-600 hover:bg-primary-500 text-white text-[14px] font-medium rounded-full transition-colors disabled:opacity-50'
 
 /**
  * The learner's saved profile + security settings. Renders as two
@@ -135,7 +135,7 @@ export default function LearnerProfileCard({ onSignOut }: { onSignOut: () => voi
 
   if (loading) {
     return (
-      <div className="bg-white border border-[#e8e8ed] rounded-2xl px-6 py-8 flex items-center justify-center text-[#86868b] text-sm gap-2">
+      <div className="bg-raised border border-gray-200 rounded-2xl px-6 py-8 flex items-center justify-center text-gray-400 text-sm gap-2">
         <Loader2 className="w-4 h-4 animate-spin" />
         Loading profile…
       </div>
@@ -144,7 +144,7 @@ export default function LearnerProfileCard({ onSignOut }: { onSignOut: () => voi
 
   if (!profile) {
     return (
-      <div className="bg-white border border-[#e8e8ed] rounded-2xl px-6 py-8 text-center text-sm text-[#86868b]">
+      <div className="bg-raised border border-gray-200 rounded-2xl px-6 py-8 text-center text-sm text-gray-400">
         Could not load your profile. Refresh the page to try again.
       </div>
     )
@@ -153,15 +153,15 @@ export default function LearnerProfileCard({ onSignOut }: { onSignOut: () => voi
   return (
     <div className="grid lg:grid-cols-2 gap-4 items-start">
       {/* Identity */}
-      <div className="bg-white border border-[#e8e8ed] rounded-2xl p-6">
+      <div className="bg-raised border border-gray-200 rounded-2xl p-6">
         <div className="flex items-start justify-between mb-5">
           <div>
             <h3 className="text-[17px] font-bold tracking-[-0.01em] text-gray-900">Your profile</h3>
-            <p className="text-[12.5px] text-[#86868b] mt-0.5">
+            <p className="text-[12.5px] text-gray-400 mt-0.5">
               Shown on your certificates and progress records.
             </p>
           </div>
-          <span className="text-[11px] font-semibold uppercase tracking-[0.08em] text-[#86868b] bg-[#f5f5f7] rounded-full px-2.5 py-1 whitespace-nowrap">
+          <span className="text-[11px] font-semibold uppercase tracking-[0.08em] text-gray-400 bg-gray-50 rounded-full px-2.5 py-1 whitespace-nowrap">
             {PROVIDER_LABEL[profile.provider] || profile.provider}
           </span>
         </div>
@@ -169,7 +169,7 @@ export default function LearnerProfileCard({ onSignOut }: { onSignOut: () => voi
         <div className="space-y-4">
           <div>
             <label className={labelCls}>Email</label>
-            <input value={profile.email} disabled className={`${inputCls} bg-[#f5f5f7] text-[#86868b] cursor-not-allowed`} />
+            <input value={profile.email} disabled className={`${inputCls} bg-gray-50 text-gray-400 cursor-not-allowed`} />
           </div>
           <div>
             <label className={labelCls}>Full name</label>
@@ -185,7 +185,7 @@ export default function LearnerProfileCard({ onSignOut }: { onSignOut: () => voi
               maxLength={24}
               spellCheck={false}
             />
-            <p className="text-[11.5px] text-[#a1a1a6] mt-1.5 leading-snug">
+            <p className="text-[11.5px] text-gray-400 mt-1.5 leading-snug">
               Sign in or reset your password with this if you forget which email you used.
             </p>
           </div>
@@ -208,7 +208,7 @@ export default function LearnerProfileCard({ onSignOut }: { onSignOut: () => voi
               {saved ? 'Saved' : 'Save changes'}
             </button>
             {profile.memberSince && (
-              <span className="text-[12px] text-[#a1a1a6]">
+              <span className="text-[12px] text-gray-400">
                 Learner since {new Date(profile.memberSince).toLocaleDateString(undefined, { month: 'short', year: 'numeric' })}
               </span>
             )}
@@ -217,14 +217,14 @@ export default function LearnerProfileCard({ onSignOut }: { onSignOut: () => voi
       </div>
 
       {/* Security */}
-      <div className="bg-white border border-[#e8e8ed] rounded-2xl p-6">
+      <div className="bg-raised border border-gray-200 rounded-2xl p-6">
         <div className="flex items-start gap-3 mb-5">
-          <div className="w-9 h-9 rounded-full bg-[#e8f0fe] inline-flex items-center justify-center shrink-0">
+          <div className="w-9 h-9 rounded-full bg-primary-100 inline-flex items-center justify-center shrink-0">
             <ShieldCheck className="w-[18px] h-[18px] text-primary-600" />
           </div>
           <div>
             <h3 className="text-[17px] font-bold tracking-[-0.01em] text-gray-900">Sign-in &amp; security</h3>
-            <p className="text-[12.5px] text-[#86868b] mt-0.5">
+            <p className="text-[12.5px] text-gray-400 mt-0.5">
               {profile.hasPassword
                 ? 'You have a password set. You can also sign in with an email code anytime.'
                 : 'Add a password for faster sign-in. Email codes keep working either way.'}
@@ -280,7 +280,7 @@ export default function LearnerProfileCard({ onSignOut }: { onSignOut: () => voi
             </button>
             <button
               onClick={onSignOut}
-              className="inline-flex items-center gap-1.5 text-[13px] font-medium text-[#6e6e73] hover:text-red-600 transition-colors"
+              className="inline-flex items-center gap-1.5 text-[13px] font-medium text-gray-500 hover:text-red-600 transition-colors"
             >
               <LogOut className="w-4 h-4" />
               Sign out
