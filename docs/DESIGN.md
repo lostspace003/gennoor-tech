@@ -184,7 +184,11 @@ page that lists what a course holds:
 - The top of the page is `st-deep`, the call to buy is `st-card st-solid`: they follow the theme.
 - The Claude Partner line is used word for word (`TIER_LINE` in `src/components/ClaudePartner.tsx`), with the
   badge on its cream card. Never recolour the badge, never add a tier claim.
-- Courses are never called "free". Preview lessons "play without signing in".
+- Courses are never called "free". What is open to watch is the preview lessons: call them "preview lessons".
+  An email, a LinkedIn message or a post never says "no sign-up" (owner, 14 November 2026: "remove word no
+  sign up as we are making it payed option now preview is free"): it read as if the whole course were open.
+  On a course page itself the small hint "Previews need no sign-in" stays, because there it tells a visitor
+  what the preview button does.
 
 ### The picture of a blog post, and of a shared link
 

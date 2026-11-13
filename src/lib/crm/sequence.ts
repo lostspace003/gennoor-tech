@@ -170,4 +170,4 @@ export const LINKEDIN_CONNECT_NOTE =
 
 /** First message once they accept. */
 export const LINKEDIN_FIRST_MESSAGE =
-  'Thank you for connecting, {firstName}. Your team can watch preview lessons from our video courses, with no sign-up, at https://www.gennoor.com/studio. If {company} is planning any AI or cloud training this year, I would be glad to show you how we shorten it. Would a 20-minute call suit you?'
+  'Thank you for connecting, {firstName}. Your team can watch preview lessons from our video courses at https://www.gennoor.com/studio. If {company} is planning any AI or cloud training this year, I would be glad to show you how we shorten it. Would a 20-minute call suit you?'
