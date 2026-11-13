@@ -50,7 +50,7 @@ export function StepStrip({ counts, active = [], onPick, hrefFor }: {
 }) {
   const tile = (s: LeadStatus) => {
     const on = active.includes(s)
-    const cls = `flex-1 min-w-[5.5rem] rounded-lg border px-3 py-2 text-left transition-colors ${on ? 'border-primary-400 bg-primary-50' : 'border-gray-200 bg-white hover:border-primary-300'}`
+    const cls = `flex-1 min-w-[5.5rem] rounded-lg border px-3 py-2 text-left transition-colors ${on ? 'border-primary-400 bg-primary-50' : 'border-gray-200 bg-raised hover:border-primary-300'}`
     const inner = (
       <>
         <span className="flex items-center gap-1.5 text-[11px] text-gray-500">
@@ -75,7 +75,7 @@ export function StepSelect({ value, onChange, disabled }: { value: LeadStatus; o
       onChange={(e) => onChange(e.target.value as LeadStatus)}
       onClick={(e) => e.stopPropagation()}
       title={STEP_HINTS[value]}
-      className="text-xs border border-gray-300 rounded-lg px-2 py-1.5 bg-white text-gray-800 hover:border-primary-400 disabled:opacity-60"
+      className="text-xs border border-gray-300 rounded-lg px-2 py-1.5 bg-raised text-gray-800 hover:border-primary-400 disabled:opacity-60"
     >
       {LEAD_STEPS.map((s) => (
         <option key={s} value={s}>{STEP_LABELS[s]}</option>
@@ -343,7 +343,7 @@ export function MultiSelect({ label, options, values, onChange }: {
         <span className="text-gray-400 text-[10px]">▾</span>
       </button>
       {open && (
-        <span className="absolute z-[70] top-full mt-1 left-0 min-w-44 bg-white border border-gray-200 rounded-lg shadow-xl p-1.5 space-y-0.5">
+        <span className="absolute z-[70] top-full mt-1 left-0 min-w-44 bg-raised border border-gray-200 rounded-lg shadow-xl p-1.5 space-y-0.5">
           {options.map((o) => (
             <label key={o.value} className="flex items-center gap-2 px-2 py-1.5 rounded-md hover:bg-gray-50 cursor-pointer text-sm text-gray-700 whitespace-nowrap">
               <input type="checkbox" className="rounded" checked={values.includes(o.value)} onChange={() => toggle(o.value)} />

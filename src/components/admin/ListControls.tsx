@@ -36,7 +36,7 @@ export function ListToolbar<T>({ v, noun = 'item', children }: { v: ListView<T>;
       {v.hasText && (
         <div className="relative">
           <Search className="w-3.5 h-3.5 text-gray-400 absolute left-2.5 top-1/2 -translate-y-1/2" />
-          <input value={v.q} onChange={e => v.setQ(e.target.value)} placeholder={`Search ${noun}s`} className="text-[13px] border border-gray-200 rounded-md pl-8 pr-7 py-1.5 w-52 bg-white focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-200" />
+          <input value={v.q} onChange={e => v.setQ(e.target.value)} placeholder={`Search ${noun}s`} className="text-[13px] border border-gray-200 rounded-md pl-8 pr-7 py-1.5 w-52 bg-raised focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-200" />
           {v.q && <button onClick={() => v.setQ('')} aria-label="Clear search" className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-700"><X className="w-3.5 h-3.5" /></button>}
         </div>
       )}
@@ -58,9 +58,9 @@ export function Pager<T>({ v }: { v: ListView<T> }) {
     <div className="flex items-center justify-between pt-3 text-xs text-gray-500">
       <span>{v.page * v.size + 1}–{Math.min(v.filtered.length, v.page * v.size + v.size)} of {v.filtered.length}</span>
       <div className="flex items-center gap-1">
-        <button disabled={v.page === 0} onClick={() => v.setPage(v.page - 1)} aria-label="Previous page" className="p-1.5 rounded border border-gray-200 bg-white disabled:opacity-30 hover:border-gray-400"><ChevronLeft className="w-3.5 h-3.5" /></button>
+        <button disabled={v.page === 0} onClick={() => v.setPage(v.page - 1)} aria-label="Previous page" className="p-1.5 rounded border border-gray-200 bg-raised disabled:opacity-30 hover:border-gray-400"><ChevronLeft className="w-3.5 h-3.5" /></button>
         <span className="px-1.5">{v.page + 1}/{v.pages}</span>
-        <button disabled={v.page >= v.pages - 1} onClick={() => v.setPage(v.page + 1)} aria-label="Next page" className="p-1.5 rounded border border-gray-200 bg-white disabled:opacity-30 hover:border-gray-400"><ChevronRight className="w-3.5 h-3.5" /></button>
+        <button disabled={v.page >= v.pages - 1} onClick={() => v.setPage(v.page + 1)} aria-label="Next page" className="p-1.5 rounded border border-gray-200 bg-raised disabled:opacity-30 hover:border-gray-400"><ChevronRight className="w-3.5 h-3.5" /></button>
       </div>
     </div>
   )

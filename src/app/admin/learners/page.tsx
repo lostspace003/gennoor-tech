@@ -56,9 +56,9 @@ const inr = (n: number) => `₹${Math.round(n).toLocaleString('en-IN')}`
 const money = (dollars: number, rupees: number) => [dollars ? usd(dollars) : '', rupees ? inr(rupees) : ''].filter(Boolean).join(' + ')
 const priceOf = (c: CourseStat) => (c.price === 'open' ? 'open to all' : c.price ? `${usd(c.price.usd)} or ${inr(c.price.inr)}` : '')
 const none = <span className="text-gray-300">–</span>
-const btn = 'inline-flex items-center gap-1.5 px-3 py-1.5 text-[13px] font-medium rounded-md border border-gray-200 bg-white hover:border-gray-400 disabled:opacity-40'
-const card = 'rounded-xl border border-gray-200 bg-white'
-const field = 'text-sm border border-gray-200 rounded-md bg-white'
+const btn = 'inline-flex items-center gap-1.5 px-3 py-1.5 text-[13px] font-medium rounded-md border border-gray-200 bg-raised hover:border-gray-400 disabled:opacity-40'
+const card = 'rounded-xl border border-gray-200 bg-raised'
+const field = 'text-sm border border-gray-200 rounded-md bg-raised'
 
 function Tile({ label, value, note }: { label: string; value: string; note?: string }) {
   return (
@@ -326,7 +326,7 @@ export default function LearnerAnalyticsPage() {
             type="button"
             onClick={() => { setPreset(key); setRange(presetRange(key)) }}
             aria-pressed={preset === key}
-            className={`inline-flex items-center gap-1 rounded-full border px-3 py-1.5 text-[13px] transition-colors ${preset === key ? 'border-gray-900 bg-gray-900 font-medium text-white' : 'border-gray-200 bg-white text-gray-700 hover:border-gray-400'}`}
+            className={`inline-flex items-center gap-1 rounded-full border px-3 py-1.5 text-[13px] transition-colors ${preset === key ? 'border-gray-900 bg-gray-900 font-medium text-white' : 'border-gray-200 bg-raised text-gray-700 hover:border-gray-400'}`}
           >
             {preset === key && <Check className="h-3.5 w-3.5" strokeWidth={3} />}{label}
           </button>
@@ -448,7 +448,7 @@ export default function LearnerAnalyticsPage() {
                 </select>
                 {([[several, setSeveral, 'On more than one course'], [activeOnly, setActiveOnly, 'Active in this period']] as const).map(([on, set, label]) => (
                   <button key={label} type="button" aria-pressed={on} onClick={() => set(!on)}
-                    className={`inline-flex items-center gap-1 rounded-full border px-2.5 py-1.5 text-xs transition-colors ${on ? 'border-gray-900 bg-gray-900 font-medium text-white' : 'border-gray-200 bg-white text-gray-700 hover:border-gray-400'}`}>
+                    className={`inline-flex items-center gap-1 rounded-full border px-2.5 py-1.5 text-xs transition-colors ${on ? 'border-gray-900 bg-gray-900 font-medium text-white' : 'border-gray-200 bg-raised text-gray-700 hover:border-gray-400'}`}>
                     {on && <Check className="h-3 w-3" strokeWidth={3} />}{label}
                   </button>
                 ))}
@@ -512,7 +512,7 @@ export default function LearnerAnalyticsPage() {
                               {l.courses.length === 0 ? <p className="pl-5 text-xs text-gray-500">Has an account, and has not started a course.</p> : (
                                 <ul className="grid gap-1.5 pl-5">
                                   {l.courses.map(c => (
-                                    <li key={c.key} className="grid items-center gap-x-4 gap-y-1 rounded-lg border border-gray-200 bg-white px-3 py-2 md:grid-cols-[minmax(0,1.6fr)_minmax(140px,1fr)_minmax(0,1fr)]">
+                                    <li key={c.key} className="grid items-center gap-x-4 gap-y-1 rounded-lg border border-gray-200 bg-raised px-3 py-2 md:grid-cols-[minmax(0,1.6fr)_minmax(140px,1fr)_minmax(0,1fr)]">
                                       <div className="min-w-0">
                                         <div className="break-words font-medium text-gray-900">{c.title}</div>
                                         <div className="text-xs text-gray-400">{[c.code, KIND[c.kind], c.enrolledAt ? `since ${when(c.enrolledAt)}` : ''].filter(Boolean).join(' · ')}</div>

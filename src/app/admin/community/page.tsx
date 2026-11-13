@@ -20,7 +20,7 @@ const KIND_NAME: Record<Kind, string> = { topic: 'Topic', announcement: 'Announc
 const KIND_CLS: Record<Kind, string> = { topic: 'bg-gray-100 text-gray-600', announcement: 'bg-amber-100 text-amber-800', poll: 'bg-gray-100 text-gray-700', quiz: 'bg-emerald-100 text-emerald-800' }
 const FIELD = 'w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:border-primary-600'
 const PRIMARY = 'px-3 py-1.5 rounded-md bg-gray-800 text-white text-xs font-medium hover:bg-gray-700 disabled:opacity-50'
-const CARD = 'border border-gray-200 rounded-xl bg-white shadow-sm'
+const CARD = 'border border-gray-200 rounded-xl bg-raised shadow-sm'
 
 export default function CommunityAdminPage() {
   const [tab, setTab] = useState<'discussion' | 'publish' | 'reviews'>('discussion')
@@ -79,7 +79,7 @@ export default function CommunityAdminPage() {
 
       <div className="mt-3 inline-flex rounded-md bg-gray-100 p-0.5 text-xs">
         {([['discussion', 'Discussion'], ['publish', 'Publish'], ['reviews', 'Reviews']] as const).map(([t, label]) => (
-          <button key={t} onClick={() => { setTab(t); setNote('') }} className={`px-3 py-1.5 rounded-md font-medium ${tab === t ? 'bg-white shadow-sm text-gray-900' : 'text-gray-500'}`}>{label}</button>
+          <button key={t} onClick={() => { setTab(t); setNote('') }} className={`px-3 py-1.5 rounded-md font-medium ${tab === t ? 'bg-raised shadow-sm text-gray-900' : 'text-gray-500'}`}>{label}</button>
         ))}
       </div>
       {error && <p className="mt-3 rounded-md bg-red-100 text-red-800 px-3 py-2 text-xs break-words">{error}</p>}
@@ -90,7 +90,7 @@ export default function CommunityAdminPage() {
         <div className={`mt-4 ${CARD} p-4 space-y-3 max-w-2xl`}>
           <div className="flex flex-wrap gap-2">
             {(['announcement', 'poll', 'quiz'] as const).map(k => (
-              <button key={k} type="button" onClick={() => setKind(k)} className={`px-3 py-1.5 rounded-md text-xs font-medium border ${kind === k ? 'bg-gray-800 text-white border-gray-800' : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-50'}`}>{KIND_NAME[k]}</button>
+              <button key={k} type="button" onClick={() => setKind(k)} className={`px-3 py-1.5 rounded-md text-xs font-medium border ${kind === k ? 'bg-gray-800 text-white border-gray-800' : 'bg-raised border-gray-300 text-gray-700 hover:bg-gray-50'}`}>{KIND_NAME[k]}</button>
             ))}
           </div>
           <label className="block text-sm text-gray-700">Where to post it
@@ -122,7 +122,7 @@ export default function CommunityAdminPage() {
           <ListToolbar v={vt} noun="thread" />
           {threads.length === 0 && <div className={`${CARD} p-8 text-center text-sm text-gray-500 flex flex-col items-center gap-2`}><Inbox className="w-6 h-6 text-gray-400" />Nothing here yet.</div>}
           {vt.rows.map(t => (
-            <article key={t.id} className={`border rounded-xl bg-white shadow-sm p-4 ${t.hidden ? 'border-amber-300 bg-amber-100/30' : 'border-gray-200'}`}>
+            <article key={t.id} className={`border rounded-xl bg-raised shadow-sm p-4 ${t.hidden ? 'border-amber-300 bg-amber-100/30' : 'border-gray-200'}`}>
               <div className="flex flex-wrap items-center gap-2 text-xs text-gray-500">
                 <span className={`px-2 py-0.5 rounded-full font-semibold ${KIND_CLS[t.kind]}`}>{KIND_NAME[t.kind]}</span>
                 <span className="font-semibold text-gray-700">{spaceName(t.scope)}</span><span>·</span><span>{t.author}</span><span>·</span><span>{when(t.createdAt)}</span>

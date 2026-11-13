@@ -70,7 +70,7 @@ export default function FindOnLinkedIn({ onClose, onAdded, notify }: {
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-3">
-      <div className="bg-white rounded-xl w-full max-w-3xl max-h-[90vh] flex flex-col">
+      <div className="bg-raised rounded-xl w-full max-w-3xl max-h-[90vh] flex flex-col">
         <div className="px-5 py-3.5 border-b border-gray-200 flex items-center justify-between gap-3 shrink-0">
           <div className="min-w-0">
             <h3 className="text-base font-semibold text-gray-900 flex items-center gap-2"><Linkedin className="w-4 h-4 text-primary-600" /> Find leads on LinkedIn</h3>

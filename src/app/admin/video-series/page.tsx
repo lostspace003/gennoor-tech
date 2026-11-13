@@ -69,7 +69,7 @@ export default function VideoSeriesPage() {
       </div>
       {error && <div className="mt-2 text-sm text-red-700 break-words">{error}</div>}
 
-      <div className="mt-3 rounded-xl border border-gray-200 bg-white divide-y divide-gray-100">
+      <div className="mt-3 rounded-xl border border-gray-200 bg-raised divide-y divide-gray-100">
         {list.map(i => {
           const runs = data.runs[i.id] || {}
           const isOpen = open === i.id

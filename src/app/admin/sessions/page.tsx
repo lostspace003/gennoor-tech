@@ -49,13 +49,13 @@ export default function SessionsPage() {
       <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
         <h1 className="text-xl font-semibold tracking-tight">Sessions<InfoTip text="Everything you did in the Social studio, Blog studio and LinkedIn hub, grouped into work sessions (activity with no gap longer than 45 minutes). Click an item to pick up where you left off." /></h1>
         <div className="flex gap-1.5 text-xs">
-          {(['all', 'social', 'blog', 'linkedin'] as const).map(k => <button key={k} onClick={() => setFilter(k)} className={`px-2.5 py-1 rounded-full border ${filter === k ? 'bg-gray-800 text-white border-gray-800' : 'border-gray-200 bg-white hover:border-gray-400'}`}>{k === 'all' ? 'Everything' : AREAS[k].label}</button>)}
+          {(['all', 'social', 'blog', 'linkedin'] as const).map(k => <button key={k} onClick={() => setFilter(k)} className={`px-2.5 py-1 rounded-full border ${filter === k ? 'bg-gray-800 text-white border-gray-800' : 'border-gray-200 bg-raised hover:border-gray-400'}`}>{k === 'all' ? 'Everything' : AREAS[k].label}</button>)}
         </div>
       </div>
       <ListToolbar v={v} noun="event" />
       {error && <div className="mb-3 rounded-md bg-red-50 border border-red-200 text-red-800 text-sm px-3 py-2">{error}</div>}
       {!events && !error && <Loader2 className="w-5 h-5 animate-spin text-gray-400" />}
-      {events && allDays.length === 0 && <div className="rounded-xl border border-dashed border-gray-300 bg-white/50 text-sm text-gray-500 p-10 text-center">Nothing here yet. Work in the studios and it will show up.</div>}
+      {events && allDays.length === 0 && <div className="rounded-xl border border-dashed border-gray-300 bg-raised/50 text-sm text-gray-500 p-10 text-center">Nothing here yet. Work in the studios and it will show up.</div>}
       <div className="space-y-6">
         {days.map(([day, sessions]) => (
           <section key={day}>
@@ -64,7 +64,7 @@ export default function SessionsPage() {
               {sessions.map(s => {
                 const areas = [...new Set(s.events.map(e => e.area))]
                 return (
-                  <div key={s.end} className="rounded-xl border border-gray-200 bg-white shadow-sm overflow-hidden">
+                  <div key={s.end} className="rounded-xl border border-gray-200 bg-raised shadow-sm overflow-hidden">
                     <div className="px-3 py-2 bg-gray-50 border-b border-gray-100 flex items-center gap-2 text-xs">
                       <span className="font-medium">{time(s.start)}{s.start !== s.end && ` – ${time(s.end)}`}</span>
                       <span className="text-gray-400">{s.events.length} item{s.events.length === 1 ? '' : 's'}</span>
@@ -93,7 +93,7 @@ export default function SessionsPage() {
       {allDays.length > DAYS && (
         <div className="flex items-center justify-between pt-4 text-xs text-gray-500">
           <span>Days {dat * DAYS + 1}–{Math.min(allDays.length, dat * DAYS + DAYS)} of {allDays.length}</span>
-          <div className="flex items-center gap-1"><button disabled={dat === 0} onClick={() => setDp(dat - 1)} className="px-2.5 py-1 rounded border border-gray-200 bg-white disabled:opacity-30">Newer</button><span className="px-1.5">{dat + 1}/{dpages}</span><button disabled={dat >= dpages - 1} onClick={() => setDp(dat + 1)} className="px-2.5 py-1 rounded border border-gray-200 bg-white disabled:opacity-30">Older</button></div>
+          <div className="flex items-center gap-1"><button disabled={dat === 0} onClick={() => setDp(dat - 1)} className="px-2.5 py-1 rounded border border-gray-200 bg-raised disabled:opacity-30">Newer</button><span className="px-1.5">{dat + 1}/{dpages}</span><button disabled={dat >= dpages - 1} onClick={() => setDp(dat + 1)} className="px-2.5 py-1 rounded border border-gray-200 bg-raised disabled:opacity-30">Older</button></div>
         </div>
       )}
     </div>

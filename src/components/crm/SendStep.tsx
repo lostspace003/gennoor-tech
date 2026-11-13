@@ -141,7 +141,7 @@ export default function SendStepModal({ leads, onClose, onSent, notify }: {
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-3">
-      <div className="bg-white rounded-xl w-full max-w-4xl h-[92vh] flex flex-col">
+      <div className="bg-raised rounded-xl w-full max-w-4xl h-[92vh] flex flex-col">
         <div className="px-5 py-3.5 border-b border-gray-200 flex items-center justify-between gap-3 shrink-0">
           <div className="min-w-0">
             <h3 className="text-base font-semibold text-gray-900">Review and send</h3>
@@ -182,7 +182,7 @@ export default function SendStepModal({ leads, onClose, onSent, notify }: {
               </div>
               <div className="flex-1 min-h-0 bg-gray-100 relative">
                 {preview && <iframe title="Email preview" srcDoc={preview.html.replace('<head>', '<head><base target="_blank">')} sandbox="allow-popups allow-popups-to-escape-sandbox" className="w-full h-full border-0" />}
-                {loading && <div className="absolute top-2 right-3 bg-white/90 rounded-full px-2.5 py-1"><Spinner label="Updating" /></div>}
+                {loading && <div className="absolute top-2 right-3 bg-surface/90 rounded-full px-2.5 py-1"><Spinner label="Updating" /></div>}
               </div>
             </div>
 

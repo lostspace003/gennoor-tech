@@ -1,5 +1,6 @@
 'use client'
 
+import { useDarkLook } from '@/hooks/useDarkLook'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { Loader2, RefreshCw } from 'lucide-react'
 import InfoTip from '@/components/admin/InfoTip'
@@ -11,6 +12,8 @@ type Gran = 'day' | 'week' | 'month' | 'cycle' | 'quarter'
 const GRANS: { v: Gran; l: string }[] = [{ v: 'day', l: 'Daily' }, { v: 'week', l: 'Weekly' }, { v: 'cycle', l: 'Billing month' }, { v: 'month', l: 'Calendar month' }, { v: 'quarter', l: 'Billing quarter' }]
 const GROUPS = [{ v: 'ServiceName', l: 'Service' }, { v: 'ResourceGroupName', l: 'Resource group' }, { v: 'ResourceType', l: 'Resource type' }, { v: 'ResourceLocation', l: 'Region' }]
 const PALETTE = ['#1d4ed8', '#334155', '#64748b', '#94a3b8', '#cbd5e1', '#475569', '#7c8da3', '#a8b4c4', '#d5dce5', '#e5e9ef']
+// The same order of weight on the dark look: the blue first, then greys from light to dim (dark greys vanish on navy)
+const PALETTE_DARK = ['#5aa9f3', '#e3eaf7', '#b7c4dd', '#9fb0cf', '#7d8cab', '#cfd9ec', '#8f9dba', '#6b7a99', '#56658a', '#44527a']
 
 const iso = (d: Date) => d.toISOString().slice(0, 10)
 const utc = (y: number, m: number, d: number) => new Date(Date.UTC(y, m, d))
@@ -35,6 +38,7 @@ function presets(cycleDay: number, today: Date): Record<string, [string, string]
 }
 
 export default function CostCentrePage() {
+  const dark = useDarkLook()
   const today = useMemo(() => new Date(), [])
   const [cycleDay, setCycleDay] = useState(13)
   const [preset, setPreset] = useState('Last 12 months')
@@ -74,14 +78,15 @@ export default function CostCentrePage() {
 
   const colors = useMemo(() => {
     const m: Record<string, string> = {}
-    ;(data?.groups || []).forEach((g, i) => { m[g.name] = PALETTE[Math.min(i, PALETTE.length - 1)] })
+    const palette = dark ? PALETTE_DARK : PALETTE
+    ;(data?.groups || []).forEach((g, i) => { m[g.name] = palette[Math.min(i, palette.length - 1)] })
     return m
-  }, [data])
+  }, [data, dark])
 
   const max = Math.max(1, ...(data?.buckets || []).map(b => b.total))
   const days = data ? Math.max(1, Math.round((Date.parse(data.to) - Date.parse(data.from)) / 86_400_000) + 1) : 1
   const top = data?.buckets.reduce((a, b) => (b.total > (a?.total ?? -1) ? b : a), undefined as Bucket | undefined)
-  const sel = 'text-sm border border-gray-200 rounded-md px-2.5 py-2 bg-white focus:outline-none focus:border-gray-500 min-w-[180px]'
+  const sel = 'text-sm border border-gray-200 rounded-md px-2.5 py-2 bg-raised focus:outline-none focus:border-gray-500 min-w-[180px]'
   const dirty = range[0] !== applied.range[0] || range[1] !== applied.range[1] || gran !== applied.gran || groupBy !== applied.groupBy
   const apply = () => setApplied({ range, gran, groupBy })
   const reset = () => { setRange(applied.range); setGran(applied.gran); setGroupBy(applied.groupBy); setPreset(Object.entries(presets(cycleDay, today)).find(([, v]) => v[0] === applied.range[0] && v[1] === applied.range[1])?.[0] || 'Custom') }
@@ -92,11 +97,11 @@ export default function CostCentrePage() {
         <h1 className="text-xl font-semibold tracking-tight">Cost centre<InfoTip text={`Azure spend for the whole subscription: website, admin, CRM, AI, email, storage and everything else. Months and quarters follow your Visual Studio billing cycle (starts on day ${cycleDay}), so they match the invoice.`} /></h1>
         <div className="flex items-center gap-2 text-xs text-gray-500">
           {data && <span>Updated {new Date(data.fetchedAt).toLocaleTimeString()}</span>}
-          <button onClick={load} disabled={loading} className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-md border border-gray-200 bg-white hover:border-gray-400 disabled:opacity-40"><RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin' : ''}`} />Refresh</button>
+          <button onClick={load} disabled={loading} className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-md border border-gray-200 bg-raised hover:border-gray-400 disabled:opacity-40"><RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin' : ''}`} />Refresh</button>
         </div>
       </div>
 
-      <div className="rounded-xl border border-gray-200 bg-white shadow-sm p-3 mb-4 flex flex-wrap items-end gap-3">
+      <div className="rounded-xl border border-gray-200 bg-raised shadow-sm p-3 mb-4 flex flex-wrap items-end gap-3">
         <label className="text-xs text-gray-500">Period<select value={preset} onChange={e => pick(e.target.value)} className={`${sel} block mt-0.5`}>
           {[...Object.keys(presets(cycleDay, today)), 'Custom'].map(p => <option key={p}>{p}</option>)}
         </select></label>
@@ -108,13 +113,13 @@ export default function CostCentrePage() {
         <label className="text-xs text-gray-500">Split by<select value={groupBy} onChange={e => setGroupBy(e.target.value)} className={`${sel} block mt-0.5`}>{GROUPS.map(g => <option key={g.v} value={g.v}>{g.l}</option>)}</select></label>
         <div className="flex items-center gap-2">
           <button onClick={apply} disabled={!dirty || loading} className="inline-flex items-center gap-1.5 px-4 py-2 text-[13px] font-medium bg-gray-800 text-white rounded-md hover:bg-gray-900 disabled:opacity-40">{loading ? <RefreshCw className="w-3.5 h-3.5 animate-spin" /> : null}Apply</button>
-          {dirty && <button onClick={reset} className="px-3 py-2 text-[13px] rounded-md border border-gray-200 bg-white hover:border-gray-400">Reset</button>}
+          {dirty && <button onClick={reset} className="px-3 py-2 text-[13px] rounded-md border border-gray-200 bg-raised hover:border-gray-400">Reset</button>}
           {dirty && <span className="text-xs text-amber-700">Filters changed. Press Apply to update.</span>}
         </div>
         {data?.currency === 'INR' && (
           <div className="ml-auto flex rounded-md border border-gray-200 overflow-hidden text-xs">
-            <button onClick={() => setUsd(false)} className={`px-3 py-1.5 ${!usd ? 'bg-gray-800 text-white' : 'bg-white'}`}>₹ INR</button>
-            <button onClick={() => setUsd(true)} className={`px-3 py-1.5 ${usd ? 'bg-gray-800 text-white' : 'bg-white'}`}>$ USD</button>
+            <button onClick={() => setUsd(false)} className={`px-3 py-1.5 ${!usd ? 'bg-gray-800 text-white' : 'bg-surface'}`}>₹ INR</button>
+            <button onClick={() => setUsd(true)} className={`px-3 py-1.5 ${usd ? 'bg-gray-800 text-white' : 'bg-surface'}`}>$ USD</button>
           </div>
         )}
       </div>
@@ -131,7 +136,7 @@ export default function CostCentrePage() {
               { l: 'Highest period', v: top ? money(top.total) : '—', s: top?.label || '' },
               { l: 'Biggest cost', v: data.groups[0]?.name || '—', s: data.groups[0] ? `${money(data.groups[0].total)} · ${Math.round((data.groups[0].total / Math.max(1, data.total)) * 100)}%` : '' },
             ].map(c => (
-              <div key={c.l} className="rounded-xl border border-gray-200 bg-white shadow-sm p-3 min-w-0">
+              <div key={c.l} className="rounded-xl border border-gray-200 bg-raised shadow-sm p-3 min-w-0">
                 <div className="text-xs text-gray-500">{c.l}</div>
                 <div className="text-lg font-semibold truncate" title={c.v}>{c.v}</div>
                 <div className="text-xs text-gray-400 truncate">{c.s}</div>
@@ -139,7 +144,7 @@ export default function CostCentrePage() {
             ))}
           </div>
 
-          <div className="rounded-xl border border-gray-200 bg-white shadow-sm p-4 mb-4">
+          <div className="rounded-xl border border-gray-200 bg-raised shadow-sm p-4 mb-4">
             <div className="flex items-end gap-1.5 h-52 overflow-x-auto pb-1">
               {data.buckets.length === 0 && <div className="text-sm text-gray-400 m-auto">No cost in this period.</div>}
               {data.buckets.map(b => (
@@ -160,7 +165,7 @@ export default function CostCentrePage() {
           </div>
 
           <div className="grid lg:grid-cols-2 gap-4">
-            <div className="rounded-xl border border-gray-200 bg-white shadow-sm overflow-hidden">
+            <div className="rounded-xl border border-gray-200 bg-raised shadow-sm overflow-hidden">
               <div className="px-3 py-2 text-xs font-semibold border-b border-gray-100">By period</div>
               <div className="max-h-96 overflow-auto">
                 <table className="w-full text-[13px]">
@@ -181,7 +186,7 @@ export default function CostCentrePage() {
                 </table>
               </div>
             </div>
-            <div className="rounded-xl border border-gray-200 bg-white shadow-sm overflow-hidden">
+            <div className="rounded-xl border border-gray-200 bg-raised shadow-sm overflow-hidden">
               <div className="px-3 py-2 text-xs font-semibold border-b border-gray-100">By {GROUPS.find(g => g.v === groupBy)?.l.toLowerCase()}</div>
               <ul className="max-h-96 overflow-auto divide-y divide-gray-100">
                 {data.groups.filter(g => g.total > 0.005).map(g => (

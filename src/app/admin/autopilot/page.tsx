@@ -30,7 +30,7 @@ const STATUS: Record<string, { label: string; tone: string }> = {
 }
 const TARGET: Record<string, string> = { pending: 'queued', publishing: 'posting…', done: 'posted', manual: 'posted by you', skipped: 'skipped', failed: 'failed', held: 'needs you' }
 const KIND = { post: { l: 'Text post', i: FileText }, poll: { l: 'Poll', i: BarChart3 }, motion: { l: 'Motion graphic', i: Film } }
-const field = 'w-full text-sm border border-gray-200 rounded-md px-2.5 py-1.5 focus:outline-none focus:border-blue-500 bg-white'
+const field = 'w-full text-sm border border-gray-200 rounded-md px-2.5 py-1.5 focus:outline-none focus:border-blue-500 bg-raised'
 
 export default function AutopilotPage() {
   const [d, setD] = useState<Data | null>(null)
@@ -86,13 +86,13 @@ export default function AutopilotPage() {
   const today = d.days.find(x => x.date === todayKey)
   const later = d.days.filter(x => x.date !== todayKey)
   const pill = (ok: boolean, text: string) => <span className={`inline-flex items-center gap-1.5 text-xs px-2 py-1 rounded-full border ${ok ? 'border-emerald-200 bg-emerald-50 text-emerald-800' : 'border-amber-200 bg-amber-50 text-amber-800'}`}><i className={`w-1.5 h-1.5 rounded-full ${ok ? 'bg-emerald-500' : 'bg-amber-500'}`} />{text}</span>
-  const btn = 'inline-flex items-center gap-1 px-3 py-1.5 text-[13px] font-medium rounded-md border border-gray-200 bg-white hover:border-gray-400 disabled:opacity-40'
+  const btn = 'inline-flex items-center gap-1 px-3 py-1.5 text-[13px] font-medium rounded-md border border-gray-200 bg-raised hover:border-gray-400 disabled:opacity-40'
 
   const SlotCard = ({ s }: { s: Slot }) => {
     const K = KIND[s.kind].i, p = s.draftId ? d.previews[s.draftId] : undefined, st = STATUS[s.status] || STATUS.planned
     const isOpen = open === s.id
     return (
-      <div className={`rounded-xl border bg-white shadow-sm p-3 ${s.status === 'held' ? 'border-amber-300' : 'border-gray-200'}`}>
+      <div className={`rounded-xl border bg-raised shadow-sm p-3 ${s.status === 'held' ? 'border-amber-300' : 'border-gray-200'}`}>
         <div className="flex items-center gap-2 text-xs">
           <span className="font-semibold text-sm">{time(s.at)}</span>
           <span className="inline-flex items-center gap-1 text-gray-500"><K className="w-3.5 h-3.5" />{KIND[s.kind].l}</span>
@@ -137,10 +137,10 @@ export default function AutopilotPage() {
       {error && <div className="mb-3 rounded-md bg-red-50 border border-red-200 text-red-800 text-sm px-3 py-2">{error}</div>}
       {notice && <div className="mb-3 rounded-md bg-emerald-50 border border-emerald-200 text-emerald-800 text-sm px-3 py-2">{notice}</div>}
 
-      <div className={`rounded-xl border p-4 mb-4 shadow-sm ${on ? 'border-emerald-200 bg-emerald-50/50' : 'border-gray-200 bg-white'}`}>
+      <div className={`rounded-xl border p-4 mb-4 shadow-sm ${on ? 'border-emerald-200 bg-emerald-50/50' : 'border-gray-200 bg-raised'}`}>
         <div className="flex flex-wrap items-center gap-3">
           <button onClick={toggle} disabled={!!busy} className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold ${on ? 'bg-emerald-600 text-white hover:bg-emerald-700' : 'bg-gray-800 text-white hover:bg-gray-900'}`}><Power className="w-4 h-4" />{on ? 'Autopilot is ON' : 'Turn autopilot on'}</button>
-          <div className="flex rounded-md border border-gray-200 overflow-hidden text-xs bg-white">
+          <div className="flex rounded-md border border-gray-200 overflow-hidden text-xs bg-raised">
             {([['auto', 'Auto-publish'], ['review', 'Review only']] as const).map(([k, l]) => <button key={k} onClick={() => patch({ mode: k }, k === 'review' ? 'Review-only: drafts are prepared but never published.' : 'Auto-publish on.')} className={`px-3 py-2 ${d.config.mode === k ? 'bg-gray-800 text-white' : 'hover:bg-gray-50'}`}>{l}</button>)}
           </div>
           <InfoTip text="Auto-publish posts by itself at each slot. Review only writes the posts and waits, so nothing goes out unless you post it." />
@@ -160,10 +160,10 @@ export default function AutopilotPage() {
       <h2 className="text-sm font-semibold mb-2">Today · {dayLabel(todayKey)}</h2>
       {today?.researchError && <div className="mb-2 rounded-md bg-amber-50 border border-amber-200 text-amber-900 text-xs px-3 py-2">Planning problem (attempt {today.researchAttempts} of 4): {today.researchError}</div>}
       {!today || !today.slots.length ? (
-        <div className="rounded-xl border border-dashed border-gray-300 bg-white/50 text-sm text-gray-500 p-8 text-center mb-4">{on ? `Today's plan is made after ${d.config.researchTime} (${d.config.tz}). The next check will pick it up.` : 'Turn the autopilot on and today\'s four posts will appear here.'}</div>
+        <div className="rounded-xl border border-dashed border-gray-300 bg-raised/50 text-sm text-gray-500 p-8 text-center mb-4">{on ? `Today's plan is made after ${d.config.researchTime} (${d.config.tz}). The next check will pick it up.` : 'Turn the autopilot on and today\'s four posts will appear here.'}</div>
       ) : <div className="grid md:grid-cols-2 xl:grid-cols-4 gap-3 mb-4">{today.slots.map(s => <SlotCard key={s.id} s={s} />)}</div>}
 
-      <div className="rounded-xl border border-gray-200 bg-white shadow-sm mb-4">
+      <div className="rounded-xl border border-gray-200 bg-raised shadow-sm mb-4">
         <div className="px-3 py-2.5 flex flex-wrap items-center gap-x-3 gap-y-2 border-b border-gray-100">
           <h2 className="text-sm font-semibold">History</h2>
           <DateRangeFilter value={range} onChange={r => { setRange(r); setHistPage(0) }} presets={[{ days: 7, label: 'Week' }, { days: 30, label: 'Month' }, { days: 90, label: '3 months' }]} />
@@ -192,7 +192,7 @@ export default function AutopilotPage() {
         })()}
       </div>
 
-      <details className="rounded-xl border border-gray-200 bg-white shadow-sm mb-4 group" open={dirty}>
+      <details className="rounded-xl border border-gray-200 bg-raised shadow-sm mb-4 group" open={dirty}>
         <summary className="px-4 py-3 text-sm font-semibold cursor-pointer list-none flex items-center gap-2"><Settings2 className="w-4 h-4 text-gray-500" />Settings<span className="text-xs font-normal text-gray-400">times, topics, rules</span><ChevronDown className="w-4 h-4 ml-auto text-gray-400 group-open:rotate-180 transition-transform" /></summary>
         <div className="px-4 pb-4 grid lg:grid-cols-2 gap-5 border-t border-gray-100 pt-4">
           {(['weekdaySlots', 'weekendSlots'] as const).map(k => (
@@ -231,7 +231,7 @@ export default function AutopilotPage() {
         </div>
       </details>
 
-      <details className="rounded-xl border border-gray-200 bg-white shadow-sm group">
+      <details className="rounded-xl border border-gray-200 bg-raised shadow-sm group">
         <summary className="px-4 py-3 text-sm font-semibold cursor-pointer list-none flex items-center gap-2">Activity log<ChevronDown className="w-4 h-4 ml-auto text-gray-400 group-open:rotate-180 transition-transform" /></summary>
         <ul className="px-4 pb-3 text-[13px] text-gray-600 space-y-1 max-h-64 overflow-y-auto border-t border-gray-100 pt-2">
           {d.log.length === 0 && <li className="text-gray-400">Nothing yet.</li>}

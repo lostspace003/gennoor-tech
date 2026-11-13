@@ -36,7 +36,7 @@ export default function DocPreview({ name, onClose }: { name: string; onClose: (
 
   return (
     <div className="fixed inset-0 bg-black/60 z-[70] flex items-center justify-center p-3" onClick={onClose}>
-      <div className="bg-white rounded-xl w-full max-w-4xl h-[85vh] flex flex-col overflow-hidden" onClick={(e) => e.stopPropagation()}>
+      <div className="bg-raised rounded-xl w-full max-w-4xl h-[85vh] flex flex-col overflow-hidden" onClick={(e) => e.stopPropagation()}>
         <div className="px-4 py-3 border-b border-gray-200 flex items-center justify-between gap-3 shrink-0">
           <div className="text-sm font-medium text-gray-900 truncate flex items-center gap-2">
             <FileText className="w-4 h-4 text-gray-400 shrink-0" /> {name}
@@ -56,7 +56,7 @@ export default function DocPreview({ name, onClose }: { name: string; onClose: (
               <img src={fileUrl} alt={name} className="max-w-full max-h-full object-contain" />
             </div>
           )}
-          {isText && <iframe src={fileUrl} className="w-full h-full bg-white" title={name} />}
+          {isText && <iframe src={fileUrl} className="w-full h-full bg-surface" title={name} />}
           {isOffice && (
             officeUrl ? (
               <iframe src={officeUrl} className="w-full h-full" title={name} />

@@ -131,7 +131,7 @@ export function InboxView({ onOpenLead }: { onOpenLead: (id: string, reply?: boo
 
       <div className="space-y-1.5">
         {pageMsgs.map((m) => (
-          <div key={m.id} className={`bg-white border rounded-lg px-3 py-2.5 flex flex-wrap items-center gap-x-3 gap-y-2 ${m.waiting ? 'border-red-200' : 'border-gray-200'}`}>
+          <div key={m.id} className={`bg-raised border rounded-lg px-3 py-2.5 flex flex-wrap items-center gap-x-3 gap-y-2 ${m.waiting ? 'border-red-200' : 'border-gray-200'}`}>
             <button onClick={() => onOpenLead(m.leadId, !!m.waiting && m.kind !== 'stop')} className="min-w-0 flex-1 basis-72 text-left hover:text-primary-700">
               <div className="flex items-center gap-2 min-w-0">
                 <span className="text-sm font-medium text-gray-900 truncate">{m.leadName}{m.leadCompany ? <span className="text-gray-400 font-normal"> · {m.leadCompany}</span> : null}</span>
@@ -251,7 +251,7 @@ export function SchedulerView() {
           <div key={g.day} className="space-y-2">
             <div className="text-[11px] font-semibold text-gray-500 pt-1">{g.day} <span className="text-gray-300 normal-case">· {g.items.length}</span></div>
             {g.items.map((m) => (
-              <div key={m.id} className="bg-white border border-gray-200 rounded-lg p-4">
+              <div key={m.id} className="bg-raised border border-gray-200 rounded-lg p-4">
                 <div className="flex items-center justify-between gap-3">
                   <div className="text-sm font-medium text-gray-900">{m.subject}</div>
                   {m.joinUrl && <a href={m.joinUrl} target="_blank" rel="noopener noreferrer" className="text-xs bg-primary-600 text-white rounded-lg px-2.5 py-1.5 hover:bg-primary-700 shrink-0">Join Teams</a>}
@@ -335,7 +335,7 @@ function RescheduleModal({ meeting, lead, onClose, onDone, notify }: {
   const inputCls = 'w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-primary-500 focus:border-transparent'
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-xl w-full max-w-md flex flex-col">
+      <div className="bg-raised rounded-xl w-full max-w-md flex flex-col">
         <div className="px-5 py-3.5 border-b border-gray-200 flex items-center justify-between">
           <div>
             <h3 className="text-base font-semibold text-gray-900">Reschedule meeting</h3>
@@ -458,7 +458,7 @@ export function DocumentsView({ canManage, notify }: { canManage: boolean; notif
         <div className="bg-gray-50 rounded-lg p-8 text-center text-sm text-gray-400">No files in this group yet. Press Upload to add one.</div>
       )}
       {shown.length > 0 && (
-        <div className="bg-white border border-gray-200 rounded-lg divide-y divide-gray-100">
+        <div className="bg-raised border border-gray-200 rounded-lg divide-y divide-gray-100">
           {shown.map((d) => (
             <div key={d.name} className="px-4 py-2.5 flex items-center gap-3">
               <FileText className="w-5 h-5 text-gray-400 shrink-0" />

@@ -150,7 +150,7 @@ export function CrmProvider({ children }: { children: React.ReactNode }) {
       {question && (
         <div className="fixed inset-0 z-[80] flex items-center justify-center bg-black/50 p-4" role="dialog" aria-modal="true" aria-labelledby="crm-ask-title" onKeyDown={(e) => { if (e.key === 'Escape') close(null) }}>
           <form
-            className="w-full max-w-md rounded-xl bg-white shadow-xl"
+            className="w-full max-w-md rounded-xl bg-raised shadow-xl"
             onSubmit={(e) => { e.preventDefault(); if (canGo) close(question.input ? typed.trim() : '') }}
           >
             <div className="px-5 pt-5 pb-4 space-y-2">

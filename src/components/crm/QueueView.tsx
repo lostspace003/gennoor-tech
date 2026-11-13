@@ -82,14 +82,14 @@ export default function QueueView({ leads }: { leads: Lead[] }) {
       {mailNote && <p className="text-xs bg-amber-50 border border-amber-200 text-amber-800 rounded-lg px-3 py-2">{mailNote} Replies from leads will not show here until this is put right.</p>}
 
       {leads.length === 0 ? (
-        <div className="bg-white border border-gray-200 rounded-xl p-8 text-center space-y-3">
+        <div className="bg-raised border border-gray-200 rounded-xl p-8 text-center space-y-3">
           <p className="text-sm text-gray-600">No leads yet. Add your first ones to begin.</p>
           <Link href="/crm/leads" className="inline-flex items-center gap-1.5 px-4 py-2 bg-primary-600 text-white text-sm rounded-lg hover:bg-primary-700">
             <UserPlus className="w-4 h-4" /> Go to Leads
           </Link>
         </div>
       ) : nothing ? (
-        <div className="bg-white border border-gray-200 rounded-xl p-8 text-center space-y-3">
+        <div className="bg-raised border border-gray-200 rounded-xl p-8 text-center space-y-3">
           <p className="text-sm text-gray-600">You hold no open leads at the moment. Pick some up from the Leads page, or add new ones.</p>
           <Link href="/crm/leads" className="inline-flex items-center gap-1.5 px-4 py-2 bg-primary-600 text-white text-sm rounded-lg hover:bg-primary-700">
             <UserPlus className="w-4 h-4" /> Go to Leads
@@ -255,12 +255,12 @@ function Section({ icon: Icon, tone, title, hint, count, action, children }: {
 }) {
   const t = TONES[tone]
   return (
-    <section className={`rounded-xl border ${t.border} overflow-hidden bg-white`}>
+    <section className={`rounded-xl border ${t.border} overflow-hidden bg-raised`}>
       <div className={`${t.bg} px-4 py-2.5 flex flex-wrap items-center justify-between gap-2`}>
         <div className="flex items-center gap-2 min-w-0">
           <Icon className={`w-4 h-4 shrink-0 ${t.text}`} />
           <h3 className={`text-sm font-semibold ${t.text}`}>{title}</h3>
-          <span className={`text-xs font-semibold rounded-full bg-white px-1.5 py-0.5 leading-none ${t.text}`}>{count}</span>
+          <span className={`text-xs font-semibold rounded-full bg-raised px-1.5 py-0.5 leading-none ${t.text}`}>{count}</span>
           <span className="text-xs text-gray-500 hidden sm:inline truncate">{hint}</span>
         </div>
         {action}

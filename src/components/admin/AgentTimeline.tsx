@@ -13,7 +13,7 @@ const ORDER = ['researcher', 'writer', 'designer', 'packager', 'reviewer', 'rend
 export default function AgentTimeline({ run, onClose, title = 'The AI team at work' }: { run: RunState; onClose: () => void; title?: string }) {
   const steps = [...run.steps].sort((a, b) => ORDER.indexOf(a.agent) - ORDER.indexOf(b.agent))
   return (
-    <div className="rounded-xl border border-gray-200 bg-white shadow-sm p-4">
+    <div className="rounded-xl border border-gray-200 bg-raised shadow-sm p-4">
       <div className="flex items-center justify-between mb-3">
         <div className="text-sm font-semibold flex items-center gap-2"><Bot className="w-4 h-4 text-gray-500" />{title}</div>
         <div className="flex items-center gap-3">

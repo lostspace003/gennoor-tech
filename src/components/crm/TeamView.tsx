@@ -90,7 +90,7 @@ export default function TeamView({ leads, isManager }: { leads: Lead[]; isManage
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         {rows.map((m) => (
-          <div key={m.email} className="bg-white border border-gray-200 rounded-xl overflow-hidden">
+          <div key={m.email} className="bg-raised border border-gray-200 rounded-xl overflow-hidden">
             <div className="px-4 py-3 border-b border-gray-100 flex items-center justify-between gap-2">
               <div className="min-w-0">
                 <div className="text-sm font-semibold text-gray-900 truncate">{m.email.split('@')[0]}</div>

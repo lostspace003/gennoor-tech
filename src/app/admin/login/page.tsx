@@ -74,7 +74,7 @@ function LoginContent() {
           <p className="text-xs text-gray-500 tracking-widest mt-2">TRAIN. INNOVATE. BUILD.</p>
         </div>
 
-        <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
+        <div className="bg-raised rounded-xl border border-gray-200 shadow-sm p-6">
           <h1 className="text-lg font-semibold text-gray-900">Sign in to CRM</h1>
           <p className="text-sm text-gray-500 mt-0.5 mb-5">CRM Lead Intelligence System</p>
 

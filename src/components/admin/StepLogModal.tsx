@@ -24,7 +24,7 @@ export function StepLogButton({ steps, title, className }: { steps: StepLog[]; t
   if (!steps.length) return null
   return (
     <>
-      <button type="button" onClick={() => setOpen(true)} className={className || 'inline-flex items-center gap-1 px-3 py-1.5 text-[13px] font-medium rounded-md border border-gray-200 bg-white hover:border-gray-400'}><ScrollText className="w-3.5 h-3.5" />Step logs</button>
+      <button type="button" onClick={() => setOpen(true)} className={className || 'inline-flex items-center gap-1 px-3 py-1.5 text-[13px] font-medium rounded-md border border-gray-200 bg-raised hover:border-gray-400'}><ScrollText className="w-3.5 h-3.5" />Step logs</button>
       {open && <StepLogModal steps={steps} title={title} onClose={() => setOpen(false)} />}
     </>
   )
@@ -37,10 +37,10 @@ export default function StepLogModal({ steps, title = 'Step logs', onClose }: { 
     window.addEventListener('keydown', k); return () => window.removeEventListener('keydown', k)
   }, [onClose])
   const doCopy = async (key: string, text: string) => { if (await copy(text)) { setCopied(key); setTimeout(() => setCopied(c => (c === key ? '' : c)), 1500) } }
-  const btn = 'inline-flex items-center gap-1 px-2 py-1 text-xs font-medium rounded-md border border-gray-200 bg-white hover:border-gray-400'
+  const btn = 'inline-flex items-center gap-1 px-2 py-1 text-xs font-medium rounded-md border border-gray-200 bg-raised hover:border-gray-400'
   return (
     <div className="fixed inset-0 z-[10000] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4" onClick={onClose} role="dialog" aria-modal="true" aria-label={title}>
-      <div className="bg-white rounded-xl shadow-xl w-full max-w-3xl max-h-[88vh] flex flex-col" onClick={e => e.stopPropagation()}>
+      <div className="bg-raised rounded-xl shadow-xl w-full max-w-3xl max-h-[88vh] flex flex-col" onClick={e => e.stopPropagation()}>
         <div className="flex items-center gap-2 px-4 py-3 border-b border-gray-100">
           <ScrollText className="w-4 h-4 text-gray-500" /><div className="text-sm font-semibold">{title}</div>
           <button onClick={() => doCopy('all', toText(title, steps))} className={`${btn} ml-auto`}>{copied === 'all' ? <><Check className="w-3.5 h-3.5 text-emerald-600" />Copied</> : <><Copy className="w-3.5 h-3.5" />Copy all</>}</button>

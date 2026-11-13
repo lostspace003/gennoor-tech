@@ -6,10 +6,10 @@ import { Check, Copy, Loader2, Plus, Trash2 } from 'lucide-react'
 interface Coupon { code: string; percent: number; slug: string; expiresAt: string; maxUses: number; uses: number; active: boolean; note: string; createdAt: string }
 interface CourseOption { slug: string; title: string }
 
-const btn = 'inline-flex items-center gap-1.5 px-3 py-1.5 text-[13px] font-medium rounded-md border border-gray-200 bg-white hover:border-gray-400 disabled:opacity-40'
+const btn = 'inline-flex items-center gap-1.5 px-3 py-1.5 text-[13px] font-medium rounded-md border border-gray-200 bg-raised hover:border-gray-400 disabled:opacity-40'
 const primary = 'inline-flex items-center gap-1.5 px-3.5 py-2 text-[13px] font-medium bg-gray-800 text-white rounded-md hover:bg-gray-900 disabled:opacity-40'
-const field = 'text-sm border border-gray-200 rounded-md px-2.5 py-2 bg-white'
-const chip = (on: boolean) => `px-3 py-1.5 text-[13px] rounded-full border ${on ? 'bg-gray-800 text-white border-gray-800' : 'border-gray-200 text-gray-700 bg-white hover:bg-gray-50'}`
+const field = 'text-sm border border-gray-200 rounded-md px-2.5 py-2 bg-raised'
+const chip = (on: boolean) => `px-3 py-1.5 text-[13px] rounded-full border ${on ? 'bg-gray-800 text-white border-gray-800' : 'border-gray-200 text-gray-700 bg-raised hover:bg-gray-50'}`
 
 const DISCOUNTS = [[100, 'Free (100% off)'], [80, '80% off'], [50, '50% off'], [20, '20% off']] as const
 const PERIODS = [['24', '24 hours'], ['72', '3 days'], ['168', '7 days'], ['720', '30 days'], ['2160', '90 days'], ['never', 'No end date'], ['pick', 'Pick a date and time']] as const
@@ -81,7 +81,7 @@ export default function Coupons({ courses }: { courses: CourseOption[] }) {
       {error && <div className="mb-3 rounded-md bg-red-50 border border-red-200 text-red-800 text-sm px-3 py-2">{error}</div>}
       {notice && <div className="mb-3 rounded-md bg-emerald-50 border border-emerald-200 text-emerald-800 text-sm px-3 py-2">{notice}</div>}
 
-      <form onSubmit={create} className="rounded-xl border border-gray-200 bg-white p-4 mb-4 space-y-4">
+      <form onSubmit={create} className="rounded-xl border border-gray-200 bg-raised p-4 mb-4 space-y-4">
         <div className="text-sm font-semibold text-gray-900">Make a coupon code</div>
 
         <div>
@@ -132,7 +132,7 @@ export default function Coupons({ courses }: { courses: CourseOption[] }) {
       </form>
 
       {!coupons ? <Loader2 className="w-5 h-5 animate-spin text-gray-400" /> : (
-        <div className="rounded-xl border border-gray-200 bg-white overflow-auto">
+        <div className="rounded-xl border border-gray-200 bg-raised overflow-auto">
           <table className="w-full text-[13px] min-w-[820px]">
             <thead className="bg-gray-50 text-xs text-gray-500">
               <tr>{['Code', 'Gives', 'Course', 'Used', 'Works until', 'Status', ''].map((h) => <th key={h} className="text-left px-3 py-2 font-medium">{h}</th>)}</tr>

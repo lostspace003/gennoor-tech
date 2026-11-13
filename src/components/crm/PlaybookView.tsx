@@ -42,7 +42,7 @@ export default function PlaybookView() {
       {tab === 'call' && (
         <div className="space-y-3">
           {CALL_STEPS.map((s, i) => (
-            <section key={s.title} className="bg-white border border-gray-200 rounded-xl p-4">
+            <section key={s.title} className="bg-raised border border-gray-200 rounded-xl p-4">
               <div className="flex flex-wrap items-baseline justify-between gap-2">
                 <h3 className="text-sm font-semibold text-gray-900"><span className="inline-flex w-5 h-5 mr-2 rounded-full bg-gray-900 text-white text-[11px] items-center justify-center align-middle">{i + 1}</span>{s.title}</h3>
                 <span className="text-xs text-gray-400">{s.time}</span>
@@ -76,7 +76,7 @@ export default function PlaybookView() {
       )}
 
       {tab === 'objections' && (
-        <div className="bg-white border border-gray-200 rounded-xl divide-y divide-gray-100">
+        <div className="bg-raised border border-gray-200 rounded-xl divide-y divide-gray-100">
           {OBJECTIONS.map((o) => (
             <div key={o.they} className="p-4 grid sm:grid-cols-[220px_1fr] gap-x-4 gap-y-1.5">
               <div className="text-sm font-semibold text-gray-900">“{o.they}”</div>
@@ -93,7 +93,7 @@ export default function PlaybookView() {
             <ul className="mt-2 space-y-1.5 list-disc pl-5 text-sm text-gray-700">{PRESENTATION_RULES.map((x) => <li key={x}>{x}</li>)}</ul>
           </section>
           {SLIDES.map((s, i) => (
-            <section key={s.title} className="bg-white border border-gray-200 rounded-xl p-4">
+            <section key={s.title} className="bg-raised border border-gray-200 rounded-xl p-4">
               <h3 className="text-sm font-semibold text-gray-900"><span className="text-gray-400 font-normal mr-2">Slide {i + 1}</span>{s.title}</h3>
               <dl className="mt-2 grid sm:grid-cols-[70px_1fr] gap-x-3 gap-y-1.5 text-sm">
                 <dt className="text-xs font-semibold text-gray-500 sm:pt-0.5">Show</dt><dd className="text-gray-800">{s.show}</dd>

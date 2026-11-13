@@ -21,8 +21,8 @@ export default function RefBox({ refs, busy, url, setUrl, onUrl, onFile, onRemov
       )}
       <div className="flex gap-1.5">
         <input value={url} onChange={e => setUrl(e.target.value)} onKeyDown={e => { if (e.key === 'Enter' && url.trim()) onUrl() }} placeholder="Paste a link…" className="flex-1 min-w-0 text-xs border border-gray-200 rounded-md px-2 py-1.5 focus:outline-none focus:border-blue-500" />
-        <button type="button" disabled={!url.trim() || busy} onClick={onUrl} className="px-2 py-1.5 text-xs rounded-md border border-gray-200 bg-white hover:border-gray-400 disabled:opacity-40">{busy ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : 'Add'}</button>
-        <label title="PDF, Word, text, markdown, CSV, JSON, HTML or an image" className="px-2 py-1.5 text-xs rounded-md border border-gray-200 bg-white hover:border-gray-400 cursor-pointer inline-flex items-center">
+        <button type="button" disabled={!url.trim() || busy} onClick={onUrl} className="px-2 py-1.5 text-xs rounded-md border border-gray-200 bg-raised hover:border-gray-400 disabled:opacity-40">{busy ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : 'Add'}</button>
+        <label title="PDF, Word, text, markdown, CSV, JSON, HTML or an image" className="px-2 py-1.5 text-xs rounded-md border border-gray-200 bg-raised hover:border-gray-400 cursor-pointer inline-flex items-center">
           <Paperclip className="w-3.5 h-3.5" />
           <input type="file" className="hidden" accept=".pdf,.docx,.txt,.md,.csv,.json,.html,.htm,image/*" onChange={e => { const f = e.target.files?.[0]; if (f) onFile(f); e.target.value = '' }} />
         </label>

@@ -9,7 +9,7 @@ interface Payment { at: string; kind: 'course' | 'weekend'; what: string; name: 
 interface PriceRow { slug: string; code: string; title: string; kind: string; price: { usd: number; inr: number } | null; custom: boolean; previews: number; offer: { on: boolean; percent: number }; regular: { usd: number; inr: number } | null }
 interface Data { payments: Payment[]; prices: PriceRow[]; defaultPrice: { usd: number; inr: number }; previewMax: number; online: boolean; testMode: boolean }
 
-const btn = 'inline-flex items-center gap-1.5 px-3.5 py-2 text-[13px] font-medium rounded-md border border-gray-200 bg-white hover:border-gray-400 disabled:opacity-40'
+const btn = 'inline-flex items-center gap-1.5 px-3.5 py-2 text-[13px] font-medium rounded-md border border-gray-200 bg-raised hover:border-gray-400 disabled:opacity-40'
 const primary = 'inline-flex items-center gap-1.5 px-3 py-1.5 text-[13px] font-medium bg-gray-800 text-white rounded-md hover:bg-gray-900 disabled:opacity-40'
 const money = (amount: number, currency: string) => (currency === 'INR' ? `₹${Math.round(amount).toLocaleString('en-IN')}` : `$${amount.toFixed(2)}`)
 
@@ -91,7 +91,7 @@ export default function PaymentsPage() {
                   [money(total('INR'), 'INR'), 'received in rupees'],
                   [`${new Set(rows.map((p) => p.email)).size}`, 'different payers'],
                 ].map(([big, small]) => (
-                  <div key={small} className="rounded-xl border border-gray-200 bg-white px-4 py-3">
+                  <div key={small} className="rounded-xl border border-gray-200 bg-raised px-4 py-3">
                     <div className="text-2xl font-semibold tracking-tight">{big}</div>
                     <div className="text-xs text-gray-500">{small}</div>
                   </div>
@@ -104,7 +104,7 @@ export default function PaymentsPage() {
                 ))}
                 <button onClick={excel} disabled={!rows.length} className={`${btn} ml-auto`}><Download className="w-3.5 h-3.5" />Download Excel</button>
               </div>
-              <div className="rounded-xl border border-gray-200 bg-white overflow-auto">
+              <div className="rounded-xl border border-gray-200 bg-raised overflow-auto">
                 <table className="w-full text-[13px] min-w-[760px]">
                   <thead className="bg-gray-50 text-xs text-gray-500">
                     <tr>{['Date', 'Paid for', 'Person', 'Amount', 'Payment reference'].map((h) => <th key={h} className="text-left px-3 py-2 font-medium">{h}</th>)}</tr>
@@ -137,7 +137,7 @@ export default function PaymentsPage() {
                 Up to {data.previewMax} lessons of each course are free previews; which ones is set when the course is published.
                 A course with its <b>offer</b> switched on shows a gold ribbon and a higher regular price struck through; buyers still pay the price in this table.
               </p>
-              <div className="rounded-xl border border-gray-200 bg-white overflow-auto">
+              <div className="rounded-xl border border-gray-200 bg-raised overflow-auto">
                 <table className="w-full text-[13px] min-w-[940px]">
                   <thead className="bg-gray-50 text-xs text-gray-500">
                     <tr>{['Course', 'Free previews', 'Price', 'Offer shown', 'Change the price'].map((h) => <th key={h} className="text-left px-3 py-2 font-medium">{h}</th>)}</tr>
@@ -161,7 +161,7 @@ export default function PaymentsPage() {
                                   onClick={() => savePrice(c.slug, { offer: { on: !c.offer.on, percent: c.offer.percent } })}
                                   className={`relative w-9 h-5 rounded-full transition-colors disabled:opacity-50 ${c.offer.on ? 'bg-blue-600' : 'bg-gray-300'}`}
                                 >
-                                  <span className={`absolute top-0.5 left-0.5 w-4 h-4 rounded-full bg-white shadow transition-transform ${c.offer.on ? 'translate-x-4' : ''}`} />
+                                  <span className={`absolute top-0.5 left-0.5 w-4 h-4 rounded-full bg-raised shadow transition-transform ${c.offer.on ? 'translate-x-4' : ''}`} />
                                 </button>
                                 <select
                                   value={c.offer.percent} disabled={busy === c.slug} aria-label={`Percent off shown on ${c.title}`}

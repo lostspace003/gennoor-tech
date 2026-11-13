@@ -38,11 +38,11 @@ export default function WarmSwitch({ onChange }: { onChange?: () => void }) {
   const label = on ? `Awake until ${when(w!.state.until)}` : scheduled ? `Starts ${when(w!.state.startAt)}` : 'Allowed to sleep'
   return (
     <div className="relative">
-      <button onClick={() => setOpen(o => !o)} aria-expanded={open} title="Keep the LinkedIn connector awake while you work" className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full border text-xs ${on ? 'border-emerald-200 bg-emerald-50 text-emerald-800' : 'border-gray-200 bg-white text-gray-600 hover:border-gray-400'}`}>
+      <button onClick={() => setOpen(o => !o)} aria-expanded={open} title="Keep the LinkedIn connector awake while you work" className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full border text-xs ${on ? 'border-emerald-200 bg-emerald-50 text-emerald-800' : 'border-gray-200 bg-raised text-gray-600 hover:border-gray-400'}`}>
         <Power className="w-3 h-3" />{w ? label : 'Warm-up'}
       </button>
       {open && (
-        <div className="absolute right-0 mt-2 w-72 z-20 rounded-xl border border-gray-200 bg-white shadow-lg p-3 text-[13px] space-y-2.5">
+        <div className="absolute right-0 mt-2 w-72 z-20 rounded-xl border border-gray-200 bg-raised shadow-lg p-3 text-[13px] space-y-2.5">
           <div className="flex items-start gap-2">
             <div className="flex-1">
               <div className="font-semibold">Keep it awake while I work</div>
@@ -58,7 +58,7 @@ export default function WarmSwitch({ onChange }: { onChange?: () => void }) {
                 {scheduled && <> Scheduled to wake at {when(w.state.startAt)} and sleep at {when(w.state.until)}.</>}
               </div>
               {(on || scheduled || w.awake) ? (
-                <button disabled={busy} onClick={() => act({ action: 'stop' })} className="w-full px-3 py-2 text-[13px] font-medium rounded-md border border-gray-300 bg-white hover:border-gray-500 disabled:opacity-50">{busy ? 'Working…' : scheduled ? 'Cancel the schedule' : 'Let it sleep now'}</button>
+                <button disabled={busy} onClick={() => act({ action: 'stop' })} className="w-full px-3 py-2 text-[13px] font-medium rounded-md border border-gray-300 bg-raised hover:border-gray-500 disabled:opacity-50">{busy ? 'Working…' : scheduled ? 'Cancel the schedule' : 'Let it sleep now'}</button>
               ) : (
                 <>
                   <div className="flex gap-1.5">

@@ -35,7 +35,7 @@ export default function SequenceView() {
 
   return (
     <div className="h-full grid grid-cols-1 lg:grid-cols-[340px_1fr]">
-      <div className="border-r border-gray-200 bg-white overflow-y-auto p-3 sm:p-4 space-y-4">
+      <div className="border-r border-gray-200 bg-surface overflow-y-auto p-3 sm:p-4 space-y-4">
         <div>
           <h2 className="text-base font-semibold text-gray-900">The email series</h2>
           <p className="text-xs text-gray-500 mt-0.5">
@@ -72,7 +72,7 @@ export default function SequenceView() {
       </div>
 
       <div className="flex flex-col min-h-[70vh] bg-gray-100">
-        <div className="bg-white border-b border-gray-200 px-4 py-2.5 flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
+        <div className="bg-surface border-b border-gray-200 px-4 py-2.5 flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
           <div className="min-w-0">
             <div className="text-[11px] text-gray-400">
               {bare
@@ -97,7 +97,7 @@ export default function SequenceView() {
         </div>
         <div className="flex-1 relative">
           {preview && <iframe title="Email preview" srcDoc={preview.html.replace('<head>', '<head><base target="_blank">')} sandbox="allow-popups allow-popups-to-escape-sandbox" className="absolute inset-0 w-full h-full border-0" />}
-          {loading && <div className="absolute top-3 right-4 bg-white/90 rounded-full px-2.5 py-1"><Spinner label="Loading" /></div>}
+          {loading && <div className="absolute top-3 right-4 bg-surface/90 rounded-full px-2.5 py-1"><Spinner label="Loading" /></div>}
         </div>
       </div>
     </div>

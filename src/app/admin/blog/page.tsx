@@ -32,7 +32,7 @@ const labelOf = (d: { status: 'draft' | 'approved' | 'submitted'; pipeline?: { s
 const badgeOf = (d: { status: 'draft' | 'approved' | 'submitted'; pipeline?: { stage: string } }) => (d.pipeline?.stage === 'attention' ? 'bg-amber-100 text-amber-800' : BADGE[d.status])
 interface Auto { config: { enabled: boolean; time: string; perDay: number; autoMerge: boolean; shareToLinkedIn: boolean; maxRevisions: number }; days: { date: string; runs: { n: number; status: string; step: string; topic?: { title: string }; reason?: string; revisions: number }[] }[]; lastTick?: string }
 const CHIPS = ['Tighten it: cut 15% without losing facts', 'Stronger opening paragraph', 'Add a practical example', 'Sharper "what to do next" section', 'Improve the FAQs', 'Make the tone more direct']
-const field = 'w-full text-sm border border-gray-200 rounded-md px-2.5 py-1.5 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-200 bg-white'
+const field = 'w-full text-sm border border-gray-200 rounded-md px-2.5 py-1.5 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-200 bg-raised'
 const usd = (n: number) => `$${n < 1 ? n.toFixed(3) : n.toFixed(2)}`
 const words = (html: string) => html.replace(/<[^>]+>/g, ' ').split(/\s+/).filter(Boolean).length
 
@@ -214,8 +214,8 @@ export default function BlogStudioPage() {
   const suggestions = useMemo(() => tax.tags.filter(t => cur && !cur.meta.tags.includes(t.name)).slice(0, 14), [tax, cur])
   const missing = cur ? [!cur.meta.title.trim() && 'title', !cur.meta.excerpt.trim() && 'excerpt', !cur.meta.tldr.trim() && 'TL;DR', !cur.body.trim() && 'article', !cur.meta.tags.length && 'a tag', !cur.meta.faqs.length && 'an FAQ'].filter(Boolean) as string[] : []
   const primary = 'inline-flex items-center gap-1.5 px-3.5 py-2 text-[13px] font-medium bg-gray-800 text-white rounded-md hover:bg-gray-900 disabled:opacity-40'
-  const btn = 'inline-flex items-center gap-1.5 px-3.5 py-2 text-[13px] font-medium rounded-md border border-gray-200 bg-white hover:border-gray-400 disabled:opacity-40'
-  const chip = 'px-2 py-1 text-xs rounded-full border border-gray-200 bg-white text-gray-700 hover:border-gray-500 hover:text-gray-900 disabled:opacity-40'
+  const btn = 'inline-flex items-center gap-1.5 px-3.5 py-2 text-[13px] font-medium rounded-md border border-gray-200 bg-raised hover:border-gray-400 disabled:opacity-40'
+  const chip = 'px-2 py-1 text-xs rounded-full border border-gray-200 bg-raised text-gray-700 hover:border-gray-500 hover:text-gray-900 disabled:opacity-40'
   const step = cur ? (cur.status === 'draft' ? 1 : cur.status === 'approved' ? 2 : 3) : 0
   const isNewCat = !!cur && !tax.categories.some(c => c.name === cur.meta.category)
 
@@ -231,10 +231,10 @@ export default function BlogStudioPage() {
       <ResizeGrid id="blog-main" initial={270} className="items-start">
         <div className="space-y-3">
           {auto && (
-            <div className={`rounded-xl border p-3 shadow-sm ${auto.config.enabled ? 'border-emerald-200 bg-emerald-50/50' : 'border-gray-200 bg-white'}`}>
+            <div className={`rounded-xl border p-3 shadow-sm ${auto.config.enabled ? 'border-emerald-200 bg-emerald-50/50' : 'border-gray-200 bg-raised'}`}>
               <div className="flex items-center gap-2">
                 <div className="text-xs font-semibold flex items-center gap-1.5"><Bot className="w-3.5 h-3.5 text-gray-500" />Daily blog autopilot<InfoTip text="Every day it researches a topic, writes the article, reviews it (revising up to twice if the reviewer asks), approves it, merges it to the website and shares it on the company page, then your profile reposts it with a short note (change this on the LinkedIn autopilot page). Each share gets a meaningful first comment, with nobody in the loop. If it still fails review after its revisions, it holds the draft for you instead." /></div>
-                <button onClick={() => patchAuto({ enabled: !auto.config.enabled })} aria-pressed={auto.config.enabled} className={`ml-auto text-xs font-medium px-2.5 py-1 rounded-full border ${auto.config.enabled ? 'bg-emerald-600 text-white border-emerald-600' : 'bg-white text-gray-700 border-gray-300'}`}>{auto.config.enabled ? 'On' : 'Off'}</button>
+                <button onClick={() => patchAuto({ enabled: !auto.config.enabled })} aria-pressed={auto.config.enabled} className={`ml-auto text-xs font-medium px-2.5 py-1 rounded-full border ${auto.config.enabled ? 'bg-emerald-600 text-white border-emerald-600' : 'bg-raised text-gray-700 border-gray-300'}`}>{auto.config.enabled ? 'On' : 'Off'}</button>
               </div>
               <div className="mt-2 text-xs text-gray-600">
                 {auto.days[0] ? auto.days[0].runs.map(r => (
@@ -243,7 +243,7 @@ export default function BlogStudioPage() {
               </div>
               <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1.5">
                 <button onClick={runAutoNow} className={`${btn} !px-2.5 !py-1.5 whitespace-nowrap`}>Write today's now</button>
-                <span className="text-xs text-gray-400">Daily at <input type="time" value={auto.config.time} onChange={e => patchAuto({ time: e.target.value })} className="border border-gray-200 rounded px-1 py-0.5 text-xs bg-white" /></span>
+                <span className="text-xs text-gray-400">Daily at <input type="time" value={auto.config.time} onChange={e => patchAuto({ time: e.target.value })} className="border border-gray-200 rounded px-1 py-0.5 text-xs bg-raised" /></span>
               </div>
             </div>
           )}
@@ -268,7 +268,7 @@ export default function BlogStudioPage() {
         </div>
 
         {run ? <AgentTimeline run={run} onClose={() => setRun(null)} title="The blog team at work" /> : !cur ? (
-          <div className="rounded-xl border border-dashed border-gray-300 bg-white/50 text-sm text-gray-500 p-10 text-center">Pick a draft on the left, or give the team a topic.</div>
+          <div className="rounded-xl border border-dashed border-gray-300 bg-raised/50 text-sm text-gray-500 p-10 text-center">Pick a draft on the left, or give the team a topic.</div>
         ) : (
           <div className="space-y-3">
             <div className="flex items-center gap-2 text-xs text-gray-500">
@@ -282,7 +282,7 @@ export default function BlogStudioPage() {
             </div>
 
             <ResizeGrid id="blog-post" fixed="second" initial={330} breakpoint={1280} className="items-start">
-              <div className="rounded-xl border border-gray-200 bg-white shadow-sm overflow-hidden">
+              <div className="rounded-xl border border-gray-200 bg-raised shadow-sm overflow-hidden">
                 <div className="px-4 pt-4">
                   <input disabled={locked} value={cur.meta.title} onChange={e => setMeta({ title: e.target.value })} className="w-full text-xl font-bold tracking-tight border border-transparent hover:border-gray-200 focus:border-blue-400 focus:outline-none rounded-md px-1.5 py-1 -mx-1.5" />
                   <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-gray-500 mt-1">
@@ -333,10 +333,10 @@ export default function BlogStudioPage() {
 
               <div className="space-y-3">
                 {!locked && (
-                  <div className="rounded-xl border border-gray-200 bg-white shadow-sm p-3">
+                  <div className="rounded-xl border border-gray-200 bg-raised shadow-sm p-3">
                     <div className="text-xs font-semibold mb-2 flex items-center gap-1.5"><Sparkles className="w-3.5 h-3.5 text-gray-500" />Revise with AI</div>
                     <div className="flex gap-1 mb-2 text-xs">
-                      {([['all', 'Everything'], ['body', 'Article only'], ['meta', 'Summary, FAQs, tags']] as const).map(([k, l]) => <button key={k} onClick={() => setRevPart(k)} className={`px-2 py-1 rounded-md border ${revPart === k ? 'bg-gray-800 text-white border-gray-800' : 'border-gray-200 bg-white'}`}>{l}</button>)}
+                      {([['all', 'Everything'], ['body', 'Article only'], ['meta', 'Summary, FAQs, tags']] as const).map(([k, l]) => <button key={k} onClick={() => setRevPart(k)} className={`px-2 py-1 rounded-md border ${revPart === k ? 'bg-gray-800 text-white border-gray-800' : 'border-gray-200 bg-raised'}`}>{l}</button>)}
                     </div>
                     <div className="flex flex-wrap gap-1.5 mb-2">{CHIPS.map(c => <button key={c} disabled={!!busy} onClick={() => revise(c)} className={chip}>{c.replace(/:.*/, '')}</button>)}</div>
                     <textarea value={rev} onChange={e => setRev(e.target.value)} rows={3} placeholder="Or say exactly what to change" className={field} />
@@ -344,7 +344,7 @@ export default function BlogStudioPage() {
                   </div>
                 )}
 
-                <div className="rounded-xl border border-gray-200 bg-white shadow-sm p-3 space-y-3">
+                <div className="rounded-xl border border-gray-200 bg-raised shadow-sm p-3 space-y-3">
                   <div>
                     <div className="text-xs font-semibold mb-1">Category<InfoTip text="Pick one of the site's existing categories, or add a new one. A new category appears on the blog filter once the post is live." /></div>
                     {newCat || isNewCat ? (
@@ -375,7 +375,7 @@ export default function BlogStudioPage() {
                       <label className="block text-xs text-gray-500">Hashtags (comma separated)<input disabled={locked} value={cur.meta.hashtags.join(', ')} onChange={e => setMeta({ hashtags: e.target.value.split(',').map(x => x.trim()).filter(Boolean) })} className={field} /></label>
                       <div className="grid grid-cols-3 gap-2">
                         <label className="block text-xs text-gray-500">Date<input disabled={locked} type="date" value={cur.meta.date} onChange={e => setMeta({ date: e.target.value })} className={field} /></label>
-                        <label className="block text-xs text-gray-500">Colour<input disabled={locked} type="color" value={cur.meta.coverColor} onChange={e => setMeta({ coverColor: e.target.value })} className="w-full h-[34px] border border-gray-200 rounded-md bg-white" /></label>
+                        <label className="block text-xs text-gray-500">Colour<input disabled={locked} type="color" value={cur.meta.coverColor} onChange={e => setMeta({ coverColor: e.target.value })} className="w-full h-[34px] border border-gray-200 rounded-md bg-raised" /></label>
                         <label className="block text-xs text-gray-500">Icon<input disabled={locked} value={cur.meta.icon} onChange={e => setMeta({ icon: e.target.value })} className={`${field} text-center`} /></label>
                       </div>
                     </div>
@@ -383,7 +383,7 @@ export default function BlogStudioPage() {
                 </div>
 
                 {(cur.review || cur.trace?.length) && (
-                  <details className="rounded-xl border border-gray-200 bg-white shadow-sm p-3 group" open={cur.review?.verdict === 'revise'}>
+                  <details className="rounded-xl border border-gray-200 bg-raised shadow-sm p-3 group" open={cur.review?.verdict === 'revise'}>
                     <summary className="text-xs font-semibold cursor-pointer list-none flex items-center gap-1.5"><Bot className="w-3.5 h-3.5 text-gray-500" />Editorial review{cur.review && <span className={`px-1.5 py-0.5 rounded text-xs ${cur.review.verdict === 'pass' ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'}`}>{cur.review.verdict === 'pass' ? 'passed' : 'changes suggested'}</span>}<ChevronDown className="w-3.5 h-3.5 ml-auto text-gray-400 group-open:rotate-180 transition-transform" /></summary>
                     {cur.review?.notes?.length ? <ul className="mt-2 space-y-1 text-xs text-gray-700 list-disc pl-4">{cur.review.notes.map((n, i) => <li key={i} className="break-words">{n}</li>)}</ul> : null}
                     {cur.review?.verdict === 'revise' && !locked && <button disabled={!!busy} onClick={() => revise(`Apply the reviewer's notes: ${cur.review!.notes.join(' ')}`)} className={`${btn} mt-2`}><Sparkles className="w-3.5 h-3.5" />Apply reviewer notes</button>}
@@ -391,7 +391,7 @@ export default function BlogStudioPage() {
                   </details>
                 )}
 
-                <div className="rounded-xl border border-gray-200 bg-white shadow-sm p-3 space-y-2">
+                <div className="rounded-xl border border-gray-200 bg-raised shadow-sm p-3 space-y-2">
                   {cur.status !== 'submitted' && missing.length > 0 && <div className="text-xs text-amber-700">Still needed: {missing.join(', ')}.</div>}
                   <div className="flex flex-wrap items-center gap-2">
                     <button disabled={locked || !!busy} onClick={() => save()} className={btn}><Save className="w-3.5 h-3.5" />Save</button>
