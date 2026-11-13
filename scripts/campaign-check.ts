@@ -72,6 +72,7 @@ ok('the hashtags vary', sets.size >= 25, `${sets.size} different sets`)
 ok('the Claude Partner line is word for word wherever it is used', all.every((p) => !/Claude Partner/i.test(both(p)) || both(p).includes('Gennoor is Certified in the Claude Partner Network.')))
 const FIRST = /(I|I'm|I've|I'll|I'd|my|me|mine|myself)/
 ok('no post speaks in the first person singular (the house rule for every LinkedIn post)', all.every((p) => !FIRST.test(both(p))), ids((p) => FIRST.test(both(p))))
+ok('nobody is named as the trainer, and the old six-demo programme is gone', all.every((p) => !/jalal|six|small working app|Claude Code|Claude Projects/i.test(both(p))), ids((p) => /jalal|six|small working app|Claude Code|Claude Projects/i.test(both(p))))
 ok('no blank is left after the dates are written in', all.every((p) => !/[{}]/.test(fill(p.text) + fill(p.share))))
 const PAST = /\blast (month|cohort)\b|\blast weekend(?! of every month)|\bparticipants? (said|built|loved)|\btestimonial/i
 ok('no post tells of a past weekend or a past learner', all.every((p) => !PAST.test(both(p))), ids((p) => PAST.test(both(p))))

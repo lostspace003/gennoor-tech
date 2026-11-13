@@ -302,23 +302,24 @@ overview.push({
 
 // ------------------------------------------------------------------ 13. the AI Weekend
 const WK = [
-  ['Day 1 &middot; Saturday', 'From asking to getting work done', ['Your context file', 'A weekly report in minutes', 'A connected workspace'], 'blue'],
-  ['Day 2 &middot; Sunday', 'Automate a task, build an agent', ['One task automated', 'A small working app', 'Your first agent'], 'gold'],
+  // Seven parts over the two days, as in src/data/ai-weekend.ts. About AI, not one product.
+  ['Day 1 &middot; Saturday', 'From how AI works to your own tools', ['Your context file', 'A weekly report in minutes', 'Pictures, video and sound', 'Skills and connectors'], 'blue'],
+  ['Day 2 &middot; Sunday', 'Automate a task, then build agents', ['One task automated', 'Your first agent', 'A team of agents'], 'gold'],
 ]
-const dayCard = ([day, title, builds, tone], k, b) => `<div class="abs card" data-b="${b}" data-o="${k}" style="left:${84 + k * 568}px;top:330px;width:544px;height:254px;padding:24px 28px">
+const dayCard = ([day, title, builds, tone], k, b) => `<div class="abs card" data-b="${b}" data-o="${k}" style="left:${84 + k * 568}px;top:314px;width:544px;height:290px;padding:22px 28px">
     <div class="row" style="gap:16px">${ico(k ? 'bot' : 'file-text', 56, tone)}<div><div class="tiny" style="color:${k ? 'var(--gold)' : 'var(--blue2)'}">${day}</div><div class="h3" style="margin-top:7px;font-size:23px">${title}</div></div></div>
-    <div class="seq" data-delay="${0.5 + k * 0.5}" data-gap=".22" style="margin-top:20px">${builds.map((t) => `<div class="row" style="padding:10px 0;border-top:1px solid rgba(255,255,255,.09);font:500 17.5px/1.2 var(--body)"><span class="tick" style="${k ? 'background:var(--gold)' : ''}"></span>${t}</div>`).join('')}</div></div>`
+    <div class="seq" data-delay="${0.5 + k * 0.5}" data-gap=".22" style="margin-top:16px">${builds.map((t) => `<div class="row" style="padding:9px 0;border-top:1px solid rgba(255,255,255,.09);font:500 17px/1.2 var(--body)"><span class="tick" style="${k ? 'background:var(--gold)' : ''}"></span>${t}</div>`).join('')}</div></div>`
 const bolt = (size) => `<div style="position:relative;width:${size}px;height:${size}px"><div data-loop="pulse" data-per="2.2" style="position:absolute;inset:-34%;border-radius:50%;background:radial-gradient(closest-side,rgba(255,190,70,.6),transparent 70%)"></div>${ico('zap', size, 'gold', 'round')}</div>`
 overview.push({
   id: 'weekend', title: 'The AI Weekend',
-  notes: `On the last weekend of every month there is the ${D.weekend.name}: two live sessions, Saturday and Sunday, and six working demos, built step by step in front of you, with the complete kit afterwards. Each day runs ${D.weekend.time}, online. The page shows the next dates.`,
-  cues: [['o11', { 1: 'Two', 2: 'Six' }]],
+  notes: `On the last weekend of every month there is the ${D.weekend.name}: two live sessions, Saturday and Sunday, and seven working demos, built step by step in front of you: from how AI works to a team of agents, with the complete kit afterwards. Each day runs ${D.weekend.time}, online. The page shows the next dates.`,
+  cues: [['o11', { 1: 'Two', 2: 'Seven' }]],
   bg: ground(GLOW.gold, { mx: 40, my: 50 }),
   fg: `
     <div class="abs" data-b="0" data-fx="pop" data-pad="60" style="left:84px;top:96px">${bolt(112)}</div>
     <div class="abs kicker" data-b="0" data-o="1" data-fx="fade" style="left:228px;top:106px">Live &middot; every month</div>
     <div class="abs h1 nowrap" data-b="0" data-o="2" style="left:226px;top:130px;font-size:66px">The AI Weekend</div>
-    <div class="abs p" data-b="0" data-o="3" style="left:228px;top:218px;font-size:23px">Build with Claude in one weekend.</div>
+    <div class="abs p" data-b="0" data-o="3" style="left:228px;top:218px;font-size:23px">Build with AI in one weekend.</div>
     ${WK.map((d, k) => dayCard(d, k, k + 1)).join('')}
     <div class="abs card lit" data-b="0" data-o="5" data-fx="right" data-href="${SITE}/ai-weekend" data-alt="The AI Weekend: the last weekend of every month, Saturday and Sunday, live online" style="left:856px;top:104px;width:340px;padding:20px 24px">
       <div class="tiny" style="color:var(--gold)">Every month</div><div class="h3" style="margin-top:9px;font-size:26px">The last weekend</div><div class="small" style="margin-top:6px;font-size:15.5px">Saturday &amp; Sunday &middot; live online</div></div>

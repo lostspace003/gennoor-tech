@@ -3,12 +3,12 @@
   "lead": 1.0,
   "tail": 3.0,
   "lines": [
-    { "id": "w01", "text": "What could you build with Claude in one weekend?", "pad": 1.1 },
+    { "id": "w01", "text": "What could you build with AI in one weekend?", "pad": 1.1 },
     { "id": "w02", "text": "Come and see. Two live sessions. One Saturday, one Sunday.", "pad": 1.2 },
-    { "id": "w03", "text": "On day one, we set Claude up to know your work. A context file, so the answers stop being generic.", "pad": 0.5 },
-    { "id": "w04", "text": "A weekly report, in minutes. And a workspace where Claude reads your files, and drafts directly.", "pad": 1.2 },
-    { "id": "w05", "text": "On day two, we automate a task you repeat every week. We build a small working app, just by describing it.", "pad": 0.5 },
-    { "id": "w06", "text": "And we build your first agent. Give it a goal, and it researches, drafts, and checks its own work.", "pad": 1.2 },
+    { "id": "w03", "text": "On day one, we start with how AI works, and set it up to know your work. Then a weekly report, in minutes.", "pad": 0.5 },
+    { "id": "w04", "text": "After that, pictures, video and sound, made with AI. And skills and connectors, so it can reach your files and your tools.", "pad": 1.2 },
+    { "id": "w05", "text": "On day two, we automate a task you repeat every week. Then we build your first agent.", "pad": 0.5 },
+    { "id": "w06", "text": "Give it a goal, and it researches, drafts, and checks its own work. And last, a team of agents, working together.", "pad": 1.2 },
     { "id": "w07", "text": "Everything is built live, step by step. Then you get the complete kit, so you can repeat it yourself.", "pad": 1.2 },
     { "id": "w08", "text": "The AI Weekend. Live, online, the last weekend of every month.", "pad": 0.7 },
     { "id": "w09", "text": "Reserve your seat. The link is on the screen.", "pad": 0 }

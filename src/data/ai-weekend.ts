@@ -5,7 +5,11 @@
 
 export const WEEKEND = {
   name: 'Gennoor AI Weekend',
-  tagline: 'Build with Claude in one weekend',
+  /**
+   * It is about AI, not one product (owner, 13 November 2026: "why to have claude based only"). Claude is
+   * one of the tools used; the weekend is not named after it.
+   */
+  tagline: 'Build with AI in one weekend',
   /** What people pay now, in rupees. */
   fee: 499,
   /** The regular price, shown crossed out beside the fee. */
@@ -17,10 +21,15 @@ export const WEEKEND = {
   endTime: '14:00',
   hoursPerDay: 4,
   mode: 'Live online, on Microsoft Teams',
-  trainer: {
-    name: 'Jalal Ahmed Khan',
-    role: 'Founder, Gennoor Tech · Microsoft Certified Trainer',
-    line: 'Jalal trains corporate teams on AI and cloud, and builds the courses on the Gennoor Learning Studio.',
+  /**
+   * Who teaches it. No person is named (owner, 13 November 2026: "Don't put my name under trainer. That will
+   * give a wrong trust value ... you can have words like learn from the industry expert"). The picture is a
+   * drawn 3D figure, not a photograph of anyone (public/assets/ai-weekend-expert.jpg, made by scripts/make-expert-avatar.ts).
+   */
+  expert: {
+    heading: 'Learn from an industry expert',
+    line: 'The sessions are led live by a practitioner who trains corporate teams on AI and cloud, and builds the courses on the Gennoor Learning Studio.',
+    image: '/assets/ai-weekend-expert.jpg',
   },
 }
 
@@ -28,36 +37,46 @@ export interface WeekendDay {
   label: string
   title: string
   summary: string
-  /** What is built live in front of you, and is in your kit to repeat. */
+  /** What is built live in front of you, and is in your kit to repeat. One for each part of the day. */
   projects: { name: string; result: string }[]
-  /** How the four hours are spent. */
+  /** The parts of the day, in order. */
   agenda: string[]
 }
 
+/**
+ * Seven parts over the eight hours: four on Saturday, three on Sunday. They follow the owner's list
+ * (foundations and workflows; operations and automation; image, video and audio; MCP and skills; automating
+ * your workflows; your AI agent; multi-agent systems), said in our own words.
+ */
 export const DAYS: WeekendDay[] = [
   {
     label: 'Day 1 · Saturday',
-    title: 'From asking questions to getting work done',
-    summary: 'Set Claude up so it knows your work, then use it on the documents, sheets and slides you already deal with.',
+    title: 'From understanding AI to using it on your work',
+    summary: 'Start with how AI works and where it fits. Then put it to work on the documents, sheets, pictures and tools you already deal with.',
     projects: [
-      { name: 'Your context file', result: 'Claude stops giving generic answers because it knows your role, your company and how you write' },
+      { name: 'Your context file', result: 'The AI stops giving generic answers because it knows your role, your company and how you write' },
       { name: 'A weekly report in minutes', result: 'A messy spreadsheet goes in, a summary you can send upward comes out' },
-      { name: 'A connected workspace', result: 'Claude reads your files and drafts directly, without copy and paste' },
+      { name: 'A picture, a short video and a voice track', result: 'Made with AI from a plain description, so you see what each tool is good for' },
+      { name: 'A connected workspace', result: 'The AI reads your files and reaches your tools, without copy and paste' },
     ],
-    agenda: ['How Claude works, in plain words', 'Projects, instructions and context', 'Claude for documents, sheets and slides', 'Skills and connectors'],
+    agenda: ['How AI works, and where it fits in your work', 'AI for everyday operations', 'Pictures, video and sound with AI', 'Skills and connectors (MCP)'],
   },
   {
     label: 'Day 2 · Sunday',
-    title: 'Automate one task, then build your first agent',
-    summary: 'Pick a task you repeat every week, automate it, and finish with an agent that does a job from start to end.',
+    title: 'Automate your work, then build agents',
+    summary: 'Pick a task you repeat every week and automate it. Then build an agent that does a job from start to end, and a small team of agents that work together.',
     projects: [
       { name: 'One task automated', result: 'A job you do by hand every week now runs when you ask' },
-      { name: 'A small working app', result: 'Built by describing it, with no coding background needed' },
       { name: 'Your first agent', result: 'Give it a goal, and it researches, drafts and checks its own work' },
+      { name: 'A team of agents', result: 'Each one has a single job, and they pass the work to each other' },
     ],
-    agenda: ['Mapping a task: trigger, steps, result', 'Building it with Claude', 'Claude Code for people who do not code', 'Agents: when to use one, and building yours'],
+    agenda: ['Automate a workflow you repeat', 'Build your first AI agent', 'Agents that work as a team'],
   },
 ]
+
+/** How many things are built live over the two days. Said in the page, the emails and the films. */
+export const DEMO_COUNT = DAYS.reduce((n, d) => n + d.projects.length, 0)
+export const DEMO_WORD = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine'][DEMO_COUNT] || String(DEMO_COUNT)
 
 export const FOR_YOU = [
   { title: 'Use AI for small things', text: 'Emails and summaries, but nothing that saves real time yet.' },
@@ -68,8 +87,8 @@ export const FOR_YOU = [
 ]
 
 export const INCLUDED = [
-  '8 hours live with the trainer, across two days',
-  'Six working demos, built step by step in front of you',
+  '8 hours live with an industry expert, across two days',
+  `${DEMO_WORD.charAt(0).toUpperCase()}${DEMO_WORD.slice(1)} working demos, built step by step in front of you`,
   'The complete kit after the weekend, so you can repeat every demo',
   'Your questions answered live',
   'A certificate when you attend both days',
@@ -85,13 +104,15 @@ export const HOW_YOU_LEARN = [
 /** What is inside the kit. */
 export const KIT = ['Session notes', 'Every prompt used', 'Demo files', 'Step-by-step guides', 'Setup checklist']
 
-export const TOOLS = ['Claude', 'Claude Projects', 'Claude Cowork', 'Claude Code', 'Skills', 'Connectors (MCP)', 'Excel', 'PowerPoint']
+/** What is worked with. Kinds of tool, not a list of brands: the weekend is about AI, and Claude is one of the assistants used. */
+export const TOOLS = ['Claude and other AI assistants', 'AI tools for pictures', 'AI tools for video and sound', 'Skills', 'Connectors (MCP)', 'Agents', 'Excel', 'PowerPoint']
 
 export const FAQS: { q: string; a: string }[] = [
   { q: 'Do I need to know how to code?', a: 'No. Everything is built by describing what you want in plain language. If you can write a clear email, you can follow it.' },
   { q: 'Do I build during the session?', a: 'You learn by watching. Each demo is built live and explained step by step, so you can follow the thinking without rushing to keep up. After the weekend you receive the full kit and repeat every demo yourself.' },
   { q: 'What is in the kit?', a: 'The session notes, every prompt that was used, the demo files and step-by-step guides. It is sent to everyone who attended, after the weekend.' },
-  { q: 'What do I need?', a: 'A stable internet connection to watch and ask questions. To repeat the demos afterwards you need a laptop and a Claude account; the kit includes a setup checklist.' },
+  { q: 'What do I need?', a: 'A stable internet connection to watch and ask questions. To repeat the demos afterwards you need a laptop and an account for the AI tools that were used; the kit includes a setup checklist that names them.' },
+  { q: 'Is it only about Claude?', a: 'No. It is about working with AI: how it works, everyday work, pictures, video and sound, connecting it to your tools, automation and agents. Claude is one of the assistants used, and what you learn carries over to the others.' },
   { q: 'When does it run?', a: 'On the last Saturday and Sunday of every month, four hours each day. The dates for the next one are at the top of this page.' },
   { q: 'Is it live or recorded?', a: 'It is live. You watch each demo being built and ask questions as it happens.' },
   { q: 'How do I pay?', a: 'Reserve your seat with the form. We email you the payment details, and your seat is confirmed once the fee is received.' },

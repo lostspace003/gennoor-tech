@@ -76,7 +76,7 @@ export default function ClaudePage() {
       <Ground glow="claude" mx={62} my={42} className="px-4 sm:px-6 pt-8 lg:pt-12 pb-10 lg:pb-14">
         <div className="max-w-[1120px] mx-auto grid lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] gap-9 lg:gap-12 items-center">
           <div className="text-center lg:text-left">
-            <p className="st-kicker st-fade" style={{ color: '#e58a62' }}>Claude</p>
+            <p className="st-kicker st-fade st-claude-ink">Claude</p>
             <h1 className="st-rise display-hero mt-5" style={turn(1)}>Claude at Gennoor.</h1>
             <p className="st-rise text-[clamp(17px,1.6vw,21px)] leading-[1.5] text-gray-600 max-w-[560px] mx-auto lg:mx-0 mt-5" style={turn(2)}>
               Training for teams, courses built around their work, and automation built with Claude.

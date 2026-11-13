@@ -155,6 +155,7 @@
   --st-deep: linear-gradient(180deg, #111b2c, #0d1524);
   --st-deep-line: rgba(255, 255, 255, 0.07);
   --st-gold-ink: #ffd06b;
+  --st-claude-ink: #f0a07c;
   --st-art-mix: 40%;
 
   color: #f5f8ff;
@@ -256,6 +257,7 @@
   --st-deep: linear-gradient(180deg, #dce7f8, #d2deef);
   --st-deep-line: #b9c8de;
   --st-gold-ink: #8a5200;
+  --st-claude-ink: #a8481f;
   --st-art-mix: 30%;
 
   color: #0f182c;
@@ -553,6 +555,7 @@ html:is(.stage, .day)::-webkit-scrollbar-thumb:hover { background: var(--st-scro
 section.st-deep, header.st-deep { border-width: 0 0 1px; }
 /* Gold words on a lit band: the kicker colour, readable on both themes */
 .st-gold-ink { color: var(--st-gold-ink, #ffd06b); }
+.st-claude-ink { color: var(--st-claude-ink, #f0a07c); }
 
 /* ── A block written dark-first: white words on navy (older pages, and pages built before the
       light theme was made fully light). On the dark theme it is navy. On the light theme it
@@ -561,9 +564,17 @@ section.st-deep, header.st-deep { border-width: 0 0 1px; }
       A filled button inside keeps its own colours. Put st-keep on anything else that must. */
 .st-night { background-color: #0c1426; color: #fff; }
 .day .st-night { background: var(--st-deep) !important; color: rgb(var(--gray-900)) !important; box-shadow: inset 0 0 0 1px var(--st-deep-line); }
-.day .st-night :is(h1, h2, h3, h4, .text-white, .\!text-white):not([class*='bg-primary-']):not([class*='bg-amber-']):not([class*='bg-green-']):not(.st-pill):not(.st-keep) { color: rgb(var(--gray-900)) !important; }
-.day .st-night :is(.text-white\/90, .text-white\/80, .text-white\/75, .text-white\/70, .text-gray-300, .text-gray-200, .text-\[\#aab6c8\], .text-\[\#c9d2e0\], .text-\[\#b7c4dd\], .text-\[\#a9b4c4\]) { color: rgb(var(--gray-600)) !important; }
-.day .st-night :is(.text-white\/60, .text-white\/55, .text-white\/50, .text-white\/40, .text-gray-400, .text-\[\#8d9bb0\]) { color: rgb(var(--gray-500)) !important; }
+/* `st-keep` on a thing, or on anything around it, leaves its colours alone: a video player keeps white controls on its black picture. */
+.day .st-night :is(h1, h2, h3, h4, .text-white, .\!text-white):not([class*='bg-primary-']):not([class*='bg-amber-']):not([class*='bg-green-']):not(.st-pill):not(.st-keep, .st-keep *) { color: rgb(var(--gray-900)) !important; }
+/* Any see-through white (text-white/90 down to text-white/10, in whatever strength a page writes) becomes a
+   readable grey: the rule matches the start of the class name, so a strength nobody listed cannot stay white. */
+.day .st-night :is([class*='text-white/'], .text-gray-300, .text-gray-200, .text-\[\#aab6c8\], .text-\[\#c9d2e0\], .text-\[\#c4cede\], .text-\[\#b7c4dd\], .text-\[\#a9b4c4\]):not(.st-keep, .st-keep *) { color: rgb(var(--gray-600)) !important; }
+.day .st-night :is([class*='text-white/5'], [class*='text-white/4'], [class*='text-white/3'], [class*='text-white/2'], [class*='text-white/1'], .text-gray-400, .text-\[\#8d9bb0\]):not(.st-keep, .st-keep *) { color: rgb(var(--gray-500)) !important; }
+/* Pale colour words (a blue label, a green "Completed") were written for a dark block: on the light one they take the deep shade of the same colour. */
+.day .st-night :is(.text-primary-200, .text-primary-300, .text-blue-200, .text-blue-300, .text-sky-300):not(.st-keep, .st-keep *) { color: rgb(var(--primary-700)) !important; }
+.day .st-night :is(.text-green-300, .text-green-400, .text-emerald-300, .text-emerald-400):not(.st-keep, .st-keep *) { color: #0b6b4a !important; }
+.day .st-night :is(.text-red-300, .text-red-400, .text-rose-300):not(.st-keep, .st-keep *) { color: #b4233c !important; }
+.day .st-night :is(.text-violet-300, .text-purple-300, .text-indigo-300):not(.st-keep, .st-keep *) { color: #5a45e0 !important; }
 .day .st-night :is(.text-amber-300, .text-amber-400, .text-\[\#ffd06b\], .text-\[\#ffd666\]),
 .day .st-night:is(.text-amber-300, .text-amber-400) { color: var(--st-gold-ink) !important; }
 .day .st-night :is(.border-white\/10, .border-white\/15, .border-white\/20, [class*='divide-white']),

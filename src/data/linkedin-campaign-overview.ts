@@ -445,7 +445,7 @@ gennoor.com/training
 It is the easiest way to see how we teach.
 
 - Two live sessions, Saturday and Sunday
-- Six working demos, built in front of you
+- Seven working demos, built in front of you
 - The complete kit afterwards
 
 Each demo starts from an empty screen, and every step is explained. The last weekend of every month, online.
@@ -453,7 +453,7 @@ Each demo starts from an empty screen, and every step is explained. The last wee
 gennoor.com/ai-weekend
 
 #Claude #AITraining #AIForWork #LearnAI`,
-    share: 'The AI Weekend: two live sessions and six working demos, every month. gennoor.com/ai-weekend',
+    share: 'The AI Weekend: two live sessions and seven working demos, every month. gennoor.com/ai-weekend',
   },
   {
     id: 'o27',

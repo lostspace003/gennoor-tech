@@ -205,19 +205,19 @@ reelO.push({
 })
 
 // ------------------------------------------------------------------ 10. the AI Weekend
-const dayCardV = ([day, title, builds, tone], k, b) => `<div class="abs card" data-b="${b}" style="left:${RX + k * 298}px;top:466px;width:286px;height:330px;padding:20px 20px 0">
+const dayCardV = ([day, title, builds, tone], k, b) => `<div class="abs card" data-b="${b}" style="left:${RX + k * 298}px;top:466px;width:286px;height:374px;padding:20px 20px 0">
     ${ico(k ? 'bot' : 'file-text', 50, tone)}
     <div class="tiny" style="margin-top:15px;color:${k ? 'var(--gold)' : 'var(--blue2)'}">${day}</div><div class="h3" style="margin-top:8px;font-size:20px;line-height:1.2;min-height:48px">${title}</div>
     <div class="seq" data-delay="${0.4 + k * 0.4}" data-gap=".2" style="margin-top:12px">${builds.map((t) => `<div class="row" style="height:42px;border-top:1px solid rgba(255,255,255,.09);font:500 15.5px/1.2 var(--body)"><span class="tick" style="width:16px;height:16px${k ? ';background:var(--gold)' : ''}"></span>${t}</div>`).join('')}</div></div>`
 reelO.push({
   id: 'weekend',
-  cues: [['o11', { 1: 'Two', 2: 'Six' }]],
+  cues: [['o11', { 1: 'Two', 2: 'Seven' }]],
   bg: ground(GLOWV.gold, { mx: 50, my: 42 }),
   fg: `
     <div class="abs" data-b="0" data-fx="pop" data-pad="60" style="left:${RX}px;top:198px">${bolt(92)}</div>
     <div class="abs kicker" data-b="0" data-o="1" data-fx="fade" style="left:${RX + 114}px;top:208px;font-size:14px">Live &middot; every month</div>
     <div class="abs h1 nowrap" data-b="0" data-o="2" style="left:${RX + 112}px;top:232px;font-size:54px">The AI Weekend</div>
-    <div class="abs p" data-b="0" data-o="3" style="left:${RX}px;top:316px;font-size:22px">Build with Claude in one weekend.</div>
+    <div class="abs p" data-b="0" data-o="3" style="left:${RX}px;top:316px;font-size:22px">Build with AI in one weekend.</div>
     <div class="abs card lit row" data-b="0" data-o="5" data-fx="right" style="left:${RX}px;top:368px;width:${RW}px;height:80px;padding:0 24px;justify-content:space-between">
       <div><div class="tiny" style="color:var(--gold)">Every month</div><div class="h3 nowrap" style="margin-top:8px;font-size:24px">The last weekend</div></div>
       <div class="small" style="font-size:15.5px;text-align:right;line-height:1.4">Saturday &amp; Sunday<br>live online</div></div>

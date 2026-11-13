@@ -25,7 +25,7 @@ BEFORE THE CALL
   more.
 - Do not quote a price. Say: "The cost depends on the size of the team and what we build.
   Once we understand your need, we send it in writing."
-- Do not name other clients.
+- Do not name other clients, and do not name a trainer. Say "an industry expert".
 - If you do not know an answer, say: "Let me note it and come back to you today."
 
 
@@ -300,21 +300,23 @@ SLIDE 13    THE AI WEEKEND
 ------------------------------------------------------------------------------------
 
 THE SLIDE SHOWS
-   "The AI Weekend. Build with Claude in one weekend." The last weekend of every month,
+   "The AI Weekend. Build with AI in one weekend." The last weekend of every month,
    Saturday and Sunday, live online. And what is built on each of the two days.
 
 SAY
    "For people who want to see it for themselves, there is the AI Weekend. It is on the
-   last weekend of every month, Saturday and Sunday, live online. On Saturday we set
-   Claude up to know your work, turn a messy sheet into a weekly report, and connect it
-   to your files. On Sunday we automate one task, build a small app just by describing
-   it, and build a first agent. Six working demos, built step by step in front of you,
-   and you get the complete kit afterwards to repeat them."
+   last weekend of every month, Saturday and Sunday, live online. On Saturday we start
+   with how AI works and set it up to know your work, turn a messy sheet into a weekly
+   report, make a picture, a short video and a voice track with AI, and connect AI to
+   your files and tools. On Sunday we automate one task, build a first agent, and then a
+   small team of agents. Seven working demos, built step by step in front of you, and
+   you get the complete kit afterwards to repeat them."
 
 IN PLAIN WORDS
-   A live online workshop over two mornings. No coding is needed. An "agent" is an AI
-   helper that is given a goal and does the steps itself. The "kit" is the notes, the
-   prompts, the files and the guides.
+   A live online workshop over two mornings. No coding is needed. It is about working
+   with AI in general, not one product: Claude is one of the AI assistants used. An
+   "agent" is an AI helper that is given a goal and does the steps itself. The "kit" is
+   the notes, the prompts, the files and the guides.
    Do not say a date or a fee from memory. The page shows both: gennoor.com/ai-weekend
 
 BLUE BUTTON   opens the AI Weekend page.
@@ -404,8 +406,9 @@ QUESTIONS CLIENTS ASK, AND A PLAIN ANSWER
    can build a small working prototype on your own examples first."
 
 "Who teaches?"
-   "Our founder, Jalal Ahmed Khan, is a Microsoft Certified Trainer. He trains corporate
-   teams on AI and cloud, and builds our courses."
+   "An industry expert: a practitioner who trains corporate teams on AI and cloud, and
+   builds our courses." Do not give a name. If they ask who it will be for their
+   training, say: "We will confirm the trainer with the proposal."
 
 Anything else: "Let me note it and come back to you today."
 

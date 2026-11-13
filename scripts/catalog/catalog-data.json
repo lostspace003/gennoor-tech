@@ -1,28 +1,24 @@
 {
  "meta": {
-  "generatedOn": "2026-11-12",
+  "generatedOn": "2026-11-13",
   "walkthrough": "https://www.gennoor.com/studio",
   "counts": {
    "studio": 7,
    "essentials": 48,
    "claudeCerts": 4,
    "claudeCourses": 16,
-   "programs": 40,
-   "exams": 29,
-   "pocs": 18,
-   "microsoft": 102,
-   "microsoftNew": 10
+   "comingSoon": 44
   },
   "studioHours": 40,
   "studioLessons": 704,
   "weekend": {
    "name": "Gennoor AI Weekend",
-   "tagline": "Build with Claude in one weekend",
+   "tagline": "Build with AI in one weekend",
    "dates": "28 and 29 November 2026",
    "time": "10:00 AM to 2:00 PM IST",
    "included": [
-    "8 hours live with the trainer, across two days",
-    "Six working demos, built step by step in front of you",
+    "8 hours live with an industry expert, across two days",
+    "Seven working demos, built step by step in front of you",
     "The complete kit after the weekend, so you can repeat every demo",
     "Your questions answered live",
     "A certificate when you attend both days"
@@ -66,99 +62,86 @@
  "What we offer": {
   "header": [
    "#",
-   "Offering",
-   "What it includes",
+   "What we offer",
+   "What it is",
    "Best for",
    "Link"
   ],
   "rows": [
    [
     1,
-    "Learning Studio",
-    "7 video courses with labs, quizzes and a certificate: certification preparation and real projects. Preview lessons of every course play without signing in.",
+    "Learning Studio video courses",
+    "7 video courses with labs, a quiz in every module and a certificate: preparation for a certification, or one real project from start to finish. Preview lessons of every course play without signing in.",
     "People and teams who want to learn at their own pace",
     "https://www.gennoor.com/studio"
    ],
    [
     2,
     "AI Essentials",
-    "48 short interactive courses with animated slides, narration and a quiz, each about an hour.",
+    "48 short interactive courses with animated slides, narration and a quiz. One useful skill in about an hour. Open on the website.",
     "Every role, including people who do not code",
     "https://www.gennoor.com/ai-academy"
    ],
    [
     3,
     "Claude certification preparation",
-    "A guide for each of the 4 Claude certifications, with a storyline, short videos and a practice exam.",
+    "A guide and a practice exam for each of the 4 Claude certifications, with a storyline and short videos. Open on the website.",
     "Anyone preparing for a Claude certification",
     "https://www.gennoor.com/claude/certifications"
    ],
    [
     4,
-    "Claude training for teams",
-    "Live sessions on Claude for everyday work, Claude Cowork and Claude Code, built around what your team does.",
-    "Teams starting with Claude or wanting to use it well",
+    "Claude automation courses for teams",
+    "16 instructor-led courses, each built around one job a team does: Automation with Claude and Agentic Cybersecurity. Every course has its outline on the website.",
+    "Teams that want to automate a real process with Claude",
     "https://www.gennoor.com/claude"
    ],
    [
     5,
-    "Training for your team",
-    "Live training, online or at your office: Claude, Microsoft AI and automation courses, plus preparation for certification exams.",
-    "Smaller teams and larger organizations",
+    "Training built on your work",
+    "We learn what your people do, build the course around it, and teach it live, online or at your office. The examples and exercises come from your own work.",
+    "A team whose work a ready-made course does not cover",
     "https://www.gennoor.com/training"
    ],
    [
     6,
-    "Microsoft official courses",
-    "Microsoft's own instructor-led courses with hands-on labs, taught by a Microsoft Certified Trainer. 102 titles across AI, data, security, infrastructure, business applications and Microsoft 365.",
-    "Teams preparing for a Microsoft certification or rolling out a Microsoft product",
+    "Automation training",
+    "One process your team runs every week, and a course built on it with their own examples and files. Taught live and hands-on, so they automate it themselves, and a person still checks the result.",
+    "A team with a task it repeats every week",
     "https://www.gennoor.com/training"
    ],
    [
     7,
-    "Custom training courses",
-    "A course written around your own tools, processes and examples, with video lessons, labs, quizzes and a certificate.",
-    "Teams whose work a standard course does not cover",
-    "https://www.gennoor.com/training"
+    "A learning platform for your company",
+    "We build and set up a learning platform (LMS) for your organization: your courses, your people, your name on it. In the cloud or on your premises.",
+    "An organization with a regular training need",
+    "https://www.gennoor.com/contact"
    ],
    [
     8,
-    "Custom automation training",
-    "A course built on one process your team runs every week, with their own examples and files. Taught live and hands-on, so they automate that process themselves, with Claude and other AI tools.",
-    "Teams with a task they repeat every week",
-    "https://www.gennoor.com/training"
-   ],
-   [
-    9,
-    "A learning platform for your company",
-    "We build and set up a learning platform (LMS) for your organization: your courses, your people, your name on it. On our platform or built for you, in the cloud or on your premises.",
-    "Organizations with a regular training need",
-    "https://www.gennoor.com/contact"
-   ],
-   [
-    10,
-    "Proof-of-concept builds",
-    "A working prototype of one AI use case, with a fixed scope. 18 ready blueprints to start from.",
-    "Teams that want to see it work before they commit",
-    "https://www.gennoor.com/contact"
-   ],
-   [
-    11,
-    "Automation",
-    "One process at a time: scoped in writing first, built with Claude, and tested on your own examples.",
-    "A process that eats hours every week",
+    "A prototype first",
+    "One use case built as a working prototype, with the scope agreed in writing before we start and tested on your own examples. People stay in charge of checking.",
+    "A team that wants to see it work before it commits",
     "https://www.gennoor.com/automation"
    ],
    [
-    12,
+    9,
     "Gennoor AI Weekend",
-    "Build with Claude in one weekend. Two live sessions on the last weekend of every month, Saturday and Sunday: six working demos, and the complete kit afterwards.",
+    "Build with AI in one weekend. Two live sessions on the last weekend of every month, Saturday and Sunday: seven working demos, and the complete kit afterwards.",
     "People who want to see it built live",
     "https://www.gennoor.com/ai-weekend"
+   ],
+   [
+    10,
+    "Coming soon to the Learning Studio",
+    "44 Microsoft courses on AI, AI for business, Copilot and data are on their way to the Learning Studio, in the same form as the courses there now: video lessons, labs, quizzes and a certificate.",
+    "People and teams following a Microsoft learning path",
+    "https://www.gennoor.com/studio"
    ]
   ],
   "widths": {
-   "C": 70,
+   "B": 38,
+   "C": 78,
    "D": 44,
    "E": 34
   }
@@ -172,13 +155,13 @@
   "rows": [
    [
     "A custom training course",
-    "Lessons written around your own tools, processes and examples. Hands-on labs, a quiz in every module and a certificate. Narration in a voice you choose, with a digital presenter on screen if you want one.",
+    "Lessons written around your own tools, processes and examples. Hands-on labs, a quiz in every module and a certificate.",
     "On the Learning Studio, or on your own platform"
    ],
    [
     "A learning platform (LMS) for your company",
-    "Your courses and your people only, under your name. Video lessons with captions and saved progress, quizzes, labs, certificates, an assistant that answers questions inside the lesson, and a question board answered by a trainer. Other features on request.",
-    "On our platform or built for you, in the cloud or on your premises"
+    "Your courses and your people only, under your name. Video lessons with captions and saved progress, quizzes, labs, certificates, an assistant that answers questions inside the lesson, and a question board answered by a trainer.",
+    "In the cloud or on your premises, built and set up by us"
    ],
    [
     "Automation training built on your process",
@@ -198,17 +181,12 @@
    [
     "Support after the training",
     "A doubt desk for your organization: learners post a question, a trainer answers, and the answer stays for the next person. The course stays open to go back to.",
-    "On the platform, online or on your premises"
+    "On the platform"
    ],
    [
-    "A proof of concept",
-    "One AI use case built as a working prototype, with the scope agreed before work starts. See the blueprints sheet.",
-    "Built in your environment, tested on your examples"
-   ],
-   [
-    "Automation of one process",
-    "Scoped in writing first, built with Claude, tested on real cases from your work, with people kept in charge of checking.",
-    "One process at a time"
+    "A prototype first",
+    "One use case built as a working prototype, with the scope agreed in writing before work starts, tested on your own examples, with people kept in charge of checking. One process at a time.",
+    "Built with you, on your examples"
    ]
   ],
   "widths": {
@@ -1022,2091 +1000,533 @@
    "H": 44
   }
  },
- "Team training": {
-  "header": [
-   "#",
-   "Title",
-   "Type",
-   "Level",
-   "Duration",
-   "Audience",
-   "Technology",
-   "Description",
-   "Link"
-  ],
-  "rows": [
-   [
-    1,
-    "AI Transformation for Business Leaders",
-    "Bootcamp",
-    "Executive",
-    "5 days",
-    "C-Suite, Senior Management",
-    "Cross-Platform",
-    "Master AI strategy and transformation to lead your organization into the future.",
-    "https://www.gennoor.com/services/training/ai-transformation-for-business-leaders"
-   ],
-   [
-    2,
-    "GenAI Copilot Mastery",
-    "Bootcamp",
-    "Intermediate",
-    "5 days",
-    "Business Users, Analysts",
-    "Microsoft",
-    "Master Microsoft Copilot and generative AI tools for maximum productivity.",
-    "https://www.gennoor.com/services/training/genai-copilot-mastery"
-   ],
-   [
-    3,
-    "Agentic AI Engineering",
-    "Bootcamp",
-    "Advanced",
-    "10 days",
-    "AI Engineers, Developers",
-    "Open Source",
-    "Build autonomous AI agents and multi-agent systems for enterprise applications.",
-    "https://www.gennoor.com/services/training/agentic-ai-engineering"
-   ],
-   [
-    4,
-    "Data Science & Machine Learning",
-    "Bootcamp",
-    "Intermediate",
-    "8 days",
-    "Data Scientists, Analysts",
-    "Cross-Platform",
-    "Comprehensive data science and ML fundamentals with hands-on projects.",
-    "https://www.gennoor.com/services/training/data-science-machine-learning"
-   ],
-   [
-    5,
-    "Deep Learning & Computer Vision",
-    "Bootcamp",
-    "Advanced",
-    "10 days",
-    "ML Engineers, Researchers",
-    "Open Source",
-    "Master deep learning and computer vision for cutting-edge AI applications.",
-    "https://www.gennoor.com/services/training/deep-learning-computer-vision"
-   ],
-   [
-    6,
-    "Production AI & MLOps",
-    "Bootcamp",
-    "Advanced",
-    "7 days",
-    "ML Engineers, DevOps",
-    "Multi-Cloud",
-    "Deploy and manage AI systems at scale with MLOps best practices.",
-    "https://www.gennoor.com/services/training/production-ai-mlops"
-   ],
-   [
-    7,
-    "AI Development Framework",
-    "Bootcamp",
-    "Intermediate",
-    "5 days",
-    "Developers, Architects",
-    "Open Source",
-    "Build robust AI applications with modern frameworks and best practices.",
-    "https://www.gennoor.com/services/training/ai-development-framework"
-   ],
-   [
-    8,
-    "Microsoft AI for Developers",
-    "Bootcamp",
-    "Intermediate",
-    "5 days",
-    "Developers, Engineers",
-    "Microsoft",
-    "Master Microsoft AI services with Azure AI Foundry and Azure OpenAI for enterprise solutions.",
-    "https://www.gennoor.com/services/training/microsoft-ai-for-developers"
-   ],
-   [
-    9,
-    "AI on Google Cloud",
-    "Bootcamp",
-    "Intermediate",
-    "5 days",
-    "Cloud Engineers, Developers",
-    "Google Cloud",
-    "Build and deploy AI solutions on Google Cloud Platform.",
-    "https://www.gennoor.com/services/training/ai-on-google-cloud"
-   ],
-   [
-    10,
-    "AI on AWS",
-    "Bootcamp",
-    "Intermediate",
-    "5 days",
-    "Cloud Engineers, Developers",
-    "AWS",
-    "Leverage AWS AI services for scalable machine learning solutions.",
-    "https://www.gennoor.com/services/training/ai-on-aws"
-   ],
-   [
-    11,
-    "AB100 Certification Prep",
-    "Bootcamp",
-    "Intermediate",
-    "3 days",
-    "AI Professionals",
-    "Cross-Platform",
-    "Prepare for the Agentic AI AB100 certification exam.",
-    "https://www.gennoor.com/services/training/ab100-certification-prep"
-   ],
-   [
-    12,
-    "Development using Claude AI",
-    "Bootcamp",
-    "Intermediate",
-    "3 days",
-    "Developers",
-    "Claude/Anthropic",
-    "Build applications with Claude AI and Anthropic APIs.",
-    "https://www.gennoor.com/services/training/development-using-claude-ai"
-   ],
-   [
-    13,
-    "Azure AI Foundry & Semantic Kernel",
-    "Bootcamp",
-    "Advanced",
-    "5 days",
-    "AI Engineers, Solution Architects",
-    "Microsoft Azure",
-    "Master the new Azure AI Foundry platform with deep-dive into Semantic Kernel orchestration.",
-    "https://www.gennoor.com/services/training/azure-ai-foundry-semantic-kernel"
-   ],
-   [
-    14,
-    "Microsoft Applied Skills Bootcamp",
-    "Bootcamp",
-    "Intermediate",
-    "5 days",
-    "Job Seekers, Developers, Cloud Engineers",
-    "Microsoft Azure",
-    "Earn 6 Microsoft Applied Skills in 5 days - practical, hands-on validation employers demand.",
-    "https://www.gennoor.com/services/training/microsoft-applied-skills-bootcamp"
-   ],
-   [
-    15,
-    "AI Transformation for Business Leaders",
-    "Course",
-    "Executive",
-    "2 days",
-    "C-Suite, Senior Management",
-    "Cross-Platform",
-    "Strategic AI adoption and transformation for business leaders.",
-    "https://www.gennoor.com/services/training/ai-transformation-for-business-leaders-course"
-   ],
-   [
-    16,
-    "Generative AI & Copilot Mastery",
-    "Course",
-    "Intermediate",
-    "3 days",
-    "Business Users",
-    "Microsoft",
-    "Master generative AI tools and Microsoft Copilot ecosystem.",
-    "https://www.gennoor.com/services/training/generative-ai-copilot-mastery"
-   ],
-   [
-    17,
-    "Agentic AI Engineering",
-    "Course",
-    "Advanced",
-    "5 days",
-    "AI Engineers",
-    "Open Source",
-    "Build autonomous AI agents and multi-agent systems.",
-    "https://www.gennoor.com/services/training/agentic-ai-engineering-course"
-   ],
-   [
-    18,
-    "Data Science & Machine Learning",
-    "Course",
-    "Intermediate",
-    "4 days",
-    "Data Scientists",
-    "Cross-Platform",
-    "Comprehensive data science and ML fundamentals.",
-    "https://www.gennoor.com/services/training/data-science-machine-learning-course"
-   ],
-   [
-    19,
-    "Deep Learning & Computer Vision",
-    "Course",
-    "Advanced",
-    "5 days",
-    "ML Engineers",
-    "Open Source",
-    "Advanced deep learning and computer vision techniques.",
-    "https://www.gennoor.com/services/training/deep-learning-computer-vision-course"
-   ],
-   [
-    20,
-    "Production AI & MLOps",
-    "Course",
-    "Advanced",
-    "3 days",
-    "ML Engineers, DevOps",
-    "Multi-Cloud",
-    "Deploy and manage AI systems at scale.",
-    "https://www.gennoor.com/services/training/production-ai-mlops-course"
-   ],
-   [
-    21,
-    "AI Development Framework",
-    "Course",
-    "Intermediate",
-    "3 days",
-    "Developers",
-    "Open Source",
-    "Build AI applications with modern frameworks.",
-    "https://www.gennoor.com/services/training/ai-development-framework-course"
-   ],
-   [
-    22,
-    "Microsoft AI for Developers",
-    "Course",
-    "Intermediate",
-    "3 days",
-    "Developers",
-    "Microsoft",
-    "Master Microsoft AI services with Azure AI Foundry and Azure OpenAI.",
-    "https://www.gennoor.com/services/training/microsoft-ai-for-developers-course"
-   ],
-   [
-    23,
-    "AI on Google Cloud",
-    "Course",
-    "Intermediate",
-    "3 days",
-    "Cloud Engineers",
-    "Google Cloud",
-    "Build AI solutions on Google Cloud Platform.",
-    "https://www.gennoor.com/services/training/ai-on-google-cloud-course"
-   ],
-   [
-    24,
-    "AI on AWS",
-    "Course",
-    "Intermediate",
-    "3 days",
-    "Cloud Engineers",
-    "AWS",
-    "Leverage AWS AI services for ML solutions.",
-    "https://www.gennoor.com/services/training/ai-on-aws-course"
-   ],
-   [
-    25,
-    "AB100 Certification Prep",
-    "Course",
-    "Intermediate",
-    "2 days",
-    "AI Professionals",
-    "Cross-Platform",
-    "Prepare for Agentic AI AB100 certification.",
-    "https://www.gennoor.com/services/training/ab100-certification-prep-course"
-   ],
-   [
-    26,
-    "Development using Claude AI",
-    "Course",
-    "Intermediate",
-    "2 days",
-    "Developers",
-    "Claude/Anthropic",
-    "Build with Claude AI and Anthropic APIs.",
-    "https://www.gennoor.com/services/training/development-using-claude-ai-course"
-   ],
-   [
-    27,
-    "Executive AI Leadership",
-    "Course",
-    "Executive",
-    "1 day",
-    "C-Suite",
-    "Cross-Platform",
-    "AI leadership and strategy for executives.",
-    "https://www.gennoor.com/services/training/executive-ai-leadership"
-   ],
-   [
-    28,
-    "Azure AI Fundamentals",
-    "Course",
-    "Beginner",
-    "3 days",
-    "IT Professionals",
-    "Microsoft",
-    "Foundation course for Azure AI services with updated 2025-2026 certification.",
-    "https://www.gennoor.com/services/training/azure-ai-fundamentals"
-   ],
-   [
-    29,
-    "Microsoft Copilot Mastery",
-    "Course",
-    "Intermediate",
-    "2 days",
-    "Business Users",
-    "Microsoft",
-    "Master all Microsoft Copilot products.",
-    "https://www.gennoor.com/services/training/microsoft-copilot-mastery"
-   ],
-   [
-    30,
-    "Power Platform + AI",
-    "Course",
-    "Intermediate",
-    "3 days",
-    "Citizen Developers",
-    "Microsoft",
-    "Build AI-powered apps with Power Platform.",
-    "https://www.gennoor.com/services/training/power-platform-ai"
-   ],
-   [
-    31,
-    "Prompt Engineering Masterclass",
-    "Course",
-    "Intermediate",
-    "2 days",
-    "All Roles",
-    "Cross-Platform",
-    "Master the art of prompt engineering.",
-    "https://www.gennoor.com/services/training/prompt-engineering-masterclass"
-   ],
-   [
-    32,
-    "GitHub Copilot for Developers",
-    "Course",
-    "Intermediate",
-    "2 days",
-    "Developers",
-    "Microsoft",
-    "Accelerate development with GitHub Copilot.",
-    "https://www.gennoor.com/services/training/github-copilot-for-developers"
-   ],
-   [
-    33,
-    "RAG Engineering",
-    "Course",
-    "Advanced",
-    "3 days",
-    "AI Engineers",
-    "Open Source",
-    "Build production RAG systems.",
-    "https://www.gennoor.com/services/training/rag-engineering"
-   ],
-   [
-    34,
-    "AI Security & Responsible AI",
-    "Course",
-    "Intermediate",
-    "2 days",
-    "All Technical Roles",
-    "Cross-Platform",
-    "Security and ethics in AI systems.",
-    "https://www.gennoor.com/services/training/ai-security-responsible-ai"
-   ],
-   [
-    35,
-    "AI for BFSI",
-    "Course",
-    "Intermediate",
-    "3 days",
-    "BFSI Professionals",
-    "Cross-Platform",
-    "AI applications in Banking, Financial Services, and Insurance.",
-    "https://www.gennoor.com/services/training/ai-for-bfsi"
-   ],
-   [
-    36,
-    "AI for Government",
-    "Course",
-    "Intermediate",
-    "2 days",
-    "Government Officials",
-    "Cross-Platform",
-    "AI solutions for public sector and governance.",
-    "https://www.gennoor.com/services/training/ai-for-government"
-   ],
-   [
-    37,
-    "Fine-Tuning Custom LLMs",
-    "Course",
-    "Advanced",
-    "4 days",
-    "ML Engineers",
-    "Open Source",
-    "Fine-tune and deploy custom language models.",
-    "https://www.gennoor.com/services/training/fine-tuning-custom-llms"
-   ],
-   [
-    38,
-    "N8N AI Workflow Automation",
-    "Course",
-    "Intermediate",
-    "2 days",
-    "Automation Engineers",
-    "Open Source",
-    "Build AI-powered automation workflows with N8N.",
-    "https://www.gennoor.com/services/training/n8n-ai-workflow-automation"
-   ],
-   [
-    39,
-    "Conversational AI & Chatbots",
-    "Course",
-    "Intermediate",
-    "3 days",
-    "Developers",
-    "Cross-Platform",
-    "Build intelligent conversational AI systems.",
-    "https://www.gennoor.com/services/training/conversational-ai-chatbots"
-   ],
-   [
-    40,
-    "AI Testing & Quality Assurance",
-    "Course",
-    "Intermediate",
-    "2 days",
-    "QA Engineers",
-    "Cross-Platform",
-    "Test and validate AI systems effectively.",
-    "https://www.gennoor.com/services/training/ai-testing-quality-assurance"
-   ]
-  ],
-  "widths": {
-   "B": 46,
-   "F": 34,
-   "G": 18,
-   "H": 70,
-   "I": 44
-  }
- },
- "Microsoft courses": {
+ "Coming soon": {
   "header": [
    "#",
    "Code",
    "Title",
-   "Area",
-   "Duration",
+   "Family",
+   "Microsoft's course length",
    "Leads to",
-   "Hands-on",
    "Status",
-   "Link"
+   "Microsoft's page"
   ],
   "rows": [
    [
     1,
-    "AB-100T00",
-    "Architecting agentic AI business solutions",
-    "Business Applications",
-    "3 days",
+    "AI-200",
+    "Develop AI cloud solutions on Azure",
+    "AI",
+    "5 days",
     "Certification exam",
-    "",
-    "New",
-    "https://learn.microsoft.com/training/courses/ab-100t00"
+    "Coming soon",
+    "https://learn.microsoft.com/training/courses/ai-200t00"
    ],
    [
     2,
-    "AB-400T00",
-    "Extend Microsoft Power Platform Solutions with code and AI",
-    "Business Applications",
-    "3 days",
-    "Certification exam",
-    "Labs",
-    "New",
-    "https://learn.microsoft.com/training/courses/ab-400t00"
+    "AI-3003",
+    "Develop natural language solutions in Azure​",
+    "AI",
+    "1 day",
+    "Applied Skills credential",
+    "Coming soon",
+    "https://learn.microsoft.com/training/paths/develop-language-solutions-azure-ai/"
    ],
    [
     3,
-    "AB-6005",
-    "Introduction to supply chain management in Dynamics 365",
-    "Business Applications",
-    "1 day",
-    "",
-    "Labs",
-    "New",
-    "https://learn.microsoft.com/training/courses/ab-6005"
-   ],
-   [
-    4,
-    "AB-620T00",
-    "Design and build integrated AI agent solutions in Copilot Studio",
-    "Modern Work",
-    "3 days",
-    "Certification exam",
-    "Labs",
-    "New",
-    "https://learn.microsoft.com/training/courses/AB-620T00"
-   ],
-   [
-    5,
     "AI-3008",
     "Extract insights from visual data on Azure",
-    "Data & AI",
+    "AI",
     "1 day",
     "",
-    "Labs",
-    "New",
+    "Coming soon",
     "https://learn.microsoft.com/training/courses/ai-3008"
    ],
    [
-    6,
-    "AI-300T00",
+    4,
+    "AI-300",
     "Operationalize machine learning and generative AI solutions",
-    "Data & AI",
+    "AI",
     "4 days",
     "Certification exam",
-    "Labs",
-    "New",
+    "Coming soon",
     "https://learn.microsoft.com/training/courses/ai-300t00"
    ],
    [
+    5,
+    "AI-3016",
+    "Develop generative AI apps in Azure",
+    "AI",
+    "1 day",
+    "Applied Skills credential",
+    "Coming soon",
+    "https://learn.microsoft.com/training/paths/develop-generative-ai-apps/"
+   ],
+   [
+    6,
+    "AI-3019",
+    "Build AI Apps with Azure Database for PostgreSQL",
+    "AI",
+    "1 day",
+    "Applied Skills credential",
+    "Coming soon",
+    "https://learn.microsoft.com/training/paths/build-ai-apps-azure-database-postgresql/"
+   ],
+   [
     7,
-    "AI-500T00",
-    "Design and implement multi-agent AI solutions",
-    "Data & AI",
-    "4 days",
-    "Certification exam",
-    "Labs",
-    "New",
-    "https://learn.microsoft.com/training/courses/ai-500t00"
+    "AI-3025",
+    "Work smarter with AI",
+    "AI",
+    "3 hours",
+    "",
+    "Coming soon",
+    "https://learn.microsoft.com/training/courses/ai-3025"
    ],
    [
     8,
-    "DP-800T00",
-    "Develop AI-enabled database solutions",
-    "Data & AI",
-    "3 days",
-    "Certification exam",
-    "Labs",
-    "New",
-    "https://learn.microsoft.com/training/courses/dp-800t00"
+    "AI-3026",
+    "Develop AI agents on Azure",
+    "AI",
+    "1 day",
+    "",
+    "Coming soon",
+    "https://learn.microsoft.com/training/courses/ai-3026"
    ],
    [
     9,
-    "GH-600T00",
-    "Developing in Agentic AI Systems",
-    "Digital and App Innovation",
+    "AI-901",
+    "Introduction to AI in Azure",
+    "AI",
     "1 day",
     "Certification exam",
-    "Labs",
-    "New",
-    "https://learn.microsoft.com/training/courses/gh-600t00"
+    "Coming soon",
+    "https://learn.microsoft.com/training/courses/ai-901t00"
    ],
    [
     10,
-    "SC-5009",
-    "Secure AI solutions in the cloud using Microsoft Defender for Cloud and Microsoft Entra",
-    "Security",
-    "1 day",
-    "Applied Skills credential",
-    "Labs",
-    "New",
-    "https://learn.microsoft.com/training/courses/sc-5009"
+    "AB-100",
+    "Architecting agentic AI business solutions",
+    "AI for business",
+    "3 days",
+    "Certification exam",
+    "Coming soon",
+    "https://learn.microsoft.com/training/courses/ab-100t00"
    ],
    [
     11,
-    "AB-250T00",
+    "AB-250",
     "Transform contact center experiences with AI in Dynamics 365",
-    "Business Applications",
+    "AI for business",
     "3 days",
     "Certification exam",
-    "Labs",
-    "Updated Oct 2026",
+    "Coming soon",
     "https://learn.microsoft.com/training/courses/ab-250t00"
    ],
    [
     12,
+    "AB-400",
+    "Extend Microsoft Power Platform Solutions with code and AI",
+    "AI for business",
+    "3 days",
+    "Certification exam",
+    "Coming soon",
+    "https://learn.microsoft.com/training/courses/ab-400t00"
+   ],
+   [
+    13,
     "AB-6002",
     "Introduction to finance in Dynamics 365",
-    "Business Applications",
+    "AI for business",
     "1 day",
     "",
-    "Labs",
-    "Updated Jun 2026",
+    "Coming soon",
     "https://learn.microsoft.com/training/courses/ab-6002"
    ],
    [
-    13,
-    "AB-6003",
-    "Introduction to sales in Dynamics 365",
-    "Business Applications",
-    "1 day",
-    "",
-    "Simulations",
-    "Updated Jun 2026",
-    "https://learn.microsoft.com/training/courses/ab-6003"
-   ],
-   [
     14,
-    "AB-6004",
-    "Introduction to service in Dynamics 365",
-    "Business Applications",
+    "AB-6005",
+    "Introduction to supply chain management in Dynamics 365",
+    "AI for business",
     "1 day",
     "",
-    "Simulations",
-    "Updated Feb 2026",
-    "https://learn.microsoft.com/training/courses/ab-6004"
+    "Coming soon",
+    "https://learn.microsoft.com/training/courses/ab-6005"
    ],
    [
     15,
-    "AB-7011",
-    "Introduction to navigating the modern Contact Center",
-    "Business Applications",
-    "1 day",
-    "",
-    "",
-    "Updated Oct 2026",
-    "https://learn.microsoft.com/training/courses/ab-7011"
-   ],
-   [
-    16,
-    "MB-230T01",
-    "Implement customer service solutions using Microsoft Dynamics 365 Customer Service",
-    "Business Applications",
-    "4 days",
-    "Certification exam",
-    "Labs",
-    "Updated Oct 2026",
-    "https://learn.microsoft.com/training/courses/mb-230t01"
-   ],
-   [
-    17,
-    "MB-310T00",
-    "Manage Financial Operations with Dynamics 365 Finance",
-    "Business Applications",
-    "4 days",
-    "Certification exam",
-    "Labs",
-    "Updated Aug 2026",
-    "https://learn.microsoft.com/training/courses/mb-310t00"
-   ],
-   [
-    18,
-    "MB-330T00",
-    "Conceptualize Supply Chain Management in Microsoft Dynamics 365",
-    "Business Applications",
-    "5 days",
-    "Certification exam",
-    "Labs",
-    "Updated Jun 2025",
-    "https://learn.microsoft.com/training/courses/mb-330t00"
-   ],
-   [
-    19,
-    "MB-500T00",
-    "Develop Finance and Operations Apps with Dynamics 365",
-    "Business Applications",
-    "5 days",
-    "Certification exam",
-    "Labs",
-    "Updated Jan 2026",
-    "https://learn.microsoft.com/training/courses/mb-500t00"
-   ],
-   [
-    20,
-    "MB-800T00",
-    "Manage business solutions with Microsoft Dynamics 365 Business Central",
-    "Business Applications",
-    "5 days",
-    "Certification exam",
-    "Labs",
-    "Updated Jun 2026",
-    "https://learn.microsoft.com/training/courses/mb-800t00"
-   ],
-   [
-    21,
-    "MB-820T00",
-    "Develop solutions with Dynamics 365 Business Central",
-    "Business Applications",
-    "5 days",
-    "Certification exam",
-    "Labs",
-    "Updated Nov 2025",
-    "https://learn.microsoft.com/training/courses/mb-820t00"
-   ],
-   [
-    22,
-    "PL-7001",
-    "Create and Manage Canvas Apps with Power Apps",
-    "Business Applications",
-    "1 day",
-    "Applied Skills credential",
-    "Labs",
-    "Updated Oct 2025",
-    "https://learn.microsoft.com/training/paths/create-manage-canvas-apps-power-apps/"
-   ],
-   [
-    23,
-    "PL-7002",
-    "Create and Manage Automated Processes by using Power Automate",
-    "Business Applications",
-    "1 day",
-    "Applied Skills credential",
-    "Labs",
-    "Updated Oct 2025",
-    "https://learn.microsoft.com/training/paths/create-manage-automated-processes-by-using-power-automate/"
-   ],
-   [
-    24,
-    "PL-900T00",
-    "Introduction to Microsoft Power Platform",
-    "Business Applications",
-    "1 day",
-    "Certification exam",
-    "Labs",
-    "Updated Jul 2026",
-    "https://learn.microsoft.com/training/courses/pl-900t00"
-   ],
-   [
-    25,
-    "AI-103T00",
-    "Develop AI apps and agents on Azure",
-    "Data & AI",
-    "4 days",
-    "Certification exam",
-    "Labs",
-    "Updated May 2026",
-    "https://learn.microsoft.com/training/courses/ai-103t00"
-   ],
-   [
-    26,
-    "AI-200T00",
-    "Develop AI cloud solutions on Azure",
-    "Data & AI",
-    "5 days",
-    "Certification exam",
-    "Labs",
-    "Updated Sep 2026",
-    "https://learn.microsoft.com/training/courses/ai-200t00"
-   ],
-   [
-    27,
-    "AI-3003",
-    "Develop natural language solutions in Azure​",
-    "Data & AI",
-    "1 day",
-    "Applied Skills credential",
-    "Labs",
-    "Updated May 2026",
-    "https://learn.microsoft.com/training/paths/develop-language-solutions-azure-ai/"
-   ],
-   [
-    28,
-    "AI-3016",
-    "Develop generative AI apps in Azure",
-    "Data & AI",
-    "1 day",
-    "Applied Skills credential",
-    "Labs",
-    "Updated May 2026",
-    "https://learn.microsoft.com/training/paths/develop-generative-ai-apps/"
-   ],
-   [
-    29,
-    "AI-3019",
-    "Build AI Apps with Azure Database for PostgreSQL",
-    "Data & AI",
-    "1 day",
-    "Applied Skills credential",
-    "Labs",
-    "Updated Sep 2024",
-    "https://learn.microsoft.com/training/paths/build-ai-apps-azure-database-postgresql/"
-   ],
-   [
-    30,
-    "AI-3026",
-    "Develop AI agents on Azure",
-    "Data & AI",
-    "1 day",
-    "",
-    "Labs",
-    "Updated May 2026",
-    "https://learn.microsoft.com/training/courses/ai-3026"
-   ],
-   [
-    31,
-    "AI-901T00",
-    "Introduction to AI in Azure",
-    "Data & AI",
-    "1 day",
-    "Certification exam",
-    "Labs",
-    "Updated Jul 2026",
-    "https://learn.microsoft.com/training/courses/ai-901t00"
-   ],
-   [
-    32,
-    "DP-080T00",
-    "Query and modify data with Transact-SQL",
-    "Data & AI",
-    "2 days",
-    "",
-    "Labs",
-    "Updated Aug 2025",
-    "https://learn.microsoft.com/training/courses/dp-080t00"
-   ],
-   [
-    33,
-    "DP-3001",
-    "Migrate SQL Server workload to Azure SQL",
-    "Data & AI",
-    "1 day",
-    "Applied Skills credential",
-    "Labs",
-    "Updated Oct 2025",
-    "https://learn.microsoft.com/training/paths/migrate-sql-workloads-azure/"
-   ],
-   [
-    34,
-    "DP-300T00",
-    "Implement scalable database solutions using Azure SQL",
-    "Data & AI",
-    "4 days",
-    "Certification exam",
-    "Labs",
-    "Updated Aug 2026",
-    "https://learn.microsoft.com/training/courses/dp-300t00"
-   ],
-   [
-    35,
-    "DP-3014",
-    "Build machine learning solutions using Azure Databricks",
-    "Data & AI",
-    "1 day",
-    "",
-    "Labs",
-    "Updated Aug 2025",
-    "https://learn.microsoft.com/training/courses/dp-3014"
-   ],
-   [
-    36,
-    "DP-3015",
-    "Get started with Azure Cosmos DB NoSQL development",
-    "Data & AI",
-    "1 day",
-    "",
-    "Labs",
-    "Updated Nov 2025",
-    "https://learn.microsoft.com/training/courses/dp-3015"
-   ],
-   [
-    37,
-    "DP-3020",
-    "Develop data-driven applications with Azure SQL Database",
-    "Data & AI",
-    "1 day",
-    "Applied Skills credential",
-    "Labs",
-    "Updated Jan 2025",
-    "https://learn.microsoft.com/training/paths/develop-data-driven-app-sql-db/"
-   ],
-   [
-    38,
-    "DP-3021",
-    "Configure and migrate to Azure Database for PostgreSQL",
-    "Data & AI",
-    "1 day",
-    "Applied Skills credential",
-    "Labs",
-    "Updated Sep 2024",
-    "https://learn.microsoft.com/training/paths/microsoft-learn-azure-database-for-postgresql/"
-   ],
-   [
-    39,
-    "DP-3029",
-    "Work smarter with Copilot in Microsoft Fabric",
-    "Data & AI",
-    "1 day",
-    "",
-    "Labs",
-    "Updated Nov 2025",
-    "https://learn.microsoft.com/training/courses/dp-3029"
-   ],
-   [
-    40,
-    "DP-420T00",
-    "Build AI applications with Azure Cosmos DB",
-    "Data & AI",
-    "4 days",
-    "Certification exam",
-    "Labs",
-    "Updated Oct 2026",
-    "https://learn.microsoft.com/training/courses/dp-420t00"
-   ],
-   [
-    41,
-    "DP-600T00",
-    "Implement analytics solutions using Microsoft Fabric",
-    "Data & AI",
-    "4 days",
-    "Certification exam",
-    "Labs",
-    "Updated May 2026",
-    "https://learn.microsoft.com/training/courses/dp-600t00"
-   ],
-   [
-    42,
-    "DP-601T00",
-    "Implement a Lakehouse with Microsoft Fabric",
-    "Data & AI",
-    "1 day",
-    "",
-    "Labs",
-    "Updated Jan 2026",
-    "https://learn.microsoft.com/training/courses/dp-601t00"
-   ],
-   [
-    43,
-    "DP-602T00",
-    "Implement a Data Warehouse with Microsoft Fabric",
-    "Data & AI",
-    "1 day",
-    "",
-    "Labs",
-    "Updated Jul 2026",
-    "https://learn.microsoft.com/training/courses/dp-602t00"
-   ],
-   [
-    44,
-    "DP-603T00",
-    "Implement Real-Time Intelligence with Microsoft Fabric",
-    "Data & AI",
-    "1 day",
-    "Applied Skills credential",
-    "Labs",
-    "Updated Dec 2025",
-    "https://learn.microsoft.com/training/paths/explore-real-time-analytics-microsoft-fabric/"
-   ],
-   [
-    45,
-    "DP-604T00",
-    "Implement a data science and machine learning solution for AI with Microsoft Fabric",
-    "Data & AI",
-    "1 day",
-    "",
-    "Labs",
-    "Updated Jan 2026",
-    "https://learn.microsoft.com/training/courses/dp-604t00"
-   ],
-   [
-    46,
-    "DP-605T00",
-    "Prepare and visualize data with Microsoft Power BI",
-    "Data & AI",
-    "1 day",
-    "",
-    "Labs",
-    "Updated Oct 2025",
-    "https://learn.microsoft.com/training/courses/dp-605t00"
-   ],
-   [
-    47,
-    "DP-700T00",
-    "Implement data engineering solutions using Microsoft Fabric",
-    "Data & AI",
-    "4 days",
-    "Certification exam",
-    "Labs",
-    "Updated Jan 2026",
-    "https://learn.microsoft.com/training/courses/dp-700t00"
-   ],
-   [
-    48,
-    "DP-750T00",
-    "Implement data engineering solutions using Azure Databricks",
-    "Data & AI",
-    "4 days",
-    "Certification exam",
-    "Labs",
-    "Updated May 2026",
-    "https://learn.microsoft.com/training/courses/dp-750t00"
-   ],
-   [
-    49,
-    "DP-900T00",
-    "Introduction to Microsoft Azure Data",
-    "Data & AI",
-    "1 day",
-    "Certification exam",
-    "Labs",
-    "Updated Aug 2025",
-    "https://learn.microsoft.com/training/courses/dp-900t00"
-   ],
-   [
-    50,
-    "PL-300T00",
-    "Design and manage analytics solutions using Power BI",
-    "Data & AI",
-    "3 days",
-    "Certification exam",
-    "Labs",
-    "Updated Jul 2025",
-    "https://learn.microsoft.com/training/courses/pl-300t00"
-   ],
-   [
-    51,
-    "AZ-2001",
-    "Implement security through a pipeline using Azure DevOps",
-    "Digital and App Innovation",
-    "1 day",
-    "Applied Skills credential",
-    "Labs",
-    "Updated Oct 2024",
-    "https://learn.microsoft.com/training/paths/implement-security-through-pipeline-using-devops/"
-   ],
-   [
-    52,
-    "AZ-2003",
-    "Deploy cloud-native apps using Azure Container Apps",
-    "Digital and App Innovation",
-    "1 day",
-    "Applied Skills credential",
-    "Labs",
-    "Updated Feb 2024",
-    "https://learn.microsoft.com/training/paths/deploy-cloud-native-applications-to-azure-container-apps/"
-   ],
-   [
-    53,
-    "AZ-2007",
-    "Get started with AI-assisted development",
-    "Digital and App Innovation",
-    "1 day",
-    "Applied Skills credential",
-    "Labs",
-    "Updated May 2026",
-    "https://learn.microsoft.com/training/paths/accelerate-app-development-using-github-copilot/"
-   ],
-   [
-    54,
-    "AZ-2008",
-    "DevOps Foundations: The Core Principles and Practices",
-    "Digital and App Innovation",
-    "1 day",
-    "",
-    "Labs",
-    "Updated Nov 2025",
-    "https://learn.microsoft.com/training/courses/az-2008"
-   ],
-   [
-    55,
-    "AZ-2010",
-    "Design and Implement Platform Engineering",
-    "Digital and App Innovation",
-    "1 day",
-    "",
-    "Labs",
-    "Updated Nov 2025",
-    "https://learn.microsoft.com/training/courses/az-2010"
-   ],
-   [
-    56,
-    "AZ-400T00",
-    "Design and Implement Microsoft DevOps solutions",
-    "Digital and App Innovation",
-    "4 days",
-    "Certification exam",
-    "Labs",
-    "Updated Nov 2025",
-    "https://learn.microsoft.com/training/courses/az-400t00"
-   ],
-   [
-    57,
-    "GH-100T00",
-    "GitHub fundamentals - Administration basics and product features",
-    "Digital and App Innovation",
-    "1 day",
-    "Certification exam",
-    "Labs",
-    "Updated May 2025",
-    "https://learn.microsoft.com/training/courses/gh-100t00"
-   ],
-   [
-    58,
-    "GH-200T00",
-    "Automate your workflow with GitHub Actions",
-    "Digital and App Innovation",
-    "1 day",
-    "Certification exam",
-    "Labs",
-    "Updated Jun 2025",
-    "https://learn.microsoft.com/training/courses/gh-200t00"
-   ],
-   [
-    59,
-    "GH-300T00",
-    "GitHub Copilot",
-    "Digital and App Innovation",
-    "1 day",
-    "Certification exam",
-    "Labs",
-    "Updated Jun 2025",
-    "https://learn.microsoft.com/training/courses/gh-300t00"
-   ],
-   [
-    60,
-    "GH-500T00",
-    "GitHub Advanced Security",
-    "Digital and App Innovation",
-    "1 day",
-    "Certification exam",
-    "Guided",
-    "Updated Apr 2025",
-    "https://learn.microsoft.com/training/courses/gh-500t00"
-   ],
-   [
-    61,
-    "GH-900T00",
-    "GitHub Foundations",
-    "Digital and App Innovation",
-    "2 days",
-    "Certification exam",
-    "Guided",
-    "Updated Aug 2025",
-    "https://learn.microsoft.com/training/courses/gh-900t00"
-   ],
-   [
-    62,
-    "AZ-040T00",
-    "Automate Administration with PowerShell",
-    "Infrastructure",
-    "5 days",
-    "",
-    "Labs",
-    "Updated May 2026",
-    "https://learn.microsoft.com/training/courses/az-040t00"
-   ],
-   [
-    63,
-    "AZ-1002",
-    "Configure secure access to your workloads using networking with Azure Virtual Network",
-    "Infrastructure",
-    "1 day",
-    "Applied Skills credential",
-    "Labs",
-    "Updated Feb 2026",
-    "https://learn.microsoft.com/training/paths/configure-secure-workloads-using-azure-virtual-networking/"
-   ],
-   [
-    64,
-    "AZ-1003",
-    "Secure storage for Azure Files and Azure Blob Storage",
-    "Infrastructure",
-    "1 day",
-    "Applied Skills credential",
-    "Labs",
-    "Updated Feb 2026",
-    "https://learn.microsoft.com/training/paths/implement-storage-azure-files-azure-blob-storage/"
-   ],
-   [
-    65,
-    "AZ-1004",
-    "Deploy and configure Azure Monitor",
-    "Infrastructure",
-    "1 day",
-    "Applied Skills credential",
-    "Labs",
-    "Updated Oct 2025",
-    "https://learn.microsoft.com/training/paths/deploy-configure-azure-monitor/"
-   ],
-   [
-    66,
-    "AZ-1007",
-    "Deploy and administer Linux virtual machines on Azure",
-    "Infrastructure",
-    "1 day",
-    "",
-    "Labs",
-    "Updated Feb 2026",
-    "https://learn.microsoft.com/training/courses/az-1007"
-   ],
-   [
-    67,
-    "AZ-1008",
-    "Administer Active Directory Domain Services",
-    "Infrastructure",
-    "1 day",
-    "Applied Skills credential",
-    "Labs",
-    "Updated Aug 2024",
-    "https://learn.microsoft.com/training/paths/administer-active-directory-domain-services/"
-   ],
-   [
-    68,
-    "AZ-104T00",
-    "Microsoft Azure Administrator",
-    "Infrastructure",
-    "4 days",
-    "Certification exam",
-    "Labs",
-    "Updated Feb 2026",
-    "https://learn.microsoft.com/training/courses/az-104t00"
-   ],
-   [
-    69,
-    "AZ-120T00",
-    "Planning and Deploying SAP on Azure",
-    "Infrastructure",
-    "3 days",
-    "Certification exam",
-    "Labs",
-    "Updated Aug 2024",
-    "https://learn.microsoft.com/training/courses/az-120t00"
-   ],
-   [
-    70,
-    "AZ-140T00",
-    "Configure and Operate Microsoft Azure Virtual Desktop",
-    "Infrastructure",
-    "4 days",
-    "Certification exam",
-    "Labs",
-    "Updated Jun 2025",
-    "https://learn.microsoft.com/training/courses/az-140t00"
-   ],
-   [
-    71,
-    "AZ-2006",
-    "Automate Azure Load Testing by using GitHub Actions",
-    "Infrastructure",
-    "1 day",
-    "Applied Skills credential",
-    "Labs",
-    "Updated Jun 2025",
-    "https://learn.microsoft.com/training/paths/automate-azure-load-testing-github/"
-   ],
-   [
-    72,
-    "AZ-305T00",
-    "Design Microsoft Azure Infrastructure Solutions",
-    "Infrastructure",
-    "4 days",
-    "Certification exam",
-    "",
-    "Updated Feb 2026",
-    "https://learn.microsoft.com/training/courses/az-305t00"
-   ],
-   [
-    73,
-    "AZ-700T00",
-    "Design and Implement Microsoft Azure Network Solutions",
-    "Infrastructure",
-    "3 days",
-    "Certification exam",
-    "Labs",
-    "Updated Feb 2026",
-    "https://learn.microsoft.com/training/courses/az-700t00"
-   ],
-   [
-    74,
-    "AZ-802T00",
-    "Administer Windows Server",
-    "Infrastructure",
-    "5 days",
-    "Certification exam",
-    "Labs",
-    "Updated Oct 2026",
-    "https://learn.microsoft.com/training/courses/az-802t00"
-   ],
-   [
-    75,
-    "AZ-900T00",
-    "Introduction to Cloud Infrastructure",
-    "Infrastructure",
-    "1 day",
-    "Certification exam",
-    "Labs",
-    "Updated May 2026",
-    "https://learn.microsoft.com/training/courses/az-900t00"
-   ],
-   [
-    76,
     "AB-6008",
     "Delegate work with AI",
-    "Modern Work",
+    "AI for business",
     "3 hours",
     "",
-    "Labs",
-    "Updated Oct 2026",
+    "Coming soon",
     "https://learn.microsoft.com/training/courses/ab-6008"
    ],
    [
-    77,
-    "AB-731T00",
+    16,
+    "AB-731",
     "Drive AI transformation in your organization",
-    "Modern Work",
+    "AI for business",
     "1 day",
     "Certification exam",
-    "",
-    "Updated Oct 2026",
+    "Coming soon",
     "https://learn.microsoft.com/training/courses/ab-731t00"
    ],
    [
-    78,
-    "AB-900T00",
+    17,
+    "AB-900",
     "Introduction to Microsoft 365 and AI administration",
-    "Modern Work",
+    "AI for business",
     "1 day",
     "Certification exam",
-    "",
-    "Updated May 2026",
+    "Coming soon",
     "https://learn.microsoft.com/training/courses/ab-900t00"
    ],
    [
-    79,
-    "AI-3025",
-    "Work smarter with AI",
-    "Modern Work",
-    "3 hours",
-    "",
-    "",
-    "Updated Oct 2026",
-    "https://learn.microsoft.com/training/courses/ai-3025"
-   ],
-   [
-    80,
-    "MD-102T00",
-    "Manage and secure Microsoft 365 endpoints by using Intune",
-    "Modern Work",
-    "5 days",
-    "Certification exam",
-    "Labs",
-    "Updated Aug 2026",
-    "https://learn.microsoft.com/training/courses/md-102t00"
-   ],
-   [
-    81,
-    "MD-4011",
-    "Enhance endpoint security with Microsoft Intune and Microsoft Security Copilot",
-    "Modern Work",
-    "1 day",
-    "",
-    "",
-    "Updated Mar 2026",
-    "https://learn.microsoft.com/training/courses/md-4011"
-   ],
-   [
-    82,
-    "MS-4004",
-    "Empower your workforce with Microsoft 365 Copilot Use Cases",
-    "Modern Work",
-    "1 day",
-    "",
-    "Labs",
-    "Updated Oct 2026",
-    "https://learn.microsoft.com/training/courses/ms-4004"
-   ],
-   [
-    83,
-    "MS-4014",
-    "Introduction to building AI agents",
-    "Modern Work",
-    "3 hours",
-    "",
-    "",
-    "Updated Oct 2026",
-    "https://learn.microsoft.com/training/courses/ms-4014"
-   ],
-   [
-    84,
-    "MS-4018",
-    "Draft, analyze, and present with Microsoft Copilot",
-    "Modern Work",
-    "1 day",
-    "",
-    "Labs",
-    "Updated Oct 2026",
-    "https://learn.microsoft.com/training/courses/ms-4018"
-   ],
-   [
-    85,
-    "MS-4019",
-    "Transform your everyday business processes with agents",
-    "Modern Work",
-    "1 day",
-    "",
-    "Labs",
-    "Updated Feb 2026",
-    "https://learn.microsoft.com/training/courses/ms-4019"
-   ],
-   [
-    86,
-    "MS-4021",
-    "Copilot Immersion Experience",
-    "Modern Work",
-    "2 hours",
-    "",
-    "",
-    "Updated Aug 2026",
-    "https://learn.microsoft.com/training/courses/ms-4021"
-   ],
-   [
-    87,
-    "MS-4022",
-    "Extend Microsoft 365 Copilot in Copilot Studio",
-    "Modern Work",
-    "4 hours",
-    "",
-    "Labs",
-    "Updated Dec 2025",
-    "https://learn.microsoft.com/training/courses/ms-4022"
-   ],
-   [
-    88,
-    "MS-700T00",
-    "Manage collaboration and communication with Microsoft Teams",
-    "Modern Work",
-    "4 days",
-    "Certification exam",
-    "Labs",
-    "Updated Dec 2025",
-    "https://learn.microsoft.com/training/courses/ms-700t00"
-   ],
-   [
-    89,
-    "MS-721T00",
-    "Plan, configure, and manage collaboration communications systems with Microsoft Teams",
-    "Modern Work",
-    "5 days",
-    "Certification exam",
-    "Labs",
-    "Updated Oct 2026",
-    "https://learn.microsoft.com/training/courses/ms-721t00"
-   ],
-   [
-    90,
-    "SC-100T00",
-    "Microsoft Cybersecurity Architect",
-    "Security",
-    "4 days",
-    "Certification exam",
-    "Labs",
-    "Updated Jun 2026",
-    "https://learn.microsoft.com/training/courses/sc-100t00"
-   ],
-   [
-    91,
-    "SC-200T00",
-    "Defend against cyberthreats with Microsoft's security operations platform",
-    "Security",
-    "4 days",
-    "Certification exam",
-    "Labs",
-    "Updated May 2026",
-    "https://learn.microsoft.com/training/courses/sc-200t00"
-   ],
-   [
-    92,
-    "SC-300T00",
-    "Microsoft Identity and Access Administrator",
-    "Security",
-    "4 days",
-    "Certification exam",
-    "Labs",
-    "Updated Mar 2026",
-    "https://learn.microsoft.com/training/courses/sc-300t00"
-   ],
-   [
-    93,
-    "SC-401T00",
-    "Protect sensitive information with Microsoft Purview in the AI era",
-    "Security",
-    "4 days",
-    "Certification exam",
-    "Labs",
-    "Updated Jan 2026",
-    "https://learn.microsoft.com/training/courses/sc-401t00"
-   ],
-   [
-    94,
-    "SC-5001",
-    "Configure SIEM security operations using Microsoft Sentinel",
-    "Security",
-    "1 day",
-    "",
-    "Labs",
-    "Updated Feb 2024",
-    "https://learn.microsoft.com/training/courses/sc-5001"
-   ],
-   [
-    95,
-    "SC-5002",
-    "Secure Azure services and workloads with Microsoft Defender for Cloud regulatory compliance controls",
-    "Security",
-    "1 day",
-    "Applied Skills credential",
-    "Labs",
-    "Updated Nov 2024",
-    "https://learn.microsoft.com/training/paths/secure-azure-services-workloads-defender-cloud/"
-   ],
-   [
-    96,
-    "SC-5003",
-    "Implement information protection and data loss prevention by using Microsoft Purview",
-    "Security",
-    "1 day",
-    "Applied Skills credential",
-    "Labs",
-    "Updated Jan 2026",
-    "https://learn.microsoft.com/training/paths/purview-implement-information-protection-data-loss-prevention"
-   ],
-   [
-    97,
-    "SC-5004",
-    "Defend against cyberthreats with Microsoft Defender XDR",
-    "Security",
-    "1 day",
-    "Applied Skills credential",
-    "Labs",
-    "Updated May 2025",
-    "https://learn.microsoft.com/training/paths/sc-5004-defend-against-cyberthreats-defender/"
-   ],
-   [
-    98,
-    "SC-5006",
-    "Enhance security operations by using Microsoft Security Copilot",
-    "Security",
-    "1 day",
-    "",
-    "Simulations",
-    "Updated May 2026",
-    "https://learn.microsoft.com/training/courses/sc-5006"
-   ],
-   [
-    99,
-    "SC-5007",
-    "Implement retention, eDiscovery, and Communication compliance in Microsoft Purview",
-    "Security",
-    "1 day",
-    "Applied Skills credential",
-    "Labs",
-    "Updated May 2025",
-    "https://learn.microsoft.com/training/paths/purview-implement-retention-ediscovery-communication-compliance/"
-   ],
-   [
-    100,
-    "SC-5008",
-    "Configure and govern entitlement with Microsoft Entra ID",
-    "Security",
-    "1 day",
-    "",
-    "Labs",
-    "Updated Aug 2025",
-    "https://learn.microsoft.com/training/courses/sc-5008"
-   ],
-   [
-    101,
-    "SC-500T00",
-    "Implement end‑to‑end security controls for cloud and AI workloads",
-    "Security",
-    "4 days",
-    "Certification exam",
-    "Labs",
-    "Updated Aug 2026",
-    "https://learn.microsoft.com/training/courses/sc-500T00"
-   ],
-   [
-    102,
-    "SC-900T00",
-    "Introduction to Microsoft Security, Compliance, and Identity",
-    "Security",
-    "1 day",
-    "Certification exam",
-    "Labs",
-    "Updated May 2026",
-    "https://learn.microsoft.com/training/courses/sc-900t00"
-   ]
-  ],
-  "widths": {
-   "B": 13,
-   "C": 62,
-   "D": 26,
-   "E": 11,
-   "F": 24,
-   "G": 12,
-   "H": 17,
-   "I": 52
-  }
- },
- "Exam preparation": {
-  "header": [
-   "#",
-   "Code",
-   "Title",
-   "Provider",
-   "Level",
-   "Link"
-  ],
-  "rows": [
-   [
-    1,
-    "AI-901",
-    "Azure AI Fundamentals",
-    "Microsoft",
-    "Fundamentals",
-    "https://www.gennoor.com/services/certifications/ai-901-azure-ai-fundamentals"
-   ],
-   [
-    2,
-    "AI-103",
-    "Azure AI App and Agent Developer Associate",
-    "Microsoft",
-    "Associate",
-    "https://www.gennoor.com/services/certifications/ai-103-azure-ai-app-and-agent-developer-associate"
-   ],
-   [
-    3,
-    "AB-100",
-    "Agentic AI Business Solutions Architect",
-    "Microsoft",
-    "Specialty",
-    "https://www.gennoor.com/services/certifications/ab-100-agentic-ai-business-solutions-architect"
-   ],
-   [
-    4,
-    "AB-730",
-    "AI Business Professional",
-    "Microsoft",
-    "Associate",
-    "https://www.gennoor.com/services/certifications/ab-730-ai-business-professional"
-   ],
-   [
-    5,
-    "AB-731",
-    "AI Transformation Leader",
-    "Microsoft",
-    "Expert",
-    "https://www.gennoor.com/services/certifications/ab-731-ai-transformation-leader"
-   ],
-   [
-    6,
-    "AB-900",
-    "Microsoft 365 Copilot and Agent Administration Fundamentals",
-    "Microsoft",
-    "Fundamentals",
-    "https://www.gennoor.com/services/certifications/ab-900-microsoft-365-copilot-and-agent-administration-fundamentals"
-   ],
-   [
-    7,
-    "AI-300",
-    "Machine Learning Operations (MLOps) Engineer Associate",
-    "Microsoft",
-    "Associate",
-    "https://www.gennoor.com/services/certifications/ai-300-machine-learning-operations-mlops-engineer-associate"
-   ],
-   [
-    8,
-    "AZ-204",
-    "Azure Developer Associate",
-    "Microsoft",
-    "Associate",
-    "https://www.gennoor.com/services/certifications/az-204-azure-developer-associate"
-   ],
-   [
-    9,
-    "AZ-305",
-    "Azure Solutions Architect Expert",
-    "Microsoft",
-    "Expert",
-    "https://www.gennoor.com/services/certifications/az-305-azure-solutions-architect-expert"
-   ],
-   [
-    10,
-    "AZ-400",
-    "DevOps Engineer Expert",
-    "Microsoft",
-    "Expert",
-    "https://www.gennoor.com/services/certifications/az-400-devops-engineer-expert"
-   ],
-   [
-    11,
-    "PL-900",
-    "Power Platform Fundamentals",
-    "Microsoft",
-    "Fundamentals",
-    "https://www.gennoor.com/services/certifications/pl-900-power-platform-fundamentals"
-   ],
-   [
-    12,
-    "PL-200",
-    "Power Platform Functional Consultant Associate",
-    "Microsoft",
-    "Associate",
-    "https://www.gennoor.com/services/certifications/pl-200-power-platform-functional-consultant-associate"
-   ],
-   [
-    13,
-    "PL-300",
-    "Power BI Data Analyst Associate",
-    "Microsoft",
-    "Associate",
-    "https://www.gennoor.com/services/certifications/pl-300-power-bi-data-analyst-associate"
-   ],
-   [
-    14,
-    "PL-400",
-    "Power Platform Developer Associate",
-    "Microsoft",
-    "Associate",
-    "https://www.gennoor.com/services/certifications/pl-400-power-platform-developer-associate"
-   ],
-   [
-    15,
-    "MS-900",
-    "Microsoft 365 Fundamentals",
-    "Microsoft",
-    "Fundamentals",
-    "https://www.gennoor.com/services/certifications/ms-900-microsoft-365-fundamentals"
-   ],
-   [
-    16,
-    "SC-900",
-    "Security, Compliance, and Identity Fundamentals",
-    "Microsoft",
-    "Fundamentals",
-    "https://www.gennoor.com/services/certifications/sc-900-security-compliance-and-identity-fundamentals"
-   ],
-   [
-    17,
-    "CDL",
-    "Cloud Digital Leader",
-    "Google",
-    "Fundamentals",
-    "https://www.gennoor.com/services/certifications/cdl-cloud-digital-leader"
-   ],
-   [
     18,
-    "MLE",
-    "Professional Machine Learning Engineer",
-    "Google",
-    "Expert",
-    "https://www.gennoor.com/services/certifications/mle-professional-machine-learning-engineer"
+    "AB-620",
+    "Design and build integrated AI agent solutions in Copilot Studio",
+    "Copilot",
+    "3 days",
+    "Certification exam",
+    "Coming soon",
+    "https://learn.microsoft.com/training/courses/AB-620T00"
    ],
    [
     19,
-    "DE",
-    "Professional Data Engineer",
-    "Google",
-    "Expert",
-    "https://www.gennoor.com/services/certifications/de-professional-data-engineer"
+    "DP-3029",
+    "Work smarter with Copilot in Microsoft Fabric",
+    "Copilot",
+    "1 day",
+    "",
+    "Coming soon",
+    "https://learn.microsoft.com/training/courses/dp-3029"
    ],
    [
     20,
-    "CLF-C02",
-    "AWS Certified Cloud Practitioner",
-    "AWS",
-    "Fundamentals",
-    "https://www.gennoor.com/services/certifications/clf-c02-aws-certified-cloud-practitioner"
+    "GH-300",
+    "GitHub Copilot",
+    "Copilot",
+    "1 day",
+    "Certification exam",
+    "Coming soon",
+    "https://learn.microsoft.com/training/courses/gh-300t00"
    ],
    [
     21,
-    "AIF-C01",
-    "AWS Certified AI Practitioner",
-    "AWS",
-    "Fundamentals",
-    "https://www.gennoor.com/services/certifications/aif-c01-aws-certified-ai-practitioner"
+    "MD-4011",
+    "Enhance endpoint security with Microsoft Intune and Microsoft Security Copilot",
+    "Copilot",
+    "1 day",
+    "",
+    "Coming soon",
+    "https://learn.microsoft.com/training/courses/md-4011"
    ],
    [
     22,
-    "MLE-C01",
-    "AWS Certified Machine Learning Engineer - Associate",
-    "AWS",
-    "Associate",
-    "https://www.gennoor.com/services/certifications/mle-c01-aws-certified-machine-learning-engineer-associate"
+    "MS-4004",
+    "Empower your workforce with Microsoft 365 Copilot Use Cases",
+    "Copilot",
+    "1 day",
+    "",
+    "Coming soon",
+    "https://learn.microsoft.com/training/courses/ms-4004"
    ],
    [
     23,
-    "MLS-C01",
-    "AWS Certified Machine Learning - Specialty",
-    "AWS",
-    "Specialty",
-    "https://www.gennoor.com/services/certifications/mls-c01-aws-certified-machine-learning-specialty"
+    "MS-4018",
+    "Draft, analyze, and present with Microsoft Copilot",
+    "Copilot",
+    "1 day",
+    "",
+    "Coming soon",
+    "https://learn.microsoft.com/training/courses/ms-4018"
    ],
    [
     24,
-    "GH-900",
-    "GitHub Foundations",
-    "GitHub",
-    "Fundamentals",
-    "https://www.gennoor.com/services/certifications/gh-900-github-foundations"
+    "MS-4021",
+    "Copilot Immersion Experience",
+    "Copilot",
+    "2 hours",
+    "",
+    "Coming soon",
+    "https://learn.microsoft.com/training/courses/ms-4021"
    ],
    [
     25,
-    "GH-300",
-    "GitHub Actions",
-    "GitHub",
-    "Associate",
-    "https://www.gennoor.com/services/certifications/gh-300-github-actions"
+    "MS-4022",
+    "Extend Microsoft 365 Copilot in Copilot Studio",
+    "Copilot",
+    "4 hours",
+    "",
+    "Coming soon",
+    "https://learn.microsoft.com/training/courses/ms-4022"
    ],
    [
     26,
-    "GH-200",
-    "GitHub Copilot",
-    "GitHub",
-    "Associate",
-    "https://www.gennoor.com/services/certifications/gh-200-github-copilot"
+    "SC-5006",
+    "Enhance security operations by using Microsoft Security Copilot",
+    "Copilot",
+    "1 day",
+    "",
+    "Coming soon",
+    "https://learn.microsoft.com/training/courses/sc-5006"
    ],
    [
     27,
-    "AI+ Executive",
-    "AI+ Executive",
-    "AI CERTs",
-    "Expert",
-    "https://www.gennoor.com/services/certifications/ai-executive-ai-executive"
+    "DP-080",
+    "Query and modify data with Transact-SQL",
+    "Data",
+    "2 days",
+    "",
+    "Coming soon",
+    "https://learn.microsoft.com/training/courses/dp-080t00"
    ],
    [
     28,
-    "AI+ Security L1",
-    "AI+ Security Level 1",
-    "AI CERTs",
-    "Associate",
-    "https://www.gennoor.com/services/certifications/ai-security-l1-ai-security-level-1"
+    "DP-3001",
+    "Migrate SQL Server workload to Azure SQL",
+    "Data",
+    "1 day",
+    "Applied Skills credential",
+    "Coming soon",
+    "https://learn.microsoft.com/training/paths/migrate-sql-workloads-azure/"
    ],
    [
     29,
-    "AI+ Security L2",
-    "AI+ Security Level 2",
-    "AI CERTs",
-    "Expert",
-    "https://www.gennoor.com/services/certifications/ai-security-l2-ai-security-level-2"
+    "DP-300",
+    "Implement scalable database solutions using Azure SQL",
+    "Data",
+    "4 days",
+    "Certification exam",
+    "Coming soon",
+    "https://learn.microsoft.com/training/courses/dp-300t00"
+   ],
+   [
+    30,
+    "DP-3014",
+    "Build machine learning solutions using Azure Databricks",
+    "Data",
+    "1 day",
+    "",
+    "Coming soon",
+    "https://learn.microsoft.com/training/courses/dp-3014"
+   ],
+   [
+    31,
+    "DP-3015",
+    "Get started with Azure Cosmos DB NoSQL development",
+    "Data",
+    "1 day",
+    "",
+    "Coming soon",
+    "https://learn.microsoft.com/training/courses/dp-3015"
+   ],
+   [
+    32,
+    "DP-3020",
+    "Develop data-driven applications with Azure SQL Database",
+    "Data",
+    "1 day",
+    "Applied Skills credential",
+    "Coming soon",
+    "https://learn.microsoft.com/training/paths/develop-data-driven-app-sql-db/"
+   ],
+   [
+    33,
+    "DP-3021",
+    "Configure and migrate to Azure Database for PostgreSQL",
+    "Data",
+    "1 day",
+    "Applied Skills credential",
+    "Coming soon",
+    "https://learn.microsoft.com/training/paths/microsoft-learn-azure-database-for-postgresql/"
+   ],
+   [
+    34,
+    "DP-420",
+    "Build AI applications with Azure Cosmos DB",
+    "Data",
+    "4 days",
+    "Certification exam",
+    "Coming soon",
+    "https://learn.microsoft.com/training/courses/dp-420t00"
+   ],
+   [
+    35,
+    "DP-600",
+    "Implement analytics solutions using Microsoft Fabric",
+    "Data",
+    "4 days",
+    "Certification exam",
+    "Coming soon",
+    "https://learn.microsoft.com/training/courses/dp-600t00"
+   ],
+   [
+    36,
+    "DP-601",
+    "Implement a Lakehouse with Microsoft Fabric",
+    "Data",
+    "1 day",
+    "",
+    "Coming soon",
+    "https://learn.microsoft.com/training/courses/dp-601t00"
+   ],
+   [
+    37,
+    "DP-602",
+    "Implement a Data Warehouse with Microsoft Fabric",
+    "Data",
+    "1 day",
+    "",
+    "Coming soon",
+    "https://learn.microsoft.com/training/courses/dp-602t00"
+   ],
+   [
+    38,
+    "DP-603",
+    "Implement Real-Time Intelligence with Microsoft Fabric",
+    "Data",
+    "1 day",
+    "Applied Skills credential",
+    "Coming soon",
+    "https://learn.microsoft.com/training/paths/explore-real-time-analytics-microsoft-fabric/"
+   ],
+   [
+    39,
+    "DP-604",
+    "Implement a data science and machine learning solution for AI with Microsoft Fabric",
+    "Data",
+    "1 day",
+    "",
+    "Coming soon",
+    "https://learn.microsoft.com/training/courses/dp-604t00"
+   ],
+   [
+    40,
+    "DP-605",
+    "Prepare and visualize data with Microsoft Power BI",
+    "Data",
+    "1 day",
+    "",
+    "Coming soon",
+    "https://learn.microsoft.com/training/courses/dp-605t00"
+   ],
+   [
+    41,
+    "DP-700",
+    "Implement data engineering solutions using Microsoft Fabric",
+    "Data",
+    "4 days",
+    "Certification exam",
+    "Coming soon",
+    "https://learn.microsoft.com/training/courses/dp-700t00"
+   ],
+   [
+    42,
+    "DP-750",
+    "Implement data engineering solutions using Azure Databricks",
+    "Data",
+    "4 days",
+    "Certification exam",
+    "Coming soon",
+    "https://learn.microsoft.com/training/courses/dp-750t00"
+   ],
+   [
+    43,
+    "DP-800",
+    "Develop AI-enabled database solutions",
+    "Data",
+    "3 days",
+    "Certification exam",
+    "Coming soon",
+    "https://learn.microsoft.com/training/courses/dp-800t00"
+   ],
+   [
+    44,
+    "DP-900",
+    "Introduction to Microsoft Azure Data",
+    "Data",
+    "1 day",
+    "Certification exam",
+    "Coming soon",
+    "https://learn.microsoft.com/training/courses/dp-900t00"
    ]
   ],
   "widths": {
-   "B": 14,
-   "C": 60,
-   "D": 16,
-   "E": 18,
-   "F": 50
-  }
- },
- "PoC blueprints": {
-  "header": [
-   "#",
-   "Title",
-   "Category",
-   "Problem it solves",
-   "What we build",
-   "Timeline",
-   "Industries"
-  ],
-  "rows": [
-   [
-    1,
-    "Invoice & Receipt AI Extraction",
-    "Documents & Knowledge",
-    "AP teams hand-key thousands of invoices a month with errors and lag, month-end close drags by days.",
-    "Document AI ingestion with table, signature, and multi-language extraction. LLM verification layer to flag mismatches and request human review on low-confidence fields. ERP write-back integration (SAP, D365, Oracle) with audit trail",
-    "4 weeks",
-    "BFSI, Manufacturing, Retail"
-   ],
-   [
-    2,
-    "Contract & Legal Document Review",
-    "Documents & Knowledge",
-    "Legal teams spend hours redlining standard contracts against playbooks that exist only in senior counsel’s head.",
-    "Clause extraction and classification across NDA, MSA, SOW, vendor templates. Risk flagging against a configurable playbook with severity scoring. Side-by-side comparison view with suggested fallback language",
-    "6 weeks",
-    "Legal Services, BFSI, Real Estate"
-   ],
-   [
-    3,
-    "Enterprise RAG / Knowledge Search",
-    "Documents & Knowledge",
-    "Employees can’t find policies, SOPs, or technical docs scattered across SharePoint, Confluence, and shared drives.",
-    "Hybrid search (keyword + vector + semantic ranking) over the enterprise corpus. Citation-backed answers with click-through to source documents. Document-level access control honoring existing AD/Entra group permissions",
-    "6 weeks",
-    "All"
-   ],
-   [
-    4,
-    "Multimodal RAG for Financial Documents",
-    "Documents & Knowledge",
-    "Financial PDFs contain tables, charts, and precise numbers that pure text-RAG misses, answers come back confidently wrong.",
-    "Two-stage pipeline: text extraction + image extraction with semantic chunking that preserves table context. Hybrid search combining keyword precision (SWIFT, IBAN, dates) with semantic similarity. GPT-4o multimodal answers with page-number citations and…",
-    "6–8 weeks",
-    "BFSI, Audit, Consulting"
-   ],
-   [
-    5,
-    "HR Onboarding Copilot",
-    "Agents",
-    "New joiners flood HR with policy questions; HR becomes the bottleneck for the first 30 days.",
-    "Copilot Studio agent grounded on policy docs, benefits, and onboarding tasks. Per-role task checklist with calendar reminders and manager nudges. Escalation to HR Business Partner on out-of-scope or sensitive queries",
-    "4 weeks",
-    "All"
-   ],
-   [
-    6,
-    "Sales Proposal Generator",
-    "Agents",
-    "Sales reps spend half a day assembling proposals from scattered templates, pricing sheets, and stale case studies.",
-    "Prompt-driven proposal builder with brand templates and approved asset library. CRM context injection (account, deal stage, prior touchpoints) from Dynamics or Salesforce. Versioning and approval workflow with redline tracking",
-    "4–6 weeks",
-    "B2B (all sectors)"
-   ],
-   [
-    7,
-    "Multilingual Customer Support Agent",
-    "Agents",
-    "Support volume is scaling faster than headcount; non-English markets are under-served and CSAT is sliding.",
-    "Voice + text support agent with intent routing and warm handoff to human agents. RAG over the knowledge base with fluency in English, Arabic, Hindi, and Swahili. Real-time sentiment + escalation triggers visible to the team lead dashboard",
-    "6–8 weeks",
-    "Telecom, Retail, BFSI"
-   ],
-   [
-    8,
-    "Finance Reconciliation Agent",
-    "Agents",
-    "Month-end close is clogged by manual reconciliation across bank statements, GL, AP/AR, finance owns the weekend.",
-    "Ingest bank statements, general ledger, and AP/AR sub-ledgers into a unified canonical view. Mismatch detection with proposed journal entries for review. Human-in-the-loop approval with full audit trail back to source documents",
-    "6 weeks",
-    "All"
-   ],
-   [
-    9,
-    "Procurement & Vendor Intelligence Agent",
-    "Agents",
-    "Procurement can’t compare vendors, contracts, and pricing across siloed systems, consolidation opportunities go unseen.",
-    "Ingest vendor docs, contracts, and spend data; build a normalized vendor profile. Consolidation recommendations with realized-savings projections. Renewal risk flags (auto-escalation clauses, terminating SLAs, single-source exposure)",
-    "6 weeks",
-    "Manufacturing, Energy, Healthcare"
-   ],
-   [
-    10,
-    "Loan Origination Agent (BFSI)",
-    "Industry-Specific",
-    "Retail loan applications take days to underwrite manually, drop-off is highest in the first 24 hours.",
-    "Multi-agent system: KYC verification, income parsing, risk scoring, decisioning aid. Document generation for sanction letters, schedules, and customer comms. Underwriter-in-the-loop dashboard with override audit and rationale capture",
-    "8 weeks",
-    "Retail Banks, NBFCs"
-   ],
-   [
-    11,
-    "Clinical Documentation Assistant (Healthcare)",
-    "Industry-Specific",
-    "Physicians spend ~2 hours a day on EHR documentation, burnout and quality both suffer.",
-    "Ambient voice capture during patient encounters with consent flow. Structured note generation (SOAP, problem-oriented) with EHR write-back. PHI-safe deployment with audit logging and on-prem inference option",
-    "8 weeks",
-    "Hospitals, Clinics"
-   ],
-   [
-    12,
-    "Predictive Maintenance Agent (Manufacturing)",
-    "Industry-Specific",
-    "Unplanned downtime on the line costs more in a quarter than the maintenance team’s entire annual budget.",
-    "Time-series ingestion from SCADA / OPC UA / IoT Hub with anomaly detection. LLM-narrated maintenance recommendations routed to plant engineers. Closed-loop feedback to refine thresholds and reduce false positives",
-    "8–10 weeks",
-    "Manufacturing, Energy"
-   ],
-   [
-    13,
-    "Citizen Services Multilingual Agent (Government)",
-    "Industry-Specific",
-    "Citizen calls to government services overwhelm contact centers; multilingual demand outpaces staffing.",
-    "Voice + chat agent grounded on official policy and service documentation. Case-handoff to human agents with full transcript and structured case fields. Sovereign deployment option (Azure Government / on-premise) with full audit trail",
-    "10 weeks",
-    "Government, Municipalities"
-   ],
-   [
-    14,
-    "Personalized Learning Path Agent (Education)",
-    "Industry-Specific",
-    "EdTech platforms struggle to personalize beyond surface-level recommendations, engagement drops after week 3.",
-    "Behavioral observation across content, quiz, and time-on-task signals. Gap analysis and dynamically generated practice problems with explanations. Teacher dashboard for cohort-level insights and intervention prompts",
-    "6–8 weeks",
-    "EdTech, Universities, Ministries of Education"
-   ],
-   [
-    15,
-    "Demand Forecasting Engine",
-    "Analytics & Forecasting",
-    "Sales and operations planning runs on Excel, forecasts are stale within a week and never trusted.",
-    "Time-series + ML forecasting pipeline on Azure ML with weekly retrain. Power BI surfacing with confidence intervals and segment drill-down. Natural-language what-if interface for scenario planning",
-    "8 weeks",
-    "Retail, Manufacturing, Supply Chain"
-   ],
-   [
-    16,
-    "Anomaly Detection / Fraud Engine",
-    "Analytics & Forecasting",
-    "Fraud and suspicious transactions hide inside normal volume, by the time they surface, the loss is booked.",
-    "Real-time anomaly detection combining classical ML with LLM reasoning for context. Case management dashboard with investigator workflow and feedback loop. Existing reference architecture from prior CV/fraud work — code transferable",
-    "8 weeks",
-    "BFSI, E-commerce, Insurance"
-   ],
-   [
-    17,
-    "Microsoft 365 Copilot Rollout (Adoption Pilot)",
-    "Productivity & Adoption",
-    "The licenses are paid for, but adoption is stuck at 10% and finance is asking why.",
-    "Licensing and persona strategy: who gets Copilot, why, and what success looks like. Persona-based prompt libraries delivered as M365 add-ins. Adoption metrics dashboard with weekly executive read-out",
-    "4 weeks",
-    "All"
-   ],
-   [
-    18,
-    "Meeting Intelligence & Action Tracker",
-    "Productivity & Adoption",
-    "Decisions made in meetings get lost; action items never get followed up, execution drifts.",
-    "Transcript ingestion from Teams / Zoom with speaker attribution. Decision and action extraction with owner and due-date inference. CRM and project-tool sync (Dynamics, Asana, Planner) plus a weekly digest agent",
-    "4–6 weeks",
-    "All"
-   ]
-  ],
-  "widths": {
-   "B": 38,
-   "C": 24,
-   "D": 56,
-   "E": 70,
-   "F": 12,
-   "G": 34
+   "B": 11,
+   "C": 62,
+   "D": 18,
+   "E": 16,
+   "F": 26,
+   "G": 14,
+   "H": 52
   }
  },
  "AI Weekend": {
   "header": [
+   "#",
    "Day",
-   "What you build",
+   "Part",
+   "What is built live",
    "What you leave with"
   ],
   "rows": [
    [
+    1,
     "Day 1 - Saturday",
+    "How AI works, and where it fits in your work",
     "Your context file",
-    "Claude stops giving generic answers because it knows your role, your company and how you write"
+    "The AI stops giving generic answers because it knows your role, your company and how you write"
    ],
    [
+    2,
     "Day 1 - Saturday",
+    "AI for everyday operations",
     "A weekly report in minutes",
     "A messy spreadsheet goes in, a summary you can send upward comes out"
    ],
    [
+    3,
     "Day 1 - Saturday",
-    "A connected workspace",
-    "Claude reads your files and drafts directly, without copy and paste"
+    "Pictures, video and sound with AI",
+    "A picture, a short video and a voice track",
+    "Made with AI from a plain description, so you see what each tool is good for"
    ],
    [
+    4,
+    "Day 1 - Saturday",
+    "Skills and connectors (MCP)",
+    "A connected workspace",
+    "The AI reads your files and reaches your tools, without copy and paste"
+   ],
+   [
+    5,
     "Day 2 - Sunday",
+    "Automate a workflow you repeat",
     "One task automated",
     "A job you do by hand every week now runs when you ask"
    ],
    [
+    6,
     "Day 2 - Sunday",
-    "A small working app",
-    "Built by describing it, with no coding background needed"
-   ],
-   [
-    "Day 2 - Sunday",
+    "Build your first AI agent",
     "Your first agent",
     "Give it a goal, and it researches, drafts and checks its own work"
+   ],
+   [
+    7,
+    "Day 2 - Sunday",
+    "Agents that work as a team",
+    "A team of agents",
+    "Each one has a single job, and they pass the work to each other"
    ]
   ],
   "widths": {
-   "A": 22,
-   "B": 34,
-   "C": 90
+   "B": 20,
+   "C": 42,
+   "D": 36,
+   "E": 84
   }
  }
 }

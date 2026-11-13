@@ -65,6 +65,12 @@ and, on the first version: "I don't want click by click, I want slide by slide."
   month, Saturday & Sunday".
 - **Vision first, few words, more picture.** Do not show a small number as if it were impressive.
 - **Custom automation training** is part of what we do and has its own scene and slide.
+- **The AI Weekend is about AI, not one product** (owner, 13 November 2026: "why to have claude based only"). Seven
+  parts over the eight hours, four on Saturday and three on Sunday, said in our own words; they are written once in
+  `src/data/ai-weekend.ts`, and the films, the slide, the page, the catalogue and the LinkedIn posts follow it.
+- **Nobody is named as the trainer** (owner, same day: "Don't put my name under trainer. That will give a wrong
+  trust value"). Say "an industry expert". Where a picture is wanted it is the drawn 3D figure
+  `public/assets/ai-weekend-expert.jpg` in a circle, never a photograph.
 - **The Claude Partner line** word for word, badge on its white card.
 - The presentation is **click by click**, and every section ends with a button to its page on the website.
 

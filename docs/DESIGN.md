@@ -250,9 +250,26 @@ never says "nothing yet" before the answer has arrived.
 3. Look for: text that cannot be read (light on light, dark on dark), a white or black box that
    does not belong, a button whose label is lost, a card the same colour as the page with no edge,
    something cut off or overlapping at 390, a sideways scrollbar.
+   The owner's rule (13 November 2026): "when you change it to the light mode, the font should be
+   properly visible." So measure it as well as look: `node scripts/contrast-check.mjs <pages>` opens each
+   page in both looks and lists every piece of text that is hard to read. It must find none.
 4. A link, a form field name or an API address must not change when only the look changes.
 5. A new page, or a page whose title changed: `node scripts/seo-head.mjs http://localhost:3111 <page>`
    and read what it prints against `docs/SEO.md`. Open its share picture (`/og/<key>`) and look at it.
+
+## A dark block in the light look (`st-night`)
+
+A block written white-on-navy carries `st-night`; in the light look it becomes a deep tint with dark
+words. Two things went wrong once, and the rules now cover them:
+
+- **A strength of white nobody had listed stayed white** (`text-white/65` on the AI Weekend page: white
+  words on a light block). Every see-through white is now caught by the start of its class name, so write
+  `text-white/NN` in any strength. A pale colour word (`text-green-300`, `text-primary-300`, ...) takes the
+  deep shade of its colour. A colour written as a fixed value (`text-[#c4cede]`) is NOT caught unless it
+  is added to the list in `src/styles/stage.css`: prefer the named classes.
+- **A video player's own controls went dark on its black picture**, because the same rule reached inside
+  it. `st-keep` on a thing, or on anything around it, leaves its colours alone. A player carries it
+  (`PromoPlayer`).
 
 ## Not to do
 
