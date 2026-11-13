@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { sendEmail } from '@/lib/email-service'
+import { emailTop } from '@/lib/crm/email-theme'
 import { saveEnquiry } from '@/lib/azure-storage'
 import { rateLimit, clientIp } from '@/lib/rate-limit'
 import { escapeHtml } from '@/lib/escape-html'
@@ -49,10 +50,7 @@ export async function POST(request: Request) {
 
     const userEmailHtml = `
       <div style="font-family: system-ui, 'Segoe UI', Arial, sans-serif; max-width: 600px; margin: 0 auto; color: #1d1d1f;">
-        <div style="background: #1d1d1f; padding: 36px 30px; text-align: center; border-radius: 12px 12px 0 0;">
-          <p style="color: #86868b; margin: 0 0 8px; font-size: 12px; letter-spacing: 2px; text-transform: uppercase;">Gennoor Tech · Free session</p>
-          <h1 style="color: #ffffff; margin: 0; font-size: 24px; font-weight: 700;">You're registered</h1>
-        </div>
+        <div style="background:#ffffff;border:1px solid #e8e8ed;border-bottom:0;border-radius:12px 12px 0 0;overflow:hidden">${emailTop("You're registered", 'Free session')}</div>
         <div style="padding: 36px 30px; background: #ffffff; border: 1px solid #e8e8ed; border-top: none;">
           <p style="font-size: 16px; margin: 0 0 16px;">Hi ${firstName},</p>
           <p style="color: #6e6e73; line-height: 1.7; font-size: 15px; margin: 0 0 20px;">

@@ -8,6 +8,7 @@ import {
 } from '@/lib/microsoft-graph'
 import { getPendingBookings, updatePendingBooking, deletePendingBooking } from '@/lib/azure-storage'
 import { sendEmail } from '@/lib/email-service'
+import { emailTop, emailFoot } from '@/lib/crm/email-theme'
 import { trackEvent, initAppInsights } from '@/lib/analytics'
 import { verifyAdmin, unauthorizedResponse } from '@/lib/admin-auth'
 import { leadTimeZone, formatInZone } from '@/lib/crm/timezones'
@@ -149,11 +150,7 @@ export async function PATCH(request: NextRequest) {
           <div style="font-family:'Segoe UI',Arial,sans-serif;background:#f1f5f9;padding:24px 12px;margin:0">
             <div style="max-width:600px;margin:0 auto;background:#ffffff;border-radius:14px;overflow:hidden;border:1px solid #e2e8f0">
               <!-- header -->
-              <div style="background: #0C1426;padding:34px 28px;text-align:center">
-                <div style="font-size:30px;line-height:1;margin-bottom:8px">✅</div>
-                <h1 style="color:#ffffff;margin:0;font-size:22px;font-weight:700">Your call is confirmed</h1>
-                <p style="color:#dbeafe;margin:6px 0 0;font-size:14px">Gennoor Tech · ${esc(service.displayName)}</p>
-              </div>
+              ${emailTop('Your call is confirmed', esc(service.displayName))}
               <!-- body -->
               <div style="padding:30px 28px">
                 <p style="color:#374151;font-size:15px;line-height:1.7;margin:0 0 22px">
@@ -218,11 +215,7 @@ export async function PATCH(request: NextRequest) {
               </div>
 
               <!-- footer -->
-              <div style="background:#0f172a;padding:22px 28px;text-align:center">
-                <p style="color:#cbd5e1;margin:0;font-size:13px;font-weight:600">Gennoor Tech</p>
-                <p style="color:#64748b;margin:5px 0 0;font-size:11px">AI training and automation</p>
-                <p style="color:#475569;margin:8px 0 0;font-size:11px">© ${new Date().getFullYear()} Gennoor Tech. See you on the call!</p>
-              </div>
+              ${emailFoot({ emails: ['schedule@gennoor.com'], note: 'Gennoor Tech · Mumbai, India. See you on the call.' })}
             </div>
           </div>
         `,
@@ -251,9 +244,7 @@ export async function PATCH(request: NextRequest) {
         subject: `Booking update — ${esc(booking.serviceName)}`,
         html: `
           <div style="font-family:Arial,sans-serif;max-width:560px;margin:0 auto">
-            <div style="background:#1e3a5f;padding:24px 28px;border-radius:12px 12px 0 0">
-              <h1 style="color:#fff;margin:0;font-size:20px">Gennoor Tech</h1>
-            </div>
+            <div style="background:#fff;border:1px solid #e5e7eb;border-bottom:0;border-radius:12px 12px 0 0;overflow:hidden">${emailTop()}</div>
             <div style="background:#fff;padding:28px;border:1px solid #e5e7eb;border-top:0;border-radius:0 0 12px 12px">
               <p style="color:#374151;font-size:15px;line-height:1.6;margin:0 0 16px">
                 Hi <strong>${esc(booking.name)}</strong>,
@@ -296,9 +287,7 @@ export async function PATCH(request: NextRequest) {
         subject: `Please reschedule — ${esc(booking.serviceName)}`,
         html: `
           <div style="font-family:Arial,sans-serif;max-width:560px;margin:0 auto">
-            <div style="background:#1e3a5f;padding:24px 28px;border-radius:12px 12px 0 0">
-              <h1 style="color:#fff;margin:0;font-size:20px">Gennoor Tech</h1>
-            </div>
+            <div style="background:#fff;border:1px solid #e5e7eb;border-bottom:0;border-radius:12px 12px 0 0;overflow:hidden">${emailTop()}</div>
             <div style="background:#fff;padding:28px;border:1px solid #e5e7eb;border-top:0;border-radius:0 0 12px 12px">
               <p style="color:#374151;font-size:15px;line-height:1.6;margin:0 0 16px">
                 Hi <strong>${esc(booking.name)}</strong>,
@@ -457,9 +446,7 @@ export async function PATCH(request: NextRequest) {
         subject: `Rescheduled: ${service.displayName} with Jalal Khan`,
         html: `
           <div style="font-family:Arial,sans-serif;max-width:560px;margin:0 auto">
-            <div style="background:#065f46;padding:24px 28px;border-radius:12px 12px 0 0">
-              <h1 style="color:#fff;margin:0;font-size:20px">Booking Rescheduled</h1>
-            </div>
+            <div style="background:#fff;border:1px solid #e5e7eb;border-bottom:0;border-radius:12px 12px 0 0;overflow:hidden">${emailTop('Booking rescheduled')}</div>
             <div style="background:#fff;padding:28px;border:1px solid #e5e7eb;border-top:0;border-radius:0 0 12px 12px">
               <p style="color:#374151;font-size:15px;line-height:1.6;margin:0 0 16px">
                 Hi <strong>${esc(booking.name)}</strong>, your meeting has been rescheduled to a new time.
@@ -517,9 +504,7 @@ export async function PATCH(request: NextRequest) {
         subject: subject || `Re: ${esc(booking.serviceName)}`,
         html: `
           <div style="font-family:Arial,sans-serif;max-width:560px;margin:0 auto">
-            <div style="background:#1e3a5f;padding:24px 28px;border-radius:12px 12px 0 0">
-              <h1 style="color:#fff;margin:0;font-size:20px">Gennoor Tech</h1>
-            </div>
+            <div style="background:#fff;border:1px solid #e5e7eb;border-bottom:0;border-radius:12px 12px 0 0;overflow:hidden">${emailTop()}</div>
             <div style="background:#fff;padding:28px;border:1px solid #e5e7eb;border-top:0;border-radius:0 0 12px 12px">
               <p style="color:#374151;font-size:15px;line-height:1.6;margin:0 0 16px">
                 Hi <strong>${esc(booking.name)}</strong>,

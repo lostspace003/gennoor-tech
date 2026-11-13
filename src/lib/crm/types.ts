@@ -12,9 +12,12 @@ export type LeadStatus = 'new' | 'contacted' | 'qualified' | 'proposal' | 'negot
 /** The steps a lead moves through, in order. */
 export const LEAD_STEPS: LeadStatus[] = ['new', 'contacted', 'qualified', 'proposal', 'won', 'lost']
 
+// A step is named for what has happened, never for something in progress: the second step was called "Emailing",
+// and the owner read it as "the email is still being sent" (13 November 2026). Whether one email has really gone
+// is said beside it, per email (see ./delivery.ts).
 export const STEP_LABELS: Record<LeadStatus, string> = {
   new: 'New',
-  contacted: 'Emailing',
+  contacted: 'Emailed',
   qualified: 'Talking',
   proposal: 'Proposal',
   negotiation: 'Proposal',
@@ -25,7 +28,7 @@ export const STEP_LABELS: Record<LeadStatus, string> = {
 /** One line per step, shown as help text wherever the step is chosen. */
 export const STEP_HINTS: Record<LeadStatus, string> = {
   new: 'Added, nothing sent yet',
-  contacted: 'Receiving the email series',
+  contacted: 'We have emailed them and they have not replied yet. The next email of the series follows when it is due',
   qualified: 'They replied or a call is booked',
   proposal: 'A proposal or quote is with them',
   negotiation: 'A proposal or quote is with them',
@@ -52,11 +55,19 @@ export interface EmailRecord {
   by: string
   to: string
   subject: string
+  /** 'sent' means the email service took it. Whether it has gone is `confirmedAt` (see ./delivery.ts). */
   status: 'sent' | 'failed'
   body?: string
   cc?: string[]
   /** Set when this was a step of the email series (see sequence.ts). */
   step?: string
+  /** The email service's own number for this send, so the CRM can ask it later what became of the email. */
+  op?: string
+  /** When the email was confirmed as gone: the email service finished it, or our own copy of it arrived. */
+  confirmedAt?: string
+  confirmedBy?: 'service' | 'copy'
+  /** Why it failed, when the email service refused it or gave up on it later. */
+  error?: string
 }
 
 export interface FollowUp {

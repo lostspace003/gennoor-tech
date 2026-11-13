@@ -10,7 +10,7 @@ import type { Lead } from './types'
  * was kept only if a person happened to read the reply.
  *
  * Now:
- *  - A real reply moves a lead from New or Emailing to Talking, so the series is no longer on the
+ *  - A real reply moves a lead from New or Emailed to Talking, so the series is no longer on the
  *    send lists, and the lead shows under "They replied" until someone answers.
  *  - The ready-made "Not for us" reply of email 9 (subject "stop") closes the lead.
  *  - Any other way of asking us to stop ("unsubscribe", "please remove me", "not interested")

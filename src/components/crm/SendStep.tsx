@@ -123,18 +123,25 @@ export default function SendStepModal({ leads, onClose, onSent, notify }: {
     setSending(true)
     try {
       const ids = [...groups.values()].flat().map((l) => l.id)
-      let sent = 0
+      let sent = 0, onItsWay = 0
       const problems: string[] = []
       // 50 at a time is the server's limit
       for (let i = 0; i < ids.length; i += 50) {
-        const res = await api<{ sent: number; errors: string[]; skipped: string[] }>('/api/admin/leads/sequence', {
+        const res = await api<{ sent: number; onItsWay?: number; errors: string[]; skipped: string[] }>('/api/admin/leads/sequence', {
           method: 'POST',
           body: JSON.stringify({ leadIds: ids.slice(i, i + 50), note }),
         })
         sent += res.sent
+        onItsWay += res.onItsWay || 0
         problems.push(...(res.errors || []), ...(res.skipped || []))
       }
-      notify(`Sent ${sent} email${sent === 1 ? '' : 's'}${problems.length ? `. ${problems.length} not sent: ${problems.slice(0, 2).join('; ')}` : ''}`, sent === 0)
+      // Say what really happened: "sent" only for what the email service has finished
+      const gone = sent - onItsWay
+      const said = [
+        gone > 0 ? `Sent ${gone} email${gone === 1 ? '' : 's'}` : '',
+        onItsWay > 0 ? `${onItsWay} ${onItsWay === 1 ? 'is' : 'are'} on ${onItsWay === 1 ? 'its' : 'their'} way: the email service has ${onItsWay === 1 ? 'it' : 'them'}, and the list says "sent" once it confirms` : '',
+      ].filter(Boolean).join('. ') || 'Nothing was sent'
+      notify(`${said}${problems.length ? `. ${problems.length} not sent: ${problems.slice(0, 2).join('; ')}` : ''}`, sent === 0)
       await onSent()
     } catch (e: any) { notify(e.message, true) } finally { setSending(false) }
   }

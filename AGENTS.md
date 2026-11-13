@@ -14,14 +14,18 @@ guide before doing that kind of work.
 | A new page, a title or a description, the picture a shared link shows, a blog post, the sitemap | `docs/SEO.md` | `gennoor-site-design` |
 | A LinkedIn post, a blog article, the autopilot, the film campaign, what any writer or reviewer is told | `docs/LINKEDIN.md` and `src/lib/writing-rules.ts` | |
 | The CRM: leads, replies, the email series, the Today page | `docs/CRM.md` | |
+| An email the site sends: its top, its foot, its logo | `docs/DESIGN.md`, "Emails" | `gennoor-site-design` |
 | Finishing: branch, pull request, merge, deploy | `.claude/skills/gennoor-ship/SKILL.md` | `gennoor-ship` |
 
 The skills are in `.claude/skills/`. They are plain Markdown: any tool can read them.
 
 ## Rules that hold everywhere
 
-1. **The look is decided.** Dark "stage" and light "day" for the public site, light "paper" for the admin
-   centre and the CRM, with a dark look the person working there can switch on (light is the default). Colours by name, the icon-tile kit, one-level menus. Do not restyle from taste; follow `docs/DESIGN.md`.
+1. **The look is decided.** Dark "stage" and light "day" for the public site, and which of the two shows
+   follows the visitor's own clock: light by day (07:00 to 18:00 where they are), dark in the evening and
+   at night. Light "paper" for the admin centre and the CRM, with a dark look the person working there can
+   switch on (light is the default). Colours by name, the icon-tile kit, one-level menus. Do not restyle
+   from taste; follow `docs/DESIGN.md`.
 2. **Look at what you made.** A change to a page is checked in both themes, on a desktop and on a phone
    (`node scripts/shot.mjs`), before it is called done. In the light look every word must be readable:
    `node scripts/contrast-check.mjs <pages>` measures it.
@@ -50,11 +54,13 @@ node scripts/shot.mjs <folder> --full [--light] home training   # photographs of
 python scripts/stage-codemod.py                        # lists colours written as fixed values
 node scripts/seo-head.mjs http://localhost:3111 home training   # what a search engine and a shared link read
 node scripts/contrast-check.mjs home ai-weekend        # can every word be read, in light and in dark
+node scripts/look-check.mjs                            # the public look follows the visitor's clock: places, the edges of the day, the switch, no flash
 node scripts/contrast-check.mjs --back-office admin/learners crm/queue   # the same for the admin centre and the CRM (made-up data)
 python scripts/stage-codemod.py --admin                # fixed colours in the admin centre and the CRM (they would not turn dark)
 npx tsx scripts/campaign-check.ts                      # the LinkedIn film campaign: the plan and all its posts
 npx tsx scripts/autopilot-check.ts                     # the autopilot: what it sends is whole and fits, the day's plan, the writing rules (no network)
-npx tsx scripts/crm-check.ts                           # the CRM: what a reply does, the Today lists, the hourly limit (made-up leads)
+npx tsx scripts/crm-check.ts                           # the CRM: what a reply does, the Today lists, the hourly limit, has an email really gone (made-up leads)
+node scripts/email-art/logo.mjs --look <folder>        # draws the logo at the top of every email, in the brand's own lettering
 npx tsx --env-file=.env.local scripts/autopilot-live-check.ts --fresh   # research now and one post written for real; nothing saved
 npx tsx --env-file=.env.local scripts/blog-live-check.ts       # one whole article written for real; nothing saved
 ```

@@ -101,7 +101,10 @@ const noted = buildStepEmail('intro', lead, signer, 'Good to meet you <b>at the 
 ok(noted.html.includes('Good to meet you &lt;b&gt;at the summit&lt;/b&gt;.'), 'a personal note is shown and cannot inject HTML')
 const hostile = buildStepEmail('custom', { name: '<script>x</script> Bob', company: '<img src=x>' }, signer).html
 ok(!hostile.includes('<script>') && !hostile.includes('<img src=x>'), 'a lead name or organization cannot inject HTML')
-ok(buildStepEmail('intro', { name: '', company: '' }, signer).html.includes('Hello there'), 'a lead with no name is greeted sensibly')
+// The rule since 13 November 2026 (src/lib/crm/greeting.ts): a lead with no clear name is written to without one.
+// Never a stand-in such as "there", and no comma left hanging where the name or the company would have been.
+const nameless = buildStepEmail('intro', { name: '', company: '' }, signer)
+ok(nameless.text.trimStart().startsWith('Hello,') && !/Hello there/i.test(nameless.html) && nameless.subject === 'Lessons your team can watch today', 'a lead with no name is greeted sensibly')
 
 ok(fillTokens(LINKEDIN_CONNECT_NOTE, lead).length <= 300, 'the LinkedIn connection note fits the 300-character limit')
 

@@ -2,6 +2,7 @@ import { welcomeEmailHtml, trainingConfirmationHtml } from '@/lib/email-template
 import { EmailClient, KnownEmailSendStatus } from '@azure/communication-email'
 import { readFile } from 'fs/promises'
 import path from 'path'
+import { createHash, createHmac } from 'crypto'
 import { downloadPdfFromBlob, saveEmailLog } from '@/lib/azure-storage'
 import { escapeHtml } from '@/lib/escape-html'
 import { ConfidentialClientApplication } from '@azure/msal-node'
@@ -185,6 +186,55 @@ function sendProblem(error: unknown): string {
   return text
 }
 
+/**
+ * The email service's own number for a send. It is known from the moment the service takes the email, long
+ * before the send is finished, in the address the service gives for asking about it. Reading it never touches
+ * the send itself; if it cannot be read, the send simply has no number (as before 13 November 2026, when a
+ * number was kept only for a send that finished within the first seconds).
+ */
+function sendNumberOf(poller: { getOperationState(): unknown }): string {
+  try {
+    const state = poller.getOperationState() as { result?: { id?: string }; config?: { operationLocation?: string } }
+    return state?.result?.id || /\/operations\/([0-9a-f-]{32,40})/i.exec(String(state?.config?.operationLocation || ''))?.[1] || ''
+  } catch {
+    return ''
+  }
+}
+
+/**
+ * What became of an email the service took earlier? One question, read only.
+ *   'sent'     the service finished it: it has left for the recipient's mail server
+ *   'failed'   the service gave up on it
+ *   'running'  still in its queue
+ *   'unknown'  the question could not be asked or answered just now (ask again later)
+ * Azure allows the whole account about 200 of these an hour, sends included, so the caller asks sparingly
+ * (see lib/crm/delivery-sync.ts). The service's key is used to sign the question and goes nowhere else.
+ */
+export async function emailSendState(sendNumber: string): Promise<{ state: 'sent' | 'failed' | 'running' | 'unknown'; error?: string }> {
+  const connection = process.env.AZURE_COMMUNICATION_CONNECTION_STRING || ''
+  const endpoint = (/endpoint=([^;]+)/i.exec(connection)?.[1] || '').replace(/\/+$/, '')
+  const key = /accesskey=([^;]+)/i.exec(connection)?.[1] || ''
+  if (!endpoint || !key || !/^[0-9a-f-]{32,40}$/i.test(sendNumber)) return { state: 'unknown' }
+  try {
+    const url = new URL(`${endpoint}/emails/operations/${sendNumber}?api-version=2023-03-31`)
+    const date = new Date().toUTCString()
+    const emptyBody = createHash('sha256').update('').digest('base64')
+    const signature = createHmac('sha256', Buffer.from(key, 'base64')).update(`GET\n${url.pathname}${url.search}\n${date};${url.host};${emptyBody}`).digest('base64')
+    const res = await fetch(url, {
+      headers: { 'x-ms-date': date, 'x-ms-content-sha256': emptyBody, Authorization: `HMAC-SHA256 SignedHeaders=x-ms-date;host;x-ms-content-sha256&Signature=${signature}` },
+      signal: AbortSignal.timeout(10_000),
+    })
+    if (!res.ok) return { state: 'unknown' }
+    const body = (await res.json()) as { status?: string; error?: { code?: string; message?: string } }
+    const status = String(body.status || '').toLowerCase()
+    if (status === 'succeeded') return { state: 'sent' }
+    if (status === 'failed' || status === 'canceled') return { state: 'failed', error: String(body.error?.message || body.error?.code || '').slice(0, 300) }
+    return status ? { state: 'running' } : { state: 'unknown' }
+  } catch {
+    return { state: 'unknown' }
+  }
+}
+
 export async function sendEmail(config: EmailConfig) {
   const connectionString = process.env.AZURE_COMMUNICATION_CONNECTION_STRING
 
@@ -253,12 +303,15 @@ export async function sendEmail(config: EmailConfig) {
       }
     }
     const state = poller.getOperationState()
-    const result = { status: state.status === 'failed' ? 'Failed' : KnownEmailSendStatus.Succeeded, id: state.result?.id || '' }
+    // The number is kept whether or not the send has finished, so it can be asked about later
+    const result = { status: state.status === 'failed' ? 'Failed' : KnownEmailSendStatus.Succeeded, id: sendNumberOf(poller) }
+    // Finished already (the usual case), or taken by the service and still in its queue
+    const done = state.status === 'succeeded'
 
     const recipients = Array.isArray(config.to) ? config.to : [config.to]
 
     if (result.status === KnownEmailSendStatus.Succeeded) {
-      console.log('Email sent via Azure Communication Services to:', recipients.join(', '))
+      console.log(`Email ${done ? 'sent' : 'taken (not finished yet)'} via Azure Communication Services to:`, recipients.join(', '))
       for (const recipient of recipients) {
         saveEmailLog({ to: recipient, from: config.from, subject: config.subject, status: 'sent', messageId: result.id }).catch((err) => console.error('Email log save failed:', err))
       }
@@ -268,6 +321,8 @@ export async function sendEmail(config: EmailConfig) {
       return {
         success: true,
         messageId: result.id,
+        /** False when the service has taken the email and not finished sending it yet. */
+        done,
       }
     } else {
       for (const recipient of recipients) {

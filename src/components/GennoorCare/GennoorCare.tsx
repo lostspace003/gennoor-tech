@@ -55,10 +55,18 @@ export default function GennoorCare() {
   const sessionId = useRef<string>('')
 
   useEffect(() => {
-    let sid = localStorage.getItem('gcare.sid')
-    if (!sid) { sid = Math.random().toString(36).slice(2, 12); localStorage.setItem('gcare.sid', sid) }
+    // A browser that refuses storage (cookies blocked, some private windows) must still get the site. Reading it
+    // here without care took every public page down with "Application error" (found 13 November 2026). Without
+    // storage the chat simply does not remember the visitor from one visit to the next.
+    let sid = '', savedName = ''
+    try {
+      sid = localStorage.getItem('gcare.sid') || ''
+      if (!sid) { sid = Math.random().toString(36).slice(2, 12); localStorage.setItem('gcare.sid', sid) }
+      savedName = localStorage.getItem('gcare.name') || ''
+    } catch {
+      if (!sid) sid = Math.random().toString(36).slice(2, 12)
+    }
     sessionId.current = sid
-    const savedName = localStorage.getItem('gcare.name')
     if (savedName) { setVisitorName(savedName); setStage('chat') }
   }, [])
 
@@ -71,7 +79,7 @@ export default function GennoorCare() {
     const name = raw.trim().replace(/[^a-zA-Z .'-]/g, '').slice(0, 40)
     if (name) {
       setVisitorName(name)
-      localStorage.setItem('gcare.name', name)
+      try { localStorage.setItem('gcare.name', name) } catch { /* no storage: the name lasts for this visit */ }
       setLead((l) => ({ ...l, name }))
     }
     setStage('chat')

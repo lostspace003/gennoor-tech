@@ -1,6 +1,7 @@
 import { ConfidentialClientApplication } from '@azure/msal-node'
 import { Client } from '@microsoft/microsoft-graph-client'
 import { CRM_USERS } from './access'
+import type { OwnCopy } from './delivery'
 
 // Microsoft Graph access for the CRM: reading replies in team mailboxes
 // and scheduling Teams meetings. Uses the same app credentials that already
@@ -199,6 +200,33 @@ export async function listRecentSentTo(days = 45, top = 200): Promise<Record<str
     })
   )
   return latest
+}
+
+/** Every outreach email is copied to this mailbox (the same setting the send routes use). */
+const COPY_MAILBOX = (process.env.EMAIL_ADMIN || MAILBOX).toLowerCase()
+
+/**
+ * The copies of our own outreach that have arrived in the admin mailbox since `sinceIso`, in any folder.
+ * A copy that has arrived is proof that the email service has sent the email: the lead's copy left with it.
+ * Used to turn "on its way" into "sent" (see ./delivery-sync.ts). Reads who and when, never the text.
+ */
+export async function listOwnCopies(sinceIso: string, top = 200): Promise<OwnCopy[]> {
+  const client = await getGraphClient()
+  const ours = new Set([SALES_MAILBOX, SALES_HOME_MAILBOX].map((a) => a.toLowerCase()))
+  const result = await inTime(client
+    .api(`/users/${COPY_MAILBOX}/messages`)
+    .filter(`receivedDateTime ge ${sinceIso}`)
+    .orderby('receivedDateTime desc')
+    .top(top)
+    .select('receivedDateTime,from,toRecipients,subject,isDraft')
+    .get())
+  return (result.value || [])
+    .filter((m: any) => !m.isDraft && ours.has((m.from?.emailAddress?.address || '').toLowerCase()))
+    .map((m: any): OwnCopy => ({
+      to: (m.toRecipients || []).map((r: any) => (r.emailAddress?.address || '').toLowerCase()).filter(Boolean),
+      subject: m.subject || '',
+      at: m.receivedDateTime || '',
+    }))
 }
 
 export interface MeetingRequest {

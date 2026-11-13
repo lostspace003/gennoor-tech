@@ -4,14 +4,16 @@
  *   npx tsx scripts/crm-check.ts          must end with ALL OK
  *
  * It reads no store and no mailbox and sends nothing: it runs the pure functions that decide what a reply does
- * to a lead (src/lib/crm/replies.ts), what the Today page lists (src/lib/crm/today.ts) and how many emails may
- * still go this hour. Run it before any pull request that touches src/lib/crm.
+ * to a lead (src/lib/crm/replies.ts), what the Today page lists (src/lib/crm/today.ts), how many emails may
+ * still go this hour, and whether an email has really gone (src/lib/crm/delivery.ts). Run it before any pull
+ * request that touches src/lib/crm.
  * Every name and address in it is invented.
  */
 import { applyReplies, HOURLY_SEND_LIMIT, isAutoReply, kindOf, needsAnswer, ownWords, sendRoom, wantsStop, type Received } from '@/lib/crm/replies'
 import { needsYou, QUIET_DAYS, quietDays, todayLists } from '@/lib/crm/today'
 import { SEQUENCE } from '@/lib/crm/sequence'
-import { newLead, type Lead } from '@/lib/crm/types'
+import { newLead, STEP_LABELS, type Lead } from '@/lib/crm/types'
+import { applyDelivery, failedSeriesSend, lastSeriesSend, matchCopies, pendingSends, sendAgain, sendLine, sendState, TRACKED_FROM } from '@/lib/crm/delivery'
 
 let failed = 0
 const ok = (name: string, pass: boolean, detail = '') => { console.log(`${pass ? 'ok  ' : 'FAIL'} ${name}${detail ? `  (${detail})` : ''}`); if (!pass) failed++ }
@@ -63,7 +65,7 @@ ok('a real reply is a reply', kindOf({ from: 'a@example.com', subject: 'Re: Samp
     mail('f@example.com', 'Re: Sample courses', 'Send me the catalogue please', 1),
   ]
   const changes = applyReplies(leads, received, { 'f@example.com': ago(0, 20) }, new Date(NOW).toISOString())
-  ok('a real reply moves Emailing to Talking and waits for an answer', a.status === 'qualified' && needsAnswer(a) && a.reply?.kind === 'reply')
+  ok('a real reply moves Emailed to Talking and waits for an answer', a.status === 'qualified' && needsAnswer(a) && a.reply?.kind === 'reply')
   ok('the ready-made "stop" closes the lead, stops the series and needs no answer', b.status === 'lost' && !!b.sequence?.stopped && !needsAnswer(b))
   ok('"please remove me" stops the series, keeps the step, and is shown to a person', c.status === 'contacted' && !!c.sequence?.stopped && needsAnswer(c) && c.reply?.kind === 'stop')
   ok('an automatic reply changes nothing', d.status === 'contacted' && !d.reply)
@@ -125,6 +127,66 @@ ok('a real reply is a reply', kindOf({ from: 'a@example.com', subject: 'Re: Samp
   ok('emails older than an hour and failed sends are not counted', sendRoom([old], NOW) === HOURLY_SEND_LIMIT)
   busy.emailHistory.push(...Array.from({ length: 10 }, () => ({ at: new Date(NOW - 30_000).toISOString(), by: ME, to: 'x@example.com', subject: 's', status: 'sent' as const })))
   ok('never below nothing', sendRoom([busy], NOW) === 0)
+}
+
+// ---- 5. Has an email really gone? (src/lib/crm/delivery.ts)
+{
+  // Well after the day the CRM began to keep track (TRACKED_FROM), so that even the week-old email here is a followed one
+  const LATER = Date.parse('2026-11-25T10:00:00Z')
+  const minsAgo = (m: number) => new Date(LATER - m * 60_000).toISOString()
+  const subjectFor = (id: string) => `Lessons your team can watch today, Company ${id}`
+  /** A lead whose email 1 the email service took `minutes` ago, and nothing has confirmed yet. */
+  const taken = (id: string, minutes: number, op = ''): Lead => {
+    const l = newLead({ id, name: `Person ${id}`, company: `Company ${id}`, email: `${id}@example.com`, owner: ME, status: 'contacted' }, ME)
+    const at = minsAgo(minutes)
+    l.sequence = { sent: [{ step: 'intro', at, by: ME }] }
+    l.emailHistory = [{ at, by: ME, to: l.email, subject: subjectFor(id), status: 'sent', step: 'intro', ...(op ? { op } : {}) }]
+    return l
+  }
+  const state = (l: Lead) => lastSeriesSend(l, LATER)?.state
+
+  ok('no step is named as if something were still in progress', STEP_LABELS.contacted === 'Emailed' && !Object.values(STEP_LABELS).includes('Emailing'), STEP_LABELS.contacted)
+  ok('an email from before the CRM kept track counts as sent', sendState({ at: '2026-11-10T09:00:00.000Z', status: 'sent' }, LATER) === 'sent' && '2026-11-10T09:00:00.000Z' < TRACKED_FROM)
+  const fresh = taken('a', 12), old = taken('b', 25 * 60)
+  ok('taken by the email service and not confirmed: on its way', state(fresh) === 'onItsWay' && sendLine(lastSeriesSend(fresh, LATER)!, LATER) === 'Email 1 on its way · 12 min', sendLine(lastSeriesSend(fresh, LATER)!, LATER))
+  ok('after a day with no confirmation: not confirmed', state(old) === 'unconfirmed' && sendLine(lastSeriesSend(old, LATER)!, LATER) === 'Email 1 not confirmed')
+  ok('both are still looked for; a week-old one is not', pendingSends([fresh, old, taken('c', 8 * 24 * 60)], LATER).length === 2)
+
+  // Our own copy arriving in the admin mailbox is the proof
+  const p = taken('p', 60), q = taken('q', 60), r = taken('r', 60), s = taken('s', 60)
+  const copies = [
+    { to: ['p@example.com'], subject: subjectFor('p'), at: minsAgo(20) },                 // p: arrived 40 minutes after the send
+    { to: ['q@example.com'], subject: 'Some other email', at: minsAgo(20) },              // q: another subject
+    { to: ['someone@example.com'], subject: subjectFor('r'), at: minsAgo(20) },           // r: written to someone else
+    { to: ['s@example.com'], subject: subjectFor('s'), at: minsAgo(60 + 30) },            // s: a copy from half an hour BEFORE the send
+  ]
+  const found = matchCopies(pendingSends([p, q, r, s], LATER), copies)
+  ok('a copy to the same person with the same subject, arrived after the send, confirms it', found.length === 1 && found[0].leadId === 'p', found.map((f) => f.leadId).join(','))
+  const twice = taken('t', 60); twice.emailHistory.unshift({ ...twice.emailHistory[0], at: minsAgo(30) })
+  ok('two emails with one subject to one person need two copies', matchCopies(pendingSends([twice], LATER), [{ to: ['t@example.com'], subject: subjectFor('t'), at: minsAgo(10) }]).length === 1)
+  const changes = applyDelivery([p, q, r, s], found, minsAgo(0))
+  ok('the confirmed email is "sent", the others stay on their way', state(p) === 'sent' && state(q) === 'onItsWay' && changes.length === 1 && sendLine(lastSeriesSend(p, LATER)!, LATER) === 'Email 1 sent · 1 hour ago', sendLine(lastSeriesSend(p, LATER)!, LATER))
+  ok('finding the same proof again changes nothing', applyDelivery([p, q, r, s], found, minsAgo(0)).length === 0)
+
+  // The email service gave up on an email
+  const lost = taken('f', 90, '11111111-2222-3333-4444-555555555555')
+  applyDelivery([lost], [{ leadId: 'f', at: lost.emailHistory[0].at, failed: 'The recipient address was refused' }], minsAgo(0))
+  const t = todayLists([lost], ME, false, LATER)
+  ok('an email 1 that failed is due again, and the lead is back at New', lost.status === 'new' && lost.sequence!.sent.length === 0 && failedSeriesSend(lost)?.number === 1 && t.toStart.length === 1 && lost.activities[0].description.includes('did not go'), lost.activities[0].description)
+  const second = lead('g', { sent: 1, lastDays: 5 })
+  const at2 = minsAgo(120)
+  second.sequence!.sent.push({ step: 'samples', at: at2, by: ME })
+  second.emailHistory.unshift({ at: at2, by: ME, to: second.email, subject: 'Sample courses and our full catalogue', status: 'sent', step: 'samples' })
+  applyDelivery([second], [{ leadId: 'g', at: at2, failed: 'gave up' }], minsAgo(0))
+  ok('an email 2 that failed is due again, and the lead stays Emailed', second.status === 'contacted' && second.sequence!.sent.length === 1 && failedSeriesSend(second)?.number === 2 && todayLists([second], ME, false, LATER).due.length === 1)
+  ok('a failed email does not use up the hour\'s allowance', sendRoom([lost], LATER) === HOURLY_SEND_LIMIT)
+
+  // "Send it again" is for a person, and only when nothing confirmed it for a day
+  const waiting = taken('w', 30), gone = taken('x', 30), stale = taken('y', 26 * 60)
+  gone.emailHistory[0].confirmedAt = minsAgo(5)
+  ok('an email on its way cannot be sent again', !sendAgain(waiting, 'intro', ME, minsAgo(0)) && waiting.sequence!.sent.length === 1)
+  ok('an email that has gone cannot be sent again', !sendAgain(gone, 'intro', ME, minsAgo(0)) && gone.sequence!.sent.length === 1)
+  ok('an email nothing confirmed for a day can', sendAgain(stale, 'intro', ME, minsAgo(0)) && stale.sequence!.sent.length === 0 && stale.emailHistory[0].status === 'failed')
 }
 
 console.log(failed ? `\n${failed} CHECK(S) FAILED` : '\nALL OK')

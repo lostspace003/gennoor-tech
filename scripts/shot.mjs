@@ -4,7 +4,10 @@
  *   npx next dev -p 3111                                  (in another terminal)
  *   node scripts/shot.mjs <folder> home studio training   one picture per page, 1366 wide and 390 wide
  *   node scripts/shot.mjs <folder> --full about           the whole page, top to bottom
- *   node scripts/shot.mjs <folder> --light home           in the light look (the site opens dark)
+ *   node scripts/shot.mjs <folder> --light home           in the light look
+ *
+ * The site itself follows the visitor's clock (light by day, dark in the evening and at night). A picture
+ * must not depend on the hour it is taken, so the look is always set here: dark, or light with --light.
  *
  * Pages are named without the leading slash (studio/ai-103), and the home page is "home":
  * Git Bash on Windows rewrites anything that starts with a slash into a file path.
@@ -25,7 +28,8 @@ mkdirSync(out, { recursive: true })
 
 const browser = await puppeteer.launch({ executablePath: process.env.CHROME || 'C:/Program Files/Google/Chrome/Application/chrome.exe', headless: true })
 const page = await browser.newPage()
-if (light) await page.evaluateOnNewDocument(() => { try { localStorage.setItem('gennoor.theme', 'light') } catch { /* no storage */ } })
+// The look as a choice made by hand that never runs out (src/lib/theme.ts: "<look>|<until, in milliseconds>")
+await page.evaluateOnNewDocument((look) => { try { localStorage.setItem('gennoor.theme.choice', `${look}|4102444800000`) } catch { /* no storage */ } }, light ? 'light' : 'dark')
 for (const p of pages) {
   const name = p === '/' ? 'home' : p.replace(/^\//, '').replace(/[^a-z0-9]+/gi, '-')
   for (const width of [1366, 390]) {

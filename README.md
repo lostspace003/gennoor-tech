@@ -73,7 +73,7 @@ Built around one job: get a lead, send them the email series, answer when they r
 | **Call guide** `/crm/playbook` | What to say on a call, how to answer push-back, and the ten-slide presentation (`src/lib/crm/playbook.ts`). |
 | More | Website enquiries · Files · Team (managers) · GennoorCare (managers). |
 
-**A lead has one step:** New → Emailing → Talking → Proposal → Customer, or Closed. Sending the first email moves it to Emailing; booking a meeting moves it to Talking; the rest is set by hand on the lead page. A lead nobody holds is *unassigned*; a lead not worth working is *archived* (restorable).
+**A lead has one step:** New → Emailed → Talking → Proposal → Customer, or Closed. Sending the first email moves it to Emailed (each email then shows as "on its way" until the email service confirms it has gone, then "sent"); booking a meeting moves it to Talking; the rest is set by hand on the lead page. A lead nobody holds is *unassigned*; a lead not worth working is *archived* (restorable).
 
 **The lead sheet** has eight columns: Name, Email, Phone, Organization, Designation, Country, LinkedIn, Notes. Only Name is required. Download it from Leads. Common heading names are recognised; a lead already in the CRM is updated, never added twice.
 

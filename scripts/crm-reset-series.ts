@@ -8,7 +8,7 @@
  * short visual briefings), so nobody is left half way through the old ones.
  *
  * What changes: the record of series emails already sent is cleared, and a lead
- * on the step "Emailing" goes back to "New".
+ * on the step "Emailed" goes back to "New".
  * What stays: every other detail, the owner, notes, the history of emails
  * actually sent, later steps (Talking, Proposal, Customer, Closed), archived
  * leads, and "stopped" for anyone who asked not to be emailed.
@@ -23,7 +23,7 @@ async function main() {
   const before = await getLeads()
   const restart = before.filter((l) => (l.sequence?.sent?.length || 0) > 0)
   const backToNew = before.filter((l) => l.status === 'contacted')
-  console.log(`${before.length} leads. ${restart.length} have series emails recorded. ${backToNew.length} are on "Emailing" and go back to "New".`)
+  console.log(`${before.length} leads. ${restart.length} have series emails recorded. ${backToNew.length} are on "Emailed" and go back to "New".`)
   if (!apply) { console.log('Nothing changed. Add --apply to make the change.'); return }
 
   const container = BlobServiceClient.fromConnectionString(process.env.AZURE_STORAGE_CONNECTION_STRING!).getContainerClient('crm-data')

@@ -39,10 +39,10 @@ const p = (html: string) => `<p style="margin:0 0 16px;font-size:16px;line-heigh
 /** The two days as a compact block: day, title, what is built. */
 function programme(): string {
   return DAYS.map(
-    (d) => `<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="margin:0 0 12px;background:#0C1426;border-radius:12px"><tr><td style="padding:16px 18px">
-      <div style="font-size:12px;font-weight:700;letter-spacing:1.4px;text-transform:uppercase;color:#FBBF24">${d.label}</div>
-      <div style="font-size:17px;font-weight:700;line-height:1.35;color:#ffffff;margin:4px 0 8px">${d.title}</div>
-      ${d.projects.map((x) => `<div style="font-size:14px;line-height:1.6;color:#CBD5E1">&#10003;&nbsp; ${x.name}</div>`).join('')}
+    (d) => `<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" bgcolor="#f4f7fd" style="margin:0 0 12px;background:#f4f7fd;border:1px solid #dbe6ff;border-radius:12px"><tr><td style="padding:16px 18px">
+      <div style="font-size:12px;font-weight:700;letter-spacing:1.4px;text-transform:uppercase;color:#b45309">${d.label}</div>
+      <div style="font-size:17px;font-weight:700;line-height:1.35;color:#0f172a;margin:4px 0 8px">${d.title}</div>
+      ${d.projects.map((x) => `<div style="font-size:14px;line-height:1.6;color:#475569"><span style="color:#16a34a">&#10003;</span>&nbsp; ${x.name}</div>`).join('')}
     </td></tr></table>`
   ).join('')
 }

@@ -39,6 +39,8 @@ Run the one that fits before the pull request, and say in it that you did. Each 
 | Who may sign in (`users.ts`, `middleware.ts`, `admin-auth.ts`, `auth.ts`) | `scripts/access-check.ts` against the BUILT site (the file says how) |
 | The LinkedIn film campaign | `npx tsx scripts/campaign-check.ts` |
 | A page a visitor sees | the screenshots and `node scripts/contrast-check.mjs` (skill `gennoor-site-design`) |
+| Which look the public site shows (`src/lib/theme.ts`, `PortalShell`, `ThemeSwitch`) | `node scripts/look-check.mjs` (needs the site running) |
+| An email's frame or logo (`email-theme.ts`, `brief-theme.ts`) | write samples to files, photograph them 700 and 390 wide, and look (`docs/DESIGN.md`, "Emails") |
 
 ## The agent service is a second deploy
 

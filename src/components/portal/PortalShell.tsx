@@ -11,7 +11,7 @@ import { ClaudePartnerBar } from '@/components/ClaudePartner'
 import { cn } from '@/lib/utils'
 import { isChromelessRoute } from '@/lib/chrome'
 import CustomTraining from '@/components/custom-training/CustomTraining'
-import { isBackOffice, readAdminTheme, readTheme, saveTheme, showAdminTheme, showTheme, type Theme } from '@/lib/theme'
+import { THEME_CHOICE_KEY, isBackOffice, nextChange, readAdminTheme, readTheme, saveTheme, showAdminTheme, showTheme, type Theme } from '@/lib/theme'
 
 const PIN_STORAGE_KEY = 'gennoor.portal.pinned'
 
@@ -21,8 +21,9 @@ export default function PortalShell({ children }: { children: React.ReactNode })
   const [mobileOpen, setMobileOpen] = useState(false)
   const [searchOpen, setSearchOpen] = useState(false)
   const [mounted, setMounted] = useState(false)
-  // Dark is the look the site opens in; the visitor's own choice is read once the page is in the browser
-  const [theme, setTheme] = useState<Theme>('dark')
+  // The look follows the visitor's clock (src/lib/theme.ts). The server cannot know their hour, so it is not
+  // known here until the page is in the browser; the small script in <head> has already put it on <html>.
+  const [theme, setTheme] = useState<Theme | null>(null)
 
   // Hydrate pinned state from localStorage on the client
   useEffect(() => {
@@ -50,14 +51,41 @@ export default function PortalShell({ children }: { children: React.ReactNode })
     setMobileOpen(false)
   }, [pathname])
 
-  // The look of the site. The lesson players carry none; the admin centre and the CRM carry their own choice
-  // (light unless the person there chose dark), which is not the public site's.
-  useEffect(() => { setTheme(readTheme()) }, [])
+  // The look of the site: light by day and dark in the evening and at night, by the visitor's own clock, unless
+  // they pressed the switch (that choice lasts until the clock next changes the look). It is read when the page
+  // arrives and kept right while the page stays open: at the next change of the clock, when the tab is looked
+  // at again, when the page comes back from the browser's memory, and when another tab changes the choice.
+  useEffect(() => {
+    let timer: ReturnType<typeof setTimeout> | undefined
+    const sync = () => {
+      setTheme(readTheme())
+      clearTimeout(timer)
+      timer = setTimeout(sync, Math.max(nextChange() - Date.now(), 0) + 500)
+    }
+    const onShown = () => { if (document.visibilityState === 'visible') sync() }
+    const onStorage = (e: StorageEvent) => { if (e.key === null || e.key === THEME_CHOICE_KEY) sync() }
+    sync()
+    document.addEventListener('visibilitychange', onShown)
+    window.addEventListener('pageshow', sync)
+    window.addEventListener('storage', onStorage)
+    return () => {
+      clearTimeout(timer)
+      document.removeEventListener('visibilitychange', onShown)
+      window.removeEventListener('pageshow', sync)
+      window.removeEventListener('storage', onStorage)
+    }
+  }, [])
+  // The lesson players carry no look; the admin centre and the CRM carry their own choice (light unless the
+  // person there chose dark), which is not the public site's and does not follow the clock.
   useEffect(() => {
     if (isBackOffice(pathname)) showAdminTheme(readAdminTheme())
-    else showTheme(isChromelessRoute(pathname) ? 'none' : theme)
+    else if (isChromelessRoute(pathname)) showTheme('none')
+    // until the look has been read, the class the small script put on <html> stands: nothing flashes
+    else if (theme) showTheme(theme)
   }, [pathname, theme])
   const changeTheme = (t: Theme) => { setTheme(t); saveTheme(t) }
+  // What the switch shows before the look is read (it lights neither half until then, see ThemeSwitch)
+  const shown: Theme = theme ?? 'dark'
 
   // Instant scroll reset on route change. `html { scroll-behavior: smooth }`
   // makes the router's own reset animate and land late/short — behavior:'instant'
@@ -103,7 +131,7 @@ export default function PortalShell({ children }: { children: React.ReactNode })
       <PortalTopBar
         onMobileOpen={() => setMobileOpen(true)}
         onSearchOpen={() => setSearchOpen(true)}
-        theme={theme}
+        theme={shown}
         onTheme={changeTheme}
       />
 
@@ -114,7 +142,7 @@ export default function PortalShell({ children }: { children: React.ReactNode })
         onMobileClose={() => setMobileOpen(false)}
         onTogglePin={() => setPinned(p => !p)}
         onSearchOpen={() => setSearchOpen(true)}
-        theme={theme}
+        theme={shown}
         onTheme={changeTheme}
       />
 

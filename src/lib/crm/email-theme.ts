@@ -1,10 +1,47 @@
 import { escapeHtml } from '@/lib/escape-html'
 
-// One professional email shell for every CRM/GennoorCare email. Real brand
-// logo (PNG — email clients don't render SVG), navy header, clean footer.
-// The bright dark-bg variant keeps the logo readable on the navy header.
-const LOGO = 'https://www.gennoor.com/logos/gennoor-tech-horizontal-dark-bright_760x260_email-header.png'
+// One email shell for every light email the site sends: the logo on a light band, the body on white, a light
+// foot. It is light all the way down, like the site's day look.
+//
+// The owner (13 November 2026), about the navy band this shell used to open with (a small logo at the left of a
+// wide dark strip, then a blue line): "looks very blank ... I don't like that black color or blue color ...
+// When it comes to our logo, we can have it defined more appropriately." So: no dark band and no dark foot, in
+// this shell or in any email that builds its own top (use emailTop() and emailFoot() there). The top is one
+// picture, drawn by `node scripts/email-art/logo.mjs` in the brand's own lettering: email apps cannot draw the
+// logo themselves (they remove SVG and have no brand fonts), and one picture looks the same in Outlook, in
+// Gmail and on a phone.
 const SITE = 'https://www.gennoor.com'
+const HEADER = `${SITE}/email/header.png`
+const FONT = "'Segoe UI',Arial,sans-serif"
+
+/**
+ * The top of a light email: the logo, in the middle of its light band. Under it, when the email has one, a
+ * title and a line (what used to be written in white on a dark strip: "Your call is confirmed").
+ */
+export function emailTop(title?: string, line?: string): string {
+  const head = `<a href="${SITE}" style="display:block;text-decoration:none"><img src="${HEADER}" alt="Gennoor Tech" width="620" style="display:block;border:0;width:100%;max-width:100%;height:auto"/></a>`
+  if (!title) return head
+  return `${head}<div style="padding:26px 28px 0;text-align:center;font-family:${FONT}">
+    <h1 style="margin:0;font-size:23px;line-height:1.25;color:#0f172a;font-weight:800;letter-spacing:-0.01em">${title}</h1>
+    ${line ? `<p style="margin:6px 0 0;font-size:14px;line-height:1.5;color:#64748b">${line}</p>` : ''}
+  </div>`
+}
+
+/**
+ * The foot of a light email: who it is from and how to reach us, in dark words on a light ground.
+ * `emails` are the addresses to write to (info@ when none is given); `contactHtml` replaces the whole line.
+ */
+export function emailFoot(opts?: { name?: string; tagline?: string; emails?: string[]; contactHtml?: string; note?: string; unsubscribeUrl?: string }): string {
+  const link = 'color:#2563EB;text-decoration:none'
+  const contact = opts?.contactHtml || `${(opts?.emails?.length ? opts.emails : ['info@gennoor.com']).map((e) => `<a href="mailto:${e}" style="${link}">${e}</a>`).join(' · ')} · <a href="${SITE}" style="${link}">www.gennoor.com</a>`
+  return `<div style="background:#f5f7fb;border-top:1px solid #e2e8f0;padding:20px 30px 22px;font-family:${FONT}">
+    <p style="color:#0f172a;margin:0 0 2px;font-size:13.5px;font-weight:700">${escapeHtml(opts?.name || 'Gennoor Tech')}</p>
+    <p style="color:#64748b;margin:0 0 8px;font-size:11px;letter-spacing:1.2px">${opts?.tagline || 'TRAIN · INNOVATE · BUILD'}</p>
+    <p style="color:#475569;margin:0;font-size:12.5px;line-height:1.6">${contact}</p>
+    <p style="color:#64748b;margin:8px 0 0;font-size:11px">${opts?.note || 'Gennoor Tech · Mumbai, India'}</p>
+    ${opts?.unsubscribeUrl ? `<p style="color:#64748b;margin:10px 0 0;font-size:11px;line-height:1.5">You are receiving this because you subscribed on gennoor.com. <a href="${opts.unsubscribeUrl}" style="color:#475569;text-decoration:underline">Unsubscribe</a></p>` : ''}
+  </div>`
+}
 const ICON = (name: string) => `${SITE}/email/icon-${name}.png`
 
 export type EmailIcon = 'file' | 'play' | 'call' | 'calendar' | 'learn' | 'chat' | 'check' | 'team' | 'mail'
@@ -113,39 +150,24 @@ export function emailShell(
   const sender = (sig?.email || opts?.senderEmail || '').trim().toLowerCase()
   const emails = [...new Set([sender, 'admin@gennoor.com'].filter(Boolean))]
   const displayName = sig?.name || opts?.senderName || 'Gennoor Tech'
+  const link = 'color:#2563EB;text-decoration:none'
   const phoneHtml = (sig?.phones || [])
     .filter(Boolean)
-    .map((p) => `<a href="tel:+${p.replace(/[^\d]/g, '')}" style="color:#93b4ff;text-decoration:none">${escapeHtml(p)}</a> · `)
+    .map((p) => `<a href="tel:+${p.replace(/[^\d]/g, '')}" style="${link}">${escapeHtml(p)}</a> · `)
     .join('')
+  const contactHtml = `${phoneHtml}${emails.map((e) => `<a href="mailto:${e}" style="${link}">${e}</a>`).join(' · ')} · <a href="${SITE}" style="${link}">www.gennoor.com</a>`
+  // A table, not a div: old Outlook lays emails out with Word, which keeps a table to its width and lets a div run
+  // the whole width of the window.
   return `
-  <div style="background:#f1f5f9;padding:24px 12px;margin:0">
+  <div style="background:#eef2f8;padding:24px 12px;margin:0">
     ${opts?.preheader ? `<div style="display:none;max-height:0;overflow:hidden">${escapeHtml(opts.preheader)}</div>` : ''}
-    <div style="max-width:620px;margin:0 auto;background:#ffffff;border-radius:14px;overflow:hidden;border:1px solid #e2e8f0;font-family:'Segoe UI',Arial,sans-serif">
-      <div style="background:#0C1426;padding:22px 28px;text-align:left">
-        <a href="${SITE}"><img src="${LOGO}" alt="Gennoor Tech" width="190" style="display:block;border:0;max-width:190px"/></a>
-      </div>
-      <div style="height:4px;line-height:4px;font-size:0;background:#2563EB;background-image:linear-gradient(90deg,#2563EB 0%,#2563EB 82%,#F59E0B 82%,#F59E0B 100%)">&nbsp;</div>
-      <div style="padding:34px 30px 30px;color:#374151;font-size:15px;line-height:1.7">
+    <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="620" align="center" bgcolor="#ffffff" style="width:100%;max-width:620px;margin:0 auto;background:#ffffff;border-radius:14px;overflow:hidden;border:1px solid #e2e8f0;font-family:${FONT}">
+      <tr><td style="padding:0">${emailTop()}</td></tr>
+      <tr><td style="padding:32px 30px 30px;color:#374151;font-size:15px;line-height:1.7;font-family:${FONT}">
         ${bodyHtml}
-      </div>
-      <div style="background:#0C1426;padding:18px 28px">
-        <p style="color:#ffffff;margin:0 0 2px;font-size:13px;font-weight:600">${escapeHtml(displayName)}</p>
-        <p style="color:#A8C3EF;margin:0 0 8px;font-size:11px;letter-spacing:1px">${sig ? 'GENNOOR TECH · TRAIN · INNOVATE · BUILD' : 'TRAIN · INNOVATE · BUILD'}</p>
-        <p style="color:#94a3b8;margin:0;font-size:12px">
-          ${phoneHtml}${emails.map((e) => `<a href="mailto:${e}" style="color:#93b4ff;text-decoration:none">${e}</a>`).join(' · ')} ·
-          <a href="${SITE}" style="color:#93b4ff;text-decoration:none">www.gennoor.com</a>
-        </p>
-        <p style="color:#64748b;margin:8px 0 0;font-size:11px">Gennoor Tech · Mumbai, India</p>
-        ${
-          opts?.unsubscribeUrl
-            ? `<p style="color:#64748b;margin:10px 0 0;font-size:11px;line-height:1.5">
-                 You are receiving this because you subscribed on gennoor.com.
-                 <a href="${opts.unsubscribeUrl}" style="color:#94a3b8;text-decoration:underline">Unsubscribe</a>
-               </p>`
-            : ''
-        }
-      </div>
-    </div>
+      </td></tr>
+      <tr><td style="padding:0">${emailFoot({ name: displayName, tagline: sig ? 'GENNOOR TECH · TRAIN · INNOVATE · BUILD' : 'TRAIN · INNOVATE · BUILD', contactHtml, unsubscribeUrl: opts?.unsubscribeUrl })}</td></tr>
+    </table>
   </div>`
 }
 

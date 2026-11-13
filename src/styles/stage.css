@@ -173,8 +173,8 @@
   --gray-100: 214 222 234;     /* #d6deea */
   --gray-200: 198 208 224;     /* #c6d0e0  hairline */
   --gray-300: 170 183 204;     /* #aab7cc */
-  --gray-400: 104 118 144;     /* #687690 */
-  --gray-500: 82 96 122;       /* #52607a */
+  --gray-400: 90 104 130;      /* #5a6882  the quietest text: 5.3 to 1 on a card, 4.9 on the page, 4.6 on a band */
+  --gray-500: 76 90 116;       /* #4c5a74 */
   --gray-600: 60 73 98;        /* #3c4962 */
   --gray-700: 43 55 80;        /* #2b3750 */
   --gray-800: 28 39 62;        /* #1c273e */
@@ -208,9 +208,9 @@
   --hairline-soft: #d6deea;
   --ink: #0f182c;
   --ink-secondary: #3c4962;
-  --ink-tertiary: #687690;
+  --ink-tertiary: #5a6882;
   --ink-soft: #3c4962;
-  --ink-quiet: #687690;
+  --ink-quiet: #5a6882;
   --accent: #0a62f0;
   --accent-hover: #084ec6;
   --accent-bright: #1a74f0;
@@ -250,7 +250,7 @@
   --st-win-ink: #0f182c;
   --st-win-bar: #e3e9f3;
   --st-win-bar-line: #c6d0e0;
-  --st-win-bar-ink: #52607a;
+  --st-win-bar-ink: #4c5a74;
   --st-track: rgba(15, 24, 44, 0.14);
   --st-q: #e3e9f3;
   --st-q-line: #c6d0e0;
