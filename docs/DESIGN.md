@@ -14,7 +14,7 @@ the films and the presentation (`scripts/show/`).
 | Look | Class on `<html>` | Who sees it |
 |---|---|---|
 | **Stage** (dark) | `stage` | Every public page. The site opens in this one. |
-| **Day** (light) | `day` | The same public pages when the visitor picks "Light". Soft grey paper, never pure white. |
+| **Day** (light) | `day` | The same public pages when the visitor picks "Light". Soft grey paper, never pure white, and **no navy blocks**. |
 | **Paper** | none | The admin centre, the CRM, the lesson players. Light and compact. |
 
 - A small script in `src/app/layout.tsx` puts the class on `<html>` before the page is drawn;
@@ -22,8 +22,15 @@ the films and the presentation (`scripts/show/`).
   phone) changes it. The choice is kept in the visitor's browser (`gennoor.theme`).
 - Which pages get no theme is decided in one place, `isChromelessRoute()` in `src/lib/chrome.ts`,
   and repeated in `THEME_SCRIPT` in `src/lib/theme.ts`. Change both together.
-- **A part that must stay dark on both themes** (a film panel, the top of a page) carries the class
-  `stage` itself. `<Ground>` does this for you.
+- **The light look is light all the way down** (owner, 2026-11-13: "the light theme also reflects
+  black, which should not be"). A lit band, a solid card, a drawn window and a deep panel are navy on
+  the stage and a deeper, bluer tint of the page on the day look, with dark words on them. Only a film
+  or a photograph is dark there. So inside `<Ground>`, `st-solid`, `st-deep` and `st-win` the words are
+  written with the colour names (`text-gray-900`, `text-gray-600`), never `text-white`.
+- A block that already exists with white words on navy takes the class `st-night`: it stays navy on
+  the stage and turns into the deep tint with dark words on the day look. Do not write new blocks that
+  way. The class `stage` on a part of a page still forces the dark values; it is for a player or a
+  preview window around a video, nothing else.
 
 ## 2. Colours: write the name, never the value
 
@@ -39,17 +46,19 @@ Every Tailwind colour reads a variable that each look sets. The same class is ri
 | `text-gray-600`, `text-gray-500`, `text-gray-400` | quieter text, in three steps |
 | `text-primary-600`, `bg-primary-50`, `bg-primary-100` | the blue: a link, a tint behind it, the selected row |
 | `green-*`, `amber-*`, `red-*` | done, take care, wrong. For status only. |
-| `bg-inverse` | a block that is dark on every look |
+| `bg-inverse` | something small that is dark on every look: a tooltip, a toast. Never a block of a page. |
 
 Rules:
 
 1. **Never a hex in brackets for a neutral or the blue** (`text-[#6e6e73]`), and **never `bg-white`**.
    They cannot change with the theme. `python scripts/stage-codemod.py` finds and converts them.
 2. `gray` is a ramp of **roles**, not of lightness: on the stage `text-gray-900` is near-white.
-   Do not use `bg-gray-800/900` to mean "dark"; use `bg-inverse`, or `<Ground>`.
+   Do not use `bg-gray-800/900` to mean "dark"; use `<Ground>`, `st-deep` or `st-card st-solid`.
 3. A fixed colour is right only when it is the same on every look: brand colours (the gold
    `#ffc24b`, WhatsApp, LinkedIn, Trustpilot), the cream card behind the Claude Partner badge
-   (`#f0eee6`, dark text on it), a white label on a photograph (`bg-[#fff]`).
+   (`#f0eee6`, dark text on it), a white label on a photograph (`bg-[#fff]`). WhatsApp is drawn with
+   its own mark, `src/components/icons/WhatsAppIcon.tsx`, in white on its green or in its green on a
+   plain ground: never a chat bubble from the icon set, and never recoloured.
 4. Inline `style={{ color: '#...' }}` follows the same rule: use `'rgb(var(--gray-900))'`.
 
 ## 3. The kit
@@ -60,18 +69,22 @@ React pieces are in `src/components/stage/`; their classes start with `st-`.
 |---|---|
 | `<Ico icon tone size />` | The icon tile: a lucide icon on a glass tile. One per idea. |
 | `<SparkIco code />` | The Claude spark, with a certification code under it. |
-| `<Ground glow>` | A lit, dark part of a page: the top, and one or two bands that should be noticed. |
+| `<Ground glow>` | A lit part of a page: the top, and one or two bands that should be noticed. Navy with glows on the stage, a deeper tint with soft glows on the day look. |
 | `<Reveal>` | Holds the arrival of what is inside until it is on screen. |
 | `<Ring>`, `<Mark>` | The dotted ring of the logo. The only ornament. Behind a statement, never behind a list. |
 | `<ProcessFlow>` | The picture of a process done by hand, then running by itself. |
-| `st-card` | A card. `st-gold` for the AI Weekend, `st-solid` + `stage` for one that is dark on both themes. |
+| `st-card` | A card. `st-gold` for the AI Weekend, `st-lit` for the one to notice, `st-solid` for one with more weight (navy on the stage, a deeper tint on the day look). |
+| `st-deep` | A deep panel where a card would be too light: the top of a course page. Follows the theme like `st-solid`. |
+| `st-ico` with `<b>3</b>` inside | A numbered tile: the step of a path, the number of a module. |
+| `st-justify` | Reading text of more than two lines: both edges straight from tablet width up, ragged on a phone. |
+| `st-gold-ink` | Gold words that stay readable on both themes. |
 | `st-pill` | The main button. `st-gold` for the AI Weekend, `st-ghost` for a second button, `st-sm` small. |
 | `st-link` | A text link, with `›` after the words. |
 | `st-chip` | A small label; `<i />` first inside it is its dot (`--dot` sets the colour). |
 | `st-kicker` | The small gold label above a heading. Only where it says something the heading does not. |
 | `st-grad` + `st-serif` | The one accented phrase of a page. Once per page at most. |
 | `st-num` | The large pale number behind a step. Only when the steps really are a sequence. |
-| `st-win`, `st-win-bar` | A window drawn in a picture (a lesson, a process). Dark on both themes. |
+| `st-win`, `st-win-bar` | A window drawn in a picture (a lesson, a process). It follows the theme. |
 
 **The colour of an icon tile says what kind of thing it is.** Keep to this:
 
@@ -110,6 +123,28 @@ Gold is the scarce one: **one gold thing in view** is the thing we want noticed.
 - Few words. If a section needs a paragraph to explain a picture, the picture is wrong.
 - No prices on marketing pages except where someone pays (the AI Weekend, a course's own page).
 - The AI Weekend is "the last weekend of every month, Saturday & Sunday". Exact dates only where people register.
+
+### The course page (`src/app/studio/[slug]/page.tsx`)
+
+The owner's words (2026-11-13): the preview lessons and what is in each module were "very much
+compressed", and "what you build ... just looks like a paragraph". So, on a course page and on any
+page that lists what a course holds:
+
+- **Nothing is cut short.** A lesson shows its whole name, its length, and the module it belongs to
+  on a line of its own. No `truncate` on the name of a lesson or a module.
+- **Preview lessons** are one band at the top of the curriculum (`PreviewList`): a play tile, "Preview 2,
+  3 min", the name, the module. They are called "preview lessons" that "play right here, no sign-in
+  needed". Never "free".
+- **A module is a card**: a numbered tile, "Module 3", its name, how much is in it (items, time, and
+  how many lessons, labs, demos and quizzes), and its lessons below, one to a line (`LessonLine`): a
+  small tile in the colour of its kind, the name, the minutes, and a lock, a "Preview" tag or a tick.
+- **"What you build" is a path, not a paragraph** (`CourseAbout`): a numbered tile for each part,
+  joined by a line; the name; one line that says what gets built; then three to five ticked points.
+  The description is written that way (see `src/lib/lms-about.ts` and the Course Factory skill
+  `new-course`): a bullet with a name, and its points as bullets set in under it. A course published
+  before this has its points in `src/data/lms/build-points.ts`.
+- **Reading text is justified** (`st-justify`), in a column no wider than the page allows comfortably.
+- The top of the page is `st-deep`, the call to buy is `st-card st-solid`: they follow the theme.
 - The Claude Partner line is used word for word (`TIER_LINE` in `src/components/ClaudePartner.tsx`), with the
   badge on its cream card. Never recolour the badge, never add a tier claim.
 - Courses are never called "free". Preview lessons "play without signing in".

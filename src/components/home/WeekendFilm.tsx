@@ -21,7 +21,7 @@ export default function WeekendFilm() {
   ] as const
   return (
     <section className="px-4 sm:px-6 pb-8 lg:pb-10" aria-labelledby="weekend-film">
-      <Ground as="div" glow="gold" mx={30} my={50} className="max-w-[1180px] mx-auto rounded-[28px] border border-white/10">
+      <Ground as="div" glow="gold" mx={30} my={50} className="max-w-[1180px] mx-auto rounded-[28px] border border-[color:var(--st-card-line)]">
         <div className="relative grid grid-cols-[minmax(0,1fr)] lg:grid-cols-[minmax(0,1.22fr)_minmax(0,0.78fr)] gap-6 lg:gap-9 items-center p-4 sm:p-6 lg:p-8">
           <FilmPlayer tone="gold" src={film.src} poster={film.poster} title={film.title} transcript={film.transcript} seconds={film.seconds} />
           <div>
@@ -29,14 +29,14 @@ export default function WeekendFilm() {
               <Ico icon={Zap} tone="gold" round size={34} />
               <span className="st-kicker">Live · every month</span>
             </p>
-            <h2 id="weekend-film" className="font-heading text-[clamp(28px,3vw,40px)] font-bold leading-[1.08] tracking-[-0.025em] !text-white mt-3.5">{WEEKEND.name}</h2>
-            <p className="text-[17px] leading-[1.5] text-white/75 mt-2.5">{WEEKEND.tagline}. Six working demos, built live in front of you, and the complete kit to repeat them.</p>
+            <h2 id="weekend-film" className="font-heading text-[clamp(28px,3vw,40px)] font-bold leading-[1.08] tracking-[-0.025em] text-gray-900 mt-3.5">{WEEKEND.name}</h2>
+            <p className="text-[17px] leading-[1.5] text-gray-600 mt-2.5">{WEEKEND.tagline}. Six working demos, built live in front of you, and the complete kit to repeat them.</p>
             <dl className="mt-5 space-y-2.5">
               {facts.map(([Icon, label, value]) => (
                 <div key={label} className="flex items-start gap-3 text-[15px]">
-                  <Icon className="h-[18px] w-[18px] mt-0.5 shrink-0 text-[#ffd666]" />
-                  <dt className="w-[58px] shrink-0 text-white/55">{label}</dt>
-                  <dd className="font-semibold text-white">{value}</dd>
+                  <Icon className="h-[18px] w-[18px] mt-0.5 shrink-0 st-gold-ink" />
+                  <dt className="w-[58px] shrink-0 text-gray-500">{label}</dt>
+                  <dd className="font-semibold text-gray-900">{value}</dd>
                 </div>
               ))}
             </dl>

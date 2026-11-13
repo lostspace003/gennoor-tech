@@ -3,7 +3,8 @@
 import { Fragment, useEffect } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { ChevronLeft, ChevronRight, X, Search, PanelLeftOpen, MessageCircle } from 'lucide-react'
+import { ChevronLeft, ChevronRight, X, Search, PanelLeftOpen } from 'lucide-react'
+import WhatsAppIcon from '@/components/icons/WhatsAppIcon'
 import { cn } from '@/lib/utils'
 import { portalNav, isItemActive, type PortalNavSection } from '@/lib/portal-nav'
 import type { Theme } from '@/lib/theme'
@@ -71,7 +72,7 @@ function WhatsAppLink({ compact }: { compact?: boolean }) {
         compact ? 'w-9 h-9 mx-auto' : 'w-10 h-10',
       )}
     >
-      <MessageCircle className={compact ? 'w-[18px] h-[18px]' : 'w-5 h-5'} />
+      <WhatsAppIcon className={compact ? 'w-5 h-5' : 'w-[22px] h-[22px]'} />
       <RailTip label="Connect to WhatsApp" />
     </a>
   )

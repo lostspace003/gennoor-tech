@@ -19,7 +19,7 @@ const workshops: { title: string; description: string; href: string; status: Wor
     seats: '32 attended',
     topics: 8,
     instructor: 'Jalal Khan',
-    gradient: 'bg-gray-900',
+    gradient: 'st-night',
     accent: '#FFD23F',
   },
   {
@@ -31,7 +31,7 @@ const workshops: { title: string; description: string; href: string; status: Wor
     seats: 'TBD',
     topics: 0,
     instructor: 'Jalal Khan',
-    gradient: 'bg-gray-900',
+    gradient: 'st-night',
     accent: '#60a5fa',
   },
   {
@@ -43,7 +43,7 @@ const workshops: { title: string; description: string; href: string; status: Wor
     seats: 'TBD',
     topics: 0,
     instructor: 'Jalal Khan',
-    gradient: 'bg-gray-900',
+    gradient: 'st-night',
     accent: '#c084fc',
   },
 ]
@@ -52,8 +52,7 @@ export default function WorkshopsPage() {
   return (
     <main className="min-h-screen">
       {/* Hero */}
-      <section className="relative overflow-hidden">
-        <div className="absolute inset-0 bg-gray-900" />
+      <section className="st-night relative overflow-hidden">
         <div className="absolute inset-0 opacity-[0.03] bg-[linear-gradient(rgba(255,255,255,0.1)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.1)_1px,transparent_1px)] bg-[size:60px_60px]" />
         <div className="relative container mx-auto px-4 sm:px-6 lg:px-8 py-10 lg:py-10">
           <div className="max-w-3xl mx-auto text-center">

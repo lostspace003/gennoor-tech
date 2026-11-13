@@ -40,7 +40,7 @@ export default async function AiWeekendPage() {
   return (
     <main className="text-gray-900 pb-28">
       {/* Moving ribbon: the three facts people look for first */}
-      <div className="bg-[#0C1426] text-white text-xs sm:text-[13px] font-medium overflow-hidden" aria-label={ribbon}>
+      <div className="st-night text-white text-xs sm:text-[13px] font-medium overflow-hidden" aria-label={ribbon}>
         <div className="weekend-ribbon flex whitespace-nowrap py-2" aria-hidden="true">
           {Array.from({ length: 6 }).map((_, i) => (
             <span key={i} className="px-8 shrink-0">{ribbon} <span className="text-amber-400">●</span></span>
@@ -50,8 +50,8 @@ export default async function AiWeekendPage() {
 
       {/* Hero */}
       <section className={`${wrap} pt-5 sm:pt-8`}>
-        <div className="relative overflow-hidden rounded-3xl bg-[#0C1426] text-white">
-          <div className="absolute inset-0 opacity-90" style={{ background: 'radial-gradient(900px 420px at 88% 10%, rgba(37,99,235,0.75), transparent 60%), radial-gradient(600px 380px at 70% 110%, rgba(245,158,11,0.35), transparent 60%)' }} />
+        <div className="relative overflow-hidden rounded-3xl st-night text-white">
+          <div className="st-night-glow absolute inset-0 opacity-90" style={{ background: 'radial-gradient(900px 420px at 88% 10%, rgba(37,99,235,0.75), transparent 60%), radial-gradient(600px 380px at 70% 110%, rgba(245,158,11,0.35), transparent 60%)' }} />
           <div className="relative grid lg:grid-cols-[1.15fr_1fr] gap-8 p-6 sm:p-10 lg:p-12">
             <div>
               <div className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-1 text-xs font-medium">
@@ -124,7 +124,7 @@ export default async function AiWeekendPage() {
       {/* Is this for you */}
       <section className={`${wrap} mt-8`}>
         <h2 className="text-3xl sm:text-4xl font-bold tracking-tight">This is for people who</h2>
-        <div className="mt-6 rounded-3xl bg-[#0C1426] text-white p-6 sm:p-8 grid sm:grid-cols-2 lg:grid-cols-5 gap-6 lg:divide-x lg:divide-white/10">
+        <div className="mt-6 rounded-3xl st-night text-white p-6 sm:p-8 grid sm:grid-cols-2 lg:grid-cols-5 gap-6 lg:divide-x lg:divide-white/10">
           {FOR_YOU.map((f, i) => (
             <div key={f.title} className={i ? 'lg:pl-6' : ''}>
               <div className="text-base font-semibold">{f.title}</div>
@@ -142,8 +142,8 @@ export default async function AiWeekendPage() {
         </div>
         <div className="mt-8 grid lg:grid-cols-2 gap-5">
           {DAYS.map((d, i) => (
-            <article key={d.label} className="relative overflow-hidden rounded-3xl bg-[#0C1426] text-white p-6 sm:p-8">
-              <div className="absolute inset-0 opacity-80" style={{ background: i === 0 ? 'radial-gradient(520px 300px at 100% 0%, rgba(245,158,11,0.45), transparent 62%)' : 'radial-gradient(520px 300px at 100% 0%, rgba(37,99,235,0.7), transparent 62%)' }} />
+            <article key={d.label} className="relative overflow-hidden rounded-3xl st-night text-white p-6 sm:p-8">
+              <div className="st-night-glow absolute inset-0 opacity-80" style={{ background: i === 0 ? 'radial-gradient(520px 300px at 100% 0%, rgba(245,158,11,0.45), transparent 62%)' : 'radial-gradient(520px 300px at 100% 0%, rgba(37,99,235,0.7), transparent 62%)' }} />
               <div className="relative">
                 <div className="flex flex-wrap items-center gap-2 text-[11px] font-semibold uppercase tracking-widest text-white/70">
                   <span>{d.label}</span>
@@ -178,7 +178,7 @@ export default async function AiWeekendPage() {
         <h2 className="text-3xl sm:text-4xl font-bold tracking-tight">What you will work with</h2>
         <div className="mt-6 grid grid-cols-2 sm:grid-cols-4 gap-3">
           {TOOLS.map((t) => (
-            <div key={t} className="rounded-2xl bg-[#0C1426] text-white text-center font-semibold px-3 py-6 text-[15px]">{t}</div>
+            <div key={t} className="rounded-2xl st-night text-white text-center font-semibold px-3 py-6 text-[15px]">{t}</div>
           ))}
         </div>
       </section>
@@ -186,7 +186,7 @@ export default async function AiWeekendPage() {
       {/* Who teaches it */}
       <section className={`${wrap} mt-10`}>
         <div className="rounded-3xl border border-gray-200 bg-raised p-6 sm:p-8 grid md:grid-cols-[auto_1fr] gap-6 items-center">
-          <div className="w-24 h-24 rounded-2xl bg-[#0C1426] text-amber-300 flex items-center justify-center text-3xl font-bold" aria-hidden="true">
+          <div className="w-24 h-24 rounded-2xl st-night text-amber-300 flex items-center justify-center text-3xl font-bold" aria-hidden="true">
             {WEEKEND.trainer.name.split(' ').map((w) => w[0]).slice(0, 2).join('')}
           </div>
           <div>
@@ -212,13 +212,13 @@ export default async function AiWeekendPage() {
         <ol className="mt-8 grid md:grid-cols-3 gap-4">
           {HOW_YOU_LEARN.map((s, i) => (
             <li key={s.title} className="rounded-3xl border border-gray-200 bg-raised p-6">
-              <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[#0C1426] text-sm font-bold text-amber-300">{i + 1}</div>
+              <div className="flex h-9 w-9 items-center justify-center rounded-full st-night text-sm font-bold text-amber-300">{i + 1}</div>
               <h3 className="mt-4 text-xl font-bold tracking-tight">{s.title}</h3>
               <p className="mt-2 text-[15px] leading-relaxed text-gray-600">{s.text}</p>
             </li>
           ))}
         </ol>
-        <div className="mt-4 rounded-3xl bg-[#0C1426] text-white p-6 sm:p-7 flex flex-col lg:flex-row lg:items-center gap-5">
+        <div className="mt-4 rounded-3xl st-night text-white p-6 sm:p-7 flex flex-col lg:flex-row lg:items-center gap-5">
           <div className="flex items-center gap-3 shrink-0">
             <Package className="w-8 h-8 text-amber-300" />
             <div>
@@ -238,7 +238,7 @@ export default async function AiWeekendPage() {
           <div>
             <h2 className="text-3xl sm:text-4xl font-bold tracking-tight">Reserve your seat</h2>
             <p className="mt-2 text-gray-600">{cohort.label} · {time}</p>
-            <div className="mt-5 inline-flex items-center rounded-full bg-[#0C1426] px-3 py-1 text-xs font-semibold text-amber-300">Limited cohort · {WEEKEND.seats} seats</div>
+            <div className="mt-5 inline-flex items-center rounded-full st-night px-3 py-1 text-xs font-semibold text-amber-300">Limited cohort · {WEEKEND.seats} seats</div>
             <div className="mt-3 flex flex-wrap items-baseline gap-x-3 gap-y-1">
               <s className="text-2xl font-semibold text-gray-400" aria-label={`Regular price ${rupees(WEEKEND.regularFee)}`}>{rupees(WEEKEND.regularFee)}</s>
               <span className="text-5xl font-bold tracking-tight text-gray-900">{rupees(WEEKEND.fee)}</span>
@@ -265,7 +265,7 @@ export default async function AiWeekendPage() {
               <ol className="mt-2.5 space-y-2.5">
                 {HOW_YOU_LEARN.map((s, i) => (
                   <li key={s.title} className="flex gap-3 text-sm">
-                    <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#0C1426] text-[11px] font-bold text-amber-300">{i + 1}</span>
+                    <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full st-night text-[11px] font-bold text-amber-300">{i + 1}</span>
                     <span><span className="font-semibold text-gray-900">{s.title}.</span> <span className="text-gray-600">{s.text}</span></span>
                   </li>
                 ))}

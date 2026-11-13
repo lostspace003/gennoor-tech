@@ -4,7 +4,9 @@ import { createContext, useCallback, useContext, useEffect, useRef, useState } f
 import { useRouter } from 'next/navigation'
 import { Loader2 } from 'lucide-react'
 import { useLearnerAuth } from '@/hooks/useLearnerAuth'
+import type { LmsKind } from '@/lib/lms-kind'
 import LearnerAuthModal from './LearnerAuthModal'
+import { LessonLine } from './LessonLine'
 
 /**
  * The course outline on the course page. A lesson that is clicked by someone who is not enrolled yet
@@ -83,16 +85,15 @@ export function OutlineGate({ slug, children }: { slug: string; children: React.
 }
 
 /** A lesson row in the outline for someone who is not enrolled: it looks the same, and opens the sign-in. */
-export function OutlineLesson({ id, title, color }: { id: string; title: string; color: string }) {
+export function OutlineLesson({ id, title, kind, minutes }: { id: string; title: string; kind: LmsKind; minutes?: number }) {
   const open = useContext(OpenLesson)
   return (
     <button
       type="button"
       onClick={() => open?.(id)}
-      className="w-full flex items-start gap-3 py-1.5 text-left text-[14.5px] leading-snug text-gray-700 hover:text-primary-600 transition-colors"
+      className="group/line block w-full rounded-xl focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary-500"
     >
-      <span className="w-1.5 h-4 rounded-[1px] mt-0.5 shrink-0" style={{ background: color }} />
-      <span className="flex-1">{title}</span>
+      <LessonLine title={title} kind={kind} minutes={minutes} />
     </button>
   )
 }
