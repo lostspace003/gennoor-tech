@@ -61,7 +61,7 @@ Once you know the shape of one course, you know them all.
 Watch a preview lesson: gennoor.com/studio
 
 #LearnAI #AITraining #Upskilling #DigitalSkills`,
-    share: 'The five parts of every Gennoor course. Preview lessons play without signing in: gennoor.com/studio',
+    share: 'The five parts of every Gennoor course. Preview lessons are open to watch: gennoor.com/studio',
   },
   {
     id: 'o04',

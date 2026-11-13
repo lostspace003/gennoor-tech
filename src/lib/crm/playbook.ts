@@ -65,7 +65,7 @@ export const CALL_STEPS: CallStep[] = [
 
 /** Pick one, by what they told you. */
 export const BRIDGES: { when: string; say: string }[] = [
-  { when: 'They want to try before buying', say: 'On our Learning Studio your team can watch the preview lessons of any course today, without signing up, and see how we teach before we talk about anything paid.' },
+  { when: 'They want to try before buying', say: 'On our Learning Studio your team can watch the preview lessons of any course today and see how we teach before we talk about anything paid.' },
   { when: 'Training takes people away for too long', say: 'A usual course is three to five days in a classroom. We put the concepts and labs into short lessons people take on their own, and keep trainer time for questions. We aim to cut classroom time by about 60%.' },
   { when: 'Generic courses do not fit them', say: 'We build the course around your own processes and tools, so the examples are your work, not someone else’s.' },
   { when: 'They want their own platform', say: 'We can set up a learning platform for your organization, with your courses and your people only, and an assistant and a question board built in.' },
@@ -81,7 +81,7 @@ export const OBJECTIONS: { they: string; you: string }[] = [
   { they: 'We have an internal training team.', you: 'Good. We usually work alongside them. Where are they stretched: content on new topics like Claude and agents, or time to deliver?' },
   { they: 'We already use another provider.', you: 'That makes sense. What would you change about it if you could? Many teams keep their provider and use us for the topics it does not cover.' },
   { they: 'Now is not a good time.', you: 'No problem. When is planning for next quarter? I will call then, and send one short note in the meantime so you have our details.' },
-  { they: 'Is the platform free?', you: 'The preview lessons of every course are free to watch, with no sign-up. A full course is a one-time purchase per learner. For a whole team, let us talk about what you need.' },
+  { they: 'Is the platform free?', you: 'The preview lessons of every course are free to watch. A full course is a one-time purchase per learner. For a whole team, let us talk about what you need.' },
 ]
 
 export const AFTER_THE_CALL = [

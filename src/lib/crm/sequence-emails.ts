@@ -44,9 +44,12 @@ function content(stepId: string, firstName: string, company: string): Content {
   switch (stepId) {
     case 'intro':
       return {
-        preheader: 'Real lessons from our AI and cloud courses, open to watch today.',
+        // The owner, 14 November 2026: "remove word no sign up as we are making it payed option now preview is free".
+        // The courses are paid; what is open to watch is the PREVIEW lessons. So outreach says "preview lessons"
+        // and never "no sign-up", which read as if the whole course were open.
+        preheader: 'Preview lessons from our AI and cloud courses, open to watch today.',
         body:
-          briefHead('Learning Studio', 'See the training before you talk to us.', `${first ? `Hello ${first}.` : 'Hello.'} ${co ? `The team at ${co}` : 'Your team'} can watch real lessons from our AI and cloud courses today. No sign-up.`) +
+          briefHead('Learning Studio', 'See the training before you talk to us.', `${first ? `Hello ${first}.` : 'Hello.'} ${co ? `The team at ${co}` : 'Your team'} can watch preview lessons from our AI and cloud courses today.`) +
           briefPicture('video', 'A preview of the AI-103 course. Open it to play the video with sound.', `${STUDIO}/ai-103`) +
           briefTiles([
             { icon: 'play', title: 'Video lessons', line: 'Short, with captions' },
@@ -55,14 +58,14 @@ function content(stepId: string, firstName: string, company: string): Content {
           ]) +
           briefButton('Watch the preview lessons', STUDIO) +
           briefLine(`New to us? ${briefLink('Watch what we do in ninety seconds', SITE)}. Prefer to talk? ${briefLink('Pick a time', CALL)}.`),
-        plain: `${firstName ? `Hello ${firstName},` : 'Hello,'}\n\nSee the training before you talk to us. ${company ? `The team at ${company}` : 'Your team'} can watch real lessons from our AI and cloud courses today, with no sign-up.\n\n- Video lessons: short, with captions\n- Hands-on labs: files to download\n- Certificate: quizzes in every module\n\nWatch the preview lessons: ${STUDIO}\nWhat we do, in ninety seconds: ${SITE}\nPrefer to talk? Pick a time: ${CALL}`,
+        plain: `${firstName ? `Hello ${firstName},` : 'Hello,'}\n\nSee the training before you talk to us. ${company ? `The team at ${company}` : 'Your team'} can watch preview lessons from our AI and cloud courses today.\n\n- Video lessons: short, with captions\n- Hands-on labs: files to download\n- Certificate: quizzes in every module\n\nWatch the preview lessons: ${STUDIO}\nWhat we do, in ninety seconds: ${SITE}\nPrefer to talk? Pick a time: ${CALL}`,
       }
 
     case 'samples':
       return {
         preheader: 'Three courses to open now. The full catalogue is attached.',
         body:
-          briefHead('Sample courses', 'Three courses. Open any one.', to(first, 'the preview lessons play without signing in.')) +
+          briefHead('Sample courses', 'Three courses. Open any one.', to(first, 'each one has preview lessons to watch today.')) +
           briefPicture('courses', 'Three courses: AI-103, AI-500 and the Claude certification guides.', STUDIO) +
           briefLinks([
             { icon: 'project', art: 'ai-103', title: 'AI-103: Build and Ship AI Agents', line: 'Microsoft certification course, one project throughout', href: `${STUDIO}/ai-103` },
@@ -72,7 +75,7 @@ function content(stepId: string, firstName: string, company: string): Content {
           briefStrip('catalogue', `<strong style="color:${BRIEF.text}">Attached: the full catalogue.</strong> Every programme we run, in one Excel file.`) +
           briefButton('Book a 20-minute call', CALL) +
           briefLine('Tell me your topics and I will point you to the right two or three.'),
-        plain: `${to(firstName, 'three courses.')} Open any one. The preview lessons play without signing in.\n\n- AI-103: Build and Ship AI Agents on Microsoft Azure: ${STUDIO}/ai-103\n- AI-500: Designing and Implementing Multi-Agent AI Solutions: ${STUDIO}/ai-500\n- Claude certification guides: ${SITE}/claude/certifications\n\nOur full catalogue is attached as an Excel file.\n\nBook a 20-minute call: ${CALL}`,
+        plain: `${to(firstName, 'three courses.')} Open any one. Each one has preview lessons to watch today.\n\n- AI-103: Build and Ship AI Agents on Microsoft Azure: ${STUDIO}/ai-103\n- AI-500: Designing and Implementing Multi-Agent AI Solutions: ${STUDIO}/ai-500\n- Claude certification guides: ${SITE}/claude/certifications\n\nOur full catalogue is attached as an Excel file.\n\nBook a 20-minute call: ${CALL}`,
       }
 
     case 'custom':
