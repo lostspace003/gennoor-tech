@@ -70,14 +70,14 @@ export default function Footer() {
         {/* Newsletter — kept from the previous footer, restated quietly */}
         <div className="border-t border-gray-300 mt-9 pt-6 flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-6">
           <div className="flex-1">
-            <p className="text-xs font-semibold text-gray-900">Stay in touch</p>
+            <p className="text-xs font-semibold text-gray-900">Get new posts by email</p>
             <p className="text-xs text-gray-400 mt-0.5">
-              Occasional notes on AI training and automation.
+              One email a week, on Thursday, with that week&apos;s posts. No spam.
             </p>
           </div>
           {subscribed ? (
             <p className="text-xs font-medium text-green-600">
-              ✓ Subscribed — you&rsquo;ll get the next issue.
+              ✓ Subscribed. The next email goes on Thursday.
             </p>
           ) : (
             <form onSubmit={handleSubscribe} className="flex flex-wrap gap-2 w-full sm:w-auto items-center">

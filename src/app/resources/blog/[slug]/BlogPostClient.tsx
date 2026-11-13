@@ -427,14 +427,14 @@ export default function BlogPostClient({ post, slug, relatedPosts }: {
                 <CheckCircle className="h-10 w-10" style={{ color: '#4ade80' }} />
                 <h3 className="text-xl font-bold text-white">You&apos;re subscribed!</h3>
                 <p className="max-w-md text-sm text-white/70">
-                  You&apos;ll receive the latest AI insights from across the globe directly in your inbox.
+                  You will get one email a week, on Thursday, with the new posts.
                 </p>
               </div>
             ) : (
               <>
-                <h3 className="text-xl font-bold mb-2 text-white">Stay ahead of the curve</h3>
+                <h3 className="text-xl font-bold mb-2 text-white">Get new posts by email</h3>
                 <p className="mb-6 max-w-md mx-auto text-sm text-white/70">
-                  Practitioner insights on enterprise AI delivered to your inbox. No spam, just signal.
+                  One email a week, on Thursday, with that week&apos;s posts. No spam.
                 </p>
                 <form onSubmit={handleSubscribe} className="flex flex-col sm:flex-row items-center justify-center gap-3 max-w-sm mx-auto">
                   <input type="email" required value={email} onChange={e => setEmail(e.target.value)} placeholder="Enter your email"

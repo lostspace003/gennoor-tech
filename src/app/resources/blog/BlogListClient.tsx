@@ -196,14 +196,14 @@ export default function BlogListClient({ posts, categories }: BlogListClientProp
               <div className="flex items-center gap-3 text-white">
                 <CheckCircle className="h-5 w-5 text-green-400" aria-hidden="true" />
                 <p className="text-sm font-medium">
-                  Subscribed! You&apos;ll receive the latest AI insights from across the globe.
+                  Subscribed. You will get one email a week, on Thursday, with the new posts.
                 </p>
               </div>
             ) : (
               <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
                 <div>
                   <h3 className="text-[15px] font-bold text-white mb-0.5">Get new posts by email</h3>
-                  <p className="text-[13px] text-gray-400">Enterprise AI insights delivered to your inbox. No spam.</p>
+                  <p className="text-[13px] text-gray-400">One email a week, on Thursday, with that week&apos;s posts. No spam.</p>
                 </div>
                 <form onSubmit={handleSubscribe} className="flex flex-wrap gap-2 w-full sm:w-auto">
                   <input

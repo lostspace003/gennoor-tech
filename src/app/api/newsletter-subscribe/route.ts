@@ -60,26 +60,26 @@ export async function POST(request: Request) {
       to: email,
       from: fromAddress,
       fromName: 'Gennoor Tech',
-      subject: "You're subscribed — Gennoor Tech",
+      subject: "You're subscribed: one email a week from Gennoor Tech",
       unsubscribeUrl: unsubUrl,
       html: emailShell(
         `
         <h3 style="margin:0 0 12px;color:#0f172a;font-size:19px">You're subscribed.</h3>
         <p style="margin:0 0 16px;color:#475569;line-height:1.7;font-size:15px">
-          Thanks for signing up. You'll get an occasional email when we publish
-          something worth your time — practical notes on AI, new guides,
-          and dates for free webinars and workshops.
+          Thank you for signing up. You will get one email a week, on Thursday,
+          with the posts we published that week. A week with no new post brings
+          no email.
         </p>
         <p style="margin:0 0 16px;color:#475569;line-height:1.7;font-size:15px">
-          No fixed schedule, and nothing sold to you. If it stops being useful,
-          the unsubscribe link at the bottom of every email works immediately.
+          If it stops being useful, the unsubscribe link at the foot of every
+          email works at once.
         </p>
-        <p style="margin:0 0 6px;color:#0f172a;font-weight:600;font-size:15px">While you're here</p>
+        <p style="margin:0 0 6px;color:#0f172a;font-weight:600;font-size:15px">While you are here</p>
         <p style="margin:0;color:#475569;line-height:1.7;font-size:15px">
-          The <a href="https://www.gennoor.com/academy" style="color:#2563EB;text-decoration:none">AI Academy</a>
-          is free and self-paced, and the
-          <a href="https://www.gennoor.com/resources" style="color:#2563EB;text-decoration:none">resources library</a>
-          collects every guide, video and calculator we've published.
+          The latest posts are on the
+          <a href="https://www.gennoor.com/resources/blog" style="color:#2563EB;text-decoration:none">blog</a>,
+          and the preview lessons of every course are on the
+          <a href="https://www.gennoor.com/studio" style="color:#2563EB;text-decoration:none">Learning Studio</a>.
         </p>`,
         {
           preheader: "You're subscribed to the Gennoor Tech newsletter.",
