@@ -94,6 +94,11 @@ export interface LinkedInTouch {
 export interface Lead {
   id: string
   name: string
+  /**
+   * The name used to greet them in emails, when it was set by hand. Not set: worked out from
+   * `name` (see ./greeting.ts). Empty text: write to them without a name.
+   */
+  greeting?: string | null
   email: string
   phone: string
   /** The organization. Leads are grouped and filtered by this. */

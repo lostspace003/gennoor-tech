@@ -14,16 +14,18 @@ export default function SequenceView() {
   const [active, setActive] = useState(SEQUENCE[0].id)
   const [preview, setPreview] = useState<Preview | null>(null)
   const [loading, setLoading] = useState(true)
+  // The same email for a lead whose name or company we do not have: it is written without them
+  const [bare, setBare] = useState(false)
 
   useEffect(() => {
     let cancelled = false
     setLoading(true)
-    api<Preview>(`/api/admin/leads/sequence?step=${active}`)
+    api<Preview>(`/api/admin/leads/sequence?step=${active}${bare ? '&sample=bare' : ''}`)
       .then((p) => { if (!cancelled) setPreview(p) })
       .catch((e) => { if (!cancelled) notify(e.message, true) })
       .finally(() => { if (!cancelled) setLoading(false) })
     return () => { cancelled = true }
-  }, [active]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [active, bare]) // eslint-disable-line react-hooks/exhaustive-deps
 
   // Day each email goes out, counted from the first one
   let day = 0
@@ -70,9 +72,28 @@ export default function SequenceView() {
       </div>
 
       <div className="flex flex-col min-h-[70vh] bg-gray-100">
-        <div className="bg-white border-b border-gray-200 px-4 py-2.5">
-          <div className="text-[11px] text-gray-400">Subject, shown with a sample name</div>
-          <div className="text-sm font-medium text-gray-900">{preview?.subject || '…'}</div>
+        <div className="bg-white border-b border-gray-200 px-4 py-2.5 flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
+          <div className="min-w-0">
+            <div className="text-[11px] text-gray-400">
+              {bare
+                ? 'Subject, for a lead with no clear name and no company on file'
+                : 'Subject, shown for a made-up lead (Priya at Acme Industries). Every lead gets their own name.'}
+            </div>
+            <div className="text-sm font-medium text-gray-900">{preview?.subject || '…'}</div>
+          </div>
+          <div className="flex gap-1 shrink-0" role="group" aria-label="Show the email">
+            {([[false, 'With a name'], [true, 'Without a name']] as const).map(([value, label]) => (
+              <button
+                key={label}
+                type="button"
+                aria-pressed={bare === value}
+                onClick={() => setBare(value)}
+                className={`px-2.5 py-1 text-xs rounded-full border whitespace-nowrap ${bare === value ? 'bg-gray-800 text-white border-gray-800' : 'border-gray-200 text-gray-600 hover:bg-gray-50'}`}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
         </div>
         <div className="flex-1 relative">
           {preview && <iframe title="Email preview" srcDoc={preview.html.replace('<head>', '<head><base target="_blank">')} sandbox="allow-popups allow-popups-to-escape-sandbox" className="absolute inset-0 w-full h-full border-0" />}

@@ -1,4 +1,5 @@
 import type { Lead } from './types'
+import { companyOf, greetingOf } from './greeting'
 
 // The email series: the same methodical steps for every lead, spread over about
 // four months. This file is the plan (what, when, why) and is safe to import in
@@ -14,6 +15,8 @@ export interface SequenceStep {
   /** What this email is for, in one line. */
   purpose: string
   subject: string
+  /** The subject for a lead with no company (or no name) to put in it, when dropping the word would not read well. */
+  subjectBare?: string
   /** The Excel course catalogue rides along as an attachment. */
   attachCatalogue?: boolean
   /** Which part of the plan this belongs to. */
@@ -45,6 +48,7 @@ export const SEQUENCE: SequenceStep[] = [
     title: 'Built for your organization',
     purpose: 'Custom training and a learning platform of their own',
     subject: 'A training programme built around {company}',
+    subjectBare: 'A training programme built around your work',
   },
   {
     id: 'time',
@@ -102,9 +106,24 @@ export const stepNumber = (id: string) => SEQUENCE.findIndex((s) => s.id === id)
 /** Total days from the first email to the last. */
 export const SEQUENCE_DAYS = SEQUENCE.reduce((n, s) => n + s.gapDays, 0)
 
-export function fillTokens(text: string, lead: Pick<Lead, 'name' | 'company'>): string {
-  const first = (lead.name || '').trim().split(/\s+/)[0] || 'there'
-  return text.replace(/\{firstName\}/g, first).replace(/\{company\}/g, lead.company?.trim() || 'your team')
+type Named = Pick<Lead, 'name' | 'company' | 'greeting'>
+
+/**
+ * Puts the lead's first name and company into a line of text. When one of them is missing
+ * (see ./greeting.ts for when a name counts), the word goes and so does the comma before it,
+ * so the line still reads well: "Thank you for connecting, {firstName}." becomes
+ * "Thank you for connecting." There is never a stand-in such as "there".
+ */
+export function fillTokens(text: string, lead: Named): string {
+  const first = greetingOf(lead), company = companyOf(lead)
+  const put = (line: string, token: string, value: string) => (value ? line.split(token).join(value) : line.replace(new RegExp(`,?\\s*${token.replace(/[{}]/g, '\\$&')}`, 'g'), ''))
+  return put(put(text, '{firstName}', first), '{company}', company).replace(/\s+([,.?!])/g, '$1').trim()
+}
+
+/** The subject of a step for one lead. */
+export function subjectFor(step: SequenceStep, lead: Named): string {
+  const missing = (step.subject.includes('{company}') && !companyOf(lead)) || (step.subject.includes('{firstName}') && !greetingOf(lead))
+  return fillTokens(missing && step.subjectBare ? step.subjectBare : step.subject, lead)
 }
 
 export interface SequenceProgress {
