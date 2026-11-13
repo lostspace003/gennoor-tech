@@ -108,6 +108,20 @@ export const HOOK_BULLETS_RULES = `Shape of every post:
 - Then the hashtags. 50 to 110 words in total. No long paragraphs, no filler, no hype words.
 - Do not paste source links in the post body: the reference link goes in the first comment, which is posted automatically.`
 
+/**
+ * How to write the post, apart from its shape: the short form of POST_CRAFT in services/studio-agents/agents.py
+ * (the agents carry the long form). Added 13 November 2026 at the owner's request: every post unique, one clear
+ * idea, the right tags. Keep the two in step.
+ */
+export const LINKEDIN_CRAFT = `How to write it:
+- One post, one idea: the single sentence a busy reader should still remember tomorrow. Leave the other ideas out.
+- Be specific: the tool, the step, the number from the source, the way it fails. Cut any sentence that could sit in any company's post.
+- Give the reader something to use: a check to run, a question to ask the team, a rule of thumb, a mistake to avoid.
+- End with the takeaway or one specific question a practitioner can answer from experience. Never "Thoughts?" or "Agree?".
+- Plain words, active voice. No hype ("game-changer", "unlock", "supercharge", "seamless", "leverage", "delve"), no three-part slogans.
+- Nothing is called "free", no price, no customer's name, no promised result.
+- Hashtags: 3 or 4, CamelCase, specific to the subject, at most one broad one.`
+
 export const LINKEDIN_STYLE_GUIDE = `Format for LinkedIn, which has no rich text:
 - First line is the hook, wrapped in **double asterisks** so it becomes bold.
 - Short paragraphs of one or two sentences with a blank line between them.

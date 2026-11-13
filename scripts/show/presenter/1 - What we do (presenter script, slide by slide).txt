@@ -1,0 +1,429 @@
+GENNOOR TECH: WHAT WE DO
+The presenter's script, slide by slide
+
+Goes with:   1 - What we do (presentation for client calls).pptx
+Same story:  1 - What we do (website and LinkedIn, wide 16x9).mp4
+
+This script is for anyone who presents Gennoor Tech to a client. You do not need a
+technical background. For each of the 15 slides it gives you:
+
+   THE SLIDE SHOWS   what the client is looking at
+   SAY               words you can say as they are
+   IN PLAIN WORDS    what it means, so you can answer in your own words
+
+The whole presentation takes about 12 to 15 minutes. A 5-minute version is at the end.
+
+
+------------------------------------------------------------------------------------
+BEFORE THE CALL
+------------------------------------------------------------------------------------
+
+- Open the presentation, press F5, and share your screen.
+- The parts of a slide come one at a time. Keep pressing the SPACE bar until the slide
+  is complete (most slides end with a blue button at the bottom), then say your lines.
+- The blue button opens that page of our website. Use it only if the client asks to see
+  more.
+- Do not quote a price. Say: "The cost depends on the size of the team and what we build.
+  Once we understand your need, we send it in writing."
+- Do not name other clients.
+- If you do not know an answer, say: "Let me note it and come back to you today."
+
+
+------------------------------------------------------------------------------------
+SLIDE 1     OUR VISION
+------------------------------------------------------------------------------------
+
+THE SLIDE SHOWS
+   Our vision, in four short lines.
+
+SAY
+   "Let me start with why we exist. Our vision is a world where anyone can learn the
+   skills that work asks for, and prove them. That is what we are building."
+
+IN PLAIN WORDS
+   We help people learn skills they can use in their job, and show proof that they have
+   learned them: a quiz passed, a project finished, a certificate.
+
+
+------------------------------------------------------------------------------------
+SLIDE 2     WHY WE EXIST
+------------------------------------------------------------------------------------
+
+THE SLIDE SHOWS
+   "Most training ends when the slides end. It should end when you can do the work."
+   And four words: Watch, Practise, Build, Prove.
+
+SAY
+   "Most training ends when the slides end. People watch, nod, and go back to their desk
+   unable to do the thing. We think training should end when you can do the work. So our
+   learners watch, practise, build something, and then prove it."
+
+IN PLAIN WORDS
+   The problem we solve: people sit through training and still cannot do the job.
+   Our answer: every course makes the learner do the work, not only watch it.
+
+
+------------------------------------------------------------------------------------
+SLIDE 3     INSIDE EVERY COURSE
+------------------------------------------------------------------------------------
+
+THE SLIDE SHOWS
+   On the left, one of our courses as a learner sees it. On the right, the five things
+   every course has: short video lessons, labs you run yourself, an assistant in the
+   lesson, a quiz in every module, a certificate at the end.
+
+SAY
+   "Every course of ours is built the same way. Short video lessons, a few minutes each,
+   with captions. Labs, where the learner does the exercise on their own computer with a
+   guide for every step. An assistant inside the lesson, which answers questions from
+   the course itself. A quiz in every module, so they know they have understood. And a
+   certificate at the end."
+
+IN PLAIN WORDS
+   A "module" is a chapter. A "lab" is a practical exercise. The "assistant" is a chat
+   box inside the lesson. The course in the picture is one of our own, AI-103.
+
+BLUE BUTTON   opens a real course page, where preview lessons play without signing in.
+
+
+------------------------------------------------------------------------------------
+SLIDE 4     ASK ANYTHING
+------------------------------------------------------------------------------------
+
+THE SLIDE SHOWS
+   A learner asking the assistant a question, and the assistant's answer. Beside it:
+   the assistant is inside every lesson, every course has a discussion page, and every
+   lesson has captions.
+
+SAY
+   "When a learner is stuck, they should not have to wait for the next class. They type
+   the question in their own words, and the assistant answers from this course, not from
+   the open internet. Every course also has a discussion page, where learners talk to
+   each other and to our team. And every lesson has captions."
+
+IN PLAIN WORDS
+   The assistant is an AI helper that has read the course, so its answer fits what the
+   learner is studying. The question shown on the slide is only an example from a
+   technical course. You do not need to explain it.
+
+BLUE BUTTON   opens the same course page.
+
+
+------------------------------------------------------------------------------------
+SLIDE 5     HANDS-ON
+------------------------------------------------------------------------------------
+
+THE SLIDE SHOWS
+   A lab guide (a list of steps), a black window where the learner types on their own
+   computer, six modules, and the words "A working project at the end".
+
+SAY
+   "This is where the learning really happens. Each lab has a guide that tells the
+   learner what to do, step by step. The learner does it on their own machine. Every
+   module adds one working part. So the course ends with a finished project, not with a
+   slide."
+
+IN PLAIN WORDS
+   "Hands-on" means the learner does it themselves. If the client is not technical, say:
+   "This is the learner building a small working program, one step at a time."
+
+BLUE BUTTON   opens the same course page.
+
+
+------------------------------------------------------------------------------------
+SLIDE 6     WHAT YOU CAN LEARN
+------------------------------------------------------------------------------------
+
+THE SLIDE SHOWS
+   Three kinds of course: certification courses, project courses, and AI Essentials.
+
+SAY
+   "There are three ways in, depending on where a person is. Certification courses: you
+   prepare for an official exam, and you build the real thing while you prepare. Project
+   courses: one real project, from start to finish. And AI Essentials: short courses,
+   about an hour each, for every role, not only for technical people."
+
+IN PLAIN WORDS
+   A certification is an official exam from a company such as Microsoft or Anthropic.
+   The "Learning Studio" is the part of our website where the video courses live.
+   AI Essentials are short courses for managers, HR, sales, finance and other roles.
+
+BLUE BUTTON   opens the Learning Studio, where all the courses are listed.
+
+
+------------------------------------------------------------------------------------
+SLIDE 7     CLAUDE AT GENNOOR
+------------------------------------------------------------------------------------
+
+THE SLIDE SHOWS
+   The Claude Partner Network badge and the line "Gennoor is Certified in the Claude
+   Partner Network." Then the four Claude certifications, and what we offer teams.
+
+SAY
+   "Gennoor is Certified in the Claude Partner Network. There are four Claude
+   certifications, and for each one we have a guide and a practice exam. For teams we
+   run live training on Claude for everyday work, and courses built around a use case in
+   your field."
+
+   Say the first sentence exactly as it is written. Do not add words such as "top",
+   "gold" or "official partner".
+
+IN PLAIN WORDS
+   Claude is an AI assistant made by a company called Anthropic. People use it to write,
+   summarise, work with files and build small tools.
+
+BLUE BUTTON   opens our Claude page.
+
+
+------------------------------------------------------------------------------------
+SLIDE 8     FOR YOUR TEAM
+------------------------------------------------------------------------------------
+
+THE SLIDE SHOWS
+   Three steps: we learn your work, we build the course, we teach it live. Then what we
+   cover: Claude, Microsoft AI, automation, Microsoft official courses, exam
+   preparation, custom courses.
+
+SAY
+   "For a team, we go further than a ready-made course. First we learn your work: what
+   your people do every day. Then we build the course around it, so the examples and the
+   exercises come from your own work, not from a textbook. Then we teach it live, online
+   or at your office, and people practise as they learn. We cover Claude, Microsoft AI
+   and automation, and we also deliver Microsoft's official courses and exam
+   preparation."
+
+IN PLAIN WORDS
+   This is the slide most companies care about. The message: training made for their
+   team, using their own kind of work as the examples. A good question to ask here:
+   "What does your team spend most of its time on?"
+
+BLUE BUTTON   opens our training page.
+
+
+------------------------------------------------------------------------------------
+SLIDE 9     CUSTOM AUTOMATION TRAINING
+------------------------------------------------------------------------------------
+
+THE SLIDE SHOWS
+   One weekly job done by hand (requests arrive, sort them, draft the reply, update the
+   sheet), and the same job after the course: "Now it runs when they ask. A person
+   checks." Below, where teams usually start.
+
+SAY
+   "We also teach automation, and it is a custom course every time. Think of one job
+   your team does by hand every week. We choose that one process with you. We build the
+   course on it, with your own examples and files. And your people automate it
+   themselves, during the course. At the end, that job runs when they ask for it, and a
+   person still checks the result. Teams usually start with sorting documents and
+   emails, routine questions, reports, or moving data from one tool to another."
+
+IN PLAIN WORDS
+   "Automation" means the computer does the repeated steps of a job. We do not take the
+   job away from the team. We teach the team to automate it, so they can do the next one
+   without us.
+
+BLUE BUTTON   opens our training page.
+
+
+------------------------------------------------------------------------------------
+SLIDE 10    YOUR OWN PLATFORM
+------------------------------------------------------------------------------------
+
+THE SLIDE SHOWS
+   A learning website with "YOUR LOGO" at the top, and three lines: Your courses. Your
+   people. Your name. It can run in the cloud or on your premises.
+
+SAY
+   "If training is a regular need in your company, it is worth having a home for it. We
+   can set up a learning platform for you: your courses, your people, your name and logo
+   on it. It can run in the cloud or on your own servers. We build it and set it up."
+
+IN PLAIN WORDS
+   A "learning platform" is a private website where a company's staff take courses and
+   managers see who has finished what. "In the cloud" means on rented computers on the
+   internet. "On your premises" means on the company's own computers.
+
+BLUE BUTTON   opens our contact page.
+
+
+------------------------------------------------------------------------------------
+SLIDE 11    AFTER THE TRAINING
+------------------------------------------------------------------------------------
+
+THE SLIDE SHOWS
+   On the left: a usual course takes 3 to 5 days in a classroom; ours aims at about 60%
+   less classroom time. On the right: a "doubt desk", where a learner asks a question a
+   week later and a trainer answers.
+
+SAY
+   "Two things clients always ask about: time, and what happens afterwards. Time: a
+   usual course keeps people in a classroom for three to five days. With us, people
+   learn the ideas from short lessons and practise in labs first, so the trainer's time
+   is kept for the hard parts. Our aim is about sixty percent less classroom time. How
+   much exactly depends on the course and the team. And afterwards: the real questions
+   come a week later, back at the desk. So there is a doubt desk. A trainer answers, the
+   answer is kept for the next person, and the course stays open."
+
+IN PLAIN WORDS
+   Sixty percent is an AIM, not a promise. Always say "our aim" and "it depends on the
+   course and the team". A "doubt desk" is a place where learners ask questions after
+   the training.
+
+BLUE BUTTON   opens our contact page.
+
+
+------------------------------------------------------------------------------------
+SLIDE 12    SEE IT WORK FIRST
+------------------------------------------------------------------------------------
+
+THE SLIDE SHOWS
+   A simple drawing of how one job would work, a small working version of it reading a
+   sample invoice, and four points: scope agreed in writing, tested on your examples,
+   people stay in charge, one process at a time.
+
+SAY
+   "Not sure yet? That is normal. We take one use case and build it as a small working
+   version, tested on your own examples. Here it reads an invoice, checks it, and marks
+   what a person should look at. Before we start, the scope is agreed in writing. People
+   stay in charge. And we do one process at a time."
+
+IN PLAIN WORDS
+   A "prototype" is a small working version made to show that the idea works, before a
+   bigger commitment. "Scope" means exactly what will be built and what will not. The
+   supplier and invoice on the slide are made-up examples, not a real client.
+
+BLUE BUTTON   opens our automation page.
+
+
+------------------------------------------------------------------------------------
+SLIDE 13    THE AI WEEKEND
+------------------------------------------------------------------------------------
+
+THE SLIDE SHOWS
+   "The AI Weekend. Build with Claude in one weekend." The last weekend of every month,
+   Saturday and Sunday, live online. And what is built on each of the two days.
+
+SAY
+   "For people who want to see it for themselves, there is the AI Weekend. It is on the
+   last weekend of every month, Saturday and Sunday, live online. On Saturday we set
+   Claude up to know your work, turn a messy sheet into a weekly report, and connect it
+   to your files. On Sunday we automate one task, build a small app just by describing
+   it, and build a first agent. Six working demos, built step by step in front of you,
+   and you get the complete kit afterwards to repeat them."
+
+IN PLAIN WORDS
+   A live online workshop over two mornings. No coding is needed. An "agent" is an AI
+   helper that is given a goal and does the steps itself. The "kit" is the notes, the
+   prompts, the files and the guides.
+   Do not say a date or a fee from memory. The page shows both: gennoor.com/ai-weekend
+
+BLUE BUTTON   opens the AI Weekend page.
+
+
+------------------------------------------------------------------------------------
+SLIDE 14    BEYOND THIS DECK
+------------------------------------------------------------------------------------
+
+THE SLIDE SHOWS
+   Eight buttons around gennoor.com: Learning Studio, AI Essentials, Claude, Training,
+   Automation, AI Weekend, Webinars, Blog.
+
+SAY
+   "What you have seen is what we do today. New courses and programmes appear on our
+   website first, and each part of what we do has its own page. I can open any of these
+   now, or send you the links after the call."
+
+IN PLAIN WORDS
+   Each button opens that page of the website. Ask the client which one interests them,
+   and open only that one.
+
+
+------------------------------------------------------------------------------------
+SLIDE 15    TRAIN. INNOVATE. BUILD.
+------------------------------------------------------------------------------------
+
+THE SLIDE SHOWS
+   Our three words, two buttons ("Watch a preview lesson" and "Book a 20-minute call"),
+   and the Claude Partner Network line.
+
+SAY
+   "Train. Innovate. Build. The simplest way to start is to watch a preview lesson.
+   There is nothing to sign up for. Or tell us about your team: how many people, which
+   teams, and by when. In twenty minutes we will suggest something sensible."
+
+   Then stop talking and let the client speak.
+
+IN PLAIN WORDS
+   This slide asks for the next step. A good closing question: "Which of these is
+   closest to what your team needs right now?"
+
+
+------------------------------------------------------------------------------------
+IF YOU HAVE ONLY FIVE MINUTES
+------------------------------------------------------------------------------------
+
+Show these seven slides. To jump to a slide, type its number and press ENTER.
+
+   1    Our vision                what we are for
+   2    Why we exist              the problem we solve
+   3    Inside every course       how every course is built
+   8    For your team             training built on their own work
+   9    Automation training       their team automates its own work
+   13   The AI Weekend            an easy first step
+   15   Train. Innovate. Build.   the next step
+
+For a company with a team to train, slides 8 and 9 matter most.
+For one person who wants to learn, slides 3, 6 and 13 matter most.
+
+
+------------------------------------------------------------------------------------
+QUESTIONS CLIENTS ASK, AND A PLAIN ANSWER
+------------------------------------------------------------------------------------
+
+"How much does it cost?"
+   "It depends on the size of the team and what we build for you. Tell me a little about
+   your need, and we will send the cost in writing."
+
+"How long does a training take?"
+   "It depends on the course and the team. People learn from short lessons and labs
+   first, so the classroom time is shorter than usual."
+
+"Is it online or at our office?"
+   "Both. Live online, or at your office."
+
+"Do our people need to know coding?"
+   "It depends on the course. Many of our courses are for people who do not code. The AI
+   Weekend and the AI Essentials courses need no coding."
+
+"Will AI replace the person doing the job?"
+   "In what we build, a person stays in charge and checks the result. We automate the
+   repeated steps."
+
+"Can we see it before we decide?"
+   "Yes. You can watch a preview lesson now, without signing up. And for automation we
+   can build a small working prototype on your own examples first."
+
+"Who teaches?"
+   "Our founder, Jalal Ahmed Khan, is a Microsoft Certified Trainer. He trains corporate
+   teams on AI and cloud, and builds our courses."
+
+Anything else: "Let me note it and come back to you today."
+
+
+------------------------------------------------------------------------------------
+WORDS YOU MAY HEAR
+------------------------------------------------------------------------------------
+
+AI               Software that can read, write and answer in ordinary language.
+Claude           An AI assistant, made by a company called Anthropic.
+Agent            An AI helper that is given a goal and does the steps itself.
+Automation       The computer does the repeated steps of a job.
+Module           A chapter of a course.
+Lab              A practical exercise the learner does on their own computer.
+Certification    An official exam, for example from Microsoft or Anthropic.
+Prototype        A small working version, made to show that an idea works.
+Scope            Exactly what will be built, and what will not.
+Platform         A private website where a company's staff take their courses.
+Cloud            Rented computers on the internet.
+On premises      The company's own computers.
+Hands-on         The learner does it, not only watches it.

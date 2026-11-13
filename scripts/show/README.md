@@ -24,6 +24,7 @@ The scenes in this folder are drawn once, as HTML, and become:
 | `music.py` | Makes the music bed from scratch, so there is no licence question |
 | `mix.py` | Joins picture, voice and music, and writes the website's copy |
 | `check-deck.ps1` | Opens the deck in PowerPoint and saves a picture of every slide |
+| `presenter/*.txt` | The presenter's script for a client call: slide by slide, in plain words, for someone who is not technical. Written by hand; change a slide's section when the slide changes. |
 
 ## To change the presentation
 

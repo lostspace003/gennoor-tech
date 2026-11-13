@@ -4,7 +4,7 @@ import { addFirstComment, repostLine } from '@/lib/linkedin-engage'
 import { loadState as loadAutopilot } from '@/lib/autopilot/live'
 import { githubConfigured, getPullRequest, mergePullRequest, openPullRequest, readFile } from '@/lib/github-pr'
 import { siteUrl } from '@/lib/tech-call-mail'
-import { formatForLinkedIn, HOOK_BULLETS_RULES, LINKEDIN_STYLE_GUIDE } from '@/lib/linkedin-format'
+import { formatForLinkedIn, HOOK_BULLETS_RULES, LINKEDIN_CRAFT, LINKEDIN_STYLE_GUIDE } from '@/lib/linkedin-format'
 import { blogPostsMeta } from '@/data/blog-posts'
 import { contentFile, getBlogDraft, listBlogDrafts, mutateBlogDraft, patchIndex, type BlogDraft } from '@/lib/blog-studio'
 import { foundry, readBlob, recordSpend, textUsd, tokensOf, writeBlob } from '@/lib/social/studio'
@@ -83,6 +83,7 @@ ${HOOK_BULLETS_RULES}
 - "page": for the Gennoor Tech company page, 3-4 bullets taken from the article's key takeaways.
 - "profile": the founder's personal version, first person, a different hook on the same problem, same bullets reworded, same link line and hashtags.
 Never invent facts beyond the article summary. No hype words. Keep each under 1,300 characters.
+${LINKEDIN_CRAFT}
 ${LINKEDIN_STYLE_GUIDE}`,
       input: `Title: ${d.meta.title}\nSummary: ${d.meta.tldr}\nKey takeaways:\n- ${d.meta.keyTakeaways.slice(0, 5).join('\n- ')}\nHashtags: ${tags}`,
     })
