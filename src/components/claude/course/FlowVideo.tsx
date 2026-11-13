@@ -4,12 +4,15 @@
  * The chapter's animated flow, played like a short video: an MP4 rendered from the flow spec (see claude-thing/flows).
  * Plays while on screen, pauses off screen, honours reduced-motion (poster + play button).
  * Back / forward move by section (one step of the flow), not by seconds. Narrated flows carry a voice-over track that
- * starts muted; the voice button turns it on and replays the current section from its start. Full screen on request.
+ * starts muted; the voice button turns it on, replays the current section from its start, and opens a slider for how
+ * loud it is (0 to 200 percent). Full screen on request.
  * View only: no download link, no native download / picture-in-picture, no right-click save.
  */
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { Maximize, Minimize, Pause, Play, SkipBack, SkipForward, Volume2, VolumeX } from 'lucide-react'
+import { Maximize, Minimize, Pause, Play, SkipBack, SkipForward } from 'lucide-react'
 import { BLOB_URL } from '@/lib/site-config'
+import { useBoostedVolume } from '@/hooks/useBoostedVolume'
+import VolumeControl from '@/components/media/VolumeControl'
 import type { FlowRef } from './types'
 
 export function flowUrls(id: string, v?: string | null) {
@@ -30,6 +33,7 @@ export default function FlowVideo({ flow, className, eager }: { flow: FlowRef; c
   const [voice, setVoice] = useState(false)
   const [full, setFull] = useState(false)
   const [cur, setCur] = useState(0)
+  const loud = useBoostedVolume(ref)
   const urls = flowUrls(flow.id, flow.v)
   const sections = flow.sections && flow.sections.length ? flow.sections : null
   const total = sections ? sections.length : flow.steps
@@ -84,15 +88,17 @@ export default function FlowVideo({ flow, className, eager }: { flow: FlowRef; c
     if (i + 1 < sections.length) seekSection(i + 1)
   }
   const toggle = () => { const v = ref.current; if (!v) return; if (v.paused) v.play().catch(() => {}); else v.pause() }
-  const toggleVoice = () => {
-    const v = ref.current; if (!v) return
-    const on = !voice
+  const voiceTo = (on: boolean) => {
+    const v = ref.current; if (!v || on === voice) return
     v.muted = !on
     setVoice(on)
+    if (!on) return
+    loud.prime()
     // hearing the voice from mid-sentence is confusing: restart the section it is in
-    if (on && sections) seekSection(sectionAt(v.currentTime * 1000))
-    else if (on) v.play().catch(() => {})
+    if (sections) seekSection(sectionAt(v.currentTime * 1000))
+    else v.play().catch(() => {})
   }
+  const toggleVoice = () => voiceTo(!voice)
   const toggleFull = () => {
     const d = document as FsDoc, el = box.current as FsEl | null
     if (!el) return
@@ -153,9 +159,12 @@ export default function FlowVideo({ flow, className, eager }: { flow: FlowRef; c
         </div>
         <div className="cc-flow-ctl">
           {flow.narrated && (
-            <button type="button" className={'voice' + (voice ? ' on' : '')} onClick={toggleVoice} aria-pressed={voice} aria-label={voice ? 'Turn the voice-over off' : 'Turn the voice-over on'} title={voice ? 'Voice-over on (M)' : 'Voice-over off (M)'}>
-              {voice ? <Volume2 /> : <VolumeX />}<span>Voice</span>
-            </button>
+            <VolumeControl
+              level={loud.level} max={loud.max} muted={!voice}
+              onLevel={loud.setLevel} onMuted={(m) => voiceTo(!m)}
+              label="Voice" name="Voice-over" align="right"
+              buttonClassName={'voice' + (voice ? ' on' : '')} iconClassName=""
+            />
           )}
           <button type="button" onClick={toggleFull} aria-label={full ? 'Exit full screen' : 'Full screen'} title={full ? 'Exit full screen (F)' : 'Full screen (F)'}>{full ? <Minimize /> : <Maximize />}</button>
         </div>

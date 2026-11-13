@@ -86,6 +86,15 @@ React pieces are in `src/components/stage/`; their classes start with `st-`.
 | `st-num` | The large pale number behind a step. Only when the steps really are a sequence. |
 | `st-win`, `st-win-bar` | A window drawn in a picture (a lesson, a process). It follows the theme. |
 
+**Sound on a video.** Every player uses the one sound button, `src/components/media/VolumeControl.tsx`,
+with `useBoostedVolume` (`src/hooks/useBoostedVolume.ts`). The owner's words (2026-11-13): "rather than
+muting, unmuting, it should allow me ... to slide ... from 0 to 200%", and "the moment I hover over it,
+it should show the percentage in small". So: pointing at the button shows the level; pressing it opens a
+slider from 0 to 200 percent; sliding to 0 is "off". Above 100 the sound goes through the browser's
+audio engine with a limiter. Where a video cannot be made louder (a phone's own streaming player, a
+video on another site that does not allow it) the slider ends at 100 and nothing else changes. Do not
+write a mute button of your own in a new player.
+
 **The colour of an icon tile says what kind of thing it is.** Keep to this:
 
 | Tone | Means |

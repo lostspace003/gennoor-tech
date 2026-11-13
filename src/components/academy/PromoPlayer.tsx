@@ -1,7 +1,9 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
-import { Maximize, Minimize, Pause, Play, Volume2, VolumeX } from 'lucide-react'
+import { Maximize, Minimize, Pause, Play, Volume2 } from 'lucide-react'
+import { useBoostedVolume } from '@/hooks/useBoostedVolume'
+import VolumeControl from '@/components/media/VolumeControl'
 
 function fmt(sec: number): string {
   if (!isFinite(sec) || sec < 0) sec = 0
@@ -11,7 +13,7 @@ function fmt(sec: number): string {
 
 /**
  * Course promo: starts by itself as the page opens (muted, as browsers require)
- * with an always-visible control bar: play or pause, time, seek, sound, full screen.
+ * with an always-visible control bar: play or pause, time, seek, sound (a slider from 0 to 200 percent), full screen.
  * framed={false} drops the rounded frame and shadow so it fills a course card's picture area.
  */
 export default function PromoPlayer({ src, poster, startMuted = true, framed = true, autoPlay = true, resumeKey }: { src: string; poster?: string | null; startMuted?: boolean; framed?: boolean; autoPlay?: boolean; resumeKey?: string }) {
@@ -44,6 +46,13 @@ export default function PromoPlayer({ src, poster, startMuted = true, framed = t
   const [cur, setCur] = useState(0)
   const [dur, setDur] = useState(0)
   const [full, setFull] = useState(false)
+  const loud = useBoostedVolume(ref)
+  const soundTo = (off: boolean) => {
+    const v = ref.current
+    if (!v) return
+    v.muted = off
+    if (!off) loud.prime()
+  }
 
   // The video can finish loading before this component hydrates, so its events are missed:
   // read the real state once on mount, then keep it in step with the events below.
@@ -104,7 +113,7 @@ export default function PromoPlayer({ src, poster, startMuted = true, framed = t
       {muted && playing && (
         <button
           type="button"
-          onClick={() => { const v = ref.current; if (v) { v.muted = false; v.volume = 1 } }}
+          onClick={() => soundTo(false)}
           className="absolute left-4 top-4 inline-flex items-center gap-2 rounded-full bg-black/60 backdrop-blur px-4 py-2 text-[13px] font-semibold text-white hover:bg-black/75 transition-colors"
         >
           <Volume2 className="w-4 h-4" /> Turn on sound
@@ -133,14 +142,7 @@ export default function PromoPlayer({ src, poster, startMuted = true, framed = t
           <button type="button" aria-label={playing ? 'Pause' : 'Play'} onClick={toggle} className="w-9 h-9 rounded-md flex items-center justify-center hover:bg-white/15 transition-colors">
             {playing ? <Pause className="w-5 h-5 fill-white" /> : <Play className="w-5 h-5 fill-white" />}
           </button>
-          <button
-            type="button"
-            aria-label={muted ? 'Unmute' : 'Mute'}
-            onClick={() => { const v = ref.current; if (v) { v.muted = !v.muted; if (!v.muted && v.volume === 0) v.volume = 1 } }}
-            className="w-9 h-9 rounded-md flex items-center justify-center hover:bg-white/15 transition-colors"
-          >
-            {muted ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
-          </button>
+          <VolumeControl level={loud.level} max={loud.max} muted={muted} onLevel={loud.setLevel} onMuted={soundTo} align="left" />
           <span className="text-[13px] tabular-nums px-1">{fmt(cur)} <span className="text-white/60">/ {fmt(dur)}</span></span>
           <span className="flex-1" />
           <button
