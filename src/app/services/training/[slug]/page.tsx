@@ -1,4 +1,5 @@
 import { notFound } from 'next/navigation'
+import { pageMeta, metaDescription } from '@/lib/seo'
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { ArrowLeft, Clock, Users, Award, BookOpen, CheckCircle, Globe, Zap, Phone, Download } from 'lucide-react'
@@ -16,20 +17,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const program = getProgramBySlug(slug)
   if (!program) return {}
 
-  const title = `${program.title} Training — ${program.category === 'bootcamp' ? 'Bootcamp' : 'Course'} | Gennoor Tech`
-  const description = `${program.description} ${program.duration} ${program.category} for ${program.audience}. Hands-on labs, expert instruction, and real-world projects.`
-
-  return {
-    title,
-    description,
+  return pageMeta({
+    title: `${program.title} training: ${program.category === 'bootcamp' ? 'bootcamp' : 'course'}`,
+    description: metaDescription(`${program.description} ${program.duration} ${program.category} for ${program.audience}. Hands-on labs, expert instruction, and real-world projects.`),
     keywords: [program.title, `${program.title} training`, `${program.title} course`, program.technology, 'AI training'],
-    alternates: { canonical: `https://gennoor.com/services/training/${program.slug}` },
-    openGraph: {
-      title,
-      description,
-      url: `https://gennoor.com/services/training/${program.slug}`,
-    },
-  }
+    path: `/services/training/${program.slug}`,
+    image: 'programs',
+  })
 }
 
 export function generateStaticParams() {

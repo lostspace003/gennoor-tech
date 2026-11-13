@@ -1,12 +1,13 @@
 import type { Metadata } from 'next'
+import { pageMeta } from '@/lib/seo'
 import BookingCalendar from '@/components/booking/BookingCalendar'
 
-export const metadata: Metadata = {
-  title: 'Schedule a Discovery Call — Gennoor Tech',
-  description:
-    'Book a free 30-minute consultation with a Gennoor Tech expert. Pick a date and time that works for you.',
-  alternates: { canonical: 'https://gennoor.com/resources/calendar' },
-}
+export const metadata: Metadata = pageMeta({
+  title: 'Book a discovery call',
+  description: 'Book a free 30-minute consultation with a Gennoor Tech expert. Pick a date and time that works for you.',
+  path: '/resources/calendar',
+  image: 'call',
+})
 
 export default function BookingCalendarPage() {
   return (

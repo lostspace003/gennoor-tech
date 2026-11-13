@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { pageMeta } from '@/lib/seo'
 import Link from 'next/link'
 import { ArrowLeftRight, BotMessageSquare, Building2, FileBarChart, FileText, FlaskConical, GraduationCap, Inbox, MessagesSquare, Scale, ShieldCheck, Users } from 'lucide-react'
 import Ground from '@/components/stage/Ground'
@@ -6,11 +7,12 @@ import Reveal from '@/components/stage/Reveal'
 import { Ico } from '@/components/stage/Ico'
 import ProcessFlow from '@/components/stage/ProcessFlow'
 
-export const metadata: Metadata = {
-  title: 'Automation — Gennoor Tech',
+export const metadata: Metadata = pageMeta({
+  title: 'AI automation, one process at a time',
   description: 'We automate one process at a time with AI, and write down what we will and will not do before we start.',
-  alternates: { canonical: 'https://gennoor.com/automation' },
-}
+  path: '/automation',
+  image: 'automation',
+})
 
 const AUDIENCES = [
   { icon: Users, tone: 'blue', title: 'Smaller businesses', body: 'One process that eats hours every week. We automate it and make sure your team can run it.' },

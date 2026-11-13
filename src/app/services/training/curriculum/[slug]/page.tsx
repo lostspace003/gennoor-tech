@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { pageMeta, metaDescription } from '@/lib/seo'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { ArrowLeft, Download, Clock, BookOpen, Users, Layers, Compass, GraduationCap, Lightbulb, Hammer, RefreshCw, Phone, ArrowRight } from 'lucide-react'
@@ -25,11 +26,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params
   const course = getCoursePdfBySlug(slug)
   if (!course) return { title: 'Curriculum not found' }
-  return {
-    title: `${course.title} — 2-Day Training Curriculum · Gennoor Tech`,
-    description: course.subtitle,
-    alternates: { canonical: `https://gennoor.com/services/training/curriculum/${course.slug}` },
-  }
+  return pageMeta({
+    title: `${course.title}: 2-day training curriculum`,
+    description: metaDescription(course.subtitle),
+    path: `/services/training/curriculum/${course.slug}`,
+    image: 'programs',
+  })
 }
 
 export default async function CurriculumViewerPage({ params }: Props) {

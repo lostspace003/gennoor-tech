@@ -1,30 +1,19 @@
 import { Metadata } from 'next';
+import { pageMeta } from '@/lib/seo'
 import Link from 'next/link';
 import { BookOpen, CheckCircle, Clock, Award, Target, Lightbulb, HelpCircle, ArrowRight, Sparkles } from 'lucide-react';
 
-export const metadata: Metadata = {
-  title: 'MS-4004 Microsoft 365 Copilot: Exam Prep Guide 2026 | Gennoor Tech',
+export const metadata: Metadata = pageMeta({
+  title: 'MS-4004 Microsoft 365 Copilot: exam prep guide 2026',
   description:
     'Comprehensive MS-4004 Microsoft 365 Copilot exam preparation guide for 2026. Exam overview, skills measured, study resources, and expert tips from the Gennoor technical team.',
-  keywords: [
-    'MS-4004',
-    'Microsoft 365 Copilot',
-    'Copilot certification',
-    'MS-4004 study guide',
-    'Microsoft Copilot exam prep',
-    'M365 Copilot certification 2026',
-    'Copilot for Microsoft 365',
-    'AI productivity certification',
-  ],
-  openGraph: {
-    title: 'MS-4004 Microsoft 365 Copilot: Exam Prep Guide 2026',
-    description:
-      'Master the MS-4004 exam with this comprehensive guide. Skills measured, study resources, and expert tips from an MCT with 16 certifications.',
-    url: 'https://gennoor.com/guides/ms-4004-copilot-365',
-    siteName: 'Gennoor Tech',
-    type: 'article',
-  },
-};
+  shareDescription:
+    'Master the MS-4004 exam with this comprehensive guide. Skills measured, study resources, and expert tips from an MCT with 16 certifications.',
+  keywords: ['MS-4004', 'Microsoft 365 Copilot', 'Copilot certification', 'MS-4004 study guide', 'Microsoft Copilot exam prep', 'M365 Copilot certification 2026', 'Copilot for Microsoft 365', 'AI productivity certification'],
+  path: '/guides/ms-4004-copilot-365',
+  image: 'guides',
+  type: 'article',
+})
 
 const faqData = [
   {

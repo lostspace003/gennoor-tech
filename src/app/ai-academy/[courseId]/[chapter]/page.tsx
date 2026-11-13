@@ -1,4 +1,5 @@
 import { notFound } from 'next/navigation'
+import { pageMeta, metaDescription } from '@/lib/seo'
 import type { Metadata } from 'next'
 import { getCourseById, getChapterBySlug, getAdjacentChapters, courses } from '@/config/courses'
 import ChapterViewer from '@/components/academy/ChapterViewer'
@@ -22,10 +23,13 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const chapter = getChapterBySlug(courseId, chapterSlug)
   const course = getCourseById(courseId)
   if (!chapter || !course) return {}
-  return {
+  return pageMeta({
     title: `${chapter.title} — ${course.shortTitle}`,
-    description: chapter.description,
-  }
+    description: metaDescription(chapter.description),
+    path: `/ai-academy/${courseId}/${chapterSlug}`,
+    // the share picture of the course this chapter belongs to
+    image: `/ai-academy/${courseId}/opengraph-image`,
+  })
 }
 
 export default async function ChapterPage({ params }: PageProps) {

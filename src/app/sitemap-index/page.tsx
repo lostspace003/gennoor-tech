@@ -1,15 +1,16 @@
 import Link from 'next/link'
+import { pageMeta } from '@/lib/seo'
 import type { Metadata } from 'next'
 import { blogPostsMeta } from '@/data/blog-posts'
 import { courses } from '@/config/courses'
 import { getAllPrograms } from '@/data/training-programs'
 import { getAllCertifications } from '@/data/certification-prep'
 
-export const metadata: Metadata = {
-  title: 'Sitemap | Gennoor Tech',
+export const metadata: Metadata = pageMeta({
+  title: 'Sitemap',
   description: 'Complete index of every page on gennoor.com — training, automation, certifications, blog posts, and AI Academy courses.',
-  alternates: { canonical: 'https://gennoor.com/sitemap-index' },
-}
+  path: '/sitemap-index',
+})
 
 interface Section {
   heading: string

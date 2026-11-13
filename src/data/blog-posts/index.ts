@@ -1118,10 +1118,21 @@ export function getRecentPostsMeta(count: number = 3): BlogPostMeta[] {
 // Legacy aliases for backward compat
 export const getRecentPosts = getRecentPostsMeta
 
-export function getRelatedPostsMeta(currentSlug: string, category: string, limit: number = 3): BlogPostMeta[] {
+/**
+ * What to read after a post: the posts in its category and the ones that share its tags come
+ * first (a shared category counts as three shared tags), the newest first among equals. There
+ * are always `limit` of them: when nothing is close, the newest posts fill the rest.
+ */
+export function getRelatedPostsMeta(currentSlug: string, limit: number = 3): BlogPostMeta[] {
+  const current = blogPostsMeta.find(p => p.slug === currentSlug)
+  const tags = new Set((current?.tags || []).map(t => t.toLowerCase()))
+  const close = (p: BlogPostMeta) => (current && p.category === current.category ? 3 : 0) + p.tags.filter(t => tags.has(t.toLowerCase())).length
   return blogPostsMeta
-    .filter(p => p.slug !== currentSlug && p.category === category)
+    .filter(p => p.slug !== currentSlug)
+    .map(p => ({ p, close: close(p), when: new Date(p.date).getTime() }))
+    .sort((a, b) => b.close - a.close || b.when - a.when)
     .slice(0, limit)
+    .map(x => x.p)
 }
 
 // Load full blog post content on demand (only for individual post pages)

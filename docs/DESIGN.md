@@ -85,6 +85,7 @@ React pieces are in `src/components/stage/`; their classes start with `st-`.
 | `st-grad` + `st-serif` | The one accented phrase of a page. Once per page at most. |
 | `st-num` | The large pale number behind a step. Only when the steps really are a sequence. |
 | `st-win`, `st-win-bar` | A window drawn in a picture (a lesson, a process). It follows the theme. |
+| `<BlogArt post main />` | The picture of a blog post: its icon tile with two smaller tiles on a band in its colour (`st-art`). Give it a height with a class. |
 
 **Sound on a video.** Every player uses the one sound button, `src/components/media/VolumeControl.tsx`,
 with `useBoostedVolume` (`src/hooks/useBoostedVolume.ts`). The owner's words (2026-11-13): "rather than
@@ -157,6 +158,21 @@ page that lists what a course holds:
 - The Claude Partner line is used word for word (`TIER_LINE` in `src/components/ClaudePartner.tsx`), with the
   badge on its cream card. Never recolour the badge, never add a tier claim.
 - Courses are never called "free". Preview lessons "play without signing in".
+
+### The picture of a blog post, and of a shared link
+
+The owner's words (13 November 2026): every blog should have an icon, "really cool and relevant to
+the blog", "colorful", and made the same way "in future ... by the Foundry agent, whoever is going to
+write the blog". And of a link shared in a chat: "very blackish, and does not make it appealing".
+
+- **A post's picture is its icon tile**, never an emoji and never a flat colour block. `<BlogArt>`
+  draws it from the post itself (`src/lib/blog-icon.ts`): the icon from the post's emoji, the colour
+  from the family of the post, two smaller tiles from its tags. It is on the blog list, at the top of
+  a post, and under "Continue reading". Nothing is made or stored per post.
+- The top of a post is `st-deep` with the theme's colours. A post's `coverColor` is not used.
+- **The picture a shared link shows is light and coloured**, the same tile on a light ground
+  (`src/lib/og-card.tsx`). Not the dark look: in a chat it reads as a black box.
+- The full rules, and what a new page or a new post must have to be found, are in `docs/SEO.md`.
 
 ## 5. The menu
 
@@ -235,6 +251,8 @@ never says "nothing yet" before the answer has arrived.
    does not belong, a button whose label is lost, a card the same colour as the page with no edge,
    something cut off or overlapping at 390, a sideways scrollbar.
 4. A link, a form field name or an API address must not change when only the look changes.
+5. A new page, or a page whose title changed: `node scripts/seo-head.mjs http://localhost:3111 <page>`
+   and read what it prints against `docs/SEO.md`. Open its share picture (`/og/<key>`) and look at it.
 
 ## Not to do
 

@@ -1,32 +1,18 @@
 import { Metadata } from 'next'
+import { pageMeta } from '@/lib/seo'
 import Link from 'next/link'
 import Image from 'next/image'
 import { CheckCircle, Clock, Users, Monitor, Star, BarChart3, Trophy, MessageCircle, ArrowRight, Award, Sparkles, Play } from 'lucide-react'
 
-export const metadata: Metadata = {
-  title: 'Claude for Productivity — Workshop Recap | Gennoor Tech',
+export const metadata: Metadata = pageMeta({
+  title: 'Claude for Productivity: workshop recap',
   description:
     'Recap of the free hands-on Claude for Productivity workshop. 73 registered, 32 attended, 8 modules covered, 4.9★ Trustpilot rating. See what was taught and what participants said.',
-  keywords: [
-    'Claude workshop',
-    'Claude Cowork',
-    'Claude for Productivity',
-    'AI workshop',
-    'free AI training',
-    'Gennoor Tech',
-    'Claude tutorial',
-    'AI productivity',
-    'hands-on AI workshop',
-  ],
-  openGraph: {
-    title: 'Claude for Productivity — Workshop Recap',
-    description:
-      '73 registered, 32 attended, 8 hands-on modules, 4.9★ Trustpilot rating. See what participants learned and what they said.',
-    url: 'https://gennoor.com/workshops/claude-cowork',
-    siteName: 'Gennoor Tech',
-    type: 'website',
-  },
-}
+  shareDescription: '73 registered, 32 attended, 8 hands-on modules, 4.9★ Trustpilot rating. See what participants learned and what they said.',
+  keywords: ['Claude workshop', 'Claude Cowork', 'Claude for Productivity', 'AI workshop', 'Gennoor Tech', 'Claude tutorial', 'AI productivity', 'hands-on AI workshop'],
+  path: '/workshops/claude-cowork',
+  image: 'workshops',
+})
 
 const modules = [
   {

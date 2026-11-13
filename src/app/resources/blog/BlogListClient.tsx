@@ -6,6 +6,7 @@ import { type BlogPostMeta } from '@/data/blog-posts'
 import { CheckCircle } from 'lucide-react'
 import EmailOTP from '@/components/EmailOTP'
 import { FilterBar, Pagination, usePage } from '@/components/academy/CatalogControls'
+import BlogArt from '@/components/blog/BlogArt'
 
 /**
  * Blog list in the Apple idiom, per the redesign handoff: dark featured
@@ -115,21 +116,7 @@ export default function BlogListClient({ posts, categories }: BlogListClientProp
                   />
                 </div>
               ) : (
-              <div className="hidden lg:flex items-center justify-center min-h-[280px]" aria-hidden="true">
-                <svg className="w-48 h-48 group-hover:scale-105 transition-transform duration-500" viewBox="0 0 200 200" fill="none" aria-hidden="true">
-                  <circle cx="100" cy="100" r="60" stroke="rgba(255,255,255,0.15)" strokeWidth="1.5"/>
-                  <circle cx="100" cy="100" r="30" stroke="rgba(255,255,255,0.2)" strokeWidth="1.5"/>
-                  <circle cx="100" cy="100" r="6" fill="rgba(255,255,255,0.4)"/>
-                  <circle cx="100" cy="40" r="4" fill="rgba(255,255,255,0.3)"/>
-                  <circle cx="100" cy="160" r="4" fill="rgba(255,255,255,0.3)"/>
-                  <circle cx="40" cy="100" r="4" fill="rgba(255,255,255,0.3)"/>
-                  <circle cx="160" cy="100" r="4" fill="rgba(255,255,255,0.3)"/>
-                  <line x1="100" y1="40" x2="100" y2="70" stroke="rgba(255,255,255,0.15)" strokeWidth="1"/>
-                  <line x1="100" y1="130" x2="100" y2="160" stroke="rgba(255,255,255,0.15)" strokeWidth="1"/>
-                  <line x1="40" y1="100" x2="70" y2="100" stroke="rgba(255,255,255,0.15)" strokeWidth="1"/>
-                  <line x1="130" y1="100" x2="160" y2="100" stroke="rgba(255,255,255,0.15)" strokeWidth="1"/>
-                </svg>
-              </div>
+                <BlogArt post={hero} main={108} className="min-h-[200px] lg:min-h-[280px]" />
               )}
             </article>
           </Link>
@@ -179,9 +166,11 @@ export default function BlogListClient({ posts, categories }: BlogListClientProp
                 <Link
                   key={post.slug}
                   href={`/resources/blog/${post.slug}`}
-                  className="bg-raised border border-gray-200 hover:border-gray-300 rounded-[18px] px-6 py-[26px] flex flex-col min-h-[190px] text-gray-900 transition-colors"
+                  className="group bg-raised border border-gray-200 hover:border-gray-300 rounded-[18px] overflow-hidden flex flex-col text-gray-900 transition-colors"
                 >
-                  <article className="flex flex-col flex-1">
+                  {/* The picture of the post: its icon tile, in the colour of what it is about */}
+                  <BlogArt post={post} main={52} className="h-[108px] shrink-0 border-b border-gray-200" />
+                  <article className="flex flex-col flex-1 px-6 pt-5 pb-6">
                     <div className="text-[10.5px] font-semibold tracking-[0.12em] uppercase text-primary-600 mb-2.5">
                       {post.category}
                     </div>

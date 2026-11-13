@@ -1,30 +1,19 @@
 import { Metadata } from 'next';
+import { pageMeta } from '@/lib/seo'
 import Link from 'next/link';
 import { BookOpen, CheckCircle, Clock, Award, Target, Lightbulb, HelpCircle, ArrowRight, BarChart3 } from 'lucide-react';
 
-export const metadata: Metadata = {
-  title: 'PL-300 Power BI Certification: Complete Study Guide 2026 | Gennoor Tech',
+export const metadata: Metadata = pageMeta({
+  title: 'PL-300 Power BI certification: complete study guide 2026',
   description:
     'Comprehensive PL-300 Microsoft Power BI Data Analyst study guide for 2026. Exam overview, skills measured, study resources, and expert tips from the Gennoor technical team.',
-  keywords: [
-    'PL-300',
-    'Power BI certification',
-    'PL-300 study guide',
-    'Microsoft Power BI Data Analyst',
-    'Power BI exam prep',
-    'PL-300 exam 2026',
-    'DAX certification',
-    'Power BI report design',
-  ],
-  openGraph: {
-    title: 'PL-300 Power BI Certification: Complete Study Guide 2026',
-    description:
-      'Master the PL-300 exam with this comprehensive guide. Skills measured, study resources, and expert tips from an MCT with 16 certifications.',
-    url: 'https://gennoor.com/guides/pl-300-power-bi-analyst',
-    siteName: 'Gennoor Tech',
-    type: 'article',
-  },
-};
+  shareDescription:
+    'Master the PL-300 exam with this comprehensive guide. Skills measured, study resources, and expert tips from an MCT with 16 certifications.',
+  keywords: ['PL-300', 'Power BI certification', 'PL-300 study guide', 'Microsoft Power BI Data Analyst', 'Power BI exam prep', 'PL-300 exam 2026', 'DAX certification', 'Power BI report design'],
+  path: '/guides/pl-300-power-bi-analyst',
+  image: 'guides',
+  type: 'article',
+})
 
 const faqData = [
   {

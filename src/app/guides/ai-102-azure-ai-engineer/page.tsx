@@ -1,30 +1,19 @@
 import { Metadata } from 'next';
+import { pageMeta } from '@/lib/seo'
 import Link from 'next/link';
 import { BookOpen, CheckCircle, Clock, Award, Target, Lightbulb, HelpCircle, ArrowRight, AlertTriangle } from 'lucide-react';
 
-export const metadata: Metadata = {
-  title: 'Azure AI-102 Certification: Complete Study Guide 2026 | Gennoor Tech',
+export const metadata: Metadata = pageMeta({
+  title: 'Azure AI-102 certification: complete study guide 2026',
   description:
     'Comprehensive AI-102 Azure AI Engineer Associate study guide for 2026. Exam overview, skills measured, study resources, and expert tips from the Gennoor technical team.',
-  keywords: [
-    'AI-102',
-    'Azure AI Engineer',
-    'AI-102 study guide',
-    'Azure AI certification',
-    'Microsoft AI certification 2026',
-    'Azure Cognitive Services',
-    'Azure OpenAI certification',
-    'AI-102 exam prep',
-  ],
-  openGraph: {
-    title: 'Azure AI-102 Certification: Complete Study Guide 2026',
-    description:
-      'Master the AI-102 exam with this comprehensive guide. Skills measured, study resources, and expert tips from an MCT with 16 certifications.',
-    url: 'https://gennoor.com/guides/ai-102-azure-ai-engineer',
-    siteName: 'Gennoor Tech',
-    type: 'article',
-  },
-};
+  shareDescription:
+    'Master the AI-102 exam with this comprehensive guide. Skills measured, study resources, and expert tips from an MCT with 16 certifications.',
+  keywords: ['AI-102', 'Azure AI Engineer', 'AI-102 study guide', 'Azure AI certification', 'Microsoft AI certification 2026', 'Azure Cognitive Services', 'Azure OpenAI certification', 'AI-102 exam prep'],
+  path: '/guides/ai-102-azure-ai-engineer',
+  image: 'guides',
+  type: 'article',
+})
 
 const faqData = [
   {

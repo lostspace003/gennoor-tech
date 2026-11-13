@@ -1,12 +1,13 @@
 import Link from 'next/link'
+import { pageMeta } from '@/lib/seo'
 import type { Metadata } from 'next'
 import PageHero from '@/components/shared/PageHero'
 
-export const metadata: Metadata = {
-  title: 'Terms of Service | Gennoor Tech',
-  description:
-    'Terms of service for Gennoor Tech Private Limited — the rules that govern your use of our website, services, and content.',
-}
+export const metadata: Metadata = pageMeta({
+  title: 'Terms of service',
+  description: 'Terms of service for Gennoor Tech Private Limited — the rules that govern your use of our website, services, and content.',
+  path: '/terms',
+})
 
 export default function TermsPage() {
   return (

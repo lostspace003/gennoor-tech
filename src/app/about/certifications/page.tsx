@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { pageMeta } from '@/lib/seo'
 import Link from 'next/link'
 import { getCertificationsByCategory } from '@/data/certifications'
 import { credentials, credentialsAsOf, learnStats, monthYear, transcriptUrl } from '@/data/credentials'
@@ -7,11 +8,12 @@ import CertificationCards from '@/components/certifications/CertificationCards'
 import CredentialTimeline from '@/components/certifications/CredentialTimeline'
 import MCTCertificateButton from '@/components/certifications/MCTCertificateButton'
 
-export const metadata: Metadata = {
-  title: 'Credentials — Gennoor Tech',
+export const metadata: Metadata = pageMeta({
+  title: 'Credentials: Microsoft and GitHub certifications',
   description: `The credentials behind the courses: ${credentials.length} active Microsoft and GitHub certifications and Microsoft Certified Trainer status, verified on Microsoft Learn.`,
-  alternates: { canonical: 'https://gennoor.com/about/certifications' },
-}
+  path: '/about/certifications',
+  image: 'about',
+})
 
 const BACKGROUND = [
   { when: 'Before 2021', what: 'Ten years teaching engineering, then a move into enterprise AI and cloud training.' },

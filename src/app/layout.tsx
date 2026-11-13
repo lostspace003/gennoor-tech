@@ -13,6 +13,7 @@ import CircleTransition from '@/components/CircleTransition'
 import { OrganizationJsonLd, WebSiteJsonLd } from '@/components/JsonLd'
 import { siteConfig, BLOB_URL } from '@/lib/site-config'
 import { THEME_SCRIPT } from '@/lib/theme'
+import { shareImage } from '@/lib/seo'
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.url),
@@ -35,6 +36,8 @@ export const metadata: Metadata = {
   ],
   authors: [{ name: 'Jalal Ahmed Khan' }],
   creator: 'Jalal Ahmed Khan',
+  // A page that does not name its own address gets its own path: no page is left without one.
+  alternates: { canonical: './' },
   icons: {
     icon: [
       { url: `${BLOB_URL}/logos/gennoor-tech-icon-white_16x16_favicon-16.png`, sizes: '16x16', type: 'image/png' },
@@ -51,21 +54,15 @@ export const metadata: Metadata = {
     siteName: siteConfig.name,
     title: siteConfig.name,
     description: siteConfig.description,
-    images: [
-      {
-        url: `${BLOB_URL}/logos/gennoor-tech-banner-facebook-820x312.png`,
-        width: 820,
-        height: 312,
-        alt: siteConfig.name,
-      },
-    ],
+    // The picture a shared link shows (src/lib/og-pages.ts). A page with its own is named in its pageMeta.
+    images: [shareImage('site', `${siteConfig.name}: ${siteConfig.tagline}`)],
   },
   twitter: {
     card: 'summary_large_image',
     title: siteConfig.name,
     description: siteConfig.description,
     creator: '@jalalkhan',
-    images: [`${BLOB_URL}/logos/gennoor-tech-banner-twitter-1500x500.png`],
+    images: ['/og/site'],
   },
   robots: {
     index: true,

@@ -1,11 +1,14 @@
 import { Metadata } from 'next'
+import { pageMeta } from '@/lib/seo'
 import Link from 'next/link'
 import { Clock, Users, Monitor, ArrowRight, Lock, Sparkles, CheckCircle, Star } from 'lucide-react'
 
-export const metadata: Metadata = {
-  title: 'Workshops — Free Hands-on AI Sessions | Gennoor Tech',
+export const metadata: Metadata = pageMeta({
+  title: 'Workshops: free hands-on AI sessions',
   description: 'Free, hands-on AI workshops led by Microsoft Certified Trainer Jalal Khan. Join live sessions on Claude, Azure AI, Copilot Studio, and more.',
-}
+  path: '/workshops',
+  image: 'workshops',
+})
 
 type WorkshopStatus = 'completed' | 'coming_soon' | 'closed'
 

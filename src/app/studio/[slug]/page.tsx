@@ -1,4 +1,5 @@
 import { notFound } from 'next/navigation'
+import { metaDescription } from '@/lib/seo'
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { BookOpen, Check, ChevronDown } from 'lucide-react'
@@ -45,7 +46,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const url = `https://gennoor.com/studio/${slug}`
   const card = toCard(course)
   const facts = [`${course.stats.lectures} video lessons`, course.stats.quizzes ? `${course.stats.quizzes} quizzes` : '', card.hours ? `${card.hours} hours of video` : ''].filter(Boolean).join(', ')
-  const description = `${course.subtitle} ${facts}. Learn on Gennoor Learning Studio.`.slice(0, 300)
+  const lead = /[.!?]$/.test(course.subtitle.trim()) ? course.subtitle.trim() : `${course.subtitle.trim()}.`
+  const description = metaDescription(`${lead} ${facts}. Learn on Gennoor Learning Studio.`, 200)
   const keywords = [course.title, course.code, card.vendor, ...(course.topics_tags || []), ...(course.topics || [])].filter(Boolean)
   return {
     // absolute: the site title template would push long course titles past what search results show

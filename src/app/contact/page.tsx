@@ -1,14 +1,15 @@
 import type { Metadata } from 'next'
+import { pageMeta } from '@/lib/seo'
 import ContactForm from '@/components/contact/ContactForm'
 import BookingCalendar from '@/components/booking/BookingCalendar'
 import WhatsAppIcon from '@/components/icons/WhatsAppIcon'
 
-export const metadata: Metadata = {
-  title: 'Contact — Gennoor Tech',
-  description: 'Write to Gennoor Tech or book a call. We are in Mumbai, India.',
-  alternates: { canonical: 'https://gennoor.com/contact' },
-  openGraph: { title: 'Contact — Gennoor Tech', description: 'Write to us or book a call.', url: 'https://gennoor.com/contact' },
-}
+export const metadata: Metadata = pageMeta({
+  title: 'Contact us or book a call',
+  description: 'Write to Gennoor Tech or book a call about training for your team, a course, or a process to automate. We are in Mumbai, India.',
+  path: '/contact',
+  image: 'contact',
+})
 
 const localBusinessSchema = {
   '@context': 'https://schema.org',

@@ -1,15 +1,16 @@
 import type { Metadata } from 'next'
+import { pageMeta } from '@/lib/seo'
 import Link from 'next/link'
 import { CLAUDE_CERTS } from '@/data/claude-certifications'
 import certMeta from '@/data/claude-cert-meta.json'
 import CertResume from '@/components/claude/CertResume'
 
-export const metadata: Metadata = {
-  title: 'Claude Certification Prep',
-  description:
-    'Story-driven preparation for all four official Anthropic Claude certifications: Associate Foundations, Developer Foundations, Architect Foundations and Architect Professional. Interactive chapters, step-through diagrams, and practice exams with discussion.',
-  alternates: { canonical: 'https://gennoor.com/claude/certifications' },
-}
+export const metadata: Metadata = pageMeta({
+  title: 'Claude certification prep',
+  description: 'Story-driven preparation for all four official Anthropic Claude certifications: interactive chapters, step-through diagrams, and practice exams with discussion.',
+  path: '/claude/certifications',
+  image: 'claude-certifications',
+})
 
 type Meta = Record<string, { questions: number; chapters: { kind: string }[] }>
 const META = certMeta as unknown as Meta

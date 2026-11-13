@@ -1,4 +1,5 @@
 import { notFound } from 'next/navigation'
+import { pageMeta, metaDescription } from '@/lib/seo'
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { ArrowLeft, Clock, Target, DollarSign, Award, BookOpen, CheckCircle, Calendar, Users, Zap, Phone } from 'lucide-react'
@@ -14,16 +15,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const cert = getCertificationBySlug(slug)
   if (!cert) return {}
 
-  const title = `${cert.code}: ${cert.title} Exam Guide — ${cert.provider} Certification | Gennoor Tech`
-  const description = `Complete ${cert.code} ${cert.title} exam preparation guide. ${cert.description} Exam duration: ${cert.examDuration}, passing score: ${cert.passingScore}. Expert-led preparation.`
-
-  return {
-    title,
-    description,
+  return pageMeta({
+    title: `${cert.code}: ${cert.title} exam guide`,
+    description: metaDescription(`Complete ${cert.code} ${cert.title} exam preparation guide. ${cert.description} Exam duration: ${cert.examDuration}, passing score: ${cert.passingScore}. Expert-led preparation.`),
     keywords: [cert.code, cert.title, `${cert.code} exam`, `${cert.code} certification`, `${cert.provider} certification`, 'exam preparation'],
-    alternates: { canonical: `https://gennoor.com/services/certifications/${cert.slug}` },
-    openGraph: { title, description, url: `https://gennoor.com/services/certifications/${cert.slug}` },
-  }
+    path: `/services/certifications/${cert.slug}`,
+    image: 'certifications',
+  })
 }
 
 export function generateStaticParams() {

@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { pageMeta } from '@/lib/seo'
 import Link from 'next/link'
 import { PencilRuler, Users, Workflow } from 'lucide-react'
 import { BOILERPLATE, PROGRAM_URL, TIER_LINE } from '@/components/ClaudePartner'
@@ -11,11 +12,12 @@ import { Ico, SparkIco } from '@/components/stage/Ico'
 // The course cards carry short-lived image links, so this page is rendered per request.
 export const dynamic = 'force-dynamic'
 
-export const metadata: Metadata = {
-  title: 'Claude — Gennoor Tech',
+export const metadata: Metadata = pageMeta({
+  title: 'Claude training and automation for teams',
   description: 'Gennoor is Certified in the Claude Partner Network. Claude training for teams, courses built around your processes, and automation built with Claude.',
-  alternates: { canonical: 'https://gennoor.com/claude' },
-}
+  path: '/claude',
+  image: 'claude',
+})
 
 const WHAT = [
   {

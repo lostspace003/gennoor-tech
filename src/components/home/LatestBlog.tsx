@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { ArrowRight } from 'lucide-react'
 import { getRecentPosts } from '@/data/blog-posts'
+import BlogArt from '@/components/blog/BlogArt'
 
 export default function LatestBlog() {
   const posts = getRecentPosts(3)
@@ -38,20 +39,15 @@ export default function LatestBlog() {
               href={`/resources/blog/${post.slug}`}
               className="group rounded-2xl overflow-hidden transition-all duration-500 ease-spring glass-card glow-border"
             >
-              <div
-                className="h-36 flex flex-col justify-end p-5 relative overflow-hidden"
-                style={{ backgroundColor: post.coverColor }}
-              >
-                <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
-                <span className="relative text-[10px] font-bold uppercase tracking-wider mb-1 text-white/70">
-                  {post.category}
-                </span>
-                <span className="relative text-sm font-bold leading-snug line-clamp-2 text-white group-hover:translate-x-0.5 transition-transform duration-300">
-                  {post.title}
-                </span>
-              </div>
+              <BlogArt post={post} main={54} className="h-32" />
 
               <div className="p-6">
+                <span className="block text-[10px] font-bold uppercase tracking-wider mb-1.5 text-primary-600">
+                  {post.category}
+                </span>
+                <span className="block text-[15px] font-bold leading-snug line-clamp-3 text-gray-900 mb-2.5">
+                  {post.title}
+                </span>
                 <p className="text-sm text-gray-500 line-clamp-2 mb-4 leading-relaxed">
                   {post.excerpt}
                 </p>

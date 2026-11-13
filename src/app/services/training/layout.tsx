@@ -1,17 +1,16 @@
 import { Metadata } from 'next'
+import { pageMeta } from '@/lib/seo'
 import { ServiceJsonLd, BreadcrumbJsonLd, FAQJsonLd } from '@/components/JsonLd'
 
-export const metadata: Metadata = {
-  title: 'Training programs — Gennoor Tech',
+// The pages under this one (a programme, a curriculum) write their own: see their generateMetadata.
+export const metadata: Metadata = pageMeta({
+  forLayout: true,
+  title: 'AI training programs for organizations',
   description: 'Instructor-led AI training programs for organizations: bootcamps and courses on Claude, Azure AI, Copilot Studio and more, adapted to your team.',
   keywords: ['AI training', 'Claude training', 'Azure AI training', 'Copilot Studio training', 'AI bootcamp'],
-  alternates: { canonical: 'https://gennoor.com/services/training' },
-  openGraph: {
-    title: 'Training programs | Gennoor Tech',
-    description: 'Instructor-led AI training programs for organizations, adapted to your team.',
-    url: 'https://gennoor.com/services/training',
-  },
-}
+  path: '/services/training',
+  image: 'programs',
+})
 
 const trainingFaqs = [
   { question: 'What training formats does Gennoor Tech offer?', answer: 'We offer on-site classroom training, live virtual instructor-led sessions, and hybrid formats. All programs include hands-on labs, real-world case studies, and post-training support materials.' },

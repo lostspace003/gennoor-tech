@@ -1,11 +1,13 @@
 import Link from 'next/link'
+import { pageMeta } from '@/lib/seo'
 import type { Metadata } from 'next'
 import PageHero from '@/components/shared/PageHero'
 
-export const metadata: Metadata = {
-  title: 'Privacy Policy | Gennoor Tech',
+export const metadata: Metadata = pageMeta({
+  title: 'Privacy policy',
   description: 'Privacy policy for Gennoor Tech Private Limited — how we collect, use, and protect your data.',
-}
+  path: '/privacy',
+})
 
 export default function PrivacyPage() {
   return (

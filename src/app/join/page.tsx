@@ -1,11 +1,13 @@
 import type { Metadata } from 'next'
+import { pageMeta } from '@/lib/seo'
 import JoinForm from '@/components/join/JoinForm'
 
-export const metadata: Metadata = {
-  title: 'Work with us — Gennoor Tech',
+export const metadata: Metadata = pageMeta({
+  title: 'Work with us: trainers and engineers',
   description: 'Trainers, engineers and others who want to work with Gennoor Tech, freelance or full-time. Send a short note and your resume.',
-  alternates: { canonical: 'https://gennoor.com/join' },
-}
+  path: '/join',
+  image: 'join',
+})
 
 export default function JoinPage() {
   return (

@@ -11,6 +11,7 @@ guide before doing that kind of work.
 |---|---|---|
 | Anything a visitor or a member of staff sees: a page, a component, a menu, a style | `docs/DESIGN.md` | `gennoor-site-design` |
 | A film, the presentation, an Instagram or LinkedIn video, the catalogue | `scripts/show/README.md` | `gennoor-films` |
+| A new page, a title or a description, the picture a shared link shows, a blog post, the sitemap | `docs/SEO.md` | `gennoor-site-design` |
 | Finishing: branch, pull request, merge, deploy | `.claude/skills/gennoor-ship/SKILL.md` | `gennoor-ship` |
 
 The skills are in `.claude/skills/`. They are plain Markdown: any tool can read them.
@@ -38,4 +39,5 @@ npx next dev -p 3111                                  # the site on this machine
 npx tsc --noEmit && npx next build                     # before every pull request
 node scripts/shot.mjs <folder> --full [--light] home training   # photographs of pages, 1366 and 390 wide
 python scripts/stage-codemod.py                        # lists colours written as fixed values
+node scripts/seo-head.mjs http://localhost:3111 home training   # what a search engine and a shared link read
 ```
