@@ -135,6 +135,26 @@
   --st-scroll: #34405f;
   --st-scroll-hover: #4c5a78;
   --st-scroll-track: #0a0f1f;
+  /* A lit band, a solid card, a drawn window and a deep panel: navy here, a deeper tint of the page in the light theme */
+  --st-ground-bg: #060914;
+  --st-ground-ink: #f5f8ff;
+  --st-dot: rgba(255, 255, 255, 0.13);
+  --st-aura-strength: 1;
+  --st-solid-line: rgba(255, 255, 255, 0.12);
+  --st-solid-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.14), 0 26px 60px -30px rgba(0, 0, 0, 0.7);
+  --st-win: linear-gradient(180deg, #131d38, #0b1329);
+  --st-win-line: rgba(255, 255, 255, 0.13);
+  --st-win-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.14), 0 40px 90px -36px rgba(0, 0, 0, 0.9), 0 0 80px -34px rgba(61, 148, 255, 0.55);
+  --st-win-ink: #f5f8ff;
+  --st-win-bar: rgba(255, 255, 255, 0.045);
+  --st-win-bar-line: rgba(255, 255, 255, 0.08);
+  --st-win-bar-ink: #b7c4dd;
+  --st-track: rgba(255, 255, 255, 0.16);
+  --st-q: rgba(255, 255, 255, 0.09);
+  --st-q-line: rgba(255, 255, 255, 0.11);
+  --st-deep: linear-gradient(180deg, #111b2c, #0d1524);
+  --st-deep-line: rgba(255, 255, 255, 0.07);
+  --st-gold-ink: #ffd06b;
 
   color: #f5f8ff;
 }
@@ -201,7 +221,7 @@
   --st-card-line: #c6d0e0;
   --st-card-shadow: inset 0 1px 0 #fff, 0 18px 40px -28px rgba(15, 24, 44, 0.45);
   --st-card-hover: #0a62f0;
-  --st-solid: linear-gradient(180deg, #17223f, #0e1730);
+  --st-solid: linear-gradient(180deg, #dde8f9, #cfdcf1);
   --st-chip: rgba(15, 24, 44, 0.055);
   --st-chip-hover: rgba(15, 24, 44, 0.1);
   --st-link: #0a62f0;
@@ -214,6 +234,27 @@
   --st-scroll: #aab7cc;
   --st-scroll-hover: #8695ae;
   --st-scroll-track: #e2e8f1;
+  /* The light theme has no navy blocks. A lit band, a solid card, a drawn window and a deep
+     panel are a deeper, bluer tint of the page, so they still stand out, with dark words on them. */
+  --st-ground-bg: linear-gradient(180deg, #d9e5f9 0%, #e4ecf8 55%, #ecf0f6 100%);
+  --st-ground-ink: #0f182c;
+  --st-dot: rgba(15, 24, 44, 0.17);
+  --st-aura-strength: 0.5;
+  --st-solid-line: #b3c4de;
+  --st-solid-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.85), 0 18px 40px -28px rgba(15, 24, 44, 0.45);
+  --st-win: linear-gradient(180deg, #fbfcfe, #eef2f8);
+  --st-win-line: #bccadf;
+  --st-win-shadow: inset 0 1px 0 #fff, 0 30px 70px -38px rgba(15, 24, 44, 0.5), 0 0 70px -36px rgba(10, 98, 240, 0.35);
+  --st-win-ink: #0f182c;
+  --st-win-bar: #e3e9f3;
+  --st-win-bar-line: #c6d0e0;
+  --st-win-bar-ink: #52607a;
+  --st-track: rgba(15, 24, 44, 0.14);
+  --st-q: #e3e9f3;
+  --st-q-line: #c6d0e0;
+  --st-deep: linear-gradient(180deg, #dce7f8, #d2deef);
+  --st-deep-line: #b9c8de;
+  --st-gold-ink: #8a5200;
 
   color: #0f182c;
 }
@@ -431,6 +472,8 @@ html:is(.stage, .day)::-webkit-scrollbar-thumb:hover { background: var(--st-scro
 .st-ico > svg { position: absolute; left: 23%; top: 23%; width: 54%; height: 54%; overflow: visible; }
 .st-ico > svg + svg { filter: drop-shadow(0 2px 3px rgba(0, 10, 40, 0.45)); }
 .st-ico.st-round { border-radius: 50%; }
+/* A number in place of an icon: the step of a path, the number of a module */
+.st-ico > b { position: relative; z-index: 1; font-size: calc(var(--s, 64px) * 0.42); font-weight: 750; line-height: 1; letter-spacing: -0.03em; font-variant-numeric: tabular-nums; color: #fff; text-shadow: 0 2px 3px rgba(0, 10, 40, 0.45); }
 .st-ico.st-ico-fill { width: 100%; height: 100%; }
 .st-ico.t-gold { --a: #ffe29a; --b: #ffab2e; --c: #8a4a00; --g: rgba(255, 170, 46, 0.55); }
 .st-ico.t-green { --a: #9ff3cf; --b: #22b47e; --c: #0a4a36; --g: rgba(34, 180, 126, 0.5); }
@@ -440,20 +483,25 @@ html:is(.stage, .day)::-webkit-scrollbar-thumb:hover { background: var(--st-scro
 .st-ico.t-cyan { --a: #b4f4f7; --b: #25b8c4; --c: #0a4f5c; --g: rgba(37, 184, 196, 0.5); }
 .st-ico.t-ink { --a: #5a6c94; --b: #2a3654; --c: #131b30; --g: rgba(0, 0, 0, 0.5); }
 
-/* ── A lit ground: dark in both themes. <Ground> puts .stage on it, so everything inside reads the dark values. */
-.st-ground { position: relative; isolation: isolate; overflow: hidden; background-color: #060914; color: #f5f8ff; }
+/* ── A lit ground: navy with glows on the dark theme, a deeper tint of the page with soft glows on the light one.
+      It follows the theme, so the words inside are written with the colour names. */
+.st-ground { position: relative; isolation: isolate; overflow: hidden; background: var(--st-ground-bg, #060914); color: var(--st-ground-ink, #f5f8ff); }
 .st-ground > .st-auras { position: absolute; inset: 0; z-index: -1; pointer-events: none; overflow: hidden; }
-.st-aura { position: absolute; border-radius: 50%; background: radial-gradient(closest-side, var(--c), transparent 72%); }
+.st-aura { position: absolute; border-radius: 50%; background: radial-gradient(closest-side, var(--c), transparent 72%); opacity: var(--st-aura-strength, 1); }
 .st-dots {
   position: absolute;
   inset: 0;
-  background-image: radial-gradient(rgba(255, 255, 255, 0.13) 1px, transparent 1.3px);
+  background-image: radial-gradient(var(--st-dot, rgba(255, 255, 255, 0.13)) 1px, transparent 1.3px);
   background-size: 30px 30px;
   -webkit-mask-image: radial-gradient(75% 85% at var(--mx, 50%) var(--my, 40%), #000 10%, transparent 75%);
   mask-image: radial-gradient(75% 85% at var(--mx, 50%) var(--my, 40%), #000 10%, transparent 75%);
 }
 
 /* ── Type helpers ───────────────────────────────────────────────────────── */
+/* Reading text of more than a line or two: both edges straight, words broken at the syllable so no gaps open up.
+   Not on a phone: a narrow column set this way opens wide gaps between the words. */
+.st-justify { text-wrap: pretty; }
+@media (min-width: 640px) { .st-justify { text-align: justify; hyphens: auto; -webkit-hyphens: auto; } }
 .st-kicker { font-size: 12.5px; font-weight: 650; line-height: 1; letter-spacing: 0.22em; text-transform: uppercase; color: var(--st-kicker, #ffc24b); }
 .st-grad { background: var(--st-grad, linear-gradient(100deg, #8ccaff 0%, #b3a4ff 52%, #ffc86a 100%)); -webkit-background-clip: text; background-clip: text; color: transparent; }
 .st-serif { font-family: 'Sitka Display', 'Sitka Banner', 'Iowan Old Style', 'Palatino Linotype', Palatino, Georgia, serif; font-style: italic; font-weight: 500; letter-spacing: -0.02em; }
@@ -467,8 +515,32 @@ html:is(.stage, .day)::-webkit-scrollbar-thumb:hover { background: var(--st-scro
   border: 1px solid var(--st-card-line);
   box-shadow: var(--st-card-shadow);
 }
-/* A card that is dark in both themes: put .stage on it too, so its words are light */
-.st-card.st-solid { background: var(--st-solid); border-color: rgba(255, 255, 255, 0.12); box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.14), 0 26px 60px -30px rgba(0, 0, 0, 0.7); }
+/* A card with more weight than the others: navy on the dark theme, a deeper tint on the light one */
+.st-card.st-solid { background: var(--st-solid); border-color: var(--st-solid-line, rgba(255, 255, 255, 0.12)); box-shadow: var(--st-solid-shadow, inset 0 1px 0 rgba(255, 255, 255, 0.14), 0 26px 60px -30px rgba(0, 0, 0, 0.7)); }
+/* A deep panel for the top of a page or a call to act, where a card would be too light. Words inside use the colour names. */
+.st-deep { background: var(--st-deep, #0f1824); border: 1px solid var(--st-deep-line, transparent); }
+section.st-deep, header.st-deep { border-width: 0 0 1px; }
+/* Gold words on a lit band: the kicker colour, readable on both themes */
+.st-gold-ink { color: var(--st-gold-ink, #ffd06b); }
+
+/* ── A block written dark-first: white words on navy (older pages, and pages built before the
+      light theme was made fully light). On the dark theme it is navy. On the light theme it
+      becomes the deep tint with dark words, so the light theme has no navy blocks.
+      New work uses <Ground>, st-deep or st-solid with the colour names; this is for what exists.
+      A filled button inside keeps its own colours. Put st-keep on anything else that must. */
+.st-night { background-color: #0c1426; color: #fff; }
+.day .st-night { background: var(--st-deep) !important; color: rgb(var(--gray-900)) !important; box-shadow: inset 0 0 0 1px var(--st-deep-line); }
+.day .st-night :is(h1, h2, h3, h4, .text-white, .\!text-white):not([class*='bg-primary-']):not([class*='bg-amber-']):not([class*='bg-green-']):not(.st-pill):not(.st-keep) { color: rgb(var(--gray-900)) !important; }
+.day .st-night :is(.text-white\/90, .text-white\/80, .text-white\/75, .text-white\/70, .text-gray-300, .text-gray-200, .text-\[\#aab6c8\], .text-\[\#c9d2e0\], .text-\[\#b7c4dd\], .text-\[\#a9b4c4\]) { color: rgb(var(--gray-600)) !important; }
+.day .st-night :is(.text-white\/60, .text-white\/55, .text-white\/50, .text-white\/40, .text-gray-400, .text-\[\#8d9bb0\]) { color: rgb(var(--gray-500)) !important; }
+.day .st-night :is(.text-amber-300, .text-amber-400, .text-\[\#ffd06b\], .text-\[\#ffd666\]),
+.day .st-night:is(.text-amber-300, .text-amber-400) { color: var(--st-gold-ink) !important; }
+.day .st-night :is(.border-white\/10, .border-white\/15, .border-white\/20, [class*='divide-white']),
+.day .st-night[class*='divide-white'] > * { border-color: var(--st-deep-line) !important; }
+.day .st-night [class*='divide-white'] > * { border-color: var(--st-deep-line) !important; }
+.day .st-night :is(.bg-white\/5, .bg-white\/10, .bg-white\/15, .bg-white\/\[0\.06\], .bg-white\/\[0\.07\]) { background-color: var(--st-chip) !important; }
+/* The coloured light painted behind the words of such a block: much softer on a light ground */
+.day .st-night-glow { opacity: 0.3 !important; }
 .st-card.st-lit { border-color: rgba(125, 190, 255, 0.42); box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 0 0 1px rgba(61, 148, 255, 0.25), 0 22px 60px -22px rgba(20, 100, 255, 0.6); }
 .st-card.st-gold { border-color: rgba(255, 194, 75, 0.5); box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.16), 0 0 0 1px rgba(255, 194, 75, 0.18), 0 22px 60px -24px rgba(255, 170, 46, 0.5); }
 a.st-card, button.st-card { transition: border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease; }
@@ -520,23 +592,23 @@ a.st-chip:hover { background: var(--st-chip-hover); }
 .st-link { color: var(--st-link); font-weight: 600; transition: color 0.15s ease; }
 .st-link:hover { color: var(--st-link-hover); }
 
-/* ── Windows drawn in scenes: a lesson, a process, a platform. Dark in both themes. ───── */
+/* ── Windows drawn in scenes: a lesson, a process, a platform. They follow the theme. ───── */
 .st-win {
   border-radius: 18px;
   overflow: hidden;
-  background: linear-gradient(180deg, #131d38, #0b1329);
-  border: 1px solid rgba(255, 255, 255, 0.13);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.14), 0 40px 90px -36px rgba(0, 0, 0, 0.9), 0 0 80px -34px rgba(61, 148, 255, 0.55);
-  color: #f5f8ff;
+  background: var(--st-win, linear-gradient(180deg, #131d38, #0b1329));
+  border: 1px solid var(--st-win-line, rgba(255, 255, 255, 0.13));
+  box-shadow: var(--st-win-shadow, inset 0 1px 0 rgba(255, 255, 255, 0.14), 0 40px 90px -36px rgba(0, 0, 0, 0.9), 0 0 80px -34px rgba(61, 148, 255, 0.55));
+  color: var(--st-win-ink, #f5f8ff);
 }
-.st-win-bar { display: flex; align-items: center; gap: 8px; padding: 11px 14px; background: rgba(255, 255, 255, 0.045); border-bottom: 1px solid rgba(255, 255, 255, 0.08); font-size: 12.5px; font-weight: 600; line-height: 1.2; color: #b7c4dd; }
+.st-win-bar { display: flex; align-items: center; gap: 8px; padding: 11px 14px; background: var(--st-win-bar, rgba(255, 255, 255, 0.045)); border-bottom: 1px solid var(--st-win-bar-line, rgba(255, 255, 255, 0.08)); font-size: 12.5px; font-weight: 600; line-height: 1.2; color: var(--st-win-bar-ink, #b7c4dd); }
 .st-win-bar > b { flex: none; width: 10px; height: 10px; border-radius: 50%; background: #3a4666; }
 .st-win-bar > b:nth-child(1) { background: #ff6b6b; }
 .st-win-bar > b:nth-child(2) { background: #ffc24b; }
 .st-win-bar > b:nth-child(3) { background: #3ed598; }
 .st-win-bar > span { margin-left: 6px; min-width: 0; }
 
-.st-track { height: 6px; border-radius: 99px; background: rgba(255, 255, 255, 0.16); overflow: hidden; }
+.st-track { height: 6px; border-radius: 99px; background: var(--st-track, rgba(255, 255, 255, 0.16)); overflow: hidden; }
 .st-track > i { display: block; height: 100%; border-radius: 99px; background: linear-gradient(90deg, #3d94ff, #62e0e8); }
 .st-tick { display: inline-flex; align-items: center; justify-content: center; flex: none; width: 18px; height: 18px; border-radius: 50%; background: #3ed598; }
 .st-tick::after { content: ''; width: 8px; height: 4px; border-left: 2px solid #04281b; border-bottom: 2px solid #04281b; transform: translateY(-1px) rotate(-45deg); }
@@ -544,7 +616,7 @@ a.st-chip:hover { background: var(--st-chip-hover); }
 .st-tick.st-off::after { display: none; }
 .st-tick.st-tick-gold { background: #ffc24b; }
 .st-bubble { border-radius: 18px; padding: 12px 15px; font-size: 15px; line-height: 1.4; }
-.st-bubble.st-q { background: rgba(255, 255, 255, 0.09); border: 1px solid rgba(255, 255, 255, 0.11); border-bottom-left-radius: 6px; color: #f5f8ff; }
+.st-bubble.st-q { background: var(--st-q, rgba(255, 255, 255, 0.09)); border: 1px solid var(--st-q-line, rgba(255, 255, 255, 0.11)); border-bottom-left-radius: 6px; color: var(--st-ground-ink, #f5f8ff); }
 .st-bubble.st-a { background: linear-gradient(180deg, #2a84ff, #0b5fe6); border-bottom-right-radius: 6px; color: #fff; box-shadow: 0 16px 36px -16px rgba(20, 110, 255, 0.85); }
 .st-bubble > .st-who { display: block; margin-bottom: 4px; font-size: 10.5px; font-weight: 650; line-height: 1; letter-spacing: 0.16em; text-transform: uppercase; opacity: 0.7; }
 

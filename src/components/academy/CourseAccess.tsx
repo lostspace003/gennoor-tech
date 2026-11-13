@@ -2,9 +2,11 @@
 
 import { createContext, useCallback, useContext, useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { Check, Loader2, Lock, Maximize, Pause, Play, PlayCircle, Volume2, VolumeX, X } from 'lucide-react'
+import { Check, Loader2, Maximize, Pause, Play, PlayCircle, Volume2, VolumeX, X } from 'lucide-react'
 import { useLearnerAuth } from '@/hooks/useLearnerAuth'
+import type { LmsKind } from '@/lib/lms-kind'
 import LearnerAuthModal from './LearnerAuthModal'
+import { LessonLine } from './LessonLine'
 import { OfferPill } from './Offer'
 
 // Everything a visitor who does not own the course can do on its page:
@@ -160,16 +162,16 @@ export function PriceLine({ className = '' }: { className?: string }) {
   if (!was) return null
   return (
     <div className={`flex flex-wrap items-center gap-x-3 gap-y-1.5 ${className}`}>
-      <span className="text-[30px] font-bold leading-none tracking-tight text-white tabular-nums">{now.usd === 0 ? 'Free' : show(now)}</span>
-      {was && <s className="text-[17px] text-[#8d9bb0] tabular-nums">{show(was)}</s>}
+      <span className="text-[30px] font-bold leading-none tracking-tight text-gray-900 tabular-nums">{now.usd === 0 ? 'Free' : show(now)}</span>
+      {was && <s className="text-[17px] text-gray-500 tabular-nums">{show(was)}</s>}
       {b.coupon
-        ? <span className="inline-flex items-center gap-1 rounded-full bg-white/10 px-2.5 py-[3px] text-[12.5px] font-semibold text-white"><Check className="w-3.5 h-3.5" strokeWidth={3} />{b.coupon.percent}% off with your code</span>
+        ? <span className="inline-flex items-center gap-1 rounded-full bg-[color:var(--st-chip)] px-2.5 py-[3px] text-[12.5px] font-semibold text-gray-900"><Check className="w-3.5 h-3.5" strokeWidth={3} />{b.coupon.percent}% off with your code</span>
         : b.offer && <OfferPill percent={b.offer.percent} />}
     </div>
   )
 }
 
-/** "Have a coupon code?": opens a small box to type one in. Made for the dark parts of the course page. */
+/** "Have a coupon code?": opens a small box to type one in. It follows the theme, like the panels it sits on. */
 export function CouponBox({ className = '' }: { className?: string }) {
   const b = useBuy()
   const [open, setOpen] = useState(false)
@@ -180,14 +182,14 @@ export function CouponBox({ className = '' }: { className?: string }) {
 
   if (b.coupon) {
     return (
-      <p className={`text-[13px] text-[#aab6c8] ${className}`}>
-        Code <b className="font-semibold text-white">{b.coupon.code}</b> applied: {b.coupon.percent >= 100 ? 'the course is free' : `${b.coupon.percent}% off`}.{' '}
-        <button type="button" onClick={() => { b.clearCoupon(); setCode(''); setOpen(false) }} className="underline underline-offset-2 hover:text-white">Remove</button>
+      <p className={`text-[13px] text-gray-600 ${className}`}>
+        Code <b className="font-semibold text-gray-900">{b.coupon.code}</b> applied: {b.coupon.percent >= 100 ? 'the course is free' : `${b.coupon.percent}% off`}.{' '}
+        <button type="button" onClick={() => { b.clearCoupon(); setCode(''); setOpen(false) }} className="underline underline-offset-2 hover:text-gray-900">Remove</button>
       </p>
     )
   }
   if (!open) {
-    return <button type="button" onClick={() => setOpen(true)} className={`text-[13px] text-[#8d9bb0] underline underline-offset-2 hover:text-white ${className}`}>Have a coupon code?</button>
+    return <button type="button" onClick={() => setOpen(true)} className={`text-[13px] text-gray-500 underline underline-offset-2 hover:text-gray-900 ${className}`}>Have a coupon code?</button>
   }
   const apply = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -203,13 +205,13 @@ export function CouponBox({ className = '' }: { className?: string }) {
         <input
           value={code} onChange={(e) => { setCode(e.target.value.toUpperCase()); setProblem('') }} autoFocus maxLength={24}
           aria-label="Coupon code" placeholder="Coupon code" autoComplete="off" spellCheck={false}
-          className="w-44 rounded-full border border-white/25 bg-white/10 px-4 py-2 text-[14px] font-medium tracking-wide text-white placeholder:font-normal placeholder:tracking-normal placeholder:text-[#8d9bb0] focus:border-primary-400 focus:ring-0"
+          className="w-44 rounded-full border border-gray-300 bg-raised px-4 py-2 text-[14px] font-medium tracking-wide text-gray-900 placeholder:font-normal placeholder:tracking-normal placeholder:text-gray-400 focus:border-primary-400 focus:ring-0"
         />
-        <button type="submit" disabled={!code.trim() || checking} className="inline-flex items-center gap-1.5 rounded-full border border-white/30 px-4 py-2 text-[13.5px] font-semibold text-white hover:bg-white/10 disabled:opacity-50">
+        <button type="submit" disabled={!code.trim() || checking} className="inline-flex items-center gap-1.5 rounded-full border border-gray-300 px-4 py-2 text-[13.5px] font-semibold text-gray-900 hover:bg-[color:var(--st-chip)] disabled:opacity-50">
           {checking && <Loader2 className="w-3.5 h-3.5 animate-spin" />}Apply
         </button>
       </div>
-      {problem && <p role="alert" className="mt-2 text-[13px] text-[#ffb4ab]">{problem}</p>}
+      {problem && <p role="alert" className="mt-2 text-[13px] text-red-600">{problem}</p>}
     </form>
   )
 }
@@ -250,28 +252,36 @@ export function PreviewProvider({ slug, previews, children }: { slug: string; pr
   )
 }
 
-/** Every free preview of the course in one list, at the top of the curriculum. */
+/**
+ * Every preview lesson of the course in one band, at the top of the curriculum. Each lesson
+ * has room for its whole name and the module it comes from: nothing is cut short.
+ */
 export function PreviewList() {
   const ctx = useContext(PreviewContext)
   if (!ctx || ctx.all.length === 0) return null
   return (
-    <div id="previews" className="scroll-mt-24 mb-8 rounded-2xl border border-primary-200 bg-primary-50/50 p-5">
-      <div className="flex flex-wrap items-baseline justify-between gap-2">
-        <h3 className="font-heading text-[18px] font-semibold text-gray-900">Watch free: {ctx.all.length} preview lessons</h3>
-        <span className="text-[13px] text-gray-500">No sign-in needed</span>
+    <div id="previews" className="scroll-mt-24 mb-8 st-card st-lit p-5 sm:p-6">
+      <div className="flex flex-wrap items-end justify-between gap-x-6 gap-y-1">
+        <div>
+          <h3 className="font-heading text-[20px] font-semibold leading-snug tracking-[-0.01em] text-gray-900">Watch {ctx.all.length} preview lessons</h3>
+          <p className="text-[14px] text-gray-500 mt-0.5">They play right here. No sign-in needed.</p>
+        </div>
       </div>
-      <ol className="mt-3 grid grid-cols-1 xl:grid-cols-2 gap-2">
+      <ol className="mt-4 grid sm:grid-cols-2 gap-3">
         {ctx.all.map((p, i) => (
           <li key={p.id} className="min-w-0">
             <button
               type="button"
               onClick={() => ctx.open(p.id, p.title)}
-              className="w-full h-full flex items-start gap-3 rounded-xl bg-raised border border-gray-200 px-3.5 py-3 text-left hover:border-primary-400 transition-colors"
+              className="group w-full h-full flex items-start gap-3.5 rounded-2xl bg-raised border border-gray-200 p-4 text-left transition-colors hover:border-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
             >
-              <PlayCircle className="w-5 h-5 mt-0.5 shrink-0 text-primary-600" />
+              <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-primary-600 text-[#fff] shadow-[0_10px_22px_-10px_rgba(10,98,240,.8)] transition-transform group-hover:scale-105">
+                <Play className="h-[18px] w-[18px] fill-current ml-0.5" aria-hidden="true" />
+              </span>
               <span className="min-w-0">
-                <span className="block text-[14.5px] font-medium leading-snug text-gray-900">{p.title}</span>
-                <span className="block text-[12.5px] text-gray-500 mt-0.5 truncate">Preview {i + 1}{p.minutes ? ` · ${p.minutes} min` : ''} · {p.module}</span>
+                <span className="block text-[12.5px] font-semibold text-gray-500">Preview {i + 1}{p.minutes ? ` · ${p.minutes} min` : ''}</span>
+                <span className="block text-[15.5px] font-semibold leading-snug text-gray-900 mt-0.5">{p.title}</span>
+                <span className="block text-[13px] leading-snug text-gray-500 mt-1.5">{p.module}</span>
               </span>
             </button>
           </li>
@@ -282,7 +292,7 @@ export function PreviewList() {
 }
 
 /** A lesson row for someone who does not own the course: a preview plays, anything else offers to buy. */
-export function LessonRow({ id, title, color, preview }: { id: string; title: string; color: string; preview: boolean }) {
+export function LessonRow({ id, title, kind, minutes, preview }: { id: string; title: string; kind: LmsKind; minutes?: number; preview: boolean }) {
   const openPreview = useContext(PreviewContext)?.open
   const b = useBuy()
   return (
@@ -290,15 +300,9 @@ export function LessonRow({ id, title, color, preview }: { id: string; title: st
       type="button"
       onClick={() => (preview ? openPreview?.(id, title) : b?.buy())}
       title={preview ? 'Watch this lesson now' : 'Included in the full course'}
-      className={`w-full flex items-start gap-3 py-1.5 text-left text-[14.5px] leading-snug transition-colors ${preview ? 'text-gray-900 hover:text-primary-600' : 'text-gray-500 hover:text-gray-700'}`}
+      className="group/line block w-full rounded-xl focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary-500"
     >
-      <span className="w-1.5 h-4 rounded-[1px] mt-0.5 shrink-0" style={{ background: color, opacity: preview ? 1 : 0.45 }} />
-      <span className="flex-1">{title}</span>
-      {preview ? (
-        <span className="shrink-0 inline-flex items-center gap-1 text-[12.5px] font-semibold text-primary-600"><PlayCircle className="w-4 h-4" /> Preview</span>
-      ) : (
-        <Lock className="w-3.5 h-3.5 mt-1 shrink-0 text-gray-400" aria-label="In the full course" />
-      )}
+      <LessonLine title={title} kind={kind} minutes={minutes} state={preview ? 'preview' : 'locked'} />
     </button>
   )
 }
@@ -431,7 +435,7 @@ function PreviewPlayer({ slug, id, title, all, onPick, onClose }: { slug: string
         `}</style>
         {b && (
           <div className="flex flex-wrap items-center justify-between gap-3 px-4 py-3">
-            <p className="text-[13.5px] text-[#aab6c8]">You are watching a free preview. No sign-in needed.</p>
+            <p className="text-[13.5px] text-[#aab6c8]">You are watching a preview lesson. No sign-in needed.</p>
             <div className="flex items-center gap-3">
               {b.offer && !b.coupon && <OfferPill percent={b.offer.percent} />}
               <BuyButton className="!px-5 !py-2" />
@@ -441,7 +445,7 @@ function PreviewPlayer({ slug, id, title, all, onPick, onClose }: { slug: string
         {/* The other previews, so they can all be watched from here */}
         {all.length > 1 && (
           <div className="px-4 pb-4">
-            <div className="text-[11.5px] font-semibold uppercase tracking-wider text-[#8d9bb0] mb-2">All free previews</div>
+            <div className="text-[12.5px] font-semibold text-[#8d9bb0] mb-2">All preview lessons</div>
             <ol className="grid sm:grid-cols-2 gap-1.5">
               {all.map((p, i) => (
                 <li key={p.id} className="min-w-0">

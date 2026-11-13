@@ -29,7 +29,7 @@ export default async function TocCoursePage({ params }: PageProps) {
   const links = tocLinks(c)
   return (
     <main className="bg-surface">
-      <section className="bg-[#0b1220] text-white px-6 py-10 lg:py-12">
+      <section className="st-night px-6 py-10 lg:py-12">
         <div className="max-w-6xl mx-auto grid lg:grid-cols-2 gap-10 items-center">
           <div>
             <p className="text-sm font-semibold text-primary-300 mb-3">{c.domain}</p>

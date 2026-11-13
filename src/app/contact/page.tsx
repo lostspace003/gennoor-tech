@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import ContactForm from '@/components/contact/ContactForm'
 import BookingCalendar from '@/components/booking/BookingCalendar'
+import WhatsAppIcon from '@/components/icons/WhatsAppIcon'
 
 export const metadata: Metadata = {
   title: 'Contact — Gennoor Tech',
@@ -49,7 +50,9 @@ export default function ContactPage() {
               </div>
               <div>
                 <p className="font-semibold text-gray-900">WhatsApp</p>
-                <a href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer" className="text-primary-600 hover:underline">Message us on WhatsApp</a>
+                <a href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 text-primary-600 hover:underline">
+                  <WhatsAppIcon className="h-[18px] w-[18px] text-[#25D366]" />Message us on WhatsApp
+                </a>
               </div>
               <div>
                 <p className="font-semibold text-gray-900">Where we are</p>

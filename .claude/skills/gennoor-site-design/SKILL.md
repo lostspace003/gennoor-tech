@@ -68,8 +68,16 @@ The admin centre keeps the light "paper" look; the rules are in `docs/DESIGN.md`
 - **Tiles inside `<Reveal>` were missing from full-page screenshots** until the page was scrolled.
   `scripts/shot.mjs --full` scrolls first; a plain viewport screenshot does not.
 - **The blog set its colours in `style={{}}`** and stayed white. Inline colours use `'rgb(var(--gray-900))'`.
-- **A dark block in the light theme** needs the class `stage` on it (or to be a `<Ground>`), or the
-  theme's dark text lands on it.
+- **The light theme still showed navy blocks** (owner: "the light theme also reflects black, which should
+  not be"). The light theme is light all the way down: `<Ground>`, `st-solid`, `st-deep` and `st-win` follow
+  the theme, so write the words inside them with the colour names, never `text-white`. An older block
+  with white words on navy takes `st-night`. After any change, run the light sweep (every main page with
+  `--light`) and look for a dark block that is not a film.
+- **A course page read as "compressed"** (owner): lesson names cut with `truncate`, modules as thin
+  rows, "what you build" as one long sentence in a card. Lessons, modules and build steps each get a
+  line or a card of their own, with nothing cut short. See "The course page" in `docs/DESIGN.md`.
+- **A chat bubble stood in for WhatsApp.** Use `src/components/icons/WhatsAppIcon.tsx`.
+- **Justified text on a phone opened gaps between words.** `st-justify` justifies from tablet width up only.
 - **Menus inside menus** were removed on purpose (owner's request). Do not add a row that only opens a list.
 
 ## What must not change when only the look changes

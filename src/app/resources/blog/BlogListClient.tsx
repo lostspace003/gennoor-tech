@@ -88,7 +88,7 @@ export default function BlogListClient({ posts, categories }: BlogListClientProp
       {hero && (
         <section className="px-8 pt-6 pb-10">
           <Link href={`/resources/blog/${hero.slug}`} className="group block max-w-[1080px] mx-auto">
-            <article className="grid grid-cols-1 lg:grid-cols-2 bg-gray-900 rounded-3xl overflow-hidden">
+            <article className="st-night grid grid-cols-1 lg:grid-cols-2 bg-gray-900 rounded-3xl overflow-hidden">
               <div className="p-9 lg:px-12 lg:py-[52px]">
                 <div className="text-[11px] font-semibold tracking-[0.12em] uppercase text-gray-400 mb-3.5">
                   Featured · {hero.category}
@@ -202,7 +202,7 @@ export default function BlogListClient({ posts, categories }: BlogListClientProp
           <Pagination page={pg.page} pages={pg.pages} onPage={pg.setPage} />
 
           {/* Newsletter — preserved feature, quiet dark panel */}
-          <div className="mt-10 bg-gray-900 rounded-3xl px-7 sm:px-10 py-7">
+          <div className="st-night mt-10 bg-gray-900 rounded-3xl px-7 sm:px-10 py-7">
             {subscribed ? (
               <div className="flex items-center gap-3 text-white">
                 <CheckCircle className="h-5 w-5 text-green-400" aria-hidden="true" />

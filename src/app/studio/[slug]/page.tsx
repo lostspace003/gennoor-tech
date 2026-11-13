@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { Check } from 'lucide-react'
+import { BookOpen, Check, ChevronDown } from 'lucide-react'
 import { verifyLearnerSession } from '@/lib/learner-auth'
 import { getLmsCourse, getLmsProgress, imageUrl, promoUrl, toCard, type LmsProgressEntry } from '@/lib/lms'
 import { hasFullAccess, offerOf, previewIds, priceOf } from '@/lib/lms-access'
@@ -14,6 +14,8 @@ import AcademyBar from '@/components/academy/AcademyBar'
 import EnrollButton from '@/components/academy/EnrollButton'
 import PromoPlayer from '@/components/academy/PromoPlayer'
 import CourseAbout from '@/components/academy/CourseAbout'
+import { LessonLine } from '@/components/academy/LessonLine'
+import { moduleLabel } from '@/lib/lms-about'
 import CourseReviews from '@/components/academy/CourseReviews'
 import { Stars } from '@/components/academy/Stars'
 import { getReviews } from '@/lib/lms-community'
@@ -31,6 +33,10 @@ interface PageProps {
 }
 
 const KIND_LABEL: Record<string, string> = { certification: 'Certification course', project: 'Project course', course: 'Course' }
+/** One tile tone a module, in the order the tiles are used on the site. */
+const MODULE_TONES = ['', 't-violet', 't-cyan', 't-green', 't-gold', 't-rose'] as const
+/** What is in a module, in words: one and many. */
+const MIX_WORD = { lecture: ['lesson', 'lessons'], lab: ['lab', 'labs'], demo: ['demo', 'demos'], quiz: ['quiz', 'quizzes'] } as const
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params
@@ -112,44 +118,44 @@ export default async function LabsCoursePage({ params }: PageProps) {
       <AcademyBar section="Certifications & Projects" />
 
       {/* Hero: the promo plays first, then the shape of the whole course */}
-      <section className="bg-[#0f1824] text-white">
-        <div className="max-w-6xl mx-auto px-6 pt-10 pb-8 lg:pt-10">
-          <Link href="/studio" className="text-sm text-[#8d9bb0] hover:text-white transition-colors">
+      <section className="st-deep">
+        <div className="max-w-[1240px] mx-auto px-5 sm:px-6 pt-10 pb-8 lg:pt-10">
+          <Link href="/studio" className="text-sm text-gray-500 hover:text-gray-900 transition-colors">
             ‹ All Learning Studio courses
           </Link>
 
           <div className="grid lg:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)] gap-x-14 gap-y-10 items-center mt-8">
             <div>
-              <p className="text-[15px] text-[#8d9bb0]">{card.vendor}, {(KIND_LABEL[card.kind] || card.kind).toLowerCase()}, {card.level.toLowerCase()} level</p>
-              <h1 className="font-heading font-bold tracking-[-0.035em] leading-[1.06] text-[clamp(32px,4.2vw,54px)] mt-3 !text-white">
+              <p className="text-[15px] text-gray-500">{card.vendor}, {(KIND_LABEL[card.kind] || card.kind).toLowerCase()}, {card.level.toLowerCase()} level</p>
+              <h1 className="font-heading font-bold tracking-[-0.035em] leading-[1.06] text-[clamp(32px,4.2vw,54px)] mt-3 text-gray-900">
                 {course.title}
               </h1>
-              <p className="text-[18px] leading-[1.5] text-[#aab6c8] mt-5 max-w-xl">{course.subtitle}</p>
+              <p className="text-[18px] leading-[1.5] text-gray-600 mt-5 max-w-xl">{course.subtitle}</p>
               {summary.count > 0 && (
-                <a href="#reviews" className="mt-4 inline-flex items-center gap-2 text-[15px] text-white">
+                <a href="#reviews" className="mt-4 inline-flex items-center gap-2 text-[15px] text-gray-900">
                   <span className="font-semibold tabular-nums">{summary.average.toFixed(1)}</span>
                   <Stars value={summary.average} size={16} />
-                  <span className="text-[#8d9bb0] underline-offset-2 hover:underline">({summary.count} {summary.count === 1 ? 'rating' : 'ratings'})</span>
+                  <span className="text-gray-500 underline-offset-2 hover:underline">({summary.count} {summary.count === 1 ? 'rating' : 'ratings'})</span>
                 </a>
               )}
               {point && point.kind !== 'start' ? (
-                <div className="mt-8"><ResumePanel slug={slug} point={point} dark /></div>
+                <div className="mt-8"><ResumePanel slug={slug} point={point} /></div>
               ) : (
               price && !enrolled ? (
               <div className="mt-8">
                 <PriceLine className="mb-4" />
                 <div className="flex flex-wrap items-center gap-4">
                   <BuyButton />
-                  <a href="#previews" className="text-[14px] font-semibold text-white underline underline-offset-4 hover:text-[#aab6c8]">Watch {previews.size} free preview lessons</a>
+                  <a href="#previews" className="text-[14px] font-semibold text-gray-900 underline underline-offset-4 hover:text-primary-600">Watch {previews.size} preview lessons</a>
                 </div>
-                <div className="mt-3 text-[#8d9bb0]"><CurrencyNote className="hover:text-white" /></div>
+                <div className="mt-3 text-gray-500"><CurrencyNote className="hover:text-gray-900" /></div>
                 <CouponBox className="mt-2.5" />
-                <p className="mt-2.5 text-[13px] text-[#8d9bb0]">One payment. Every lesson, lab and quiz, and a certificate. Previews need no sign-in.</p>
+                <p className="mt-2.5 text-[13px] text-gray-500">One payment. Every lesson, lab and quiz, and a certificate. Previews need no sign-in.</p>
               </div>
               ) : (
               <div className="mt-8 flex flex-wrap items-center gap-4">
                 <EnrollButton slug={slug} enrolled={enrolled} />
-                {!learner && <p className="text-[13px] text-[#8d9bb0]">You sign in once to start.</p>}
+                {!learner && <p className="text-[13px] text-gray-500">You sign in once to start.</p>}
               </div>
               )
               )}
@@ -161,8 +167,8 @@ export default async function LabsCoursePage({ params }: PageProps) {
                   ...(card.hours ? [[`${card.hours} h`, 'of video']] : []),
                 ].map(([v, l]) => (
                   <div key={String(l)} className="flex items-baseline gap-2">
-                    <dt className="font-semibold text-white tabular-nums">{v}</dt>
-                    <dd className="text-[#8d9bb0]">{l}</dd>
+                    <dt className="font-semibold text-gray-900 tabular-nums">{v}</dt>
+                    <dd className="text-gray-500">{l}</dd>
                   </div>
                 ))}
               </dl>
@@ -182,15 +188,15 @@ export default async function LabsCoursePage({ params }: PageProps) {
           <div className="mt-8">
             <CourseStrip sections={course.sections} height={26} animate />
             <div className="mt-4">
-              <StripLegend sections={course.sections} dark />
+              <StripLegend sections={course.sections} />
             </div>
-            <p className="text-[13px] text-gray-400 mt-3">Each bar is one lesson. Gaps separate the modules.</p>
+            <p className="text-[13px] text-gray-500 mt-3">Each bar is one lesson. Gaps separate the modules.</p>
           </div>
         </div>
       </section>
 
-      <div className="max-w-6xl mx-auto px-6 py-10 lg:py-14 grid lg:grid-cols-[minmax(0,1fr)_340px] gap-16">
-        <div className="min-w-0 space-y-12">
+      <div className="max-w-[1240px] mx-auto px-5 sm:px-6 py-10 lg:py-14 grid lg:grid-cols-[minmax(0,1fr)_320px] gap-x-12 gap-y-12">
+        <div className="min-w-0 space-y-14">
           <section>
             <h2 className="font-heading text-[28px] font-bold tracking-[-0.02em] text-gray-900 mb-6">What you will be able to do</h2>
             <ul className="grid sm:grid-cols-2 gap-x-10 gap-y-4">
@@ -205,49 +211,64 @@ export default async function LabsCoursePage({ params }: PageProps) {
 
           <section id="curriculum" className="scroll-mt-24">
             <h2 className="font-heading text-[28px] font-bold tracking-[-0.02em] text-gray-900 mb-2">Curriculum</h2>
-            <p className="text-gray-500 mb-6">{totalItems} items (lessons and quizzes) across {course.sections.length} modules. {enrolled ? 'Pick any lesson to open it.' : price ? `The ${previews.size} free previews are listed first. The rest open when you buy the course.` : 'Pick any lesson to open it. You will sign in first if you have not already.'}</p>
+            <p className="text-gray-500 mb-6">{totalItems} items (lessons and quizzes) across {course.sections.length} modules. {enrolled ? 'Pick any lesson to open it.' : price ? `The ${previews.size} preview lessons are listed first. The rest open when you buy the course.` : 'Pick any lesson to open it. You will sign in first if you have not already.'}</p>
             <PreviewProvider slug={slug} previews={price && !enrolled ? previewList : []}>
             <PreviewList />
             <OutlineGate slug={slug}>
-            <div className="border-t border-gray-200">
-              {course.sections.map((s, i) => (
-                <details key={i} className="group border-b border-gray-200" open={i === Math.min(1, course.sections.length - 1)}>
-                  <summary className="cursor-pointer list-none py-5 flex items-center gap-5 [&::-webkit-details-marker]:hidden">
-                    <div className="min-w-0 flex-1">
-                      <div className="font-semibold text-gray-900 text-[16px] leading-snug group-open:text-primary-600 transition-colors">{s.title}</div>
-                      <div className="mt-3 max-w-xs"><CourseStrip sections={[s]} height={8} maxSeconds={longestLesson(course.sections)} /></div>
-                    </div>
-                    <span className="text-[13px] text-gray-400 tabular-nums shrink-0">{s.items.length} {s.items.length === 1 ? "lesson" : "lessons"}</span>
-                    <span className="text-gray-400 transition-transform group-open:rotate-90" aria-hidden>›</span>
-                  </summary>
-                  <ul className="pb-5 grid gap-px">
-                    {s.items.map(it => (
-                      <li key={it.id}>
-                        {enrolled ? (
-                          <Link href={`/studio/${slug}/learn?item=${it.id}`} className="flex items-start gap-3 py-1.5 text-[14.5px] leading-snug text-gray-700 hover:text-primary-600 transition-colors">
-                            <span className="w-1.5 h-4 rounded-[1px] mt-0.5 shrink-0" style={{ background: KIND_COLOR[kindOf(it)] }} />
-                            <span className="flex-1">{it.title}</span>
-                            {progress[it.id]?.done && <Check className="w-4 h-4 mt-0.5 shrink-0 text-emerald-600" strokeWidth={2.5} />}
-                          </Link>
-                        ) : price ? (
-                          <LessonRow id={it.id} title={it.title} color={KIND_COLOR[kindOf(it)]} preview={previews.has(it.id)} />
-                        ) : (
-                          <OutlineLesson id={it.id} title={it.title} color={KIND_COLOR[kindOf(it)]} />
-                        )}
-                      </li>
-                    ))}
-                  </ul>
-                </details>
-              ))}
+            <div className="space-y-3">
+              {course.sections.map((s, i) => {
+                const { number, name } = moduleLabel(s.title)
+                const mix = (['lecture', 'lab', 'demo', 'quiz'] as const).map((k) => [k, s.items.filter((it) => kindOf(it) === k).length] as const).filter(([, n]) => n > 0)
+                const minutes = Math.round(s.items.reduce((n, it) => n + (it.type === 'lecture' ? it.durationSec || 0 : 0), 0) / 60)
+                return (
+                  <details key={i} className="group st-card !rounded-2xl overflow-hidden" open={i === Math.min(1, course.sections.length - 1)}>
+                    <summary className="cursor-pointer list-none px-4 py-4 sm:px-6 sm:py-5 flex items-start gap-4 [&::-webkit-details-marker]:hidden after:!content-none">
+                      <span className={`st-ico ${MODULE_TONES[i % MODULE_TONES.length]} mt-0.5`} style={{ ['--s' as string]: '46px' }} aria-hidden="true">
+                        {number ? <b>{number}</b> : <BookOpen fill="none" stroke="#fff" strokeWidth={1.9} />}
+                      </span>
+                      <div className="min-w-0 flex-1">
+                        {number && <p className="text-[12.5px] font-semibold text-gray-500">Module {number}</p>}
+                        <h3 className="font-heading text-[18px] font-semibold leading-snug tracking-[-0.01em] text-gray-900">{name}</h3>
+                        <p className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-[13.5px] text-gray-500">
+                          <span className="font-medium text-gray-700">{s.items.length} {s.items.length === 1 ? 'item' : 'items'}{minutes ? `, ${minutes >= 60 ? `${Math.floor(minutes / 60)} h ${minutes % 60} min` : `${minutes} min`}` : ''}</span>
+                          {mix.map(([k, n]) => (
+                            <span key={k} className="inline-flex items-center gap-1.5"><i className="h-2 w-2 rounded-full" style={{ background: KIND_COLOR[k] }} />{n} {MIX_WORD[k][n === 1 ? 0 : 1]}</span>
+                          ))}
+                        </p>
+                        <div className="mt-3 max-w-md"><CourseStrip sections={[s]} height={8} maxSeconds={longestLesson(course.sections)} /></div>
+                      </div>
+                      <ChevronDown className="mt-1.5 h-5 w-5 shrink-0 text-gray-400 transition-transform group-open:rotate-180" aria-hidden="true" />
+                    </summary>
+                    <ul className="border-t border-gray-200 px-2 py-2.5 sm:px-3.5 grid gap-0.5">
+                      {s.items.map(it => {
+                        const mins = it.type === 'lecture' && it.durationSec ? Math.max(1, Math.round(it.durationSec / 60)) : undefined
+                        return (
+                          <li key={it.id}>
+                            {enrolled ? (
+                              <Link href={`/studio/${slug}/learn?item=${it.id}`} className="group/line block rounded-xl focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary-500">
+                                <LessonLine title={it.title} kind={kindOf(it)} minutes={mins} state={progress[it.id]?.done ? 'done' : 'open'} />
+                              </Link>
+                            ) : price ? (
+                              <LessonRow id={it.id} title={it.title} kind={kindOf(it)} minutes={mins} preview={previews.has(it.id)} />
+                            ) : (
+                              <OutlineLesson id={it.id} title={it.title} kind={kindOf(it)} minutes={mins} />
+                            )}
+                          </li>
+                        )
+                      })}
+                    </ul>
+                  </details>
+                )
+              })}
             </div>
             </OutlineGate>
             </PreviewProvider>
             {price && !enrolled && (
-              <div className="mt-8 rounded-2xl bg-[#0f1824] text-white p-6 flex flex-wrap items-center justify-between gap-4">
+              <div className="mt-8 st-card st-solid p-6 flex flex-wrap items-center justify-between gap-4">
                 <div>
-                  <div className="font-heading text-[19px] font-semibold !text-white">Get the full course</div>
-                  <div className="text-[14px] text-[#aab6c8] mt-1">{course.stats.lectures} video lessons, the labs, {course.stats.quizzes} quizzes and a certificate.</div>
-                  <div className="mt-2 text-[#8d9bb0]"><CurrencyNote className="hover:text-white" /></div>
+                  <div className="font-heading text-[19px] font-semibold text-gray-900">Get the full course</div>
+                  <div className="text-[14px] text-gray-600 mt-1">{course.stats.lectures} video lessons, the labs, {course.stats.quizzes} quizzes and a certificate.</div>
+                  <div className="mt-2 text-gray-500"><CurrencyNote className="hover:text-gray-900" /></div>
                   <CouponBox className="mt-2" />
                 </div>
                 <BuyButton />
@@ -258,10 +279,10 @@ export default async function LabsCoursePage({ params }: PageProps) {
           <section>
             <h2 className="font-heading text-[28px] font-bold tracking-[-0.02em] text-gray-900 mb-6">About this course</h2>
             {course.about && course.about.length > 0 ? (
-              <CourseAbout blocks={course.about} counts={counts} />
+              <CourseAbout blocks={course.about} counts={counts} slug={slug} />
             ) : (
-              <div className="space-y-4 text-[16px] leading-[1.7] text-gray-700 max-w-[68ch]">
-                {course.description.map((p, i) => <p key={i} className="whitespace-pre-line">{p}</p>)}
+              <div className="space-y-4 text-[16.5px] leading-[1.75] text-gray-700">
+                {course.description.map((p, i) => <p key={i} className="whitespace-pre-line st-justify">{p}</p>)}
               </div>
             )}
           </section>
@@ -271,20 +292,20 @@ export default async function LabsCoursePage({ params }: PageProps) {
 
         <aside className="lg:sticky lg:top-24 self-start space-y-10">
           {badge && (
-            <div className="rounded-2xl overflow-hidden bg-[#0f1824]">
+            <div className="st-card st-solid overflow-hidden">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src={badge} alt="Microsoft Certified: Azure AI App and Agent Developer Associate" className="w-full aspect-[4/3] object-cover object-top" />
-              <p className="px-6 py-4 text-[14px] text-[#aab6c8]">This course prepares you for the certification above.</p>
+              <p className="px-6 py-4 text-[14px] text-gray-600">This course prepares you for the certification above.</p>
             </div>
           )}
           <div className="rounded-2xl bg-gray-50 p-7">
-            <h2 className="font-heading font-semibold text-gray-900 mb-3">Before you start</h2>
+            <h2 className="font-heading text-[19px] font-semibold leading-snug tracking-[-0.01em] text-gray-900 mb-3">Before you start</h2>
             <ul className="space-y-2.5 text-[14.5px] leading-snug text-gray-700 list-disc pl-5">
               {course.requirements.map(r => <li key={r}>{r}</li>)}
             </ul>
           </div>
           <div className="px-1">
-            <h2 className="font-heading font-semibold text-gray-900 mb-3">Who it is for</h2>
+            <h2 className="font-heading text-[19px] font-semibold leading-snug tracking-[-0.01em] text-gray-900 mb-3">Who it is for</h2>
             <ul className="space-y-2.5 text-[14.5px] leading-snug text-gray-700 list-disc pl-5">
               {course.audience.map(r => <li key={r}>{r}</li>)}
             </ul>

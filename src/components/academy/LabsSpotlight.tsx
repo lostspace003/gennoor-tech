@@ -18,7 +18,7 @@ export default function LabsSpotlight({ className = '' }: { className?: string }
   if (courses && courses.length === 0) return null
 
   return (
-    <section className={`bg-[#0f1824] ${className}`}>
+    <section className={`st-night ${className}`}>
       <div className="max-w-6xl mx-auto px-6 py-10 lg:py-10">
         <div className="flex flex-wrap items-end justify-between gap-4 mb-8">
           <div>

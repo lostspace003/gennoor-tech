@@ -28,14 +28,15 @@ interface GroundProps {
 }
 
 /**
- * A lit part of a page: the dark ground, three slow glows and a faint grid of dots, with the
- * content in front. It is dark on both themes (it carries the class `stage`), so on the light
- * theme it is the dark band that stands out. Use it for the top of a page and for the one or
- * two bands that should be noticed; ordinary sections need nothing.
+ * A lit part of a page: a ground with three slow glows and a faint grid of dots, and the
+ * content in front. It follows the theme: navy on the dark one, a deeper tint of the page on
+ * the light one (the light theme has no navy blocks). So write the words inside with the
+ * colour names (`text-gray-900`, `text-gray-600`), never `text-white`. Use it for the top of a
+ * page and for the one or two bands that should be noticed; ordinary sections need nothing.
  */
 export default function Ground({ glow = 'blue', dots = true, mx = 50, my = 40, as: Tag = 'section', className, children, ...rest }: GroundProps) {
   return (
-    <Tag className={cn('st-ground stage', className)} {...rest}>
+    <Tag className={cn('st-ground', className)} {...rest}>
       <div className="st-auras" aria-hidden="true">
         {GLOWS[glow].map(([x, y, size, c], i) => (
           <div
