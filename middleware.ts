@@ -1,12 +1,13 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 import { getToken } from 'next-auth/jwt'
-import { CRM_USERS } from './src/lib/crm/users'
+import { ADMIN_USERS, CRM_USERS } from './src/lib/crm/users'
 
 // Single middleware for protected app surfaces. NOTE: a second middleware at
 // src/middleware.ts was silently shadowed by this file for months — keep ONE
 // middleware, here at the repo root.
 // The list of people lives in src/lib/crm/users.ts (one place for the whole site).
+// Everyone on CRM_USERS may sign in; only ADMIN_USERS may open the admin centre.
 const AUTHORIZED_EMAILS = CRM_USERS
 
 export async function middleware(request: NextRequest) {
@@ -40,10 +41,16 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(loginUrl)
   }
 
-  if (!AUTHORIZED_EMAILS.includes((token.email as string || '').toLowerCase())) {
+  const email = (token.email as string || '').toLowerCase()
+  if (!AUTHORIZED_EMAILS.includes(email)) {
     const loginUrl = new URL('/admin/login', request.url)
     loginUrl.searchParams.set('error', 'AccessDenied')
     return NextResponse.redirect(loginUrl)
+  }
+
+  // Someone who works leads only has no business in the admin centre: they are taken to the CRM.
+  if (path.startsWith('/admin') && !ADMIN_USERS.includes(email)) {
+    return NextResponse.redirect(new URL('/crm', request.url))
   }
 
   return NextResponse.next()

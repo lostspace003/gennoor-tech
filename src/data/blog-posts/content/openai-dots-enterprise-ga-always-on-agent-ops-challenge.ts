@@ -7,7 +7,7 @@ export const post: BlogPost = {
     tldr: 'OpenAI’s recent announcement about persistent agent capabilities for business-focused ChatGPT workspaces shifts the enterprise discussion from model quality to operating discipline. The key issue is not just whether these agents are useful. It is whether admins can verify controls, govern app connections, review privacy and residency implications, monitor usage, and assign clear operational ownership before adoption expands.',
     keyTakeaways: [
       'Persistent agents change the enterprise AI conversation from model performance to operational control, because always-on behavior creates governance obligations that short-session chat tools do not.',
-      'Use OpenAI’s exact public product wording and official documentation rather than informal terms or unsupported release claims, especially when admins need to validate what was actually announced.',
+      'Check OpenAI’s official announcement and documentation when admins need to validate what was actually announced.',
       'Admin controls matter more once agents persist across sessions, since IT teams need clear policy over access, provisioning, monitoring, and escalation before broad rollout.',
       'App connections are the main multiplier for both value and risk, so enterprises need an explicit approval model for which systems these agents can access and under what conditions.',
       'Residency, privacy, and regulated-workload constraints should be treated as enterprise review requirements and verified in official documentation, not assumed from headline product language alone.',
@@ -47,7 +47,7 @@ export const post: BlogPost = {
 
 <p>The first mistake with always-on agents is treating them like better chat. That usually works for a pilot. It fails in production when an agent persists across sessions, touches business systems, and quietly becomes another managed runtime inside the enterprise.</p>
 
-<p>That is why the latest OpenAI update matters. OpenAI has announced new persistent agent capabilities for ChatGPT business-focused workspaces, including Enterprise, Edu, and Healthcare. We are deliberately using OpenAI’s public product wording where possible and avoiding unofficial naming that is not clearly documented in public sources. The product news matters, but the larger enterprise signal matters more: persistent agents shift the discussion from model comparison to operational control.</p>
+<p>That is why the latest OpenAI update matters. OpenAI has announced new persistent agent capabilities for ChatGPT business-focused workspaces, including Enterprise, Edu, and Healthcare. OpenAI calls these always-on agents “dots.” The product news matters, but the larger enterprise signal matters more: persistent agents shift the discussion from model comparison to operational control.</p>
 
 <p>For IT and AI leaders, the question is no longer just whether an agent can reason well enough to help. The harder question is who governs long-running AI workers, what systems they can access, how admins monitor them, which <strong>admin controls</strong> are available, and what happens if wider enablement arrives before those answers are settled.</p>
 
@@ -62,14 +62,6 @@ export const post: BlogPost = {
 <p>That difference pushes the burden onto governance and platform teams. If an always-on agent is available inside a workspace used by enterprise staff, then access policy, <strong>admin controls</strong>, monitoring, support ownership, and data-boundary decisions become immediate concerns, not later-stage maturity work.</p>
 
 <p>OpenAI’s official materials are the right first source for what was announced. Teams should start with the product announcement and then validate any admin, privacy, compliance, and residency implications in the corresponding documentation before rollout decisions are made. See the official OpenAI sources in the references below.</p>
-
-<h2>Use the public product name, not internal shorthand</h2>
-
-<p>The original draft referred to “OpenAI Dots” and “personal dots.” That terminology may reflect internal shorthand or community usage, but if it is not clearly presented as the public product name in OpenAI’s own materials, it should not be the language used in a published enterprise analysis.</p>
-
-<p>For enterprise readers, exact naming matters. Product names map to admin settings, release notes, support requests, policy reviews, and procurement conversations. If the public announcement uses a different name for the capability, enterprises need that exact wording so they can verify what is actually available in their workspaces.</p>
-
-<p>That is also why this article focuses on the underlying operational issue rather than on unsourced phrasing about a precise GA milestone. The enterprise lesson does not depend on one informal label. It depends on the confirmed fact that OpenAI is expanding persistent agent capabilities into business-oriented ChatGPT environments and that those capabilities need governance.</p>
 
 <h2>Persistent agents turn AI into an operations problem</h2>
 
@@ -145,9 +137,7 @@ export const post: BlogPost = {
 
 <h2>Residency and regulated environments are enterprise review items, not assumptions</h2>
 
-<p>The earlier draft stated residency implications too directly, as if they were explicitly established by the product announcement itself. That is too strong unless the cited OpenAI source says so.</p>
-
-<p>The more accurate enterprise position is this: if persistent agents are being introduced into Enterprise, Edu, or Healthcare contexts, then residency, retention, privacy, and regulated-workload handling become mandatory review topics. Whether a given workload is suitable depends on the controls and documentation that OpenAI actually publishes for that workspace and region.</p>
+<p>If persistent agents are being introduced into Enterprise, Edu, or Healthcare contexts, then residency, retention, privacy, and regulated-workload handling become mandatory review topics. Whether a given workload is suitable depends on the controls and documentation that OpenAI actually publishes for that workspace and region.</p>
 
 <p>Healthcare and education already bring heightened sensitivity around data handling, retention expectations, and administrative oversight. Large enterprises face similar constraints across legal, finance, public sector, and cross-border operations. In all of these settings, a persistent agent raises immediate questions about where state is held, how connected data is handled, and whether usage patterns remain inside approved boundaries.</p>
 
@@ -209,7 +199,7 @@ export const post: BlogPost = {
 
 <h2>Monitoring has to happen before exposure expands</h2>
 
-<p>The earlier version referred to unnamed “notes behind this development.” Without a cited source, that phrasing should not stay. The underlying operational point is still valid and does not require unsupported attribution: once persistent capabilities begin to spread, monitoring cannot remain a future enhancement.</p>
+<p>Once persistent capabilities begin to spread, monitoring cannot remain a future enhancement.</p>
 
 <p>Enterprises need visibility into how agents are being used, what they are connected to, where exceptions appear, and which teams are driving adoption. This is not only a security requirement. It is also how organizations determine whether the feature is producing value, where support demand is rising, and which policies are too loose or too restrictive.</p>
 

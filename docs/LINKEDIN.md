@@ -71,3 +71,34 @@ news, one usable checklist, the limits said plainly, a "next 30 days" close.
 `agents.py` does nothing until it is put out again; the steps are in
 `docs/studio-agent-terminated-issue.md`. The website sends the list of emoji the blog can draw with
 every request, so that part works without it.
+
+After putting it out, try the real thing: `npx tsx --env-file=.env.local scripts/autopilot-live-check.ts`
+builds the autopilot's own request for the newest planned post, sends it to the live service and prints
+the post that comes back. It saves nothing and posts nothing. It must end with ALL OK.
+
+## 5. The two days no post could be written (12 and 13 November 2026)
+
+What happened: from 12 November every slot of the autopilot was held with "drafting failed: Agent
+service returned 500" (posts) or "Invalid body: failed to parse JSON value" (polls). GitHub showed
+nothing, because nothing in GitHub failed.
+
+Why: the change of 11 November added the opening lines of recent posts to the writers' notes. Those
+lines are kept in Unicode bold, where one letter is two units of a JavaScript string. `firstLine()` cut
+them at "the first 200", sometimes through the middle of a letter. Half a letter cannot be sent: Azure
+refused the request, and the Python service answered 500 while trying to describe it.
+
+What holds it now, and must stay:
+
+- Text is cut with `cut()` and every request body is written with `safeJson()` (`src/lib/safe-text.ts`).
+  Never `.slice()` a text that may hold bold letters or emoji, and never `JSON.stringify` a body that
+  carries text from an earlier post.
+- `firstLine()` gives plain letters, so a new opening can also be compared with an old one.
+- The notes are built to a fixed size by `buildBrief()` (`src/lib/autopilot/variety.ts`): the rules, the
+  format and the fixes whole, then as many recent openings as fit, newest first. The website's limit is
+  `BRIEF_MAX` (6,000); the service's is 12,000 (`RunBody.brief` in `app.py`). Keep the second above the first.
+- The service drops half letters before it looks at anything (`whole_text` in `app.py`) and refuses a
+  request that does not fit with a short reason, which the Autopilot page now shows.
+- `npx tsx scripts/autopilot-check.ts` runs all of this with no secret and no network. It must end with
+  ALL OK before any pull request that touches the autopilot, the writing rules or `safe-text.ts`.
+
+When the Autopilot page says "drafting failed", read the words after it, then run the live check above.

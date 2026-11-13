@@ -3,6 +3,7 @@ import { randomBytes } from 'crypto'
 import { agentFetch, agentServiceConfigured } from '@/lib/social/agent-service'
 import { refSourceUrls, sourceImageFromUrl, withReferences, type Ref } from '@/lib/social/references'
 import { foundryAuthHeader, foundryConfigured } from '@/lib/crm/foundry'
+import { safeJson } from '@/lib/safe-text'
 import { artBrief, artInstruction, pickArt, type Art } from '@/lib/social/art-direction'
 import { extractHashtags, formatForLinkedIn, LINKEDIN_STYLE_GUIDE } from '@/lib/linkedin-format'
 
@@ -129,7 +130,8 @@ export async function foundry(path: string, body: unknown): Promise<any> {
   const res = await fetch(`${BASE}${path}`, {
     method: 'POST',
     headers: { ...(await foundryAuthHeader()), 'Content-Type': 'application/json' },
-    body: JSON.stringify(body),
+    // safeJson: text taken from an earlier post can hold half a letter, which Azure refuses (see lib/safe-text.ts)
+    body: safeJson(body),
   })
   const json = await res.json().catch(() => ({}))
   if (!res.ok) throw new Error(json?.error?.message || `Foundry request failed (${res.status})`)

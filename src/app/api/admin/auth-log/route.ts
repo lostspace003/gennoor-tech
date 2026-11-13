@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@/lib/auth'
+import { isAdminUser } from '@/lib/crm/users'
 import { TableClient, AzureNamedKeyCredential } from '@azure/data-tables'
 
 function getTableClient() {
@@ -13,7 +14,8 @@ function getTableClient() {
 
 export async function GET(req: NextRequest) {
   const session = await auth()
-  if (!session?.user?.email) {
+  // The list of who signed in is for the admin centre only (not for someone who has the CRM alone)
+  if (!isAdminUser(session?.user?.email)) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 

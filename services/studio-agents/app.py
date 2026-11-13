@@ -23,9 +23,10 @@ import logging
 import os
 from typing import Any, Literal
 
-from fastapi import Depends, FastAPI, Header, HTTPException
-from fastapi.responses import StreamingResponse
-from pydantic import BaseModel, Field
+from fastapi import Depends, FastAPI, Header, HTTPException, Request
+from fastapi.exceptions import RequestValidationError
+from fastapi.responses import JSONResponse, StreamingResponse
+from pydantic import BaseModel, Field, model_validator
 
 import li
 import render as renderer
@@ -40,6 +41,22 @@ app = FastAPI(title="Gennoor Studio Agents")
 _render_lock = asyncio.Semaphore(1)
 
 
+@app.exception_handler(RequestValidationError)
+async def refused(_request: Request, exc: RequestValidationError) -> JSONResponse:
+    """A request that does not fit is refused with a short reason, in plain ASCII.
+
+    The standard answer repeats the whole of what was sent. With an odd character in it, that answer could not be
+    written out and became a 500, which told the website nothing. This one names the field and the problem only.
+    """
+    problems = []
+    for e in exc.errors()[:6]:
+        field = ".".join(str(x) for x in e.get("loc", [])[1:]) or "body"
+        problems.append(f"{field}: {e.get('msg', 'not accepted')}")
+    reason = "; ".join(problems).encode("ascii", "replace").decode("ascii")[:400]
+    log.warning("request refused: %s", reason)
+    return JSONResponse({"detail": reason}, status_code=422)
+
+
 def auth(x_api_key: str = Header(default="")):
     if not API_KEY:
         raise HTTPException(503, "STUDIO_API_KEY is not configured")
@@ -47,17 +64,45 @@ def auth(x_api_key: str = Header(default="")):
         raise HTTPException(401, "Bad key")
 
 
-class RunBody(BaseModel):
+def whole_text(value: Any) -> Any:
+    """Text without half letters.
+
+    A letter outside the basic set (Unicode bold, an emoji) is two units in JavaScript. A caller that cuts a text
+    in the middle of one sends half a letter, which Python reads without complaint and then cannot write out again:
+    the request ended in a 500 with nothing in the log that said why (12 and 13 November 2026, every autopilot
+    draft). Such halves are dropped here, before anything else looks at the text.
+    """
+    if isinstance(value, str):
+        return value.encode("utf-8", "ignore").decode("utf-8")
+    if isinstance(value, list):
+        return [whole_text(v) for v in value]
+    if isinstance(value, dict):
+        return {k: whole_text(v) for k, v in value.items()}
+    return value
+
+
+class TextBody(BaseModel):
+    """Every body that carries written text: its strings are made whole before they are checked."""
+
+    @model_validator(mode="before")
+    @classmethod
+    def _whole(cls, data: Any) -> Any:
+        return whole_text(data)
+
+
+class RunBody(TextBody):
     topic: str = Field(min_length=3, max_length=500)
-    brief: str = Field(default="", max_length=2000)
-    references: str = Field(default="", max_length=40_000)
+    # The website keeps its brief under 6,000 characters (BRIEF_MAX in src/lib/autopilot/live.ts); the room above
+    # that is so a longer note never turns into a refused request.
+    brief: str = Field(default="", max_length=12_000)
+    references: str = Field(default="", max_length=60_000)
     mode: Literal["post", "motion"] = "post"
 
 
-class BlogBody(BaseModel):
+class BlogBody(TextBody):
     topic: str = Field(min_length=3, max_length=500)
-    brief: str = Field(default="", max_length=2000)
-    references: str = Field(default="", max_length=40_000)
+    brief: str = Field(default="", max_length=12_000)
+    references: str = Field(default="", max_length=60_000)
     context: dict[str, Any] = Field(default_factory=dict)
 
 

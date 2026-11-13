@@ -4,10 +4,10 @@ export const post: BlogPost = {
     slug: 'openai-aws-marketplace-enterprise-ai-procurement',
     title: 'AWS Highlighted OpenAI-Powered Bedrock Agents: Why Procurement Architecture Still Matters for Enterprise AI',
     excerpt: 'AWS publicly highlighted Amazon Bedrock Managed Agents powered by OpenAI in an official roundup on October 5, 2026. That does not independently confirm an AWS Marketplace event, but it does signal how enterprise AI is increasingly evaluated through platform fit, procurement architecture, and governance readiness rather than model quality alone.',
-    tldr: 'The supplied source confirms that AWS highlighted Amazon Bedrock Managed Agents powered by OpenAI in an official roundup on October 5, 2026. For enterprise leaders, that can be read as a platform signal: AI adoption is increasingly shaped by procurement architecture, operating models, and governance readiness. Marketplace and purchasing implications are best treated as analysis, not as confirmed facts from this source.',
+    tldr: 'AWS highlighted Amazon Bedrock Managed Agents powered by OpenAI in an official roundup on October 5, 2026. For enterprise leaders, that can be read as a platform signal: AI adoption is increasingly shaped by procurement architecture, operating models, and governance readiness. Marketplace and purchasing implications are best treated as analysis, not as confirmed facts.',
     keyTakeaways: [
       'AWS publicly highlighted Amazon Bedrock Managed Agents powered by OpenAI in an official roundup, which is the verified fact at the center of this article.',
-      'The supplied source does not independently confirm ChatGPT Enterprise availability in AWS Marketplace, nor any specific pricing, billing, onboarding, or procurement mechanics.',
+      'The AWS roundup does not confirm ChatGPT Enterprise availability in AWS Marketplace, nor any specific pricing, billing, onboarding, or procurement mechanics.',
       'For enterprise leaders, AWS platform messaging around OpenAI-powered capabilities can be read as a sign that AI is moving into mainstream platform and governance conversations.',
       'Procurement architecture matters because enterprise AI scale depends on approved buying paths, cost visibility, ownership clarity, and repeatable review processes.',
       'Commercial operability and runtime governance are different workstreams; smoother acquisition does not replace identity, data, logging, and policy controls.',
@@ -15,12 +15,12 @@ export const post: BlogPost = {
     ],
     faqs: [
       {
-        question: 'What is the verified claim in the source material?',
+        question: 'What has AWS actually confirmed?',
         answer: 'The verified claim is that AWS published an official roundup on October 5, 2026 highlighting Amazon Bedrock Managed Agents powered by OpenAI. That is the confirmed fact discussed in this article.',
       },
       {
-        question: 'Does the supplied source confirm that OpenAI launched on AWS Marketplace?',
-        answer: 'No. The supplied material does not independently confirm an OpenAI launch on AWS Marketplace, a ChatGPT Enterprise listing there, or any related pricing, region, eligibility, or purchase mechanics.',
+        question: 'Does the AWS roundup confirm that OpenAI launched on AWS Marketplace?',
+        answer: 'No. The AWS roundup does not confirm an OpenAI launch on AWS Marketplace, a ChatGPT Enterprise listing there, or any related pricing, region, eligibility, or purchase mechanics.',
       },
       {
         question: 'Why does AWS highlighting OpenAI-powered capabilities matter to enterprises?',
@@ -47,7 +47,7 @@ export const post: BlogPost = {
 
 <p>Enterprise AI projects rarely stall because a team cannot find another capable model. They stall because the buying path is messy, security review drags, cloud commitments sit in one budget while AI tools sit in another, and every new vendor arrives as a one-off exception. By the time the pilot proves useful, procurement has become the bottleneck.</p>
 
-<p>The verified signal in the supplied source set is narrower than some early commentary suggested. AWS publicly highlighted <a href="https://aws.amazon.com/blogs/aws/aws-weekly-roundup-amazon-bedrock-managed-agents-powered-by-openai-q3-service-availability-updates-kiro-workflows-and-more-october-5-2026" target="_blank" rel="noopener">Amazon Bedrock Managed Agents powered by OpenAI</a> in an official weekly roundup on October 5, 2026. That is the evidence base. It can be read as a meaningful enterprise platform signal. It does <strong>not</strong> independently confirm ChatGPT Enterprise marketplace availability, pricing, regions, eligibility, or procurement mechanics.</p>
+<p>The verified signal is narrower than some early commentary suggested. AWS publicly highlighted <a href="https://aws.amazon.com/blogs/aws/aws-weekly-roundup-amazon-bedrock-managed-agents-powered-by-openai-q3-service-availability-updates-kiro-workflows-and-more-october-5-2026" target="_blank" rel="noopener">Amazon Bedrock Managed Agents powered by OpenAI</a> in an official weekly roundup on October 5, 2026. That is the evidence base. It can be read as a meaningful enterprise platform signal. It does <strong>not</strong> independently confirm ChatGPT Enterprise marketplace availability, pricing, regions, eligibility, or procurement mechanics.</p>
 
 <p>That distinction matters because enterprise leaders need to separate what the source confirms from what it merely suggests. The confirmed point is that AWS chose to highlight OpenAI-powered capabilities inside its own platform communications. The analytical question is what that may imply for enterprise AI adoption patterns, procurement architecture, and operating models.</p>
 
@@ -60,7 +60,7 @@ export const post: BlogPost = {
 <ul>
   <li><strong>Confirmed:</strong> AWS published an official roundup on October 5, 2026 that highlighted Amazon Bedrock Managed Agents powered by OpenAI.</li>
   <li><strong>Reasonable interpretation:</strong> AWS sees enough enterprise relevance in OpenAI-powered capabilities to feature them in its platform communications.</li>
-  <li><strong>Not confirmed by the supplied material:</strong> Any direct claim that OpenAI itself launched into AWS Marketplace, that ChatGPT Enterprise is available there, or that specific purchasing mechanics now apply.</li>
+  <li><strong>Not confirmed:</strong> Any direct claim that OpenAI itself launched into AWS Marketplace, that ChatGPT Enterprise is available there, or that specific purchasing mechanics now apply.</li>
   <li><strong>Also not confirmed here:</strong> Pricing, committed spend treatment, billing consolidation behavior, onboarding workflow, regions, or eligibility details tied to this specific development.</li>
 </ul>
 
@@ -171,7 +171,7 @@ export const post: BlogPost = {
   <li>Can governance controls be applied consistently across teams?</li>
 </ul>
 
-<p>This is the practical reality behind many enterprise AI decisions. Procurement fit and platform fit increasingly shape rollout speed more than benchmark wins. That is also why enterprise leaders should read major AI launches carefully instead of focusing only on headline claims, a point covered in <a href="/resources/blog/claude-5-2-enterprise-upgrade-bar-faster-cheaper-stricter">How Enterprise Teams Should Read AI Model Launches When the Details Are Still Unclear</a>.</p>
+<p>This is the practical reality behind many enterprise AI decisions. Procurement fit and platform fit increasingly shape rollout speed more than benchmark wins. That is also why enterprise leaders should read major AI launches carefully instead of focusing only on headline claims, a point covered in <a href="/resources/blog/claude-5-2-enterprise-upgrade-bar-faster-cheaper-stricter">Claude Fable 5.2: What Changed and What a Business Should Do</a>.</p>
 
 <p>Once AI becomes a portfolio decision rather than a team experiment, the commercial and operational structure matters more than many vendors would prefer to admit.</p>
 
@@ -197,7 +197,7 @@ export const post: BlogPost = {
 
 <p>In other words, enterprise AI is becoming less like a consumer tool category and more like a core enterprise platform category. That shift changes how products compete. Capability still matters, but distribution through trusted enterprise channels and alignment with enterprise operating models increasingly become part of the competitive advantage.</p>
 
-<p>AWS highlighting OpenAI-powered capabilities in its own platform communications is consistent with that trajectory. This can be read as a sign that major cloud platforms see AI alignment as part of the enterprise control plane, not just part of the feature catalog. If broader commercial routing follows over time, the practical implication would be faster standardization for some enterprises. But that future step is not what the supplied source confirms today.</p>
+<p>AWS highlighting OpenAI-powered capabilities in its own platform communications is consistent with that trajectory. This can be read as a sign that major cloud platforms see AI alignment as part of the enterprise control plane, not just part of the feature catalog. If broader commercial routing follows over time, the practical implication would be faster standardization for some enterprises. But that future step is not what the AWS roundup confirms today.</p>
 
 <h2>Bottom line</h2>
 

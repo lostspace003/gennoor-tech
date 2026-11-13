@@ -96,6 +96,20 @@ audio engine with a limiter. Where a video cannot be made louder (a phone's own 
 video on another site that does not allow it) the slider ends at 100 and nothing else changes. Do not
 write a mute button of your own in a new player.
 
+**A button on a video is an icon, with no words.** The owner's words (2026-11-13): "with sound, not
+required to write that text ... just having that simple icon can be good." A video that plays without
+sound shows one round button with the muted-speaker icon (`VolumeX`), top left, 40 to 44 pixels, with
+what it does in `aria-label` and `title`. Never a pill that says "Play with sound" or "Turn on sound".
+
+**A video always has a slider to move through it.** The owner's words: "we should be able to see the
+video slider so that we can move it forward the moment we hover over it." Every player of our own uses
+the one bar, `src/components/media/PlayerBar.tsx`: the slider, play or pause, the sound button above,
+the time and full screen. On a course promo it is always there. On a film that plays by itself
+(`src/components/home/FilmPlayer.tsx`) it shows while the pointer is on the film, after a tap on a
+phone, while the film is paused and whenever the keyboard is in it, and is out of the way otherwise,
+because the spoken words are written at the foot of the picture. Do not turn on the browser's own
+controls instead, and do not build a second bar.
+
 **The colour of an icon tile says what kind of thing it is.** Keep to this:
 
 | Tone | Means |

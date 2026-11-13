@@ -8,12 +8,14 @@ import { publishNew } from '@/lib/social/publisher'
 import { createAgentDraft, createDraft, foundry, getDraft, listDrafts, mutateDraft, readBlob, recordSpend, textUsd, tokensOf, writeBlob, type TraceStep } from '@/lib/social/studio'
 import { isTransient, withRetry, type Deps } from './engine'
 import { emptyState, DEFAULT_CONFIG, type Slot, type State, type TargetKey, type TopicIdea } from './types'
-import { BLOG_FORMATS, HOOK_RULES, POST_FORMATS, RESEARCH_SOURCES, firstLine, formatOf, pillarOf } from './variety'
+import { BLOG_FORMATS, POST_FORMATS, RESEARCH_SOURCES, buildBrief, firstLine, formatOf, pillarOf } from './variety'
 import { linksHtml } from './email-actions'
 
 const FILE = 'autopilot/state.json'
 const TEXT_MODEL = process.env.FOUNDRY_POST_MODEL || process.env.FOUNDRY_WEB_MODEL || 'gpt-5.4'
 const FALLBACK_MODEL = process.env.FOUNDRY_FALLBACK_MODEL || 'gpt-5-mini'
+/** The longest brief sent to the agent service. Its own limit is higher (services/studio-agents/app.py, RunBody.brief). */
+const BRIEF_MAX = 6000
 
 export async function loadState(): Promise<State> {
   const raw = await readBlob(FILE)
@@ -98,7 +100,8 @@ Reply with JSON only: {"ideas":[{"title": string (<=110 chars), "format": string
 /** Runs the Python agent team to completion and returns its final result (the web app does not need the live steps here). */
 async function runTeam(topic: string, brief: string, refs: string, mode: 'post' | 'motion') {
   const res = await agentFetch('/run', { topic, brief, references: refs, mode })
-  if (!res.ok || !res.body) throw new Error(`Agent service returned ${res.status}`)
+  // The service's own words are kept, so the Autopilot page says why (a bare "returned 500" hid the cause for two days)
+  if (!res.ok || !res.body) throw new Error(`Agent service returned ${res.status}${res.ok ? '' : `: ${(await res.text().catch(() => '')).replace(/\s+/g, ' ').slice(0, 160)}`}`)
   const reader = res.body.getReader(), dec = new TextDecoder()
   let buf = '', result: any = null
   const trace: TraceStep[] = []
@@ -137,11 +140,23 @@ async function variantOf(text: string, sleep: Deps['sleep']): Promise<string | u
   } catch { return undefined }
 }
 
-async function generate(ctx: Parameters<Deps['generate']>[0], sleep: Deps['sleep']): ReturnType<Deps['generate']> {
+/**
+ * What is sent to the writers for one slot: the editor's notes and the reference material. Kept apart from the
+ * sending so that `npx tsx --env-file=.env.local scripts/autopilot-live-check.ts` can build the real thing and try it.
+ * The brief is built to a fixed size: the service refuses a longer one, and on 12 and 13 November 2026 an over-long,
+ * half-cut list of openings stopped every draft.
+ */
+export function draftRequest(ctx: Parameters<Deps['generate']>[0]): { brief: string; references: string } {
   const { slot, cfg, notes, recentHooks = [] } = ctx
   const topic = slot.topic!
-  const hooks = recentHooks.length ? `\n${HOOK_RULES}\n- ${recentHooks.slice(-15).join('\n- ')}\n` : ''
-  const brief = `${REACH_RULES}\n${slot.kind === 'poll' ? '' : formatBrief(topic)}${hooks}\n${slot.weekend ? `Weekend flavour: ${cfg.weekendTheme}\n` : ''}Never mention: ${cfg.avoid.join('; ')}.\n${notes.length ? `\nFix these problems from the last attempt:\n- ${notes.join('\n- ')}` : ''}`
+  const brief = buildBrief({ rules: REACH_RULES, format: slot.kind === 'poll' ? '' : formatBrief(topic), weekend: slot.weekend ? cfg.weekendTheme : '', avoid: cfg.avoid, notes, openings: recentHooks }, BRIEF_MAX)
+  return { brief, references: sourcesText(topic) }
+}
+
+async function generate(ctx: Parameters<Deps['generate']>[0], sleep: Deps['sleep']): ReturnType<Deps['generate']> {
+  const { slot } = ctx
+  const topic = slot.topic!
+  const { brief } = draftRequest(ctx)
 
   if (slot.kind === 'poll') {
     const draft = await createDraft(topic.title, `${brief}\nThe poll should ask a question practitioners will have an opinion on, based on: ${sourcesText(topic)}`, 'poll')

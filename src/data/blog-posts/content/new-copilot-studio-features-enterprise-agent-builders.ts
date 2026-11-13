@@ -120,7 +120,7 @@ export const post: BlogPost = {
 
 <h2>What enterprise teams should watch carefully</h2>
 
-<p>The provided source set is strong on official announcements, but it leaves some practical questions open. Enterprises still need to confirm exact availability, preview versus general availability status, licensing, regional support, data boundaries, and feature-specific limitations directly in the current product documentation. Those details matter before any production commitment.</p>
+<p>The official announcements leave some practical questions open. Enterprises still need to confirm exact availability, preview versus general availability status, licensing, regional support, data boundaries, and feature-specific limitations directly in the current product documentation. Those details matter before any production commitment.</p>
 
 <p>There is also a role clarity problem that many organizations underestimate. Copilot Studio now spans citizen developer scenarios, business analyst workflows, and platform-level agent design. Without a clear operating model, teams can end up with duplicated agents, inconsistent controls, and fragile automations spread across departments.</p>
 
