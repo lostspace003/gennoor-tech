@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { ChevronRight, Loader2, RefreshCw, UploadCloud } from 'lucide-react'
 import { EMPTY_CUSTOM, TRACKS, mergedOptions, type CustomTaxonomy, type Facet } from '@/lib/lms-taxonomy'
 
@@ -98,6 +98,10 @@ function Checks({ label, options, value, onChange }: { label: string; options: r
 
 export default function AdminLmsPage() {
   const [rows, setRows] = useState<Row[]>([])
+  // The list takes a few seconds to arrive (the server counts every file of every course), so the page says so
+  const [listState, setListState] = useState<'loading' | 'ready' | 'failed'>('loading')
+  const [refreshing, setRefreshing] = useState(false)
+  const loadingNow = useRef(false)
   const [sasUrl, setSasUrl] = useState('')
   const [slug, setSlug] = useState('')
   const [vendor, setVendor] = useState('')
@@ -122,19 +126,37 @@ export default function AdminLmsPage() {
   const [lessonMsg, setLessonMsg] = useState<{ ok: boolean; text: string } | null>(null)
 
   const load = useCallback(async () => {
-    const r = await fetch('/api/admin/lms/courses', { cache: 'no-store' })
-    if (r.ok) setRows((await r.json()).courses)
+    // One request at a time: a slow answer is never overtaken by the next one
+    if (loadingNow.current) return
+    loadingNow.current = true
+    setRefreshing(true)
+    try {
+      const r = await fetch('/api/admin/lms/courses', { cache: 'no-store' })
+      if (!r.ok) throw new Error(String(r.status))
+      setRows((await r.json()).courses)
+      setListState('ready')
+    } catch {
+      // Keep a list that is already on screen; only an empty page says it failed
+      setListState(s => (s === 'ready' ? s : 'failed'))
+    } finally {
+      loadingNow.current = false
+      setRefreshing(false)
+    }
   }, [])
 
   useEffect(() => {
     fetch('/api/admin/lms/taxonomy', { cache: 'no-store' }).then(r => (r.ok ? r.json() : null)).then(d => d && setCustom(d.custom)).catch(() => {})
   }, [])
 
+  useEffect(() => { load() }, [load])
+
+  // Ask again every 15 seconds only while files are being copied; a finished list does not change by itself
+  const copying = busy || rows.some(r => !!r.copy && r.copy.pending > 0)
   useEffect(() => {
-    load()
+    if (!copying) return
     const t = setInterval(load, 15_000)
     return () => clearInterval(t)
-  }, [load])
+  }, [copying, load])
 
   const importCourse = async () => {
     setBusy(true)
@@ -197,7 +219,7 @@ export default function AdminLmsPage() {
       <section className="mt-4">
         <div className="flex items-center justify-between mb-3">
           <h2 className="text-sm font-semibold text-gray-900">Courses</h2>
-          <button type="button" onClick={load} className="text-xs text-gray-600 hover:text-gray-900 inline-flex items-center gap-1 rounded-md border border-gray-200 bg-white px-2.5 py-1"><RefreshCw className="w-3.5 h-3.5" /> Refresh</button>
+          <button type="button" onClick={load} disabled={refreshing} className="text-xs text-gray-600 hover:text-gray-900 inline-flex items-center gap-1 rounded-md border border-gray-200 bg-white px-2.5 py-1 disabled:opacity-60"><RefreshCw className={`w-3.5 h-3.5 ${refreshing ? 'animate-spin' : ''}`} /> {refreshing ? 'Loading…' : 'Refresh'}</button>
         </div>
         <div className="divide-y divide-gray-200 border border-gray-200 rounded-xl bg-white shadow-sm max-h-[28rem] overflow-y-auto">
           {rows.map(r => {
@@ -241,7 +263,14 @@ export default function AdminLmsPage() {
               </div>
             )
           })}
-          {rows.length === 0 && <div className="p-4 text-xs text-gray-500">No courses yet.</div>}
+          {rows.length === 0 && listState === 'loading' && (
+            <div className="p-4" role="status" aria-live="polite">
+              <p className="text-xs text-gray-500 mb-3">Loading the courses and counting their files. This takes a few seconds.</p>
+              {[0, 1, 2].map(i => <div key={i} className="admin-skeleton h-11 mb-2 last:mb-0" />)}
+            </div>
+          )}
+          {rows.length === 0 && listState === 'failed' && <div className="p-4 text-xs text-red-600" role="alert">The courses could not be loaded. Press Refresh to try again.</div>}
+          {rows.length === 0 && listState === 'ready' && <div className="p-4 text-xs text-gray-500">No courses yet.</div>}
         </div>
       </section>
 

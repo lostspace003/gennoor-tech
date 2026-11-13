@@ -187,8 +187,7 @@ export async function studioCopyStatus(connectionString: string, course: LmsCour
       // container not created yet
     }
   }
-  await count(hlsContainer(course.slug))
-  await count(KEYS_CONTAINER, `${course.slug}/`)
-  await count(course.slug)
+  // The three places are read at the same time: the admin list waits for the slowest one, not for all three in a row
+  await Promise.all([count(hlsContainer(course.slug)), count(KEYS_CONTAINER, `${course.slug}/`), count(course.slug)])
   return { total, success, pending, failed, missing: Math.max(0, total - success - pending - failed) }
 }
