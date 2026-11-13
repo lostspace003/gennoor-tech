@@ -49,7 +49,9 @@ for (const theme of themes) {
   const context = await browser.createBrowserContext()
   const page = await context.newPage()
   await page.setViewport({ width: 1366, height: 900, deviceScaleFactor: 1 })
-  await page.evaluateOnNewDocument((t, key) => { try { localStorage.setItem(key, t) } catch { /* no storage */ } }, theme, backOffice ? 'gennoor.admin.theme' : 'gennoor.theme')
+  // The public site follows the visitor's clock, so its look is set here as a choice made by hand that never
+  // runs out (src/lib/theme.ts: "<look>|<until, in milliseconds>"). The back office keeps its own plain choice.
+  await page.evaluateOnNewDocument((key, value) => { try { localStorage.setItem(key, value) } catch { /* no storage */ } }, backOffice ? 'gennoor.admin.theme' : 'gennoor.theme.choice', backOffice ? theme : `${theme}|4102444800000`)
   if (real) {
     const { encode } = await import('next-auth/jwt')
     const name = 'authjs.session-token'

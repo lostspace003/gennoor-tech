@@ -7,6 +7,7 @@ import { SEQUENCE, stepById, stepNumber, sequenceProgress, isOpen } from '@/lib/
 import { buildStepEmail } from '@/lib/crm/sequence-emails'
 import { newLead } from '@/lib/crm/types'
 import { needsAnswer, sendRoom, sentInLastHour, HOURLY_SEND_LIMIT } from '@/lib/crm/replies'
+import { sendAgain } from '@/lib/crm/delivery'
 import { syncRepliesBriefly } from '@/lib/crm/reply-sync'
 
 const ADMIN_CC = process.env.EMAIL_ADMIN || 'admin@gennoor.com'
@@ -101,11 +102,12 @@ export async function POST(request: Request) {
     const catalogue = needsCatalogue ? await catalogExcelAttachment() : null
 
     const cc = [...new Set([ADMIN_CC, user.email])]
-    const results: Array<{ leadId: string; ok: boolean; error?: string }> = []
+    // `done` is false when the email service has taken the email and not finished sending it yet (see lib/crm/delivery.ts)
+    const results: Array<{ leadId: string; ok: boolean; error?: string; op?: string; done?: boolean }> = []
     for (const job of jobs) {
       const attach = stepById(job.step)?.attachCatalogue && catalogue ? [catalogue] : undefined
       const r = await sendEmail({ to: job.to, cc, from: FROM, fromName: 'Gennoor Tech', subject: job.subject, html: job.html, attachments: attach })
-      results.push({ leadId: job.leadId, ok: r.success, error: r.error })
+      results.push({ leadId: job.leadId, ok: r.success, error: r.error, op: r.messageId, done: r.done })
     }
 
     const now = new Date().toISOString()
@@ -115,7 +117,12 @@ export async function POST(request: Request) {
         const job = jobs.find((j) => j.leadId === r.leadId)!
         if (!lead) continue
         const n = stepNumber(job.step)
-        lead.emailHistory.unshift({ at: now, by: user.email, to: job.to, subject: job.subject, status: r.ok ? 'sent' : 'failed', body: job.text.slice(0, 4000), cc, step: job.step })
+        lead.emailHistory.unshift({
+          at: now, by: user.email, to: job.to, subject: job.subject, status: r.ok ? 'sent' : 'failed', body: job.text.slice(0, 4000), cc, step: job.step,
+          ...(r.op ? { op: r.op } : {}),
+          ...(r.ok && r.done ? { confirmedAt: now, confirmedBy: 'service' as const } : {}),
+          ...(!r.ok && r.error ? { error: r.error.slice(0, 300) } : {}),
+        })
         if (r.ok) {
           lead.sequence = lead.sequence || { sent: [] }
           lead.sequence.sent.push({ step: job.step, at: now, by: user.email })
@@ -123,15 +130,18 @@ export async function POST(request: Request) {
           // Sending to an unassigned lead makes it yours, so the follow-ups have an owner
           if (!lead.owner) lead.owner = user.email
         }
-        touch(lead, { at: now, by: user.email, type: 'email', description: r.ok ? `Email ${n} of ${SEQUENCE.length} sent: ${stepById(job.step)!.title}` : `Email ${n} FAILED: ${r.error || 'unknown error'}` })
+        touch(lead, { at: now, by: user.email, type: 'email', description: r.ok ? `Email ${n} of ${SEQUENCE.length} ${r.done ? 'sent' : 'handed to the email service'}: ${stepById(job.step)!.title}` : `Email ${n} FAILED: ${r.error || 'unknown error'}` })
       }
     })
 
     const sent = results.filter((r) => r.ok).length
+    // Taken by the email service and not finished yet: shown as "on its way" until it is confirmed
+    const onItsWay = results.filter((r) => r.ok && !r.done).length
     const failed = results.filter((r) => !r.ok)
     return NextResponse.json({
       success: failed.length === 0,
       sent,
+      onItsWay,
       failed: failed.length,
       skipped,
       errors: failed.map((f) => f.error || 'send failed'),
@@ -143,15 +153,28 @@ export async function POST(request: Request) {
   }
 }
 
-/** Stop or resume the series for leads: { leadIds, action: 'stop' | 'resume', reason? } */
+/**
+ * Stop or resume the series for leads: { leadIds, action: 'stop' | 'resume', reason? }
+ * Make one email of the series due again: { leadIds: [id], action: 'again', step }. Only for an email that
+ * failed, or that nothing confirmed for a day (lib/crm/delivery.ts decides); never for one that has gone.
+ */
 export async function PATCH(request: Request) {
   const user = await requireCrmUser()
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   try {
-    const { leadIds, action, reason } = await request.json()
-    if (!Array.isArray(leadIds) || !['stop', 'resume'].includes(action)) return NextResponse.json({ error: 'leadIds and action required' }, { status: 400 })
+    const { leadIds, action, reason, step } = await request.json()
+    if (!Array.isArray(leadIds) || !['stop', 'resume', 'again'].includes(action)) return NextResponse.json({ error: 'leadIds and action required' }, { status: 400 })
     const now = new Date().toISOString()
+    if (action === 'again') {
+      if (!stepById(step)) return NextResponse.json({ error: 'Unknown step' }, { status: 400 })
+      const due = await mutateLeads((leads) => {
+        const lead = leads.find((l) => l.id === leadIds[0])
+        return !!lead && canWorkLead(lead, user) && sendAgain(lead, step, user.email, now)
+      })
+      if (!due) return NextResponse.json({ error: 'This email cannot be sent again: it has gone, or it is still on its way.' }, { status: 409 })
+      return NextResponse.json({ success: true, done: 1 })
+    }
     const done = await mutateLeads((leads) => {
       let n = 0
       for (const lead of leads) {

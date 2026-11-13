@@ -2,13 +2,14 @@
 
 import { useEffect, useMemo, useRef, useState } from 'react'
 import * as XLSX from 'xlsx'
-import { Search, Upload, Download, Trash2, X, Hand, Undo2, Archive, UserPlus, Send, Linkedin, Mail } from 'lucide-react'
+import { Search, Upload, Download, Trash2, X, Hand, Undo2, Archive, UserPlus, Send, Linkedin, Mail, Check, Clock, AlertTriangle } from 'lucide-react'
 import { Lead, LEAD_STEPS, STEP_LABELS, isAutoSource } from '@/lib/crm/types'
 import { LEAD_COLUMNS, mapHeaders, rowToLead, looksLikeEmail, leadToRow } from '@/lib/crm/import'
 import { sequenceProgress, stepNumber } from '@/lib/crm/sequence'
 import { CRM_USERS, shortName } from '@/lib/crm/users'
-import { StatusBadge, StepStrip, timeAgo, api, Spinner, MultiSelect, Pagination } from './shared'
+import { StatusBadge, StepStrip, timeAgo, api, Spinner, MultiSelect, Pagination, useMinute } from './shared'
 import { needsAnswer } from '@/lib/crm/replies'
+import { failedSeriesSend, lastSeriesSend, sendHint, sendLine, type SeriesSend } from '@/lib/crm/delivery'
 import { useCrm } from './CrmContext'
 import SendStepModal from './SendStep'
 import FindOnLinkedIn from './FindOnLinkedIn'
@@ -26,16 +27,25 @@ interface Props {
 
 interface ParsedUpload { rows: Partial<Lead>[]; notes: string[]; skipped: number; file: string }
 
-/** "Email 3 of 9 in 4 days", "Email 2 due", "Finished"… one phrase for the series. */
-export function seriesLabel(lead: Lead): { text: string; due: boolean } {
-  if (lead.status !== 'new' && lead.status !== 'contacted') return { text: '', due: false }
-  const p = sequenceProgress(lead)
-  if (p.stopped) return { text: 'Emails stopped', due: false }
-  if (p.finished) return { text: 'Series finished', due: false }
-  if (!lead.email) return { text: 'No email address', due: false }
+const SEND_ICON = { sent: Check, onItsWay: Clock, unconfirmed: AlertTriangle, failed: AlertTriangle } as const
+const SEND_TONE = { sent: 'text-gray-700', onItsWay: 'text-gray-700', unconfirmed: 'text-amber-700', failed: 'text-red-700' } as const
+
+/**
+ * The series for one lead, in two short lines: what has happened to the last email ("Email 1 on its way",
+ * "Email 1 sent · 3 hours ago") and what comes next ("Email 2 in 4 days", "Email 2 is due").
+ * The first line used to be missing: the list said only "Email 2 in 4d", and nothing said email 1 had gone.
+ */
+export function seriesLines(lead: Lead, now = Date.now()): { last?: SeriesSend; next: string; due: boolean } {
+  if (lead.status !== 'new' && lead.status !== 'contacted') return { next: '', due: false }
+  const p = sequenceProgress(lead, now)
+  const last = failedSeriesSend(lead) || lastSeriesSend(lead, now) || undefined
+  if (p.stopped) return { last, next: 'Emails stopped', due: false }
+  if (p.finished) return { last, next: 'Series finished', due: false }
+  if (!lead.email) return { next: 'No email address', due: false }
   const n = stepNumber(p.next!.id)
-  if (p.sentIds.length === 0) return { text: 'Ready for email 1', due: true }
-  return p.due ? { text: `Email ${n} due`, due: true } : { text: `Email ${n} in ${p.daysUntil}d`, due: false }
+  if (last?.state === 'failed') return { last, next: `Send email ${n} again`, due: true }
+  if (p.sentIds.length === 0) return { next: 'Ready for email 1', due: true }
+  return { last, next: p.due ? `Email ${n} is due` : `Email ${n} in ${p.daysUntil} day${p.daysUntil === 1 ? '' : 's'}`, due: p.due }
 }
 
 export default function LeadsView({ leads, canManage, onOpenLead, onReload, notify }: Props) {
@@ -55,6 +65,8 @@ export default function LeadsView({ leads, canManage, onOpenLead, onReload, noti
   const [finding, setFinding] = useState(false)
   const [sendTo, setSendTo] = useState<Lead[] | null>(null)
   const fileRef = useRef<HTMLInputElement>(null)
+  // "On its way · 12 min" must stay true while the page is open
+  useMinute()
 
   // Deep links, used once then cleaned from the address bar:
   //   ?new=1        open the Add lead window
@@ -383,7 +395,8 @@ export default function LeadsView({ leads, canManage, onOpenLead, onReload, noti
               </tr>
             )}
             {pageLeads.map((lead) => {
-              const series = seriesLabel(lead)
+              const series = seriesLines(lead)
+              const LastIcon = series.last ? SEND_ICON[series.last.state] : Mail
               return (
                 <tr key={lead.id} className="hover:bg-gray-50 cursor-pointer" onClick={() => onOpenLead(lead.id)}>
                   <td className="px-4 py-2.5" onClick={(e) => e.stopPropagation()}>
@@ -409,11 +422,21 @@ export default function LeadsView({ leads, canManage, onOpenLead, onReload, noti
                   <td className="px-4 py-2.5">
                     {lead.dumped ? <span className="text-[11px] bg-gray-200 text-gray-600 rounded-full px-2 py-0.5" title={lead.dumped.reason}>Archived</span> : <StatusBadge status={lead.status} />}
                   </td>
-                  <td className="px-4 py-2.5">
-                    {series.text ? (
-                      <span className={`text-xs inline-flex items-center gap-1 ${series.due ? 'text-primary-700 font-medium' : 'text-gray-500'}`}>
-                        <Mail className="w-3 h-3" /> {series.text}
-                      </span>
+                  <td className="px-4 py-2.5 whitespace-nowrap">
+                    {series.last || series.next ? (
+                      <>
+                        {/* What has happened to the last email, then what comes next */}
+                        {series.last && (
+                          <div className={`text-xs flex items-center gap-1 ${SEND_TONE[series.last.state]}`} title={sendHint(series.last)}>
+                            <LastIcon className={`w-3 h-3 shrink-0 ${series.last.state === 'sent' ? 'text-green-600' : ''}`} /> {sendLine(series.last)}
+                          </div>
+                        )}
+                        {series.next && (
+                          <div className={`text-xs flex items-center gap-1 ${series.due ? 'text-primary-700 font-medium' : 'text-gray-500'}`}>
+                            {!series.last && <Mail className="w-3 h-3 shrink-0" />}<span className={series.last ? 'pl-4' : ''}>{series.next}</span>
+                          </div>
+                        )}
+                      </>
                     ) : (
                       <span className="text-xs text-gray-400">{timeAgo(lead.lastActivity)}</span>
                     )}

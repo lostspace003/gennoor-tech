@@ -14,7 +14,8 @@ import { escapeHtml } from '@/lib/escape-html'
 
 const SITE = 'https://www.gennoor.com'
 const ART = `${SITE}/email/brief`
-const LOGO = `${SITE}/logos/gennoor-tech-horizontal-dark-bright_760x260_email-header.png`
+// The logo in the brand's own lettering, on this email's card colour (drawn by scripts/email-art/logo.mjs)
+const LOGO = `${SITE}/email/logo-dark.png`
 const FONT = "'Segoe UI',Arial,sans-serif"
 
 export const BRIEF = {
@@ -150,7 +151,7 @@ export function briefShell(bodyHtml: string, opts: { preheader: string; signatur
 <div style="display:none;max-height:0;overflow:hidden;color:${C.page}">${escapeHtml(opts.preheader)}</div>
 <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" bgcolor="${C.page}" style="background:${C.page}"><tr><td align="center" style="padding:24px 10px">
   <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="600" bgcolor="${C.card}" style="width:100%;max-width:600px;background:${C.card};border:1px solid ${C.line};border-radius:20px;font-family:${FONT}">
-    <tr><td style="padding:24px 28px 0"><a href="${SITE}"><img src="${LOGO}" alt="Gennoor Tech" width="150" style="display:block;border:0;max-width:150px"/></a></td></tr>
+    <tr><td style="padding:22px 26px 0"><a href="${SITE}"><img src="${LOGO}" alt="Gennoor Tech" width="182" height="60" style="display:block;border:0;width:182px;max-width:182px;height:auto"/></a></td></tr>
     <tr><td style="padding:26px 28px 30px;font-family:${FONT}">${bodyHtml}</td></tr>
     <tr><td style="padding:20px 28px 24px;border-top:1px solid ${C.line};font-family:${FONT}">
       <p style="margin:0 0 2px;font-size:14px;font-weight:700;color:${C.text}">${escapeHtml(sig.name)}</p>

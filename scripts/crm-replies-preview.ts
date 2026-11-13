@@ -40,7 +40,7 @@ async function main() {
   console.log(`\na run now would: note a reply on ${count('replied')} leads, stop the series for ${count('stopped')}, close ${count('closed')} (the ready-made "Not for us"), mark ${count('answered')} as already answered from a mailbox`)
   const before = (s: string) => leads.filter((l) => !l.dumped && l.status === s).length
   const after = (s: string) => copy.filter((l) => !l.dumped && l.status === s).length
-  console.log(`steps before -> after: New ${before('new')} -> ${after('new')}, Emailing ${before('contacted')} -> ${after('contacted')}, Talking ${before('qualified')} -> ${after('qualified')}, Proposal ${before('proposal')} -> ${after('proposal')}, Customer ${before('won')} -> ${after('won')}, Closed ${before('lost')} -> ${after('lost')}`)
+  console.log(`steps before -> after: New ${before('new')} -> ${after('new')}, Emailed ${before('contacted')} -> ${after('contacted')}, Talking ${before('qualified')} -> ${after('qualified')}, Proposal ${before('proposal')} -> ${after('proposal')}, Customer ${before('won')} -> ${after('won')}, Closed ${before('lost')} -> ${after('lost')}`)
   console.log(`waiting for an answer afterwards: ${copy.filter((l) => needsAnswer(l)).length} leads`)
   const t = todayLists(copy, '', true)
   console.log(`Today (everyone) afterwards: replies ${t.replies.length}, in conversation ${t.talking.length}, to pick up ${t.pool.length}, to start ${t.toStart.length}, due ${t.due.length}, no address ${t.noEmail.length}, series finished ${t.finished.length}, waiting ${t.waiting.length}`)

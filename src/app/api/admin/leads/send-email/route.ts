@@ -60,7 +60,8 @@ export async function POST(request: Request) {
     }
 
     const html = wrapHtml(body, user.email)
-    const results: Array<{ leadId: string; to: string; success: boolean; error?: string }> = []
+    // `done` is false when the email service has taken the email and not finished sending it yet (see lib/crm/delivery.ts)
+    const results: Array<{ leadId: string; to: string; success: boolean; error?: string; op?: string; done?: boolean }> = []
 
     // One email per lead so each lead gets an individually addressed message.
     // admin@ AND the team member sending are ALWAYS on CC regardless of what
@@ -79,7 +80,7 @@ export async function POST(request: Request) {
         html,
         attachments: attachments.length ? attachments : undefined,
       })
-      results.push({ leadId: lead.id, to: lead.email, success: result.success, error: result.error })
+      results.push({ leadId: lead.id, to: lead.email, success: result.success, error: result.error, op: result.messageId, done: result.done })
     }
 
     // Record history + activity on each lead
@@ -96,6 +97,9 @@ export async function POST(request: Request) {
           status: r.success ? 'sent' : 'failed',
           body: String(body).slice(0, 4000),
           cc: [...new Set(ccList)],
+          ...(r.op ? { op: r.op } : {}),
+          ...(r.success && r.done ? { confirmedAt: now, confirmedBy: 'service' as const } : {}),
+          ...(!r.success && r.error ? { error: r.error.slice(0, 300) } : {}),
         })
         if (r.success && lead.status === 'new') lead.status = 'contacted'
         touch(lead, {

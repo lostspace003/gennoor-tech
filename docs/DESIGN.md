@@ -13,14 +13,26 @@ the films and the presentation (`scripts/show/`).
 
 | Look | Class on `<html>` | Who sees it |
 |---|---|---|
-| **Stage** (dark) | `stage` | Every public page. The site opens in this one. |
-| **Day** (light) | `day` | The same public pages when the visitor picks "Light". Soft grey paper, never pure white, and **no navy blocks**. |
+| **Stage** (dark) | `stage` | Every public page, in the evening and at night: from 18:00 to 07:00 on the visitor's own clock. |
+| **Day** (light) | `day` | The same public pages by day: from 07:00 to 18:00 on the visitor's own clock. Soft grey paper, never pure white, and **no navy blocks**. |
 | **Paper** | none | The admin centre, the CRM, the lesson players. Light and compact. |
 | **Paper, dark** | `stage` | The admin centre and the CRM, when the person working there switches it on. The same pages with the stage's colour values. Light stays the default. |
 
+- **The public site follows the visitor's clock** (owner, 13 November 2026: "If it is the daylight, it
+  will be light. If it is the dawn or the night time, it will be dark", "as per the zone in which the
+  website is being opened"). The clock of the visitor's device is already in their own zone, so nothing
+  is asked of them and nothing is sent anywhere. The two hours are `DAY_FROM` and `DAY_UNTIL` in
+  `src/lib/theme.ts`; change them there and nowhere else.
+- **Both looks are now the first thing somebody sees.** A visitor by day meets the light look without
+  pressing anything, so a page that is right only in the dark is wrong for most working hours.
 - A small script in `src/app/layout.tsx` puts the class on `<html>` before the page is drawn;
-  `PortalShell` keeps it right while moving between pages; `ThemeSwitch` (foot of the menu, top bar on a
-  phone) changes it. The choice is kept in the visitor's browser (`gennoor.theme`).
+  `PortalShell` keeps it right while moving between pages and while a page stays open (it turns by
+  itself at 07:00 and at 18:00). `ThemeSwitch` (foot of the menu, top bar on a phone) still changes it:
+  a choice made by hand lasts until the clock next changes the look, then the clock decides again. It is
+  kept in the visitor's browser (`gennoor.theme.choice`); the older `gennoor.theme` decides nothing and
+  is removed when met. `node scripts/look-check.mjs` proves all of this on the real pages.
+- A picture or a measurement must not depend on the hour it is made: `scripts/shot.mjs` and
+  `scripts/contrast-check.mjs` set the look themselves.
 - Which pages get no theme is decided in one place, `isChromelessRoute()` in `src/lib/chrome.ts`,
   and repeated in `THEME_SCRIPT` in `src/lib/theme.ts`. Change both together.
 - **The light look is light all the way down** (owner, 2026-11-13: "the light theme also reflects
@@ -292,7 +304,8 @@ never says "nothing yet" before the answer has arrived.
        node scripts/shot.mjs <folder> --full home training          dark
        node scripts/shot.mjs <folder> --full --light home training  light
 
-   Each page gives `<page>-1366.png` and `<page>-390.png`. Open them and look.
+   Each page gives `<page>-1366.png` and `<page>-390.png`. Open them and look. (The pictures are dark
+   unless `--light` is given, whatever the hour; the site itself follows the visitor's clock.)
 3. Look for: text that cannot be read (light on light, dark on dark), a white or black box that
    does not belong, a button whose label is lost, a card the same colour as the page with no edge,
    something cut off or overlapping at 390, a sideways scrollbar.
@@ -302,6 +315,33 @@ never says "nothing yet" before the answer has arrived.
 4. A link, a form field name or an API address must not change when only the look changes.
 5. A new page, or a page whose title changed: `node scripts/seo-head.mjs http://localhost:3111 <page>`
    and read what it prints against `docs/SEO.md`. Open its share picture (`/og/<key>`) and look at it.
+6. After a change to `src/lib/theme.ts`, `PortalShell` or `ThemeSwitch`: `node scripts/look-check.mjs`.
+   It must end with ALL OK.
+
+## Emails
+
+Every email the site sends is light all the way down, like the day look. The owner (13 November 2026),
+about the navy band the emails used to open with, a small logo at the left of a wide dark strip: "looks
+very blank ... I don't like that black color or blue color ... When it comes to our logo, we can have it
+defined more appropriately."
+
+- **The top is one picture**, `public/email/header.png`: the logo in the middle of a light band, in the
+  brand's own lettering (Plus Jakarta Sans and Sora), with the ring of dots large and pale at both ends.
+  `node scripts/email-art/logo.mjs` draws it. Never use the PNG files of `public/logos` in an email: they
+  were made on a machine without the brand's lettering.
+- **The frame** is `emailShell()` in `src/lib/crm/email-theme.ts`: that top, the body on white, a light
+  foot with dark words. An email that builds its own frame takes `emailTop(title?, line?)` and
+  `emailFoot()` from the same file. No dark band at the top, no dark foot, no navy block inside.
+- **The one dark email** is the series the CRM sends (`briefShell()` in `src/lib/crm/brief-theme.ts`): a
+  dark briefing with one moving picture, because the owner asked for exactly that on 12 November 2026
+  ("not in the white background"). Its logo is `public/email/logo-dark.png`, drawn by the same script.
+- **Email apps decide what is possible.** They remove SVG and brand fonts, and old Outlook lays a page
+  out with Word. So: tables with their colour in `bgcolor`; pictures as PNG or GIF with a ground of
+  their own (an app that turns pages dark then cannot make the logo unreadable); a width on every
+  picture; nothing that needs a script.
+- **Look before it ships.** Write the email to a file and photograph it 700 wide and 390 wide
+  (`npx tsx scripts/crm-flow-test.ts --out <folder>`, then `node scripts/email-art/preview.mjs <folder> 640`
+  for the series). Nobody can see from here how a real inbox draws it: say so.
 
 ## A dark block in the light look (`st-night`)
 

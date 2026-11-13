@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { generateOTP, storeOTP } from '@/lib/otp-store'
 import { sendEmail } from '@/lib/email-service'
+import { emailTop } from '@/lib/crm/email-theme'
 import { resolveLearnerEmail, getLearner } from '@/lib/azure-storage'
 import { looksLikeEmail, maskEmail } from '@/lib/learner-username'
 import { rateLimit, clientIp } from '@/lib/rate-limit'
@@ -63,10 +64,8 @@ export async function POST(request: NextRequest) {
         subject: `${otp} is your password reset code`,
         html: `
           <div style="font-family:'Segoe UI',Arial,sans-serif;max-width:480px;margin:0 auto;padding:32px 24px;">
-            <div style="text-align:center;margin-bottom:24px;">
-              <h1 style="color:#2563eb;font-size:22px;margin:0 0 4px;">Gennoor Academy</h1>
-              <p style="color:#64748b;font-size:12px;margin:0;">Password reset</p>
-            </div>
+            <div style="border:1px solid #e2e8f0;border-radius:12px;overflow:hidden;margin-bottom:14px;">${emailTop()}</div>
+            <p style="color:#64748b;font-size:12px;margin:0 0 14px;text-align:center;">Gennoor Academy: password reset</p>
             <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;padding:24px;text-align:center;">
               <p style="color:#334155;font-size:14px;margin:0 0 16px;">Enter this code to choose a new password:</p>
               <div style="font-size:36px;font-weight:bold;letter-spacing:8px;color:#1e293b;padding:12px 0;">${otp}</div>

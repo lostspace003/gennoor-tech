@@ -10,8 +10,10 @@ assistant draft the reply, can we send to many at once, can we track them in one
 
 ## 1. The idea
 
-- **One list of leads, one axis.** A lead stands at one step: New, Emailing, Talking, Proposal, Customer,
-  Closed (`STEP_LABELS` in `src/lib/crm/types.ts`). No boards, no second pipeline, no scores.
+- **One list of leads, one axis.** A lead stands at one step: New, Emailed, Talking, Proposal, Customer,
+  Closed (`STEP_LABELS` in `src/lib/crm/types.ts`). No boards, no second pipeline, no scores. A step is
+  named for what has happened, never for something in progress: the second step was called "Emailing"
+  and the owner read it as "the email is still being sent".
 - **Nine emails, sent by a person.** The series (`src/lib/crm/sequence.ts`) is fixed text. Nothing goes to
   a lead by itself: someone reviews and presses Send.
 - **A reply drives the lead.** When a lead writes back, the CRM moves them and shows them; nobody has to
@@ -26,6 +28,7 @@ assistant draft the reply, can we send to many at once, can we track them in one
 | The series: which email, when it is due | `src/lib/crm/sequence.ts`, the emails in `sequence-emails.ts` |
 | What a reply means (pure, runs in the browser too) | `src/lib/crm/replies.ts` |
 | Reading the mailboxes and bringing the leads in step | `src/lib/crm/reply-sync.ts`, `src/lib/crm/graph.ts` |
+| Has an email really gone (pure, runs in the browser too) | `src/lib/crm/delivery.ts`; the looking is in `delivery-sync.ts` |
 | The lists of the Today page and of the morning email | `src/lib/crm/today.ts` |
 | Who may sign in, and to what | `src/lib/crm/users.ts` (see "Who may sign in" in `AGENTS.md`) |
 | The screens | `src/components/crm/`: `QueueView` (Today), `LeadsView`, `OtherViews` (Replies, Meetings, Files), `LeadWorkspace` (one lead), `SendStep` (the send window) |
@@ -40,7 +43,7 @@ minutes), when the Replies page is opened, just before a series send, and before
 
 | They sent | What happens |
 |---|---|
-| A real reply | New or Emailing becomes **Talking**. The lead shows under "They replied" on Today, with a red number beside Replies in the menu, until we write back or someone presses "No reply needed". The series is no longer offered for them. |
+| A real reply | New or Emailed becomes **Talking**. The lead shows under "They replied" on Today, with a red number beside Replies in the menu, until we write back or someone presses "No reply needed". The series is no longer offered for them. |
 | The ready-made "Not for us" of email 9 (subject "stop") | The lead is **Closed** and the series stopped. That is what the email promised. |
 | Any other request to stop ("unsubscribe", "remove me", "not interested", the word stop alone) | The series is **stopped**. The step stays. The reply is shown to a person, with a "Close lead" button. |
 | Out of office, a delivery failure, a meeting answer | Nothing. It is listed on the Replies page only when "Show automatic mail" is ticked. |
@@ -84,7 +87,47 @@ stands. It is on Today (as links) and on the Leads page (as the step filter). Do
 - The reply window writes a first draft by itself (`/api/admin/leads/generate-email`). A person reads,
   corrects and sends. Nothing drafted goes out by itself.
 
-## 6. Asking before doing
+## 6. Has it gone?
+
+The owner (13 November 2026) sent four emails, saw no copy arrive and asked: "why is it still showing
+emailing? ... will I be receiving it?" The CRM used to write "sent" the moment the email service TOOK an
+email. On an ordinary day the service finishes within two seconds, so the two were the same. That day
+Microsoft's mail was slow: the service took every email, finished almost none for hours, and nobody could
+tell. One of his four arrived after 64 minutes.
+
+So each email has a state (`sendState()` in `src/lib/crm/delivery.ts`), and the screens say it:
+
+| State | It means | What a person does |
+|---|---|---|
+| **on its way** | The email service has taken it and has not finished it. | Nothing. Never send it again: it is in the queue. |
+| **sent** | Confirmed: the service finished it, or our own copy of it arrived in the admin mailbox. | Nothing. |
+| **not confirmed** | A day has passed and nothing confirmed it. | Decide: "Send it again" on the lead's Emails tab makes that email due again. |
+| **did not go** | The service refused it, or gave up on it later. | A series email is due again by itself; the lead goes back to New if it was their only email. |
+
+`confirmSends()` in `delivery-sync.ts` looks for the proof, with the reply check (every 15 minutes from the
+heartbeat, every three minutes while the CRM is open):
+
+1. **Our own copy.** Every outreach email is copied to the admin mailbox. A copy with the same subject, to
+   the same person, that arrived after the send is proof that the email has left (`matchCopies`).
+2. **The email service**, by the number it gave the send (`emailSendState()` in `src/lib/email-service.ts`).
+   Azure allows the whole site about 200 questions an hour and each send already uses up to two, so this
+   asks six every ten minutes and goes round all the waiting emails. Do not raise that without counting.
+
+Rules that must stay:
+
+- "Sent" is never written on a screen for an email that nothing has confirmed.
+- An email that is on its way, or that has gone, is never sent twice. Only a failed one, or one that
+  nothing confirmed for a day, can go again, and only when a person says so.
+- A series email that failed stops counting as sent (`failSend`), so nobody is sent email 2 without
+  having had email 1.
+- The number of a send is kept even while the send is still in progress (`sendNumberOf`). Before this it
+  was kept only for a send that finished within the first seconds, so a slow one could never be asked about.
+- Emails recorded before `TRACKED_FROM` count as sent: until that day every send finished at once.
+
+What this cannot know: whether the lead's own mail server put the email in their inbox or in spam. "Sent"
+means it left our email service.
+
+## 7. Asking before doing
 
 Use `ask()` from `useCrm()`: a small window in the page, with a reason field when one is wanted and a red
 button for a step that cannot be taken back. Never `prompt()`, `confirm()` or `alert()`: they look like
@@ -95,7 +138,7 @@ Words on screen are plain: what happened and what to do next. Never the name of 
 or a status code on its own ("Microsoft Graph is not configured" became "Reading replies is not set up on
 this site yet").
 
-## 7. Checks
+## 8. Checks
 
 ```bash
 npx tsx scripts/crm-check.ts        # the rules above, with made-up leads and mail; must end with ALL OK
@@ -114,9 +157,10 @@ made-up data (the sign-in check did not run under `next dev` on the owner's mach
 if it does, see the note in the `gennoor-site-design` skill). Look at 1366 and 390 wide. Never photograph
 or print real leads.
 
-## 8. Not to do
+## 9. Not to do
 
-- Do not send an email to try something. Not even one.
+- Do not send an email to try something. Not even one, unless the owner asks for that one email.
+- Do not write "sent" for an email the email service has only taken (section 6).
 - Do not add a step, a score, a tag system or a second list of "stages".
 - Do not make a machine send to a lead, close a lead on a free-text reply, or delete anything.
 - Do not print or log a lead's name, address or message. Counts and ids only.

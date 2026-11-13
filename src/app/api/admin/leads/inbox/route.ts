@@ -34,7 +34,8 @@ export async function GET(req: NextRequest) {
     }
 
     const result = await syncReplies(req.nextUrl.searchParams.get('fresh') === '1')
-    return NextResponse.json({ configured: true, messages: result.messages, changed: result.changes.length, ...(result.error ? { error: result.error } : {}), ...(result.note ? { note: result.note } : {}) })
+    // `changed` tells the screens to load the leads again: a reply moved someone, or an email that was on its way is now confirmed
+    return NextResponse.json({ configured: true, messages: result.messages, changed: result.changes.length + result.delivery.length, ...(result.error ? { error: result.error } : {}), ...(result.note ? { note: result.note } : {}) })
   } catch (error) {
     console.error('Inbox error:', error)
     return NextResponse.json({ configured: true, messages: [], error: mailProblem(error) })

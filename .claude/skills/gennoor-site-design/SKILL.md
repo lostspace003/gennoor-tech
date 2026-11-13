@@ -32,6 +32,11 @@ Pages are named without the leading slash, and the home page is `home` (Git Bash
 `/training` into a file path). Open the pictures and look at them: both themes, both widths.
 A page is not finished because it compiles.
 
+The site shows the light look by day and the dark look in the evening and at night, by the visitor's
+own clock (`src/lib/theme.ts`), so every visitor in working hours meets the light look first: it is not
+the second-best one. The pictures do not depend on the hour they are taken (dark unless `--light`).
+After a change to the look's own code, `node scripts/look-check.mjs` must end with ALL OK.
+
 ## A new page, or a page whose words for search change
 
 The rules are in `docs/SEO.md`. In short:

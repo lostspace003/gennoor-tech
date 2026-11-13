@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react'
 import DOMPurify from 'dompurify'
 import {
   ArrowLeft, Mail, Phone, Building2, Linkedin, Globe, Send, Sparkles, Calendar, Trash2,
-  User, RefreshCw, Paperclip, Reply, Check, CircleDashed, Ban, Play, X,
+  User, RefreshCw, Paperclip, Reply, Check, CircleDashed, Ban, Play, X, Clock, AlertTriangle,
 } from 'lucide-react'
 import { Lead, LeadStatus, STEP_LABELS, STEP_HINTS } from '@/lib/crm/types'
 import { SEQUENCE, sequenceProgress, stepNumber, fillTokens, LINKEDIN_CONNECT_NOTE, LINKEDIN_FIRST_MESSAGE } from '@/lib/crm/sequence'
@@ -14,6 +14,7 @@ import { StatusBadge, StepSelect, api, formatDateTime, timeAgo, Spinner, Duratio
 import { useCrm } from './CrmContext'
 import SendStepModal from './SendStep'
 import { needsAnswer } from '@/lib/crm/replies'
+import { sendHint, sendState, seriesRecord, span, type SendState } from '@/lib/crm/delivery'
 
 type Tab = 'details' | 'emails' | 'linkedin' | 'meeting'
 const TABS: Array<[Tab, string, any]> = [
@@ -354,15 +355,35 @@ function EmailsTab({ lead, canWork, onReload, notify, intent }: { lead: Lead; ca
     } catch (e: any) { notify(e.message, true) }
   }
 
+  // An email of the series that nothing confirmed for a day: a person may make it due again
+  const again = async (step: string) => {
+    const go = await ask({ title: `Send email ${stepNumber(step)} again?`, text: 'The email service took this email more than a day ago and never confirmed that it had gone. If it did reach them after all, they will receive it twice.', confirm: 'Make it due again' })
+    if (go === null) return
+    try {
+      await api('/api/admin/leads/sequence', { method: 'PATCH', body: JSON.stringify({ leadIds: [lead.id], action: 'again', step }) })
+      await onReload()
+      notify(`Email ${stepNumber(step)} is due again. Review and send it.`)
+    } catch (e: any) { notify(e.message, true) }
+  }
+
+  // Emails of the series the email service has taken and nothing has confirmed yet (and those a day old, still unconfirmed)
+  const stateOfStep = (step: string) => { const r = seriesRecord(lead, step); return r ? sendState(r) : 'sent' }
+  const waitingToGo = (lead.sequence?.sent || []).filter((x) => stateOfStep(x.step) === 'onItsWay').length
+  const neverConfirmed = (lead.sequence?.sent || []).filter((x) => stateOfStep(x.step) === 'unconfirmed').length
+
+  // What each email we sent has come to: gone, on its way, never confirmed, or failed (lib/crm/delivery.ts)
+  const STATE_WORDS: Record<SendState, string> = { sent: '', onItsWay: ' · on its way', unconfirmed: ' · not confirmed', failed: ' · DID NOT GO' }
+
   const thread = [
     ...lead.emailHistory.map((e) => ({
-      kind: 'sent' as const, at: e.at, subject: e.subject, status: e.status as string,
+      kind: 'sent' as const, at: e.at, subject: e.subject, status: sendState(e) as string,
       detail: `to ${e.to}${e.step ? ` · email ${stepNumber(e.step)} of the series` : ''}`,
+      note: sendState(e) === 'sent' ? '' : sendHint({ at: e.at, state: sendState(e), error: e.error }),
       body: e.body || '', html: '', raw: null as InboundMessage | null,
     })),
     ...inbound.map((m) => ({
       kind: 'received' as const, at: m.receivedAt, subject: m.subject, status: 'received',
-      detail: `from ${m.from}`,
+      detail: `from ${m.from}`, note: '',
       body: (m.body || m.preview).replace(/<style[\s\S]*?<\/style>/gi, '').replace(/<[^>]+>/g, ' ').replace(/\s{3,}/g, '\n').trim(),
       html: /<[a-z][\s\S]*>/i.test(m.body || '') ? m.body : '', raw: m,
     })),
@@ -374,7 +395,7 @@ function EmailsTab({ lead, canWork, onReload, notify, intent }: { lead: Lead; ca
       <div className="space-y-3">
         <div className="flex items-center justify-between">
           <h3 className="text-sm font-medium text-gray-500">Email series</h3>
-          <span className="text-xs text-gray-400">{progress.sentIds.length} of {SEQUENCE.length} sent</span>
+          <span className="text-xs text-gray-400">{progress.sentIds.length - waitingToGo - neverConfirmed} of {SEQUENCE.length} sent{waitingToGo ? `, ${waitingToGo} on its way` : ''}{neverConfirmed ? `, ${neverConfirmed} not confirmed` : ''}</span>
         </div>
 
         {!lead.email ? (
@@ -401,18 +422,31 @@ function EmailsTab({ lead, canWork, onReload, notify, intent }: { lead: Lead; ca
           {SEQUENCE.map((s, i) => {
             const sent = lead.sequence?.sent.find((x) => x.step === s.id)
             const isNext = !progress.stopped && progress.next?.id === s.id
+            // Has it really gone? "sent" is said only once the email service, or our own copy, has confirmed it
+            const record = seriesRecord(lead, s.id)
+            const state: SendState | null = sent ? (record ? sendState(record) : 'sent') : record?.status === 'failed' ? 'failed' : null
             return (
               <li key={s.id} className={`flex gap-2.5 px-2.5 py-2 rounded-lg ${isNext ? 'bg-primary-50' : ''}`}>
                 <span className="mt-0.5 shrink-0">
-                  {sent ? <Check className="w-4 h-4 text-green-600" /> : <CircleDashed className={`w-4 h-4 ${isNext ? 'text-primary-600' : 'text-gray-300'}`} />}
+                  {state === 'sent' ? <Check className="w-4 h-4 text-green-600" />
+                    : state === 'onItsWay' ? <Clock className="w-4 h-4 text-gray-500" />
+                    : state === 'unconfirmed' ? <AlertTriangle className="w-4 h-4 text-amber-600" />
+                    : state === 'failed' ? <AlertTriangle className="w-4 h-4 text-red-600" />
+                    : <CircleDashed className={`w-4 h-4 ${isNext ? 'text-primary-600' : 'text-gray-300'}`} />}
                 </span>
                 <div className="min-w-0">
                   <div className={`text-sm ${sent ? 'text-gray-500' : isNext ? 'text-primary-800 font-medium' : 'text-gray-700'}`}>{i + 1}. {s.title}</div>
-                  <div className="text-[11px] text-gray-400">
-                    {sent ? `sent ${timeAgo(sent.at)} by ${shortName(sent.by)}`
+                  <div className={`text-[11px] ${state === 'failed' ? 'text-red-700' : state === 'unconfirmed' ? 'text-amber-700' : state === 'onItsWay' ? 'text-gray-600' : 'text-gray-400'}`}>
+                    {sent && state === 'sent' ? `sent ${timeAgo(sent.at)} by ${shortName(sent.by)}`
+                      : sent && state === 'onItsWay' ? `on its way for ${span(sent.at)}: the email service has it and has not confirmed yet`
+                      : sent && state === 'unconfirmed' ? `handed to the email service ${span(sent.at)} ago and never confirmed as gone`
+                      : state === 'failed' ? `did not go${record?.error ? `: ${record.error}` : ''}. ${isNext ? 'It is due again.' : ''}`
                       : isNext ? (progress.due ? 'due now' : `due in ${progress.daysUntil} day${progress.daysUntil === 1 ? '' : 's'}`)
                       : s.gapDays ? `${s.gapDays} days after email ${i}` : 'sent first'}
                   </div>
+                  {sent && state === 'unconfirmed' && canWork && (
+                    <button onClick={() => again(s.id)} className="mt-1 text-[11px] font-medium text-amber-800 underline">Send it again</button>
+                  )}
                 </div>
               </li>
             )
@@ -465,7 +499,8 @@ function EmailsTab({ lead, canWork, onReload, notify, intent }: { lead: Lead; ca
             <div className="flex items-start justify-between gap-3">
               <button className="min-w-0 text-left flex-1" onClick={() => setExpanded(expanded === i ? null : i)}>
                 <div className="text-sm font-medium text-gray-900 truncate">{item.subject || '(no subject)'}</div>
-                <div className="text-xs text-gray-500">{item.kind === 'received' ? 'Received' : 'Sent'} {item.detail} · {formatDateTime(item.at)}{item.status === 'failed' ? ' · FAILED' : ''}</div>
+                <div className="text-xs text-gray-500">{item.kind === 'received' ? 'Received' : item.status === 'sent' ? 'Sent' : 'Written'} {item.detail} · {formatDateTime(item.at)}{item.kind === 'sent' ? <span className={item.status === 'failed' ? 'text-red-700 font-medium' : item.status === 'unconfirmed' ? 'text-amber-700 font-medium' : 'font-medium'}>{STATE_WORDS[item.status as SendState] || ''}</span> : null}</div>
+                {item.note && <div className={`text-[11px] mt-0.5 ${item.status === 'failed' ? 'text-red-700' : item.status === 'unconfirmed' ? 'text-amber-700' : 'text-gray-500'}`}>{item.note}</div>}
               </button>
               {item.kind === 'received' && canWork && (
                 <button onClick={() => setComposing({ replyTo: item.raw })} className="px-2.5 py-1.5 bg-green-600 text-white text-xs rounded-lg hover:bg-green-700 flex items-center gap-1.5 shrink-0">

@@ -84,6 +84,16 @@ export function StepSelect({ value, onChange, disabled }: { value: LeadStatus; o
   )
 }
 
+/** Draws a list again once a minute, so "on its way · 12 min" stays true while the page is open. */
+export function useMinute(): number {
+  const [minute, setMinute] = useState(0)
+  useEffect(() => {
+    const timer = setInterval(() => setMinute((n) => n + 1), 60_000)
+    return () => clearInterval(timer)
+  }, [])
+  return minute
+}
+
 export function timeAgo(dateString: string): string {
   if (!dateString) return '—'
   const date = new Date(dateString)

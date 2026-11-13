@@ -1,6 +1,8 @@
 import { getLeads, mutateLeads } from './store'
 import { graphConfigured, listRecentReceived, listRecentSentTo } from './graph'
 import { applyReplies, kindOf, needsAnswer, type Received, type ReplyChange, type ReplyKind } from './replies'
+import { confirmSends } from './delivery-sync'
+import type { DeliveryChange } from './delivery'
 import type { Lead } from './types'
 
 /**
@@ -13,6 +15,9 @@ import type { Lead } from './types'
  * It runs from the heartbeat (every 15 minutes, whether or not anyone has the CRM open), whenever the Replies
  * page or Today asks for the mail, and just before a series send, so nobody is emailed "email 4" a minute
  * after they wrote back.
+ *
+ * The same look also confirms the emails that are still "on its way" (./delivery-sync.ts): has the email
+ * service finished them, has our own copy arrived.
  */
 
 /** A message from a lead, as the Replies page shows it. */
@@ -30,6 +35,8 @@ export interface SyncResult {
   configured: boolean
   messages: LeadMessage[]
   changes: ReplyChange[]
+  /** Emails that were "on its way" and are now confirmed as sent, or failed. */
+  delivery: DeliveryChange[]
   /** Nothing could be read. */
   error?: string
   /** Some of it could be read: said on screen, so nobody trusts an empty list too far. */
@@ -50,8 +57,15 @@ export function mailProblem(error: unknown): string {
   return 'The mailboxes could not be read just now. Try again in a minute.'
 }
 
+/** Has what we sent gone? Never lets a problem there spoil the reading of replies. */
+async function delivered(): Promise<DeliveryChange[]> {
+  try { return await confirmSends() } catch (e: any) { console.error(`Delivery check failed: ${String(e?.message || e).slice(0, 140)}`); return [] }
+}
+
 async function run(): Promise<SyncResult> {
-  if (!graphConfigured()) return { configured: false, messages: [], changes: [] }
+  // Started now and waited for at the end: it must not hold up the reading of replies just before a send
+  const deliveryWork = delivered()
+  if (!graphConfigured()) return { configured: false, messages: [], changes: [], delivery: await deliveryWork }
   try {
     const leads = await getLeads()
     const byAddress = new Map<string, Lead>()
@@ -79,16 +93,16 @@ async function run(): Promise<SyncResult> {
         kind, waiting: kind !== 'auto' && needsAnswer(lead) && lead.reply?.at === m.receivedAt,
       }
     })
-    return { configured: true, messages, changes, ...(note ? { note } : {}) }
+    return { configured: true, messages, changes, delivery: await deliveryWork, ...(note ? { note } : {}) }
   } catch (error) {
     console.error('Reply check failed:', error)
-    return { configured: true, messages: [], changes: [], error: mailProblem(error) }
+    return { configured: true, messages: [], changes: [], delivery: await deliveryWork, error: mailProblem(error) }
   }
 }
 
 /** Checks the mailboxes, unless it did so in the last 45 seconds (then the same answer is given again). */
 export async function syncReplies(fresh = false): Promise<SyncResult> {
-  if (!fresh && last && Date.now() - last.at < REUSE_MS) return { ...last.result, changes: [] }
+  if (!fresh && last && Date.now() - last.at < REUSE_MS) return { ...last.result, changes: [], delivery: [] }
   if (running) return running
   running = run().then((result) => { last = { at: Date.now(), result }; return result }).finally(() => { running = null })
   return running
@@ -104,8 +118,9 @@ export function syncRepliesBriefly(ms = 8000): Promise<SyncResult | null> {
 
 /** For the heartbeat: one line that says what changed. */
 export async function replyTick(): Promise<string[]> {
-  if (!graphConfigured()) return ['mailboxes not set up']
   const r = await syncReplies(true)
-  if (r.error) return [r.error]
-  return r.changes.length ? r.changes.map((c) => `${c.what}: ${c.leadId}`) : ['nothing new']
+  const lines = [...r.changes.map((c) => `${c.what}: ${c.leadId}`), ...r.delivery.map((c) => `email ${c.what}: ${c.leadId}`)]
+  if (!r.configured) lines.unshift('mailboxes not set up')
+  if (r.error) lines.unshift(r.error)
+  return lines.length ? lines : ['nothing new']
 }

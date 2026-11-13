@@ -3,6 +3,7 @@ import { getBookingServices, getConfiguredBusinessId } from '@/lib/microsoft-gra
 import { trackEvent, initAppInsights } from '@/lib/analytics'
 import { savePendingBooking } from '@/lib/azure-storage'
 import { sendEmail } from '@/lib/email-service'
+import { emailTop } from '@/lib/crm/email-theme'
 import { rateLimit, clientIp } from '@/lib/rate-limit'
 import { escapeHtml } from '@/lib/escape-html'
 import { formatIstCstFull } from '@/lib/format-time'
@@ -63,9 +64,7 @@ export async function POST(request: Request) {
       subject: `Booking request received — ${service.displayName}`,
       html: `
         <div style="font-family:Arial,sans-serif;max-width:560px;margin:0 auto">
-          <div style="background:#1e3a5f;padding:24px 28px;border-radius:12px 12px 0 0">
-            <h1 style="color:#fff;margin:0;font-size:20px">Gennoor Tech</h1>
-          </div>
+          <div style="background:#fff;border:1px solid #e5e7eb;border-bottom:0;border-radius:12px 12px 0 0;overflow:hidden">${emailTop()}</div>
           <div style="background:#fff;padding:28px;border:1px solid #e5e7eb;border-top:0;border-radius:0 0 12px 12px">
             <p style="color:#374151;font-size:15px;line-height:1.6;margin:0 0 16px">
               Hi <strong>${escapeHtml(name)}</strong>,
@@ -94,9 +93,7 @@ export async function POST(request: Request) {
       subject: `New booking request: ${name} — ${service.displayName}`,
       html: `
         <div style="font-family:Arial,sans-serif;max-width:560px;margin:0 auto">
-          <div style="background:#1e3a5f;padding:24px 28px;border-radius:12px 12px 0 0">
-            <h1 style="color:#fff;margin:0;font-size:20px">New Booking Request</h1>
-          </div>
+          <div style="background:#fff;border:1px solid #e5e7eb;border-bottom:0;border-radius:12px 12px 0 0;overflow:hidden">${emailTop('New booking request')}</div>
           <div style="background:#fff;padding:28px;border:1px solid #e5e7eb;border-top:0;border-radius:0 0 12px 12px">
             <div style="background:#fef3c7;border:1px solid #fcd34d;border-radius:8px;padding:12px 16px;margin:0 0 16px">
               <p style="margin:0;font-size:14px;color:#92400e"><strong>Action required:</strong> Review and accept/reject this booking.</p>

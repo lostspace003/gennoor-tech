@@ -6,7 +6,8 @@ import { Reply, Hand, Send, Clock, UserPlus, ArrowRight, MessagesSquare, Flag } 
 import { Lead, LEAD_STEPS, STEP_LABELS } from '@/lib/crm/types'
 import { SEQUENCE, sequenceProgress, stepNumber } from '@/lib/crm/sequence'
 import { QUIET_DAYS, needsYou, quietDays, todayLists } from '@/lib/crm/today'
-import { timeAgo, api, StepStrip } from './shared'
+import { timeAgo, api, StepStrip, useMinute } from './shared'
+import { failedSeriesSend, lastSeriesSend, sendLine, sendState } from '@/lib/crm/delivery'
 import { useCrm } from './CrmContext'
 import SendStepModal from './SendStep'
 
@@ -30,8 +31,22 @@ export default function QueueView({ leads }: { leads: Lead[] }) {
   const [busy, setBusy] = useState('')
   const me = userEmail.toLowerCase()
 
+  const minute = useMinute()
   const t = useMemo(() => todayLists(leads, me, everyone), [leads, me, everyone])
   const total = needsYou(t)
+  // Emails the email service has taken and not confirmed yet, on this desk: said plainly, so nobody wonders
+  // whether a send worked (the owner did, on a day Microsoft's mail was slow)
+  const { onItsWay, unconfirmed } = useMemo(() => {
+    let onItsWay = 0
+    const unconfirmed: Lead[] = []
+    for (const l of leads) {
+      if (l.dumped || !(everyone || !l.owner || l.owner.toLowerCase() === me)) continue
+      const states = (l.emailHistory || []).map((e) => sendState(e))
+      onItsWay += states.filter((s) => s === 'onItsWay').length
+      if (states.includes('unconfirmed')) unconfirmed.push(l)
+    }
+    return { onItsWay, unconfirmed }
+  }, [leads, me, everyone, minute]) // eslint-disable-line react-hooks/exhaustive-deps
   // Where every lead on this desk stands, in one row
   const counts = useMemo(() => {
     const mineOrAll = leads.filter((l) => !l.dumped && (everyone || !l.owner || l.owner.toLowerCase() === me))
@@ -80,6 +95,26 @@ export default function QueueView({ leads }: { leads: Lead[] }) {
       {leads.length > 0 && <StepStrip counts={counts} hrefFor={(s) => `/crm/leads?step=${s}${everyone ? '' : '&scope=mine'}`} />}
 
       {mailNote && <p className="text-xs bg-amber-50 border border-amber-200 text-amber-800 rounded-lg px-3 py-2">{mailNote} Replies from leads will not show here until this is put right.</p>}
+
+      {/* Has what we sent really gone? */}
+      {onItsWay > 0 && (
+        <p className="text-xs bg-gray-50 border border-gray-200 text-gray-700 rounded-lg px-3 py-2 flex items-start gap-2">
+          <Clock className="w-3.5 h-3.5 mt-0.5 shrink-0 text-gray-500" />
+          <span>
+            {onItsWay === 1 ? 'One email is on its way.' : `${onItsWay} emails are on their way.`} The email service has taken {onItsWay === 1 ? 'it' : 'them'} and has not confirmed yet that {onItsWay === 1 ? 'it has' : 'they have'} gone.
+            Nothing to do, and do not send {onItsWay === 1 ? 'it' : 'them'} again: each one changes to &quot;sent&quot; by itself, and your copy arrives in the admin mailbox at the same time.
+          </span>
+        </p>
+      )}
+      {unconfirmed.length > 0 && (
+        <p className="text-xs bg-amber-50 border border-amber-200 text-amber-800 rounded-lg px-3 py-2">
+          {unconfirmed.length === 1 ? 'One email was' : `${unconfirmed.length} emails were`} taken by the email service more than a day ago and never confirmed as gone:{' '}
+          {unconfirmed.slice(0, 4).map((l, i) => (
+            <span key={l.id}>{i > 0 && ', '}<Link href={leadHref(l, 'tab=emails')} className="underline font-medium">{l.name}</Link></span>
+          ))}
+          {unconfirmed.length > 4 ? ` and ${unconfirmed.length - 4} more` : ''}. Open the lead to send it again.
+        </p>
+      )}
 
       {leads.length === 0 ? (
         <div className="bg-raised border border-gray-200 rounded-xl p-8 text-center space-y-3">
@@ -164,11 +199,15 @@ export default function QueueView({ leads }: { leads: Lead[] }) {
           icon={Send} tone="blue" title="Start the email series" hint={`Email 1 of ${SEQUENCE.length}: the introduction`} count={t.toStart.length}
           action={<button onClick={() => setSendTo(t.toStart)} className="px-3 py-1.5 bg-primary-600 hover:bg-primary-700 text-white text-xs rounded-lg">Review and send to all {t.toStart.length}</button>}
         >
-          {t.toStart.slice(0, 6).map((l) => (
-            <Row key={l.id} lead={l} sub={l.email}>
-              <button onClick={() => setSendTo([l])} className="px-3 py-1.5 border border-primary-200 text-primary-700 hover:bg-primary-50 text-xs rounded-lg shrink-0">Send email 1</button>
-            </Row>
-          ))}
+          {t.toStart.slice(0, 6).map((l) => {
+            // An email 1 that the email service could not send is due again, and the row says so
+            const failed = failedSeriesSend(l)
+            return (
+              <Row key={l.id} lead={l} sub={failed ? `Email 1 did not go${failed.error ? `: ${failed.error}` : ''}. Send it again.` : l.email} flag={failed ? 'did not go' : ''}>
+                <button onClick={() => setSendTo([l])} className="px-3 py-1.5 border border-primary-200 text-primary-700 hover:bg-primary-50 text-xs rounded-lg shrink-0">{failed ? 'Send again' : 'Send email 1'}</button>
+              </Row>
+            )
+          })}
           {t.toStart.length > 6 && <More text={`${t.toStart.length - 6} more are included when you send to all`} />}
         </Section>
       )}
@@ -217,11 +256,12 @@ export default function QueueView({ leads }: { leads: Lead[] }) {
 
       {/* Waiting */}
       {t.waiting.length > 0 && (
-        <Section icon={Clock} tone="gray" title="Waiting" hint="Sent. The next email is not due yet." count={t.waiting.length}>
+        <Section icon={Clock} tone="gray" title="Waiting" hint="Emailed. The next email is not due yet." count={t.waiting.length}>
           {t.waiting.slice(0, 6).map((l) => {
             const p = sequenceProgress(l)
+            const last = lastSeriesSend(l)
             return (
-              <Row key={l.id} lead={l} sub={`email ${stepNumber(p.next!.id)} in ${p.daysUntil} day${p.daysUntil === 1 ? '' : 's'}`}>
+              <Row key={l.id} lead={l} sub={`${last ? `${sendLine(last)} · ` : ''}email ${stepNumber(p.next!.id)} in ${p.daysUntil} day${p.daysUntil === 1 ? '' : 's'}`}>
                 <Link href={leadHref(l)} className="px-3 py-1.5 text-gray-500 hover:text-gray-800 text-xs shrink-0">View</Link>
               </Row>
             )
