@@ -4,10 +4,35 @@ import { useEffect, useMemo, useState } from 'react'
 import { X, Send, Paperclip } from 'lucide-react'
 import { Lead } from '@/lib/crm/types'
 import { SEQUENCE, sequenceProgress, stepById, stepNumber } from '@/lib/crm/sequence'
+import { companyOf, greetingOf, tidyGreeting } from '@/lib/crm/greeting'
 import { api, Spinner } from './shared'
 import { useCrm } from './CrmContext'
 
 interface Preview { subject: string; html: string; attachCatalogue: boolean }
+
+/** One lead and the name their emails will open with. Clearing it sends the email without a name. */
+function NameRow({ lead, value, onSave }: { lead: Lead; value: string; onSave: (text: string) => void }) {
+  const [text, setText] = useState(value)
+  useEffect(() => { setText(value) }, [value])
+  const commit = () => { const tidy = tidyGreeting(text); setText(tidy); if (tidy !== value) onSave(tidy) }
+  return (
+    <div className="flex items-center gap-2">
+      <div className="min-w-0 flex-1">
+        <div className="truncate text-gray-800">{lead.name || lead.email}</div>
+        <div className="truncate text-[11px] text-gray-400">{companyOf(lead) || 'no company on file'}</div>
+      </div>
+      <input
+        value={text}
+        onChange={(e) => setText(e.target.value)}
+        onBlur={commit}
+        onKeyDown={(e) => { if (e.key === 'Enter') e.currentTarget.blur() }}
+        placeholder="no name"
+        aria-label={`Name used to greet ${lead.name || lead.email}`}
+        className={`w-24 shrink-0 px-2 py-1 border rounded-md text-xs focus:ring-2 focus:ring-primary-500 focus:border-transparent ${text ? 'border-gray-200' : 'border-amber-300 bg-amber-50'}`}
+      />
+    </div>
+  )
+}
 
 /**
  * Review and send the next email of the series to one or many leads.
@@ -40,6 +65,17 @@ export default function SendStepModal({ leads, onClose, onSent, notify }: {
   const [preview, setPreview] = useState<Preview | null>(null)
   const [loading, setLoading] = useState(false)
   const [sending, setSending] = useState(false)
+  // Names corrected in this window. They are saved on the lead at once, so every later email uses them too.
+  const [names, setNames] = useState<Record<string, string>>({})
+  const [saved, setSaved] = useState(0)
+  const nameOf = (l: Lead) => (l.id in names ? names[l.id] : greetingOf(l))
+  const saveName = async (lead: Lead, text: string) => {
+    try {
+      await api('/api/admin/leads', { method: 'PUT', body: JSON.stringify({ id: lead.id, greeting: text }) })
+      setNames((n) => ({ ...n, [lead.id]: text }))
+      setSaved((n) => n + 1)
+    } catch (e: any) { notify(e.message, true) }
+  }
 
   const total = [...groups.values()].reduce((n, g) => n + g.length, 0)
   // Who gets a copy: the admin mailbox always, and the person sending
@@ -59,7 +95,7 @@ export default function SendStepModal({ leads, onClose, onSent, notify }: {
         .finally(() => { if (!cancelled) setLoading(false) })
     }, note ? 400 : 0)
     return () => { cancelled = true; clearTimeout(timer) }
-  }, [active, sample?.id, note]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [active, sample?.id, note, saved]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const send = async () => {
     setSending(true)
@@ -139,12 +175,14 @@ export default function SendStepModal({ leads, onClose, onSent, notify }: {
                 <p className="text-[11px] text-gray-400 mt-1">Shown at the top of the email, for everyone in this send.</p>
               </div>
               <div className="text-xs text-gray-600">
-                <div className="font-medium text-gray-700 mb-1">Going to</div>
-                <div className="max-h-40 overflow-y-auto space-y-0.5">
-                  {[...groups.values()].flat().slice(0, 40).map((l) => (
-                    <div key={l.id} className="truncate">{l.name} <span className="text-gray-400">· {l.company || l.email}</span></div>
+                <div className="font-medium text-gray-700">Going to, and the name each email opens with</div>
+                <p className="text-[11px] text-gray-400 mt-0.5 mb-1.5">Correct a name or clear it. It is kept on the lead for every email. With no name, the email is written without one.</p>
+                <div className="max-h-56 overflow-y-auto space-y-1.5 pr-1">
+                  {/* Leads with no clear name come first, so they are seen */}
+                  {[...groups.values()].flat().sort((a, b) => Number(!!nameOf(a)) - Number(!!nameOf(b))).slice(0, 40).map((l) => (
+                    <NameRow key={l.id} lead={l} value={nameOf(l)} onSave={(text) => saveName(l, text)} />
                   ))}
-                  {total > 40 && <div className="text-gray-400">and {total - 40} more</div>}
+                  {total > 40 && <div className="text-gray-400">and {total - 40} more, greeted by the same rule</div>}
                 </div>
               </div>
               {skipped.length > 0 && (

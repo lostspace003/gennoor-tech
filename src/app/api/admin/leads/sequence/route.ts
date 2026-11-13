@@ -15,6 +15,7 @@ const MAX_PER_CALL = 50
 /**
  * Preview one step of the email series.
  *   ?step=intro            a sample lead, for the Emails page
+ *   ?step=intro&sample=bare   the same email for a lead with no clear name and no company
  *   ?step=intro&leadId=…   exactly what this lead would receive
  */
 export async function GET(req: NextRequest) {
@@ -25,7 +26,9 @@ export async function GET(req: NextRequest) {
   if (!step) return NextResponse.json({ error: 'Unknown step' }, { status: 400 })
 
   const leadId = req.nextUrl.searchParams.get('leadId')
-  let lead = newLead({ name: 'Priya Sharma', company: 'Acme Industries', email: 'priya@example.com' }, user.email)
+  // A made-up lead, only ever shown on the Emails page. Real leads get their own name (see lib/crm/greeting.ts).
+  const bare = req.nextUrl.searchParams.get('sample') === 'bare'
+  let lead = newLead(bare ? { name: '', company: '', email: 'sample@example.com' } : { name: 'Priya Sharma', company: 'Acme Industries', email: 'priya@example.com' }, user.email)
   if (leadId) {
     const found = (await getLeads()).find((l) => l.id === leadId)
     if (!found) return NextResponse.json({ error: 'Lead not found' }, { status: 404 })

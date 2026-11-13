@@ -41,7 +41,7 @@ export async function POST(req: NextRequest) {
 // Editable fields; system fields (activities, emailHistory, ...) are managed server-side.
 const EDITABLE: Array<keyof Lead> = [
   'name', 'email', 'phone', 'company', 'designation', 'linkedin', 'website',
-  'status', 'country', 'city', 'owner', 'source', 'notes', 'altEmails',
+  'status', 'country', 'city', 'owner', 'source', 'notes', 'altEmails', 'greeting',
 ]
 
 export async function PUT(req: NextRequest) {
