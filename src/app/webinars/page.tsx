@@ -63,6 +63,16 @@ export default function WebinarsPage() {
             </div>
             <SessionCarousel photos={SABOO_PHOTOS} />
           </div>
+
+          {/* A second session we have delivered: the Claude workshop, with its own page (owner, 14 November 2026) */}
+          <Link href="/workshops/claude-cowork" className="st-card group mt-10 flex flex-wrap items-center justify-between gap-x-8 gap-y-4 p-6 sm:p-7">
+            <span className="min-w-0 flex-1 basis-[300px]">
+              <span className="block text-[12px] font-semibold uppercase tracking-[0.12em] text-primary-600">Workshop · online · 4 hours</span>
+              <span className="block font-heading text-[22px] font-bold tracking-[-0.02em] text-gray-900 mt-2 leading-tight">Claude for Productivity</span>
+              <span className="block text-[15px] text-gray-500 mt-2">Eight hands-on modules, from the basics of Claude Cowork to Excel, PowerPoint and Chrome. 73 people registered and 32 attended.</span>
+            </span>
+            <span className="st-link shrink-0 text-[15px]">See the recap</span>
+          </Link>
         </div>
       </section>
 
