@@ -71,6 +71,21 @@ rules are in `docs/DESIGN.md`, section 9. Every colour is written by name there 
 
 ## Mistakes already made here, so do not repeat them
 
+- **The icons were glossy, glowing and large**, a dozen on the home page in five strong colours. The owner
+  (14 November 2026): "too many flashy icons ... I want the icons, but I don't want to be flashy ...
+  professional, very much subtle ... It's hitting the eyes right now." An icon tile is calm now: a soft wash
+  of its colour, the drawing in that colour, no shine, no glow, 40 to 44 pixels in a card
+  (`docs/DESIGN.md`, section 3, "An icon tile is calm"). Do not bring the gloss back on one page, do not make
+  a tile bigger to fill a card, and do not put an icon on a solid colour square: use `<Ico>` or `st-ico`.
+  Where a line passes behind a tile, add `st-ico-solid`, or it shows through.
+- **The buttons on the videos were big and bright, and each in a different place**: a yellow or white disc
+  at the top left of a film, a white "Watch" pill with a blue disc at the foot of the walkthrough, a large
+  disc in the middle of a stopped promo. The owner (14 November 2026): "very big ... too much flashy ...
+  keep every of the play button on the same side. On the right corner of the video." Every button on a
+  video is `st-play` now: 36 pixels, dark glass, top right (`docs/DESIGN.md`, section 3). A new player uses
+  that class and puts nothing else in that corner. The gold "% off" ribbon of a course page lies across the
+  same corner: there the button goes just under it (`underRibbon`). Look at a player with a ribbon on it.
+
 - **A class the project had never used did nothing in the running dev server** (`w-[190px]`: the dropdown
   stayed 494 pixels wide). Stop and start `npx next dev` after adding such a class; the production build
   is not affected.

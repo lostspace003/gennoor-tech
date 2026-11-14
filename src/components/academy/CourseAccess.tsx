@@ -262,8 +262,9 @@ export function PreviewList() {
               onClick={() => ctx.open(p.id, p.title)}
               className="group w-full h-full flex items-start gap-3.5 rounded-2xl bg-raised border border-gray-200 p-4 text-left transition-colors hover:border-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
             >
-              <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-primary-600 text-[#fff] shadow-[0_10px_22px_-10px_rgba(10,98,240,.8)] transition-transform group-hover:scale-105">
-                <Play className="h-[18px] w-[18px] fill-current ml-0.5" aria-hidden="true" />
+              {/* The play tile is the site's calm tile, not a solid blue square with a glow: six of them are in view at once */}
+              <span className="st-ico transition-transform group-hover:scale-105" style={{ ['--s' as string]: '40px' }} aria-hidden="true">
+                <Play className="ml-0.5" fill="currentColor" stroke="currentColor" strokeWidth={1.75} />
               </span>
               <span className="min-w-0">
                 <span className="block text-[12.5px] font-semibold text-gray-500">Preview {i + 1}{p.minutes ? ` · ${p.minutes} min` : ''}</span>

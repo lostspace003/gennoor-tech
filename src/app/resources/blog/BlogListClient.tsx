@@ -98,7 +98,7 @@ export default function BlogListClient({ posts, categories }: BlogListClientProp
                   />
                 </div>
               ) : (
-                <BlogArt post={hero} main={108} className="min-h-[200px] lg:min-h-[280px]" />
+                <BlogArt post={hero} main={84} className="min-h-[200px] lg:min-h-[280px]" />
               )}
             </article>
           </Link>
@@ -151,7 +151,7 @@ export default function BlogListClient({ posts, categories }: BlogListClientProp
                   className="group bg-raised border border-gray-200 hover:border-gray-300 rounded-[18px] overflow-hidden flex flex-col text-gray-900 transition-colors"
                 >
                   {/* The picture of the post: its icon tile, in the colour of what it is about */}
-                  <BlogArt post={post} main={52} className="h-[108px] shrink-0 border-b border-gray-200" />
+                  <BlogArt post={post} main={44} className="h-[108px] shrink-0 border-b border-gray-200" />
                   <article className="flex flex-col flex-1 px-6 pt-5 pb-6">
                     <div className="text-[10.5px] font-semibold tracking-[0.12em] uppercase text-primary-600 mb-2.5">
                       {post.category}

@@ -178,7 +178,7 @@ export default async function LabsCoursePage({ params }: PageProps) {
             <div className="relative">
               {offer && <OfferRibbon percent={offer.percent} className="rounded-tr-2xl" />}
               {promo ? (
-                <PromoPlayer src={promo} poster={card.thumbnailUrl} resumeKey={`studio-${slug}`} />
+                <PromoPlayer src={promo} poster={card.thumbnailUrl} resumeKey={`studio-${slug}`} underRibbon={!!offer} />
               ) : card.thumbnailUrl ? (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img src={card.thumbnailUrl} alt="" className="w-full aspect-video object-cover rounded-2xl shadow-[0_30px_60px_-20px_rgba(0,0,0,.6)] ring-1 ring-white/10" />
@@ -224,8 +224,8 @@ export default async function LabsCoursePage({ params }: PageProps) {
                 return (
                   <details key={i} className="group st-card !rounded-2xl overflow-hidden" open={i === Math.min(1, course.sections.length - 1)}>
                     <summary className="cursor-pointer list-none px-4 py-4 sm:px-6 sm:py-5 flex items-start gap-4 [&::-webkit-details-marker]:hidden after:!content-none">
-                      <span className={`st-ico ${MODULE_TONES[i % MODULE_TONES.length]} mt-0.5`} style={{ ['--s' as string]: '46px' }} aria-hidden="true">
-                        {number ? <b>{number}</b> : <BookOpen fill="none" stroke="#fff" strokeWidth={1.9} />}
+                      <span className={`st-ico ${MODULE_TONES[i % MODULE_TONES.length]} mt-0.5`} style={{ ['--s' as string]: '40px' }} aria-hidden="true">
+                        {number ? <b>{number}</b> : <BookOpen fill="none" stroke="currentColor" strokeWidth={1.9} />}
                       </span>
                       <div className="min-w-0 flex-1">
                         {number && <p className="text-[12.5px] font-semibold text-gray-500">Module {number}</p>}

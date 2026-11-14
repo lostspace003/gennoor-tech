@@ -13,8 +13,9 @@ import PlayerBar from '@/components/media/PlayerBar'
  *
  * Two things are there for the visitor (owner, 13 November 2026: "just having that simple icon
  * can be good", and "we should be able to see the video slider ... the moment we hover over it"):
- *  - A round speaker button at the top left, with no words. It plays the film from the beginning
- *    with the voice and the music.
+ *  - A small round speaker button in the top right corner, with no words. It plays the film from the
+ *    beginning with the voice and the music. (Top right since 14 November 2026: every button on a video
+ *    of ours is there, small and quiet. It was a larger white or yellow button at the top left.)
  *  - A bar at the foot with a slider to move through the film, play or pause, the sound, the time
  *    and full screen. It shows while the pointer is on the film, after a tap on a phone, while the
  *    film is paused, and whenever the keyboard is in it. It is out of the way otherwise, because the
@@ -123,9 +124,11 @@ export default function FilmPlayer({ src, poster, title, transcript, seconds, to
     hide.current = setTimeout(() => setNear(false), stay)
   }
 
-  const glow = tone === 'gold' ? 'shadow-[0_30px_80px_-24px_rgba(245,166,35,.55)]' : 'shadow-[0_30px_80px_-24px_rgba(10,108,255,.55)]'
-  const button = tone === 'gold' ? 'bg-[#ffc24b] text-[#2a1a00] hover:bg-[#ffd06b]' : 'bg-[#fff] text-[#0b1220] hover:bg-[#e8f1ff]'
-  const waiting = still && !playing && !sound   // nothing moves yet: one play button in the middle
+  // A soft glow under the film, not a bright one (owner, 14 November 2026: "too much flashy")
+  const glow = tone === 'gold' ? 'shadow-[0_26px_70px_-28px_rgba(245,166,35,.32)]' : 'shadow-[0_26px_70px_-28px_rgba(10,108,255,.32)]'
+  // The one button of every video (st-play in src/styles/stage.css): small, quiet, top right
+  const button = tone === 'gold' ? 'st-play st-gold' : 'st-play'
+  const waiting = still && !playing && !sound   // nothing moves yet: the same button plays it, and so does the picture
   const barHidden = waiting || (!near && playing)
 
   return (
@@ -156,28 +159,24 @@ export default function FilmPlayer({ src, poster, title, transcript, seconds, to
         onEnded={() => setEnded(true)}
       />
 
-      {/* Without sound: one round button, no words. It sits at the top, clear of the words at the foot of the picture. */}
+      {/* Without sound: one small round button, no words, in the top right corner like every button on a video.
+          The top, because the words of the film and its slider are at the foot of the picture. */}
       {!sound && !waiting && (
-        <button
-          type="button"
-          onClick={withSound}
-          aria-label="Play with sound, from the beginning"
-          title="Play with sound"
-          className={`absolute left-2.5 top-2.5 sm:left-4 sm:top-4 grid h-10 w-10 sm:h-11 sm:w-11 place-items-center rounded-full shadow-lg transition-colors ${button}`}
-        >
-          <VolumeX className="h-[18px] w-[18px] sm:h-5 sm:w-5" aria-hidden="true" />
+        <button type="button" onClick={withSound} aria-label="Play with sound, from the beginning" title="Play with sound" className={button}>
+          <VolumeX aria-hidden="true" />
         </button>
       )}
 
+      {/* Nothing moves yet: the whole picture plays it, and the same small button says so */}
       {waiting && (
-        <button type="button" onClick={withSound} aria-label="Play the film" className={`absolute inset-0 m-auto grid h-16 w-16 place-items-center rounded-full shadow-lg transition-transform duration-200 hover:scale-105 ${button}`}>
-          <Play className="h-7 w-7 fill-current ml-0.5" aria-hidden="true" />
+        <button type="button" onClick={withSound} aria-label="Play the film" className="absolute inset-0">
+          <span className={button}><Play className="fill-current ml-px" aria-hidden="true" /></span>
         </button>
       )}
 
       {sound && ended && (
-        <button type="button" onClick={withSound} className="absolute inset-0 flex items-center justify-center bg-black/55 text-[#fff]">
-          <span className="inline-flex items-center gap-2 rounded-full bg-white/15 px-5 py-3 text-[15px] font-semibold backdrop-blur hover:bg-white/25"><RotateCcw className="h-4 w-4" /> Watch it again</span>
+        <button type="button" onClick={withSound} className="absolute inset-0 bg-black/55">
+          <span className={button}><RotateCcw aria-hidden="true" /> Watch it again</span>
         </button>
       )}
 

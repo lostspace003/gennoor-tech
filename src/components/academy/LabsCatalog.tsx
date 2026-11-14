@@ -133,9 +133,9 @@ export default function LabsCatalog({ courses, custom = EMPTY_CUSTOM }: { course
             {grouped.map(group => (
               <div key={group.id}>
                 <div className="flex items-center gap-3 mb-7">
-                  <div className="w-8 h-8 rounded-lg bg-primary-600 flex items-center justify-center">
-                    <Layers className="w-4 h-4 text-white" />
-                  </div>
+                  <span className="st-ico" style={{ ['--s' as string]: '32px' }} aria-hidden="true">
+                    <Layers fill="none" stroke="currentColor" strokeWidth={1.9} />
+                  </span>
                   <div>
                     <h3 className="font-heading text-lg font-bold text-gray-900">{group.label}</h3>
                     <p className="text-xs text-gray-500">{KIND_LINE[group.id]} · {group.items.length} course{group.items.length > 1 ? 's' : ''}</p>

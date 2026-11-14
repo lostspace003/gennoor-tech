@@ -76,10 +76,10 @@ function Path({ items, slug }: { items: AboutItem[]; slug: string }) {
         const body = points.length ? (it.points?.length ? split.rest : '') : split.rest || split.lead
         const last = i === items.length - 1
         return (
-          <li key={it.label || i} className="relative grid grid-cols-[44px_minmax(0,1fr)] sm:grid-cols-[56px_minmax(0,1fr)] gap-x-4 sm:gap-x-5 pb-5 last:pb-0">
-            {/* The line that joins this part to the next */}
-            {!last && <span aria-hidden className="absolute left-[21px] sm:left-[27px] top-12 sm:top-14 bottom-0 w-[2px] rounded-full bg-gray-200" />}
-            <span className={`st-ico ${TONES[i % TONES.length]} relative z-[1] mt-1`} style={{ ['--s' as string]: 'clamp(44px, 5vw, 56px)' }} aria-hidden="true">
+          <li key={it.label || i} className="relative grid grid-cols-[40px_minmax(0,1fr)] sm:grid-cols-[44px_minmax(0,1fr)] gap-x-4 sm:gap-x-5 pb-5 last:pb-0">
+            {/* The line that joins this part to the next: it starts under the tile (4 + 40, or 4 + 44) and runs down its middle */}
+            {!last && <span aria-hidden className="absolute left-[19px] sm:left-[21px] top-11 sm:top-12 bottom-0 w-[2px] rounded-full bg-gray-200" />}
+            <span className={`st-ico ${TONES[i % TONES.length]} relative z-[1] mt-1 [--s:40px] sm:[--s:44px]`} aria-hidden="true">
               <b>{number || i + 1}</b>
             </span>
             <div className="st-card !rounded-2xl px-5 py-4 sm:px-6 sm:py-5 min-w-0">

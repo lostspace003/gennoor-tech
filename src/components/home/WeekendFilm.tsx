@@ -27,7 +27,7 @@ export default function WeekendFilm() {
           <FilmPlayer tone="gold" src={film.src} poster={film.poster} title={film.title} transcript={film.transcript} seconds={film.seconds} />
           <div>
             <p className="inline-flex items-center gap-2.5">
-              <Ico icon={Zap} tone="gold" round size={34} />
+              <Ico icon={Zap} tone="gold" round size={30} />
               <span className="st-kicker">Live · every month</span>
             </p>
             <h2 id="weekend-film" className="font-heading text-[clamp(28px,3vw,40px)] font-bold leading-[1.08] tracking-[-0.025em] text-gray-900 mt-3.5">{WEEKEND.heading}</h2>

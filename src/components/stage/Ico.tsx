@@ -31,8 +31,9 @@ interface IcoProps {
 }
 
 /**
- * The icon tile of the site: a glass square lit from the top left, with the icon drawn twice
- * (a soft fill, then the line), exactly as in the films and the presentation.
+ * The icon tile of the site: a soft wash of its colour with a thin line round it, and the icon drawn
+ * in that colour (a faint fill, then the line). Calm on purpose: no shine, no glow, no shadow
+ * (docs/DESIGN.md, section 3). In a card it is 40 to 44 pixels.
  * Use a lucide icon. One tile per idea; do not put a tile beside every line of text.
  */
 export function Ico({ icon: Icon, tone = 'blue', size, round, fill, label, className, style }: IcoProps) {
@@ -45,8 +46,8 @@ export function Ico({ icon: Icon, tone = 'blue', size, round, fill, label, class
       aria-label={label}
       aria-hidden={label ? undefined : true}
     >
-      <Icon fill="#fff" fillOpacity={0.26} stroke="none" />
-      <Icon fill="none" stroke="#fff" strokeWidth={1.75} />
+      <Icon fill="currentColor" fillOpacity={0.14} stroke="none" />
+      <Icon fill="none" stroke="currentColor" strokeWidth={1.75} />
     </span>
   )
 }
@@ -62,9 +63,9 @@ export function SparkIco({ size, code, className, label }: { size?: number; code
       aria-hidden={label ? undefined : true}
     >
       <svg viewBox="0 0 24 24" style={{ position: 'static', width: code ? '40%' : '56%', height: code ? '40%' : '56%' }}>
-        <path fill="#fff" d="M12 2l1.6 6.1L19 4.9l-3.4 5.2 6.1 1.9-6.1 1.9L19 19.1l-5.4-3.2L12 22l-1.6-6.1L5 19.1l3.4-5.2L2.3 12l6.1-1.9L5 4.9l5.4 3.2L12 2z" />
+        <path fill="currentColor" d="M12 2l1.6 6.1L19 4.9l-3.4 5.2 6.1 1.9-6.1 1.9L19 19.1l-5.4-3.2L12 22l-1.6-6.1L5 19.1l3.4-5.2L2.3 12l6.1-1.9L5 4.9l5.4 3.2L12 2z" />
       </svg>
-      {code && <b style={{ position: 'relative', fontSize: 'calc(var(--s, 64px) * 0.17)', fontWeight: 800, lineHeight: 1, letterSpacing: '0.02em', color: '#fff' }}>{code}</b>}
+      {code && <b style={{ position: 'relative', fontSize: 'calc(var(--s, 44px) * 0.17)', fontWeight: 800, lineHeight: 1, letterSpacing: '0.02em' }}>{code}</b>}
     </span>
   )
 }

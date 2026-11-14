@@ -9,8 +9,10 @@ import PlayerBar from '@/components/media/PlayerBar'
  * Course promo: starts by itself as the page opens (muted, as browsers require)
  * with an always-visible control bar (components/media/PlayerBar): a slider to move through it, play or pause, sound (0 to 200 percent), the time, full screen.
  * framed={false} drops the rounded frame and shadow so it fills a course card's picture area.
+ * underRibbon: the page lays the gold "% off" ribbon across the top right corner, so the button sits just under it.
  */
-export default function PromoPlayer({ src, poster, startMuted = true, framed = true, autoPlay = true, resumeKey }: { src: string; poster?: string | null; startMuted?: boolean; framed?: boolean; autoPlay?: boolean; resumeKey?: string }) {
+export default function PromoPlayer({ src, poster, startMuted = true, framed = true, autoPlay = true, resumeKey, underRibbon = false }: { src: string; poster?: string | null; startMuted?: boolean; framed?: boolean; autoPlay?: boolean; resumeKey?: string; underRibbon?: boolean }) {
+  const button = underRibbon ? 'st-play st-play-low' : 'st-play'
   const boxRef = useRef<HTMLDivElement>(null)
   const ref = useRef<HTMLVideoElement>(null)
   const lastSaved = useRef(0)
@@ -104,22 +106,17 @@ export default function PromoPlayer({ src, poster, startMuted = true, framed = t
         onVolumeChange={e => setMuted(e.currentTarget.muted)}
       />
 
-      {/* Playing without sound: one round button, no words (owner, 13 November 2026) */}
+      {/* The one button of every video (st-play in src/styles/stage.css): small, quiet, in the top right corner.
+          Playing without sound, it turns the sound on; stopped, it plays (a click on the picture does too). */}
       {muted && playing && (
-        <button
-          type="button"
-          onClick={() => soundTo(false)}
-          aria-label="Turn on the sound"
-          title="Turn on the sound"
-          className="absolute left-3 top-3 sm:left-4 sm:top-4 grid h-10 w-10 place-items-center rounded-full bg-black/60 backdrop-blur text-[#fff] hover:bg-black/75 transition-colors"
-        >
-          <VolumeX className="w-[18px] h-[18px]" aria-hidden="true" />
+        <button type="button" onClick={() => soundTo(false)} aria-label="Turn on the sound" title="Turn on the sound" className={button}>
+          <VolumeX aria-hidden="true" />
         </button>
       )}
 
       {!playing && (
-        <button type="button" onClick={toggle} aria-label="Play" className="absolute inset-0 m-auto w-16 h-16 rounded-full bg-white/20 backdrop-blur flex items-center justify-center hover:bg-white/30 hover:scale-105 transition duration-200">
-          <Play className="w-7 h-7 text-white fill-white ml-0.5" />
+        <button type="button" onClick={toggle} aria-label="Play" title="Play" className={button}>
+          <Play className="fill-current ml-px" aria-hidden="true" />
         </button>
       )}
 

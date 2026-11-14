@@ -39,7 +39,7 @@ export default function LatestBlog() {
               href={`/resources/blog/${post.slug}`}
               className="group rounded-2xl overflow-hidden transition-all duration-500 ease-spring glass-card glow-border"
             >
-              <BlogArt post={post} main={54} className="h-32" />
+              <BlogArt post={post} main={44} className="h-32" />
 
               <div className="p-6">
                 <span className="block text-[10px] font-bold uppercase tracking-wider mb-1.5 text-primary-600">

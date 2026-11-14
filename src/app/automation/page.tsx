@@ -65,7 +65,7 @@ export default function AutomationPage() {
           <Reveal as="ul" className="grid sm:grid-cols-2 gap-3">
             {TYPICAL.map((t, i) => (
               <li key={t.text} className={`st-rise st-card flex items-center gap-4 p-4 ${i === TYPICAL.length - 1 ? 'sm:col-span-2' : ''}`} style={turn(i)}>
-                <Ico icon={t.icon} tone={t.tone} size={48} />
+                <Ico icon={t.icon} tone={t.tone} size={36} />
                 <span className="text-[16px] font-semibold leading-snug text-gray-900">{t.text}</span>
               </li>
             ))}
@@ -80,7 +80,7 @@ export default function AutomationPage() {
           <div className="grid md:grid-cols-2 gap-4 mt-8">
             {AUDIENCES.map(a => (
               <div key={a.title} className="st-card flex items-start gap-5 p-6">
-                <Ico icon={a.icon} tone={a.tone} size={60} />
+                <Ico icon={a.icon} tone={a.tone} size={44} />
                 <div>
                   <h3 className="text-[20px] font-bold tracking-[-0.01em] text-gray-900">{a.title}</h3>
                   <p className="text-[15.5px] leading-[1.55] text-gray-600 mt-1.5">{a.body}</p>
@@ -98,7 +98,7 @@ export default function AutomationPage() {
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-8">
             {PRINCIPLES.map(p => (
               <div key={p.title} className="st-card p-6">
-                <Ico icon={p.icon} tone={p.tone} size={56} />
+                <Ico icon={p.icon} tone={p.tone} size={40} />
                 <h3 className="text-[18.5px] font-bold tracking-[-0.01em] text-gray-900 mt-5">{p.title}</h3>
                 <p className="text-[15px] leading-[1.55] text-gray-600 mt-2">{p.body}</p>
               </div>
@@ -110,7 +110,7 @@ export default function AutomationPage() {
       {/* ===== Or we teach your team to do it ===== */}
       <section className="bg-gray-50 px-4 sm:px-6 py-10 lg:py-12" aria-labelledby="teach-it">
         <div className="st-card max-w-[1120px] mx-auto flex flex-col md:flex-row md:items-center gap-5 md:gap-7 p-6 sm:p-8">
-          <Ico icon={GraduationCap} tone="gold" size={72} />
+          <Ico icon={GraduationCap} tone="gold" size={48} />
           <div className="flex-1 min-w-0">
             <h2 id="teach-it" className="text-[clamp(22px,2.4vw,28px)] font-bold tracking-[-0.02em] text-gray-900">Or your team learns to automate it.</h2>
             <p className="text-[16px] leading-[1.55] text-gray-600 mt-2 max-w-[640px]">

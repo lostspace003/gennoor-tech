@@ -80,7 +80,7 @@ React pieces are in `src/components/stage/`; their classes start with `st-`.
 
 | Piece | Use it for |
 |---|---|
-| `<Ico icon tone size />` | The icon tile: a lucide icon on a glass tile. One per idea. |
+| `<Ico icon tone size />` | The icon tile: a lucide icon on a calm tile, a soft wash of its colour with the drawing in that colour. One per idea. 40 to 44 pixels in a card. |
 | `<SparkIco code />` | The Claude spark, with a certification code under it. |
 | `<Ground glow>` | A lit part of a page: the top, and one or two bands that should be noticed. Navy with glows on the stage, a deeper tint with soft glows on the day look. |
 | `<Reveal>` | Holds the arrival of what is inside until it is on screen. |
@@ -112,8 +112,27 @@ write a mute button of your own in a new player.
 
 **A button on a video is an icon, with no words.** The owner's words (2026-11-13): "with sound, not
 required to write that text ... just having that simple icon can be good." A video that plays without
-sound shows one round button with the muted-speaker icon (`VolumeX`), top left, 40 to 44 pixels, with
-what it does in `aria-label` and `title`. Never a pill that says "Play with sound" or "Turn on sound".
+sound shows one round button with the muted-speaker icon (`VolumeX`), with what it does in `aria-label`
+and `title`. Never a pill that says "Play with sound" or "Turn on sound".
+
+**Every button on a video is small, quiet, and in the top right corner.** The owner's words (14 November
+2026), of the yellow button on the AI Weekend film and the white "Watch" pill with its blue disc: "Those
+are very big. They can be smaller in size and they can be little less shiny, like too much flashy they
+look ... keep every of the play button on the same side. On the right corner of the video, check the
+entire website." So there is one class, `st-play` (`src/styles/stage.css`), and every player of ours uses
+it: the button that turns the sound on, the one that plays a stopped video, "Watch it again", and the
+"Watch · 9 min" of the Learning Studio walkthrough (the one button that keeps its words, as a small pill).
+
+- 36 pixels, dark glass with a thin light line, the drawing in white; `st-gold` draws it in the AI Weekend's
+  gold. No solid yellow, white or blue disc, no shadow, nothing that grows when pointed at. It can be
+  pressed over 48 pixels.
+- **The top right corner**, never the middle and never the left: the foot of a video has its slider, and a
+  film has its spoken words written there. Where the gold "% off" ribbon lies across that corner (the top of
+  a course page), the button sits just under the ribbon on the same edge: `underRibbon` on `PromoPlayer`.
+- A stopped video is also played by a click anywhere on its picture, so the small button costs nothing.
+- Not covered by this, and unchanged: the players inside a course once someone is learning (`LmsPlayer`,
+  the Claude course reader), which keep their own large button in the middle. They are behind the sign-in
+  and could not be looked at when this was done.
 
 **A video always has a slider to move through it.** The owner's words: "we should be able to see the
 video slider so that we can move it forward the moment we hover over it." Every player of our own uses
@@ -138,6 +157,35 @@ controls instead, and do not build a second bar.
 | `ink` | off, not yet, or "no" |
 
 Gold is the scarce one: **one gold thing in view** is the thing we want noticed.
+
+**An icon tile is calm.** The owner's words (14 November 2026): "I just feel too many flashy icons are
+there. I want the icons, but I don't want to be flashy. I want it to be professional, very much subtle ...
+Size should not be too much on the eyes. It's hitting the eyes right now rather than making me get a calm
+feeling when I see those colors." Until that day a tile was a glossy glass square with a white shine, a
+coloured glow under it and a white drawing, 48 to 72 pixels in a card; the home page showed a dozen of them
+in five strong colours. So:
+
+- **The tile is a soft wash of its colour with a thin line round it, and the drawing is in that colour**: a
+  light tint of it on the dark look, a deep shade of it on the light one. No shine, no glow, no shadow under
+  it, no white drawing on a strong colour. It is all in one place, `.st-ico` in `src/styles/stage.css`, and
+  the sixteen colours are with the two looks at the top of that file (`--st-ico-*`). Each was measured
+  against its own tile on every ground a tile sits on (4.5 to 1 or better), so a number on a tile reads too.
+  Change a colour there and measure it again; never give one tile a colour of its own on a page.
+- **Sizes.** In a card 40 to 44 pixels (`size={44}`, or 40 where five cards share a row); in a line of text
+  30 to 36; the one tile above the heading of a page 72 (`w-[72px] h-[72px]`); the picture at the top of a
+  page 88 to 112 at most. If a tile looks too small, the card has too little in it: do not make the tile bigger.
+- **A tile lets what is behind it show through.** Where something passes behind a tile, or a tile lies on
+  another tile or on a coloured bar, add `st-ico-solid` (`className="st-ico-solid"` on `<Ico>`): the same wash
+  on a ground of its own. The process drawing uses it; without it the joining line showed through its tiles.
+- **An icon on a button or in a list is drawn the same way.** Never a solid colour square with a white icon
+  and a glow (`bg-primary-600 text-white shadow-[...]`): the play tiles of a course's preview lessons and the
+  small tiles beside "Certification prep" on the Learning Studio were that, six and three in view at once.
+  They are `st-ico` now. The main button (`st-pill`) is the one solid blue thing on a page.
+- **What did not change:** the meaning of each colour (the table above), one tile per idea, and the films,
+  the presentation, the picture a shared link shows and the moving picture of the email series, which keep
+  the glossy tile (each draws its own: `scripts/show/css/stage.css`, `src/lib/og-card.tsx`,
+  `scripts/email-art/art.html`). They are seen once, as a picture, not lived in like a page. If they are to
+  follow, that is a separate piece of work.
 
 ## 4. How a page is built
 
@@ -380,6 +428,8 @@ words. Two things went wrong once, and the rules now cover them:
 ## Not to do
 
 - No new colour families, no new fonts, no second icon style. Icons are lucide, on tiles.
+- No shine, glow or shadow on an icon, no solid colour square behind one, and no tile larger than the
+  sizes in section 3. The tiles are calm on purpose.
 - No tile beside every line of text; no three identical cards where a sentence would do.
 - No all-capitals labels except `st-kicker`; no accented word in every heading.
 - No number shown large unless it is impressive and true.

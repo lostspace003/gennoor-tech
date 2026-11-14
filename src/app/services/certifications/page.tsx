@@ -104,7 +104,7 @@ export default function CertificationPreparationPage() {
             </p>
 
           </div>
-          <ExamPrepIllustration className="w-[128px] h-[128px] lg:w-[180px] lg:h-[180px] mx-auto lg:mx-0 shrink-0" />
+          <ExamPrepIllustration className="w-[88px] h-[88px] lg:w-[112px] lg:h-[112px] mx-auto lg:mx-0 shrink-0" />
           </div>
         </div>
       </section>

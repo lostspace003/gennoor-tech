@@ -102,7 +102,7 @@ export default async function HomePage() {
           <Reveal as="ul" className="mt-8 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4">
             {IN_A_COURSE.map((f, i) => (
               <li key={f.title} className="st-rise st-card p-4 sm:p-5" style={turn(i)}>
-                <Ico icon={f.icon} tone={f.tone} size={56} />
+                <Ico icon={f.icon} tone={f.tone} size={40} />
                 <h3 className="text-[16.5px] font-semibold leading-snug text-gray-900 mt-4">{f.title}</h3>
                 <p className="text-[14px] leading-[1.45] text-gray-500 mt-1.5">{f.body}</p>
               </li>
@@ -155,7 +155,7 @@ export default async function HomePage() {
           <div className="grid md:grid-cols-3 gap-4 mt-10 lg:mt-12">
             {WAYS.map(w => (
               <Link key={w.title} href={w.href} className="st-card group flex flex-col p-6">
-                <Ico icon={w.icon} tone={w.tone} size={60} />
+                <Ico icon={w.icon} tone={w.tone} size={44} />
                 <h3 className="text-[20px] font-bold tracking-[-0.01em] text-gray-900 mt-5">{w.title}</h3>
                 <p className="text-[15px] leading-[1.55] text-gray-600 mt-2 flex-1">{w.body}</p>
                 <span className="st-link text-[14.5px] mt-5">{w.link} ›</span>
@@ -181,14 +181,14 @@ export default async function HomePage() {
             {FOR_A_TEAM.map((s, i) => (
               <li key={s.title} className="st-card relative p-6">
                 <span className="st-num absolute right-5 top-4" aria-hidden="true">0{i + 1}</span>
-                <Ico icon={s.icon} tone={s.tone} size={64} />
+                <Ico icon={s.icon} tone={s.tone} size={44} />
                 <h3 className="text-[20px] font-bold tracking-[-0.01em] text-gray-900 mt-5">{s.title}</h3>
                 <p className="text-[15px] leading-[1.55] text-gray-600 mt-2">{s.body}</p>
               </li>
             ))}
           </ol>
           <div className="st-card mt-4 flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-5 p-5 sm:p-6">
-            <Ico icon={Workflow} tone="green" size={56} />
+            <Ico icon={Workflow} tone="green" size={44} />
             <div className="flex-1 min-w-0">
               <h3 className="text-[18.5px] font-bold tracking-[-0.01em] text-gray-900">We also teach automation.</h3>
               <p className="text-[15px] leading-[1.5] text-gray-600 mt-1">One process your team runs every week, and a course built on it, so they can automate it themselves.</p>
