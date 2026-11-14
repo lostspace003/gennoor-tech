@@ -4,6 +4,7 @@ import { createContext, useCallback, useContext, useEffect, useRef, useState } f
 import { useRouter } from 'next/navigation'
 import { Check, Loader2, Maximize, Pause, Play, X } from 'lucide-react'
 import { useLearnerAuth } from '@/hooks/useLearnerAuth'
+import { useIndia } from '@/hooks/useIndia'
 import type { LmsKind } from '@/lib/lms-kind'
 import { useBoostedVolume } from '@/hooks/useBoostedVolume'
 import VolumeControl from '@/components/media/VolumeControl'
@@ -22,11 +23,6 @@ export interface AppliedCoupon { code: string; percent: number; price: Price }
 const usd = (n: number) => `$${n.toFixed(2)}`
 const inr = (n: number) => `₹${Math.round(n).toLocaleString('en-IN')}`
 
-/** A first guess at whether the buyer is in India, from the device's time zone. They can switch. */
-const looksLikeIndia = () => {
-  try { return /^Asia\/(Kolkata|Calcutta)$/.test(Intl.DateTimeFormat().resolvedOptions().timeZone) } catch { return false }
-}
-
 function loadRazorpay(): Promise<boolean> {
   return new Promise((resolve) => {
     if ((window as any).Razorpay) return resolve(true)
@@ -41,7 +37,11 @@ function loadRazorpay(): Promise<boolean> {
 // ---------------------------------------------------------------- buying
 
 interface BuyApi {
-  buy: () => void; busy: boolean; price: Price; india: boolean; setIndia: (v: boolean) => void
+  buy: () => void; busy: boolean; price: Price
+  /** The buyer is in India: rupees are shown and charged. Everyone else sees and pays dollars. Never both. */
+  india: boolean
+  /** False until the browser has said where the buyer is; no amount is drawn before that. */
+  ready: boolean
   offer: Offer | null
   coupon: AppliedCoupon | null
   /** Check a code with the server. Returns the reason when it cannot be used. */
@@ -62,9 +62,9 @@ export function CourseBuyProvider({ slug, price, offer = null, children }: { slu
   const [authOpen, setAuthOpen] = useState(false)
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState('')
-  const [india, setIndia] = useState(false)
+  const where = useIndia()
+  const india = where === true
   const [coupon, setCoupon] = useState<AppliedCoupon | null>(null)
-  useEffect(() => setIndia(looksLikeIndia()), [])
 
   const applyCoupon = useCallback(async (code: string) => {
     try {
@@ -121,7 +121,7 @@ export function CourseBuyProvider({ slug, price, offer = null, children }: { slu
   const buy = useCallback(() => (isLoggedIn ? pay() : setAuthOpen(true)), [isLoggedIn, pay])
 
   return (
-    <BuyContext.Provider value={{ buy, busy, price, india, setIndia, offer, coupon, applyCoupon, clearCoupon: () => setCoupon(null) }}>
+    <BuyContext.Provider value={{ buy, busy, price, india, ready: where !== null, offer, coupon, applyCoupon, clearCoupon: () => setCoupon(null) }}>
       {children}
       {error && (
         <div role="alert" className="fixed inset-x-0 bottom-6 z-50 flex justify-center px-4">
@@ -142,21 +142,10 @@ export function CourseBuyProvider({ slug, price, offer = null, children }: { slu
   )
 }
 
-/** The line under the buy button that lets a buyer switch between dollars and rupees. */
-export function CurrencyNote({ className = '' }: { className?: string }) {
-  const b = useBuy()
-  if (!b) return null
-  return (
-    <button type="button" onClick={() => b.setIndia(!b.india)} className={`text-[13px] underline underline-offset-2 ${className}`}>
-      {b.india ? `Paying from outside India? Pay ${usd(b.price.usd)}` : `Paying from India? Pay ${inr(b.price.inr)} by UPI, card or net banking`}
-    </button>
-  )
-}
-
 /** The price in the buyer's currency. With an offer or a coupon, the higher price is struck through beside it. */
 export function PriceLine({ className = '' }: { className?: string }) {
   const b = useBuy()
-  if (!b) return null
+  if (!b || !b.ready) return null
   const show = (p: Price) => (b.india ? inr(p.inr) : usd(p.usd))
   const now = b.coupon ? b.coupon.price : b.price
   const was = b.coupon ? b.price : b.offer?.regular
@@ -218,7 +207,7 @@ export function CouponBox({ className = '' }: { className?: string }) {
   )
 }
 
-/** The main button: "Buy the full course · $9.99". */
+/** The main button: "Buy the full course · $19.99" (or "· ₹849" in India). */
 export function BuyButton({ className = '', label }: { className?: string; label?: string }) {
   const b = useBuy()
   if (!b) return null
@@ -233,7 +222,7 @@ export function BuyButton({ className = '', label }: { className?: string; label
       className={`inline-flex items-center justify-center gap-2 px-7 py-3 bg-primary-600 hover:bg-primary-500 text-white text-sm font-semibold rounded-full transition-colors disabled:opacity-60 ${className}`}
     >
       {b.busy && <Loader2 className="w-4 h-4 animate-spin" />}
-      {free ? 'Get the full course' : label || 'Buy the full course'} · {shown}
+      {free ? 'Get the full course' : label || 'Buy the full course'}{b.ready && <> · {shown}</>}
     </button>
   )
 }

@@ -245,12 +245,21 @@ try {
         await c.close()
       }
     }
-    for (const [stored, want, words] of [[null, '', 'light (its paper) when nothing was chosen, at night'], [{ 'gennoor.admin.theme': 'dark' }, 'stage', 'dark when the person there chose dark, at noon']]) {
+    // The admin centre and the CRM follow the clock too since 14 November 2026: paper (no class) by day, the
+    // stage's colours at night; a look switched by hand holds until the next change of day and night.
+    const far = '|4102444800000'
+    for (const [stored, at, dark, words] of [
+      [null, noon, false, 'light (its paper) at noon'],
+      [null, night, true, 'dark at night'],
+      [{ 'gennoor.admin.theme': `dark${far}` }, noon, true, 'dark at noon when the person there switched to dark'],
+      [{ 'gennoor.admin.theme': `light${far}` }, night, false, 'light at night when the person there switched to light'],
+      [{ 'gennoor.admin.theme': 'dark' }, noon, false, 'light at noon with a choice kept the old way (no longer followed)'],
+    ]) {
       const c = await browser.createBrowserContext()
-      const p = await open(c, { zone: Z, now: stored ? noon : night, path: '/admin', alive: false, stored })
+      const p = await open(c, { zone: Z, now: at, path: '/admin', alive: false, stored })
       const s = await p.evaluate(() => window.__looks.filter((l) => /^\/(admin|crm)(\/|$)/.test(l.path)).map((l) => l.look))
-      const never = stored ? !s.includes('day') && s.filter(Boolean).every((l) => l === 'stage') && s.includes('stage') : s.every((l) => l === '')
-      ok(never, `the admin centre is ${words}: the clock does not touch it`, `on /admin the page was given: ${s.map((l) => l || 'nothing').join(', ') || 'nothing'} (wanted ${want || 'nothing'})`)
+      const right = !s.includes('day') && (dark ? s.includes('stage') && s.filter(Boolean).every((l) => l === 'stage') : s.every((l) => l === ''))
+      ok(right, `the admin centre is ${words}`, `on /admin the page was given: ${s.map((l) => l || 'nothing').join(', ') || 'nothing'} (wanted ${dark ? 'stage' : 'nothing'})`)
       await c.close()
     }
   }

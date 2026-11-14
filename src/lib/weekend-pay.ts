@@ -4,6 +4,7 @@ import { WEEKEND, cohortById } from '@/data/ai-weekend'
 import { getRegistrations, mutateRegistrations, getSettings, type WeekendRegistration } from '@/lib/weekend'
 import { createOrder, razorpayConfigured, razorpayKeyId } from '@/lib/razorpay'
 import { buildPaidEmail } from '@/lib/weekend-emails'
+import { money } from '@/lib/money'
 
 // Paying for an AI Weekend seat. One registration has at most one open order;
 // the same order is reused if the person comes back to pay later.
@@ -29,8 +30,9 @@ export interface Checkout {
   token: string
   keyId: string
   orderId: string
-  /** In paise, as Razorpay counts. */
+  /** In the smallest unit, as Razorpay counts: paise, or cents. */
   amount: number
+  currency: 'INR' | 'USD'
   name: string
   email: string
   phone: string
@@ -42,7 +44,7 @@ export async function startPayment(reg: WeekendRegistration): Promise<Checkout |
   if (!razorpayConfigured() || reg.payment !== 'pending') return null
   let orderId = reg.orderId
   if (!orderId) {
-    const order = await createOrder(reg.fee, reg.id, { registration: reg.id, cohort: reg.cohort, email: reg.email })
+    const order = await createOrder(reg.fee, reg.id, { registration: reg.id, cohort: reg.cohort, email: reg.email }, reg.currency || 'INR')
     orderId = order.id
     await mutateRegistrations((rows) => { const r = rows.find((x) => x.id === reg.id); if (r && !r.orderId) r.orderId = order.id })
   }
@@ -53,6 +55,7 @@ export async function startPayment(reg: WeekendRegistration): Promise<Checkout |
     keyId: razorpayKeyId(),
     orderId,
     amount: Math.round(reg.fee * 100),
+    currency: reg.currency || 'INR',
     name: reg.name,
     email: reg.email,
     phone: reg.phone,
@@ -86,8 +89,8 @@ export async function markPaid(match: { orderId?: string; registrationId?: strin
     await sendEmail({ to: reg.email, from: FROM, fromName: 'Gennoor Tech', subject: mail.subject, html: mail.html }).catch((e) => console.error('weekend receipt email failed', e))
     await sendEmail({
       to: ADMIN, from: FROM, fromName: 'AI Weekend',
-      subject: `AI Weekend payment received: ${reg.name} (₹${reg.fee})`,
-      html: `<p>${reg.name.replace(/[<>&]/g, '')} paid ₹${reg.fee} for ${cohort.label}.</p><p>Razorpay payment: ${paymentId.replace(/[^\w]/g, '')}</p><p><a href="${SITE}/admin/weekend">Open the list</a></p>`,
+      subject: `AI Weekend payment received: ${reg.name} (${money(reg.fee, reg.currency || 'INR')})`,
+      html: `<p>${reg.name.replace(/[<>&]/g, '')} paid ${money(reg.fee, reg.currency || 'INR')} for ${cohort.label}.</p><p>Razorpay payment: ${paymentId.replace(/[^\w]/g, '')}</p><p><a href="${SITE}/admin/weekend">Open the list</a></p>`,
     }).catch(() => {})
   }
   return 'paid'

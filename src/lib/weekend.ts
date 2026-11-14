@@ -21,8 +21,10 @@ export interface WeekendRegistration {
   role: string
   at: string
   payment: PaymentState
-  /** Fee in rupees at the time they registered. */
+  /** The fee at the time they registered, in `currency`. */
   fee: number
+  /** Rupees for someone in India, dollars for everyone else. Absent on registrations made before 14 November 2026: rupees. */
+  currency?: 'INR' | 'USD'
   /** Where they came from: campaign tag or referring site. */
   source: string
   note?: string

@@ -3,7 +3,8 @@ import { rateLimit, clientIp } from '@/lib/rate-limit'
 import { sendEmail } from '@/lib/email-service'
 import { escapeHtml } from '@/lib/escape-html'
 import { emailShell, emailTitle, emailDetails, emailSteps, emailButton, emailContact } from '@/lib/crm/email-theme'
-import { WEEKEND, nextCohort, timeLabel } from '@/data/ai-weekend'
+import { WEEKEND, nextCohort, timeLabel, weekendFee } from '@/data/ai-weekend'
+import { money } from '@/lib/money'
 import { mutateRegistrations, newRegistrationId, getSettings, getRegistrations, type WeekendRegistration } from '@/lib/weekend'
 import { buildWeekendEmail } from '@/lib/weekend-emails'
 import { razorpayConfigured } from '@/lib/razorpay'
@@ -35,6 +36,9 @@ export async function POST(req: Request) {
     }
 
     const cohort = nextCohort()
+    // Rupees in India, dollars everywhere else. The page says which (from the visitor's device); the amount
+    // itself is always decided here. A page that does not say is an older copy of the form: rupees, as before.
+    const charge = weekendFee(b.india !== false)
     const reg: WeekendRegistration = {
       id: newRegistrationId(),
       cohort: cohort.id,
@@ -45,7 +49,8 @@ export async function POST(req: Request) {
       role: clean(b.role, 80),
       at: new Date().toISOString(),
       payment: 'pending',
-      fee: WEEKEND.fee,
+      fee: charge.fee,
+      currency: charge.currency,
       source: clean(b.source, 160),
     }
 
@@ -72,6 +77,11 @@ export async function POST(req: Request) {
     // The payment window is pre-filled with what was just typed, never with details stored earlier:
     // typing someone else's email must not reveal their name or phone number.
     if (checkout) { checkout.name = name; checkout.phone = phone }
+    // What this person pays, in the money their seat was reserved in (someone coming back keeps their first one)
+    const inIndia = (seat.currency || 'INR') === 'INR'
+    const due = money(seat.fee, seat.currency || 'INR')
+    const regular = money(weekendFee(inIndia).regular, seat.currency || 'INR')
+    const ways = inIndia ? 'UPI, card or net banking' : 'card'
 
     // The person always gets the confirmation (a repeat usually means they lost the first one)
     await sendEmail({
@@ -85,14 +95,14 @@ export async function POST(req: Request) {
             ['Dates', cohort.label],
             ['Time', `${timeLabel()}, both days`],
             ['Where', WEEKEND.mode],
-            ['Fee', `₹${WEEKEND.fee} (regular price ₹${WEEKEND.regularFee.toLocaleString('en-IN')})`],
+            ['Fee', `${due} (regular price ${regular})`],
           ]) +
-          (payLink ? emailButton(`Pay ₹${WEEKEND.fee} now`, payLink) : '') +
+          (payLink ? emailButton(`Pay ${due} now`, payLink) : '') +
           emailSteps(
             [
               payLink
-                ? { title: 'Pay the fee', body: `If you have not paid yet, use the button above (UPI, card or net banking). Your seat is confirmed the moment the payment goes through.` }
-                : { title: 'Pay the fee', body: `We will email you the payment details for ₹${WEEKEND.fee}. Your seat is confirmed once it is received.` },
+                ? { title: 'Pay the fee', body: `If you have not paid yet, use the button above (${ways}). Your seat is confirmed the moment the payment goes through.` }
+                : { title: 'Pay the fee', body: `We will email you the payment details for ${due}. Your seat is confirmed once it is received.` },
               { title: 'Get set up', body: 'A few days before, we send the joining link and short setup steps.' },
               { title: 'Watch it built live', body: 'Each demo is built step by step on Saturday and Sunday. Ask questions as it happens.' },
               { title: 'Receive the full kit', body: 'After the weekend we send the notes, prompts, files and guides, so you can repeat every demo yourself.' },
@@ -100,7 +110,7 @@ export async function POST(req: Request) {
             'What happens next'
           ) +
           emailContact({ email: 'admin@gennoor.com' }),
-        { preheader: payLink ? `${cohort.label}, ${timeLabel()}. Pay ₹${WEEKEND.fee} to confirm your seat.` : `${cohort.label}, ${timeLabel()}. Payment details follow by email.`, senderEmail: FROM }
+        { preheader: payLink ? `${cohort.label}, ${timeLabel()}. Pay ${due} to confirm your seat.` : `${cohort.label}, ${timeLabel()}. Payment details follow by email.`, senderEmail: FROM }
       ),
     }).catch((e) => console.error('weekend confirmation email failed', e))
 

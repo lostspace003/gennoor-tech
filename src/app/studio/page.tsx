@@ -27,8 +27,8 @@ export default async function LabsPage() {
   const prices = Object.fromEntries(await Promise.all(cards.map(async c => [c.slug, await priceOf(c.slug)] as const)))
   const offers = Object.fromEntries(await Promise.all(cards.map(async c => [c.slug, await offerOf(c, prices[c.slug])] as const)))
   const courses = cards.map(c => ({
-    ...c, rating: ratings[c.slug]?.count ? ratings[c.slug] : undefined, priceUsd: prices[c.slug]?.usd, previews: previewCount[c.slug],
-    offer: offers[c.slug] ? { percent: offers[c.slug]!.percent, regularUsd: offers[c.slug]!.regular.usd } : undefined,
+    ...c, rating: ratings[c.slug]?.count ? ratings[c.slug] : undefined, priceUsd: prices[c.slug]?.usd, priceInr: prices[c.slug]?.inr, previews: previewCount[c.slug],
+    offer: offers[c.slug] ? { percent: offers[c.slug]!.percent, regularUsd: offers[c.slug]!.regular.usd, regularInr: offers[c.slug]!.regular.inr } : undefined,
   }))
   return (
     <main className="bg-gray-50 min-h-screen">

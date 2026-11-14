@@ -6,7 +6,7 @@ import { readAdminTheme, saveAdminTheme, showAdminTheme, type AdminTheme } from 
 
 /**
  * The switch between the light and the dark look of the back office (the admin centre and the CRM).
- * Light is the default. The choice is kept in this browser and is separate from the public site's.
+ * The look follows the clock (light by day, dark at night); a switch by hand holds until the next change. The choice is kept in this browser and is separate from the public site's.
  *
  * `label` shows the words beside the icon (a row of a menu); without it, it is an icon button (a top bar).
  * What it will do is always in its name for a screen reader and in its tooltip.

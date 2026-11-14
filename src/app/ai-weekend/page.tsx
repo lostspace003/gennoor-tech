@@ -3,6 +3,7 @@ import { pageMeta } from '@/lib/seo'
 import { CalendarDays, Clock, Video, Check, Hammer, Award, ShieldCheck, Package } from 'lucide-react'
 import { WEEKEND, DAYS, FOR_YOU, INCLUDED, HOW_YOU_LEARN, KIT, TOOLS, FAQS, nextCohort, timeLabel, DEMO_COUNT, DEMO_WORD } from '@/data/ai-weekend'
 import RegisterForm, { StickyRegister } from './RegisterForm'
+import WeekendFee from '@/components/WeekendFee'
 import { getRegistrations } from '@/lib/weekend'
 import { razorpayConfigured } from '@/lib/razorpay'
 import FilmPlayer from '@/components/home/FilmPlayer'
@@ -13,16 +14,14 @@ export const revalidate = 300
 
 export const metadata: Metadata = pageMeta({
   title: `${WEEKEND.name}: ${WEEKEND.tagline}`,
-  // The fee is named here because this is the page where it is paid; the words a shared link shows leave it out.
-  description: `A live two-day workshop on the last weekend of every month. Eight hours with an industry expert, ${DEMO_WORD} demos built live, and the full kit to repeat them yourself. ₹${WEEKEND.fee}.`,
+  // No amount here: the fee is in rupees in India and in dollars elsewhere, and a search result cannot tell which reader it has.
+  description: `A live two-day workshop on the last weekend of every month. Eight hours with an industry expert, ${DEMO_WORD} demos built live, and the full kit to repeat them yourself.`,
   shareDescription: `Live online on the last weekend of every month, Saturday & Sunday. Eight hours with an industry expert, ${DEMO_WORD} demos built live, and the full kit to repeat them yourself.`,
   path: '/ai-weekend',
   image: 'ai-weekend',
 })
 
 const wrap = 'mx-auto w-full max-w-6xl px-4 sm:px-6'
-
-const rupees = (n: number) => `₹${n.toLocaleString('en-IN')}`
 
 export default async function AiWeekendPage() {
   const cohort = nextCohort()
@@ -33,7 +32,8 @@ export default async function AiWeekendPage() {
   const full = left === 0
   // Online payment is on once the Razorpay keys are set; until then people reserve and pay later
   const online = razorpayConfigured()
-  const ribbon = `Limited cohort of ${WEEKEND.seats} · ${cohort.label} · ${rupees(WEEKEND.fee)} instead of ${rupees(WEEKEND.regularFee)}`
+  // The fee is added to the ribbon in the visitor's own money (rupees in India, dollars elsewhere): <WeekendFee>
+  const ribbon = `Limited cohort of ${WEEKEND.seats} · ${cohort.label}`
 
   return (
     <main className="text-gray-900 pb-28">
@@ -41,7 +41,7 @@ export default async function AiWeekendPage() {
       <div className="st-night text-white text-xs sm:text-[13px] font-medium overflow-hidden" aria-label={ribbon}>
         <div className="weekend-ribbon flex whitespace-nowrap py-2" aria-hidden="true">
           {Array.from({ length: 6 }).map((_, i) => (
-            <span key={i} className="px-8 shrink-0">{ribbon} <span className="text-amber-400">●</span></span>
+            <span key={i} className="px-8 shrink-0">{ribbon}<WeekendFee before=" · " /><WeekendFee part="regular" before=" instead of " /> <span className="text-amber-400">●</span></span>
           ))}
         </div>
       </div>
@@ -55,7 +55,7 @@ export default async function AiWeekendPage() {
               <div className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-1 text-xs font-medium">
                 <span className="w-1.5 h-1.5 rounded-full bg-red-400 animate-pulse" /> Live · last weekend of every month
               </div>
-              <h1 className="mt-4 text-4xl sm:text-5xl font-bold tracking-tight leading-[1.08] text-white">{WEEKEND.name}</h1>
+              <h1 className="mt-4 text-4xl sm:text-5xl font-bold tracking-tight leading-[1.08] text-white">{WEEKEND.heading}</h1>
               <p className="mt-2 text-xl sm:text-2xl font-semibold text-amber-300">{WEEKEND.tagline}</p>
               <p className="mt-4 max-w-xl text-[15px] sm:text-base leading-relaxed text-white/80">
                 Two mornings, eight hours, {DEMO_WORD} working demos. From how AI works to a team of agents: see AI set up for real work, a weekly task automated, and agents built from nothing. Then take the full kit and do it yourself. No coding background needed.
@@ -67,10 +67,10 @@ export default async function AiWeekendPage() {
               </dl>
               <div className="mt-7 flex flex-wrap items-center gap-x-5 gap-y-3">
                 <a href="#register" className="st-pill st-gold">
-                  {full ? 'Join the next cohort' : `Reserve my seat · ${rupees(WEEKEND.fee)}`}
+                  {full ? 'Join the next cohort' : <>Reserve my seat<WeekendFee before=" · " /></>}
                 </a>
                 <div className="text-sm leading-tight">
-                  <div><s className="text-white/55">{rupees(WEEKEND.regularFee)}</s> <span className="font-semibold text-white">{rupees(WEEKEND.fee)}</span> <span className="text-white/70">for this cohort</span></div>
+                  <div><s className="text-white/55"><WeekendFee part="regular" /></s> <span className="font-semibold text-white"><WeekendFee /></span> <span className="text-white/70">for this cohort</span></div>
                   {left !== null && <div className="mt-1 font-semibold text-amber-300">{full ? 'This cohort is full' : `${left} of ${WEEKEND.seats} seats left`}</div>}
                 </div>
               </div>
@@ -237,8 +237,8 @@ export default async function AiWeekendPage() {
             <p className="mt-2 text-gray-600">{cohort.label} · {time}</p>
             <div className="mt-5 inline-flex items-center rounded-full st-night px-3 py-1 text-xs font-semibold text-amber-300">Limited cohort · {WEEKEND.seats} seats</div>
             <div className="mt-3 flex flex-wrap items-baseline gap-x-3 gap-y-1">
-              <s className="text-2xl font-semibold text-gray-400" aria-label={`Regular price ${rupees(WEEKEND.regularFee)}`}>{rupees(WEEKEND.regularFee)}</s>
-              <span className="text-5xl font-bold tracking-tight text-gray-900">{rupees(WEEKEND.fee)}</span>
+              <s className="text-2xl font-semibold text-gray-400"><span className="sr-only">Regular price </span><WeekendFee part="regular" /></s>
+              <span className="min-h-[48px] text-5xl font-bold tracking-tight text-gray-900"><WeekendFee /></span>
               <span className="text-sm text-gray-500">for both days</span>
             </div>
             {left !== null && taken !== null && (
@@ -274,7 +274,7 @@ export default async function AiWeekendPage() {
             </div>
           </div>
           <div className="rounded-2xl bg-raised border border-gray-200 p-5 sm:p-6">
-            <RegisterForm cohortLabel={cohort.label} fee={WEEKEND.fee} full={full} online={online} />
+            <RegisterForm cohortLabel={cohort.label} full={full} online={online} />
           </div>
         </div>
       </section>
@@ -306,7 +306,7 @@ export default async function AiWeekendPage() {
         </div>
       </section>
 
-      <StickyRegister fee={WEEKEND.fee} regularFee={WEEKEND.regularFee} note={left === null ? cohort.label : full ? 'This cohort is full' : `${left} seats left · ${cohort.label}`} />
+      <StickyRegister note={left === null ? cohort.label : full ? 'This cohort is full' : `${left} seats left · ${cohort.label}`} />
 
       <style>{`
         .weekend-ribbon { animation: weekend-ribbon 38s linear infinite; width: max-content; }
@@ -326,7 +326,10 @@ export default async function AiWeekendPage() {
             eventStatus: 'https://schema.org/EventScheduled',
             location: { '@type': 'VirtualLocation', url: 'https://gennoor.com/ai-weekend' },
             organizer: { '@type': 'Organization', name: 'Gennoor Tech', url: 'https://gennoor.com' },
-            offers: { '@type': 'Offer', price: WEEKEND.fee, priceCurrency: 'INR', url: 'https://gennoor.com/ai-weekend', availability: 'https://schema.org/InStock' },
+            offers: [
+              { '@type': 'Offer', price: WEEKEND.fee, priceCurrency: 'INR', eligibleRegion: 'IN', url: 'https://gennoor.com/ai-weekend', availability: 'https://schema.org/InStock' },
+              { '@type': 'Offer', price: WEEKEND.feeUsd, priceCurrency: 'USD', url: 'https://gennoor.com/ai-weekend', availability: 'https://schema.org/InStock' },
+            ],
           }),
         }}
       />

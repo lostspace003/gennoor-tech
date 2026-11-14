@@ -9,8 +9,8 @@ import { readBlob, writeBlob } from '@/lib/social/studio'
  *  - The rest of a paid course opens once the learner has BOUGHT it.
  *  - A course with no price is free: signing in and enrolling opens all of it, as before.
  *
- * Prices are per course, in US dollars with a rupee price beside it for buyers in India
- * (Razorpay can only take UPI and net banking in rupees).
+ * Prices are per course: a dollar price, and a rupee price for buyers in India (Razorpay can only take
+ * UPI and net banking in rupees). A visitor is shown one of the two, never both: src/lib/money.ts.
  */
 
 // ---------------------------------------------------------------- previews
@@ -62,7 +62,7 @@ export const isPreview = (course: LmsCourse, itemId: string) => previewIds(cours
 export interface CoursePrice { usd: number; inr: number }
 
 /** What every published course costs unless it has its own price. */
-export const DEFAULT_PRICE: CoursePrice = { usd: 9.99, inr: 849 }
+export const DEFAULT_PRICE: CoursePrice = { usd: 19.99, inr: 849 }
 
 /** Stored per course: a price, or `free: true` to keep that course open. */
 export type PriceSetting = { usd: number; inr: number; free?: false } | { free: true }

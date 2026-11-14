@@ -14,7 +14,7 @@ import { teamMember } from '../src/lib/crm/team'
 import { WEEKEND_EMAILS, buildWeekendEmail, buildPaidEmail } from '../src/lib/weekend-emails'
 import { hmacHex, validPaymentSignature, validWebhookSignature } from '../src/lib/razorpay'
 import { previewIds, isPreview, PREVIEW_MAX, DEFAULT_PRICE, formatUsd, formatInr } from '../src/lib/lms-access'
-import { WEEKEND, nextCohort, cohortById } from '../src/data/ai-weekend'
+import { WEEKEND, nextCohort, cohortById, weekendFee } from '../src/data/ai-weekend'
 
 let pass = 0, fail = 0
 const ok = (c: boolean, n: string) => { c ? pass++ : (fail++, console.log('  FAIL:', n)); if (c) console.log('  ok  :', n) }
@@ -122,7 +122,10 @@ for (const [i, info] of WEEKEND_EMAILS.entries()) {
   if (outDir) writeFileSync(path.join(outDir, `weekend-${i + 1}-${info.kind}.html`), `<!doctype html><meta charset="utf-8"><title>${mail.subject}</title>${mail.html}`)
 }
 ok(buildWeekendEmail('join', {}, nov, { joinUrl: 'https://teams.example/join' }).html.includes('href="https://teams.example/join"'), 'the joining email links to the saved Teams link')
-ok(buildWeekendEmail('invite', {}, nov).html.includes('₹1,999') && buildWeekendEmail('invite', {}, nov).html.includes('₹499'), 'the invitation shows 499 against 1,999')
+ok(WEEKEND.feeUsd === 9.99 && weekendFee(false).currency === 'USD' && weekendFee(true).fee === 499, 'outside India the fee is 9.99 dollars; in India 499 rupees')
+ok(!/[₹$]\s?\d/.test(buildWeekendEmail('invite', {}, nov).html), 'the invitation names no amount (it goes to people in India and abroad)')
+ok(buildWeekendEmail('payment', { name: 'A', fee: 9.99, currency: 'USD' }, nov, {}, undefined, 'https://x.example/pay').html.includes('$9.99') && !buildWeekendEmail('payment', { name: 'A', fee: 9.99, currency: 'USD' }, nov, {}, undefined, 'https://x.example/pay').html.includes('₹'), 'someone abroad is asked for dollars only')
+ok(buildWeekendEmail('payment', { name: 'A', fee: 499, currency: 'INR' }, nov, {}, undefined, 'https://x.example/pay').html.includes('₹499') && !/\$\d/.test(buildWeekendEmail('payment', { name: 'A', fee: 499 }, nov, {}, undefined, 'https://x.example/pay').html), 'someone in India is asked for rupees only')
 
 // ---- Online payment: only a correctly signed payment or webhook is believed
 const secret = 'test_secret_123'
@@ -154,7 +157,7 @@ ok(previewIds({ ...unmarked, slug: 'another-course' }).join() !== drawn.join(), 
 ok(drawn.some((id) => Number(id.slice(1)) > 10), 'the draw reaches beyond the first few lessons')
 ok(previewIds(courseOf([lesson('a', false), lesson('b', false)])).join() === 'a,b', 'a course with six lessons or fewer shows them all as previews')
 ok(isPreview(courseOf([lesson('a', true), lesson('b', false)]), 'a') && !isPreview(courseOf([lesson('a', true), lesson('b', false)]), 'b'), 'a lesson outside the previews is not open')
-ok(DEFAULT_PRICE.usd === 9.99 && DEFAULT_PRICE.inr > 0, 'the standard course price is 9.99 dollars, with a rupee price beside it')
+ok(DEFAULT_PRICE.usd === 19.99 && DEFAULT_PRICE.inr === 849, 'the standard course price is 19.99 dollars, or 849 rupees in India')
 ok(formatUsd(9.99) === '$9.99' && formatInr(849) === '₹849', 'prices are written the usual way')
 
 console.log(`\n${pass} passed, ${fail} failed`)

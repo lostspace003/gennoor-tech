@@ -347,10 +347,12 @@ export interface LmsCourseCard {
   rating?: { average: number; count: number }
   /** price in US dollars, when the course is paid; absent for a free course */
   priceUsd?: number
+  /** the same course's price in rupees, shown instead of dollars to a visitor in India */
+  priceInr?: number
   /** how many lessons can be watched without buying */
   previews?: number
-  /** when the course is shown as discounted: the percent off and the regular dollar price */
-  offer?: { percent: number; regularUsd: number }
+  /** when the course is shown as discounted: the percent off and the regular price, in dollars and in rupees */
+  offer?: { percent: number; regularUsd: number; regularInr?: number }
 }
 
 /** Catalog-card view of a course, with a signed link for its thumbnail. */

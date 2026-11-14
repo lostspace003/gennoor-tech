@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { CalendarDays, Clock, Video, Zap } from 'lucide-react'
 import { WEEKEND, timeLabel, DEMO_WORD } from '@/data/ai-weekend'
+import WeekendFee from '@/components/WeekendFee'
 import films from '@/data/films.json'
 import FilmPlayer from './FilmPlayer'
 import Ground from '@/components/stage/Ground'
@@ -41,7 +42,7 @@ export default function WeekendFilm() {
               ))}
             </dl>
             <div className="mt-6 flex flex-wrap items-center gap-x-5 gap-y-3">
-              <Link href="/ai-weekend#register" className="st-pill st-gold">Reserve a seat · ₹{WEEKEND.fee}</Link>
+              <Link href="/ai-weekend#register" className="st-pill st-gold">Reserve a seat<WeekendFee before=" · " /></Link>
               <Link href="/ai-weekend" className="st-link text-[15px]">See the two days ›</Link>
             </div>
           </div>

@@ -9,11 +9,24 @@ export const WEEKEND = {
    * It is about AI, not one product (owner, 13 November 2026: "why to have claude based only"). Claude is
    * one of the tools used; the weekend is not named after it.
    */
-  tagline: 'Build with AI in one weekend',
-  /** What people pay now, in rupees. */
+  tagline: 'Build with AI',
+  /**
+   * The big words at the top of its page (owner, 14 November 2026, pointing at "Gennoor AI Weekend / Build with
+   * AI in one weekend": "Can we have here only AI Weekend Program with tagline Build with AI"). The emails and
+   * receipts keep `name`, so a reader knows who is writing.
+   */
+  heading: 'AI Weekend Program',
+  /** What people in India pay now, in rupees. */
   fee: 499,
   /** The regular price, shown crossed out beside the fee. */
   regularFee: 1999,
+  /**
+   * What people outside India pay, in US dollars (owner, 14 November 2026: "$9.99 outside India. For Indian
+   * 499 rupees"). A visitor sees one of the two, never both: weekendFee() below.
+   * The regular dollar price is taken at the same reduction as the rupee one (499 of 1,999 is a quarter).
+   */
+  feeUsd: 9.99,
+  regularFeeUsd: 39.99,
   /** Seats in each cohort. The page shows how many are left. */
   seats: 1000,
   /** Each day, India time (24-hour "HH:MM"). */
@@ -31,6 +44,13 @@ export const WEEKEND = {
     line: 'The sessions are led live by a practitioner who trains corporate teams on AI and cloud, and builds the courses on the Gennoor Learning Studio.',
     image: '/assets/ai-weekend-expert.jpg',
   },
+}
+
+/** The fee in the visitor's own money: rupees in India, dollars everywhere else. */
+export function weekendFee(india: boolean): { fee: number; regular: number; currency: 'INR' | 'USD' } {
+  return india
+    ? { fee: WEEKEND.fee, regular: WEEKEND.regularFee, currency: 'INR' }
+    : { fee: WEEKEND.feeUsd, regular: WEEKEND.regularFeeUsd, currency: 'USD' }
 }
 
 export interface WeekendDay {
@@ -116,7 +136,7 @@ export const FAQS: { q: string; a: string }[] = [
   { q: 'When does it run?', a: 'On the last Saturday and Sunday of every month, four hours each day. The dates for the next one are at the top of this page.' },
   { q: 'Is it live or recorded?', a: 'It is live. You watch each demo being built and ask questions as it happens.' },
   { q: 'How do I pay?', a: 'Reserve your seat with the form. We email you the payment details, and your seat is confirmed once the fee is received.' },
-  { q: 'Why is the price lower than the regular price?', a: 'The regular price is ₹1,999. It is offered at ₹499, and each cohort has a fixed number of seats.' },
+  { q: 'Why is the price lower than the regular price?', a: 'The fee on this page is an introductory one, below the regular price shown crossed out beside it. Each cohort has a fixed number of seats.' },
   { q: 'Can my company send a group?', a: 'Yes. Register each person, or write to admin@gennoor.com and we will arrange it. We also run this as a private session for one organization.' },
   { q: 'What if I miss this month?', a: 'It runs every month. Register for the next one whenever you are ready.' },
 ]

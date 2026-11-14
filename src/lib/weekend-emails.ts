@@ -33,7 +33,7 @@ export const WEEKEND_EMAILS: WeekendEmailInfo[] = [
 
 const SITE = 'https://www.gennoor.com'
 const PAGE = `${SITE}/ai-weekend`
-const rupees = (n: number) => `₹${n.toLocaleString('en-IN')}`
+import { money } from '@/lib/money'
 const p = (html: string) => `<p style="margin:0 0 16px;font-size:16px;line-height:1.65;color:#475569">${html}</p>`
 
 /** The two days as a compact block: day, title, what is built. */
@@ -47,14 +47,6 @@ function programme(): string {
   ).join('')
 }
 
-function price(): string {
-  return `<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="margin:6px 0 4px"><tr><td align="center" style="font-family:'Segoe UI',Arial,sans-serif">
-    <span style="font-size:18px;color:#94a3b8;text-decoration:line-through">${rupees(WEEKEND.regularFee)}</span>
-    <span style="font-size:30px;font-weight:800;color:#0f172a;padding-left:8px">${rupees(WEEKEND.fee)}</span>
-    <span style="font-size:14px;color:#64748b;padding-left:6px">for both days</span>
-  </td></tr></table>`
-}
-
 const details = (cohort: Cohort) =>
   emailDetails('The weekend', [['Dates', cohort.label], ['Time', `${timeLabel()}, both days`], ['Where', WEEKEND.mode]])
 
@@ -62,13 +54,16 @@ const stop = `<p style="margin:26px 0 0;padding-top:16px;border-top:1px solid #e
 
 export function buildWeekendEmail(
   kind: WeekendEmailKind,
-  person: { name?: string },
+  /** `fee` and `currency` are the person's own (rupees in India, dollars elsewhere); without them, the rupee fee. */
+  person: { name?: string; fee?: number; currency?: 'INR' | 'USD' },
   cohort: Cohort,
   settings: CohortSettings = {},
   from = 'webinar@gennoor.com',
   /** The person's own link to pay online, when online payment is switched on. */
   payLink = ''
 ): { subject: string; html: string } {
+  const due = money(person.fee ?? WEEKEND.fee, person.currency || 'INR')
+  const ways = (person.currency || 'INR') === 'INR' ? 'UPI, card or net banking' : 'Card'
   const first = escapeHtml((person.name || '').trim().split(/\s+/)[0] || '')
   const hello = first ? `Hello ${first},` : 'Hello,'
   const shell = (body: string, preheader: string) => emailShell(body, { preheader, senderEmail: from })
@@ -89,11 +84,12 @@ export function buildWeekendEmail(
               'How it works'
             ) +
             details(cohort) +
-            price() +
+            // No amount here: an invitation goes to people in India and abroad, and each pays in their own
+            // money. The page shows the one fee that applies to whoever opens it.
             emailButton('Reserve my seat', PAGE) +
             p(`<span style="font-size:14px;color:#64748b">Seats in each cohort are limited. No coding background is needed.</span>`) +
             stop,
-          `${cohort.label}. Two live mornings, ${DEMO_WORD} demos, and the full kit. ${rupees(WEEKEND.fee)}.`
+          `${cohort.label}. Two live mornings, ${DEMO_WORD} demos, and the full kit.`
         ),
       }
 
@@ -101,17 +97,17 @@ export function buildWeekendEmail(
       return {
         subject: `Complete your registration: ${WEEKEND.name}, ${cohort.label}`,
         html: shell(
-          emailTitle(hello, `Your seat on the ${WEEKEND.name} is held. One step is left: the fee of ${rupees(WEEKEND.fee)}.`) +
+          emailTitle(hello, `Your seat on the ${WEEKEND.name} is held. One step is left: the fee of ${due}.`) +
             (payLink
-              ? emailCallout('check', `Pay ${rupees(WEEKEND.fee)} online`, 'UPI, card or net banking. It takes about a minute, and your seat is confirmed the moment the payment goes through.') +
-                emailButton(`Pay ${rupees(WEEKEND.fee)} now`, payLink) +
+              ? emailCallout('check', `Pay ${due} online`, `${ways}. It takes about a minute, and your seat is confirmed the moment the payment goes through.`) +
+                emailButton(`Pay ${due} now`, payLink) +
                 (settings.payment ? `<p style="margin:18px 0 8px;font-size:14px;color:#64748b">Or pay another way:</p><div style="margin:0 0 18px;padding:14px 16px;border:1px solid #e2e8f0;border-radius:12px;font-size:14px;line-height:1.7;color:#0f172a">${textToHtml(settings.payment)}</div>` : '')
-              : emailCallout('check', `Pay ${rupees(WEEKEND.fee)}`, 'Use the details below. Your seat is confirmed as soon as the payment is received.') +
+              : emailCallout('check', `Pay ${due}`, 'Use the details below. Your seat is confirmed as soon as the payment is received.') +
                 `<div style="margin:0 0 18px;padding:16px 18px;border:1px solid #e2e8f0;border-radius:12px;font-size:15px;line-height:1.7;color:#0f172a">${textToHtml(settings.payment || '[Payment details go here]')}</div>`) +
             details(cohort) +
             (payLink ? '' : p('After you pay, reply to this email with the payment reference so we can match it to you quickly.')) +
             emailContact({ email: 'admin@gennoor.com' }),
-          `One step left: ${rupees(WEEKEND.fee)} to confirm your seat for ${cohort.label}.`
+          `One step left: ${due} to confirm your seat for ${cohort.label}.`
         ),
       }
 
@@ -182,7 +178,7 @@ export function buildWeekendEmail(
 
 /** The receipt, sent the moment an online payment succeeds. */
 export function buildPaidEmail(
-  person: { name?: string; fee: number },
+  person: { name?: string; fee: number; currency?: 'INR' | 'USD' },
   cohort: Cohort,
   paymentId: string,
   settings: CohortSettings = {},
@@ -194,7 +190,7 @@ export function buildPaidEmail(
     html: emailShell(
       emailTitle(first ? `You are confirmed, ${first}.` : 'You are confirmed.', `We have received your payment. Your seat on the ${WEEKEND.name} is confirmed.`) +
         emailDetails('Your receipt', [
-          ['Paid', rupees(person.fee)],
+          ['Paid', money(person.fee, person.currency || 'INR')],
           ['For', `${WEEKEND.name}, ${cohort.label}`],
           ['Payment reference', paymentId],
           ['Paid on', new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'Asia/Kolkata' })],
@@ -210,7 +206,7 @@ export function buildPaidEmail(
           'What happens next'
         ) +
         emailContact({ email: 'admin@gennoor.com' }),
-      { preheader: `${rupees(person.fee)} received. Your seat for ${cohort.label} is confirmed.`, senderEmail: from }
+      { preheader: `${money(person.fee, person.currency || 'INR')} received. Your seat for ${cohort.label} is confirmed.`, senderEmail: from }
     ),
   }
 }

@@ -24,8 +24,8 @@ The skills are in `.claude/skills/`. They are plain Markdown: any tool can read 
 
 1. **The look is decided.** Dark "stage" and light "day" for the public site, and which of the two shows
    follows the visitor's own clock: light by day (07:00 to 18:00 where they are), dark in the evening and
-   at night. Light "paper" for the admin centre and the CRM, with a dark look the person working there can
-   switch on (light is the default). Colours by name, the icon-tile kit, one-level menus. Do not restyle
+   at night. The admin centre and the CRM follow the same clock: light "paper" by day, their dark look at
+   night, and the person working there can switch. Colours by name, the icon-tile kit, one-level menus. Do not restyle
    from taste; follow `docs/DESIGN.md`.
 2. **Look at what you made.** A change to a page is checked in both themes, on a desktop and on a phone
    (`node scripts/shot.mjs`), before it is called done. In the light look every word must be readable:
@@ -38,6 +38,11 @@ The skills are in `.claude/skills/`. They are plain Markdown: any tool can read 
    is "the last weekend of every month, Saturday & Sunday". The Claude Partner line is used word for word.
    The AI Weekend is about AI, not one product: its seven parts are written once, in `src/data/ai-weekend.ts`.
    Nobody is named as the trainer: "an industry expert". The catalogue lists only what we really offer.
+   **One price, in the visitor's own money.** Rupees in India, dollars everywhere else, never both on a
+   page (owner, 14 November 2026). The AI Weekend is ₹499 or $9.99; a course is ₹849 or $19.99, and that is
+   the price paid, with the regular price crossed out beside it. Where a visitor is, is read from their
+   device (`src/lib/money.ts`, `useIndia`); a price is drawn only once that is known. An email to many people
+   names no amount.
    **The reader is not technical.** Posts, articles and emails are written for a manager who is curious
    about AI and is not a specialist: the point first, every technical word explained, short sentences, no
    clever framing. The rules are in one file, `src/lib/writing-rules.ts`, and every writer and reviewer is
