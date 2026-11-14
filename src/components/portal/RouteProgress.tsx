@@ -30,7 +30,6 @@ export default function RouteProgress() {
     bar.style.transition = 'width 0.15s ease-in, opacity 0.3s ease 0.15s'
     bar.style.width = '100%'
     bar.style.opacity = '0'
-    document.documentElement.style.removeProperty('cursor')
     pressed.current?.removeAttribute('data-pending')
     pressed.current = null
     window.dispatchEvent(new CustomEvent('route:pending', { detail: '' }))
@@ -50,7 +49,6 @@ export default function RouteProgress() {
       bar.style.transition = 'width 0.2s ease-out'
       bar.style.width = '35%'
       window.setTimeout(() => { if (running.current && barRef.current) { barRef.current.style.transition = 'width 8s cubic-bezier(0.1, 0.6, 0.3, 1)'; barRef.current.style.width = '92%' } }, 220)
-      document.documentElement.style.cursor = 'progress'
       window.dispatchEvent(new CustomEvent('route:pending', { detail: to }))
       if (giveUp.current) window.clearTimeout(giveUp.current)
       giveUp.current = window.setTimeout(finish, 15_000)
