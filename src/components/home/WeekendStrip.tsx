@@ -22,7 +22,7 @@ export default function WeekendStrip() {
         <span aria-hidden="true" className="pointer-events-none absolute inset-y-0 left-0 w-[46%]" style={{ background: 'radial-gradient(120% 160% at 0% 50%, rgba(255,170,46,.26), transparent 70%)' }} />
         <span className="relative flex flex-wrap items-center gap-x-4 gap-y-2">
           <span className="flex items-center gap-3 shrink-0">
-            <span className="st-pulse inline-flex"><Ico icon={Zap} tone="gold" round size={40} /></span>
+            <span className="st-pulse inline-flex"><Ico icon={Zap} tone="gold" round size={32} /></span>
             <span className="rounded-full bg-[#ffc24b]/15 border border-[#ffc24b]/40 px-2.5 py-0.5 text-[11.5px] font-bold uppercase tracking-[0.1em] st-gold-ink">Live · every month</span>
           </span>
           <span className="min-w-0 flex-1 basis-[280px]">

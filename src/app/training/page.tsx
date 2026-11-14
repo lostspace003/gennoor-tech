@@ -63,7 +63,7 @@ export default function TrainingPage() {
           <ol className="grid gap-3" aria-label="How a course is built">
             {BUILD.map((b, i) => (
               <li key={b.title} className="st-left st-card relative flex items-center gap-5 p-5" style={turn(i + 2)}>
-                <Ico icon={b.icon} tone={b.tone} size={64} />
+                <Ico icon={b.icon} tone={b.tone} size={44} />
                 <div className="min-w-0">
                   <h2 className="text-[19.5px] font-bold tracking-[-0.01em] text-gray-900">{b.title}</h2>
                   <p className="text-[15px] leading-[1.5] text-gray-600 mt-1">{b.body}</p>
@@ -97,7 +97,7 @@ export default function TrainingPage() {
           <div className="grid md:grid-cols-3 gap-4 mt-8">
             {TOPICS.map(t => (
               <Link key={t.title} href={t.href} className="st-card group flex flex-col p-6">
-                {t.icon ? <Ico icon={t.icon} tone={t.tone} size={60} /> : <SparkIco size={60} />}
+                {t.icon ? <Ico icon={t.icon} tone={t.tone} size={44} /> : <SparkIco size={44} />}
                 <h3 className="text-[19.5px] font-bold tracking-[-0.01em] text-gray-900 mt-5">{t.title}</h3>
                 <p className="text-[15px] leading-[1.55] text-gray-600 mt-2 flex-1">{t.body}</p>
                 <span className="st-link text-[14.5px] mt-5">{t.cta} ›</span>
@@ -114,7 +114,7 @@ export default function TrainingPage() {
           <div className="grid md:grid-cols-2 gap-4 mt-8">
             {AUDIENCES.map(a => (
               <div key={a.title} className="st-card flex items-start gap-5 p-6">
-                <Ico icon={a.icon} tone={a.tone} size={60} />
+                <Ico icon={a.icon} tone={a.tone} size={44} />
                 <div>
                   <h3 className="text-[20px] font-bold tracking-[-0.01em] text-gray-900">{a.title}</h3>
                   <p className="text-[15.5px] leading-[1.55] text-gray-600 mt-1.5">{a.body}</p>
@@ -138,7 +138,7 @@ export default function TrainingPage() {
           <ul className="grid gap-3">
             {YOURS.map(y => (
               <li key={y.text} className="st-card flex items-center gap-5 px-5 py-4">
-                <Ico icon={y.icon} tone={y.tone} size={54} />
+                <Ico icon={y.icon} tone={y.tone} size={40} />
                 <span className="text-[clamp(22px,2.6vw,30px)] font-bold tracking-[-0.02em] text-gray-900">{y.text}.</span>
               </li>
             ))}

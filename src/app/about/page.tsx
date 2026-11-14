@@ -56,7 +56,7 @@ export default function AboutPage() {
         <div className="max-w-[1080px] mx-auto grid md:grid-cols-3 gap-6 mt-8">
           {PILLARS.map(p => (
             <div key={p.title} className="rounded-[18px] border border-gray-200 p-7 flex flex-col items-center text-center">
-              <p.art className="w-[104px] h-[104px] mb-5" />
+              <p.art className="w-[56px] h-[56px] mb-4" />
               <h3 className="font-heading text-[19px] font-bold tracking-[-0.01em] text-gray-900">{p.title}</h3>
               <p className="text-[15px] leading-[1.55] text-gray-500 mt-2">{p.body}</p>
             </div>

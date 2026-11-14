@@ -1,10 +1,11 @@
 /**
  * The small pictures on the marketing pages. Each is an icon tile from the stage kit
- * (src/components/stage/Ico.tsx): the same glass tile the films and the presentation use.
+ * (src/components/stage/Ico.tsx): the calm tile, a soft wash of its colour with the drawing in that colour.
  * They were line drawings on a pale disc; the names and props are unchanged, so pages
  * that use them did not have to change.
  *
- * Size comes from the className (w-[104px] h-[104px] ...). The title is read by screen readers.
+ * Size comes from the className: w-[72px] h-[72px] above the heading of a page, 88 to 112 at most for the
+ * picture at the top of one (docs/DESIGN.md, section 3). The title is read by screen readers.
  * For a new page, use <Ico> directly and choose the icon and the tone for what it stands for.
  */
 import {

@@ -120,7 +120,7 @@ export default function ClaudePage() {
               {CLAUDE_CERTS.map((c, i) => (
                 <li key={c.slug} className="st-pop" style={{ ...turn(i + 2), paddingBottom: `calc(${i} * clamp(0px, 2.2vw, 26px))` }}>
                   <Link href={`/claude/certifications/${c.slug}`} className="group flex flex-col items-center text-center">
-                    <SparkIco code={c.code} className="w-[84px] h-[84px] sm:w-[96px] sm:h-[96px] [--s:84px] sm:[--s:96px] transition-transform group-hover:-translate-y-1" />
+                    <SparkIco code={c.code} className="w-[72px] h-[72px] sm:w-[80px] sm:h-[80px] [--s:72px] sm:[--s:80px] transition-transform group-hover:-translate-y-1" />
                     <span className="mt-3 text-[15px] font-semibold leading-snug text-gray-900 group-hover:text-primary-600">{shortName(c.name)}</span>
                   </Link>
                 </li>
@@ -137,7 +137,7 @@ export default function ClaudePage() {
           <div className="grid md:grid-cols-3 gap-4 mt-8">
             {WHAT.map(w => (
               <Link key={w.title} href={w.href} className="st-card group flex flex-col p-6">
-                <Ico icon={w.icon} tone={w.tone} size={60} />
+                <Ico icon={w.icon} tone={w.tone} size={44} />
                 <h3 className="text-[19.5px] font-bold tracking-[-0.01em] text-gray-900 mt-5">{w.title}</h3>
                 <p className="text-[15px] leading-[1.55] text-gray-600 mt-2 flex-1">{w.body}</p>
                 <span className="st-link text-[14.5px] mt-5">{w.cta} ›</span>

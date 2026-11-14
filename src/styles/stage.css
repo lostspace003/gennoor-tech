@@ -156,7 +156,19 @@
   --st-deep-line: rgba(255, 255, 255, 0.07);
   --st-gold-ink: #ffd06b;
   --st-claude-ink: #f0a07c;
-  --st-art-mix: 40%;
+  --st-art-mix: 28%;
+  /* The drawing on an icon tile, as three numbers: a light tint of each colour here. The tile itself is a
+     thin wash of the same colour (--st-ico-wash) with a thin line round it (--st-ico-line). */
+  --st-ico-blue: 140 196 255;    /* #8cc4ff */
+  --st-ico-violet: 184 172 255;  /* #b8acff */
+  --st-ico-green: 110 220 175;   /* #6edcaf */
+  --st-ico-gold: 245 200 110;    /* #f5c86e */
+  --st-ico-claude: 240 160 124;  /* #f0a07c */
+  --st-ico-rose: 247 158 180;    /* #f79eb4 */
+  --st-ico-cyan: 122 214 224;    /* #7ad6e0 */
+  --st-ico-ink: 159 176 207;     /* #9fb0cf */
+  --st-ico-wash: 0.14;
+  --st-ico-line: 0.26;
 
   color: #f5f8ff;
 }
@@ -262,7 +274,19 @@
   --st-run-glow: 0 0 30px -12px rgba(18, 140, 92, 0.5);
   --st-gold-ink: #8a5200;
   --st-claude-ink: #a8481f;
-  --st-art-mix: 30%;
+  --st-art-mix: 22%;
+  /* The drawing on an icon tile: a deep shade of each colour here, so it reads on the pale tile
+     (4.5 to 1 or better on every ground of this look, the deeper tints included). */
+  --st-ico-blue: 10 79 191;      /* #0a4fbf */
+  --st-ico-violet: 77 56 200;    /* #4d38c8 */
+  --st-ico-green: 9 96 64;       /* #096040 */
+  --st-ico-gold: 120 73 0;       /* #784900 */
+  --st-ico-claude: 140 61 26;    /* #8c3d1a */
+  --st-ico-rose: 160 34 71;      /* #a02247 */
+  --st-ico-cyan: 7 93 105;       /* #075d69 */
+  --st-ico-ink: 67 79 102;       /* #434f66 */
+  --st-ico-wash: 0.1;
+  --st-ico-line: 0.2;
 
   color: #0f182c;
 }
@@ -472,8 +496,16 @@ html:is(.stage, .day)::-webkit-scrollbar-thumb:hover { background: var(--st-scro
    Icon tiles, windows, ticks and the main button carry their own colours and look the
    same on both themes. Cards, chips, links and the small label read the theme. */
 
-/* ── Icon tile: glass, lit from the top left, with a two-tone glyph ─────────
-   Size comes from --s (or from the box it is put in, with st-ico-fill).
+/* ── Icon tile: calm. A soft wash of its colour, a thin line round it, the drawing in that colour ──────
+   No shine, no glow, no shadow under it. The owner, 14 November 2026: "I want the icons, but I don't want
+   to be flashy ... professional, very much subtle ... It's hitting the eyes right now rather than making
+   me get a calm feeling." Until that day the tile was a glossy glass square with a coloured glow under it,
+   as in the films; the films and the presentation still have that one.
+   The tile follows the look. The drawing is a light tint of the colour on the dark look and a deep shade of
+   it on the light one (--st-ico-*, with each look in Part 1; the values after the comma here are for a page
+   with no look, the lesson players). Every one was measured against its own tile on every ground a tile sits
+   on: 4.5 to 1 or better, so a number on a tile can be read as well.
+   Size comes from --s (or from the box it is put in, with st-ico-fill): 40 to 44 pixels in a card.
    The tone says what kind of thing it is:
      blue watch or read · violet do or practise · green help or done · gold earned, live,
      not to be missed · claude anything Claude · rose a check · cyan a connection · ink off or "no" */
@@ -483,37 +515,72 @@ html:is(.stage, .day)::-webkit-scrollbar-thumb:hover { background: var(--st-scro
   align-items: center;
   justify-content: center;
   flex: none;
-  width: var(--s, 64px);
-  height: var(--s, 64px);
-  border-radius: 30%;
-  --a: #7fc0ff; --b: #2a7bff; --c: #12306e; --g: rgba(61, 148, 255, 0.6);
-  background: radial-gradient(120% 120% at 18% 8%, var(--a) 0%, var(--b) 42%, var(--c) 100%);
-  box-shadow: inset 0 1.5px 0 rgba(255, 255, 255, 0.55), inset 0 -10px 18px rgba(0, 0, 20, 0.28), 0 14px 30px -10px var(--g), 0 0 0 1px rgba(255, 255, 255, 0.1);
+  width: var(--s, 44px);
+  height: var(--s, 44px);
+  border-radius: 28%;
+  --i: var(--st-ico-blue, 10 79 191);
+  color: rgb(var(--i));
+  background: rgb(var(--i) / var(--st-ico-wash, 0.1));
+  box-shadow: inset 0 0 0 1px rgb(var(--i) / var(--st-ico-line, 0.2));
 }
-.st-ico::before {
-  content: '';
-  position: absolute;
-  left: 12%;
-  top: 7%;
-  width: 56%;
-  height: 34%;
-  border-radius: 50%;
-  background: radial-gradient(closest-side, rgba(255, 255, 255, 0.5), transparent);
-  pointer-events: none;
-}
-.st-ico > svg { position: absolute; left: 23%; top: 23%; width: 54%; height: 54%; overflow: visible; }
-.st-ico > svg + svg { filter: drop-shadow(0 2px 3px rgba(0, 10, 40, 0.45)); }
+.st-ico > svg { position: absolute; left: 25%; top: 25%; width: 50%; height: 50%; overflow: visible; }
 .st-ico.st-round { border-radius: 50%; }
 /* A number in place of an icon: the step of a path, the number of a module */
-.st-ico > b { position: relative; z-index: 1; font-size: calc(var(--s, 64px) * 0.42); font-weight: 750; line-height: 1; letter-spacing: -0.03em; font-variant-numeric: tabular-nums; color: #fff; text-shadow: 0 2px 3px rgba(0, 10, 40, 0.45); }
+.st-ico > b { position: relative; z-index: 1; font-size: calc(var(--s, 44px) * 0.42); font-weight: 700; line-height: 1; letter-spacing: -0.03em; font-variant-numeric: tabular-nums; color: inherit; }
 .st-ico.st-ico-fill { width: 100%; height: 100%; }
-.st-ico.t-gold { --a: #ffe29a; --b: #ffab2e; --c: #8a4a00; --g: rgba(255, 170, 46, 0.55); }
-.st-ico.t-green { --a: #9ff3cf; --b: #22b47e; --c: #0a4a36; --g: rgba(34, 180, 126, 0.5); }
-.st-ico.t-violet { --a: #cfc6ff; --b: #7a66ff; --c: #2a1f7a; --g: rgba(122, 102, 255, 0.55); }
-.st-ico.t-claude { --a: #ffc3a3; --b: #e0764a; --c: #7a3215; --g: rgba(224, 118, 74, 0.55); }
-.st-ico.t-rose { --a: #ffc0cf; --b: #f0527a; --c: #7a1436; --g: rgba(240, 82, 122, 0.5); }
-.st-ico.t-cyan { --a: #b4f4f7; --b: #25b8c4; --c: #0a4f5c; --g: rgba(37, 184, 196, 0.5); }
-.st-ico.t-ink { --a: #5a6c94; --b: #2a3654; --c: #131b30; --g: rgba(0, 0, 0, 0.5); }
+/* A tile that something passes behind, or that sits on another tile or on a coloured bar (the line and the
+   small gold marks of the process drawing): the same wash on a ground of its own, so nothing shows through. */
+.st-ico.st-ico-solid { background: linear-gradient(rgb(var(--i) / var(--st-ico-wash, 0.1)), rgb(var(--i) / var(--st-ico-wash, 0.1))), rgb(var(--raised, 255 255 255)); }
+.st-ico.t-gold { --i: var(--st-ico-gold, 120 73 0); }
+.st-ico.t-green { --i: var(--st-ico-green, 9 96 64); }
+.st-ico.t-violet { --i: var(--st-ico-violet, 77 56 200); }
+.st-ico.t-claude { --i: var(--st-ico-claude, 140 61 26); }
+.st-ico.t-rose { --i: var(--st-ico-rose, 160 34 71); }
+.st-ico.t-cyan { --i: var(--st-ico-cyan, 7 93 105); }
+.st-ico.t-ink { --i: var(--st-ico-ink, 67 79 102); }
+
+/* ── The button on a video: play it, or turn on its sound. Small, quiet, always in the top right corner ──
+   The owner, 14 November 2026, of the yellow and blue play buttons: "very big ... they can be smaller in
+   size and they can be little less shiny, like too much flashy they look", and "keep every of the play
+   button on the same side. On the right corner of the video." So every player of ours uses this one class
+   (FilmPlayer, WalkthroughVideo, PromoPlayer): 36 pixels, dark glass with a thin light line, the drawing in
+   white, or in the AI Weekend's gold with st-gold. With words inside ("Watch · 9 min") it is a small pill.
+   The top corner, because the foot of a video has its slider and, on a film, its spoken words.
+   It sits on video, so its colours are fixed and the same in both looks. It is drawn 36 pixels and can be
+   pressed over 48 (::after). */
+.st-play {
+  position: absolute;
+  right: 12px;
+  top: 12px;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-width: 36px;
+  height: 36px;
+  padding: 0 10px;
+  border-radius: 999px;
+  background: rgba(8, 12, 24, 0.62);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1;
+  white-space: nowrap;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.3);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  transition: background-color 0.15s ease;
+}
+.st-play::after { content: ''; position: absolute; inset: -6px; border-radius: inherit; }
+.st-play > svg { flex: none; width: 16px; height: 16px; }
+.st-play:hover,
+:is(button, a):hover > .st-play { background: rgba(8, 12, 24, 0.82); }
+.st-play.st-gold { color: #ffcf6b; box-shadow: inset 0 0 0 1px rgba(255, 194, 75, 0.55); }
+@media (min-width: 640px) { .st-play { right: 16px; top: 16px; } }
+/* Where the gold "% off" ribbon lies across that corner (the top of a course page), the button sits just
+   under the ribbon, on the same right edge: in the corner the ribbon covered half of it. */
+.st-play.st-play-low { top: 86px; }
 
 /* ── A lit ground: navy with glows on the dark theme, a deeper tint of the page with soft glows on the light one.
       It follows the theme, so the words inside are written with the colour names. */

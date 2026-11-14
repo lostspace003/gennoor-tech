@@ -280,7 +280,7 @@ export default function BlogPostClient({ post, slug, relatedPosts }: {
               />
             </div>
             {/* The picture of the post: its icon tile, in the colour of what it is about */}
-            <BlogArt post={post} main={88} className="h-[170px] w-full rounded-2xl lg:h-[190px] lg:w-[300px]" />
+            <BlogArt post={post} main={68} className="h-[170px] w-full rounded-2xl lg:h-[190px] lg:w-[300px]" />
           </header>
 
           {/* Share Bar */}
@@ -439,7 +439,7 @@ export default function BlogPostClient({ post, slug, relatedPosts }: {
                 <Link key={rp.slug} href={`/resources/blog/${rp.slug}`}
                   className="group rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300"
                   style={{ backgroundColor: 'rgb(var(--raised))', border: '1px solid rgb(var(--gray-200))' }}>
-                  <BlogArt post={rp} main={46} className="h-24" />
+                  <BlogArt post={rp} main={40} className="h-24" />
                   <div className="p-4">
                     <span className="block text-[10px] font-bold uppercase tracking-wider mb-1" style={{ color: 'rgb(var(--primary-600))' }}>
                       {rp.category}

@@ -18,7 +18,11 @@ import type { Tone } from '@/components/stage/Ico'
 
 export const OG_SIZE = { width: 1200, height: 630 }
 
-/** The colours of a tile, as in .st-ico of src/styles/stage.css: light, middle, dark, glow. */
+/**
+ * The colours of the tile in a share picture: light, middle, dark, glow. It is the glossy tile the pages
+ * had until 14 November 2026 and the films still have. The tile on a page is calm now (.st-ico in
+ * src/styles/stage.css); a share picture is seen once, small, in a chat, and keeps its colour.
+ */
 const TILE: Record<Tone, [string, string, string, string]> = {
   blue: ['#7fc0ff', '#2a7bff', '#12306e', 'rgba(61,148,255,0.55)'],
   gold: ['#ffe29a', '#ffab2e', '#8a4a00', 'rgba(255,170,46,0.5)'],
