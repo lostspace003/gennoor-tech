@@ -3,7 +3,7 @@ import { rateLimit, clientIp } from '@/lib/rate-limit'
 import { sendEmail } from '@/lib/email-service'
 import { escapeHtml } from '@/lib/escape-html'
 import { emailShell, emailTitle, emailDetails, emailSteps, emailButton, emailContact } from '@/lib/crm/email-theme'
-import { WEEKEND, nextCohort, timeLabel, weekendFee } from '@/data/ai-weekend'
+import { WEEKEND, nextCohort, closedNote, timeLabel, weekendFee } from '@/data/ai-weekend'
 import { money } from '@/lib/money'
 import { mutateRegistrations, newRegistrationId, getSettings, getRegistrations, type WeekendRegistration } from '@/lib/weekend'
 import { buildWeekendEmail } from '@/lib/weekend-emails'
@@ -62,7 +62,7 @@ export async function POST(req: Request) {
       return 'new' as const
     })
     if (outcome === 'full') {
-      return NextResponse.json({ error: 'This cohort is now full. Registration for next month opens when this weekend begins.' }, { status: 409 })
+      return NextResponse.json({ error: 'This cohort is now full. Registration for next month opens the day before this weekend.' }, { status: 409 })
     }
     const fresh = outcome === 'new'
 
@@ -91,6 +91,8 @@ export async function POST(req: Request) {
       subject: `Your seat is reserved: ${WEEKEND.name}, ${cohort.label}`,
       html: emailShell(
         emailTitle(`You are in, ${escapeHtml(name.split(/\s+/)[0])}.`, `Your seat on the ${WEEKEND.name} is reserved. Here is what happens next.`) +
+          // On the days when this month's weekend has closed: say so, so nobody expects to join tomorrow
+          (closedNote() ? `<p style="margin:0 0 18px;padding:12px 14px;border:1px solid #fde68a;border-radius:10px;background:#fffbeb;font-size:15px;line-height:1.6;color:#0f172a">${escapeHtml(closedNote())}</p>` : '') +
           emailDetails('Your weekend', [
             ['Dates', cohort.label],
             ['Time', `${timeLabel()}, both days`],

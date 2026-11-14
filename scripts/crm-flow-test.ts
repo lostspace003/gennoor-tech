@@ -14,7 +14,7 @@ import { teamMember } from '../src/lib/crm/team'
 import { WEEKEND_EMAILS, buildWeekendEmail, buildPaidEmail } from '../src/lib/weekend-emails'
 import { hmacHex, validPaymentSignature, validWebhookSignature } from '../src/lib/razorpay'
 import { previewIds, isPreview, PREVIEW_MAX, DEFAULT_PRICE, formatUsd, formatInr } from '../src/lib/lms-access'
-import { WEEKEND, nextCohort, cohortById, weekendFee } from '../src/data/ai-weekend'
+import { WEEKEND, nextCohort, cohortById, weekendFee, closedNote } from '../src/data/ai-weekend'
 
 let pass = 0, fail = 0
 const ok = (c: boolean, n: string) => { c ? pass++ : (fail++, console.log('  FAIL:', n)); if (c) console.log('  ok  :', n) }
@@ -111,8 +111,10 @@ ok(fillTokens(LINKEDIN_CONNECT_NOTE, lead).length <= 300, 'the LinkedIn connecti
 // ---- The AI Weekend: its dates and its own emails
 const nov = nextCohort(new Date('2026-11-12T06:00:00Z'))
 ok(nov.saturday === '2026-11-28' && nov.sunday === '2026-11-29', 'the November 2026 weekend is the 28th and 29th')
-ok(nextCohort(new Date('2026-11-28T05:00:00Z')).id === '2026-12', 'once Saturday has started, the page moves to the next month')
+ok(nextCohort(new Date('2026-11-27T04:29:00Z')).id === '2026-11' && nextCohort(new Date('2026-11-27T04:30:00Z')).id === '2026-12', 'registration closes one day before: from Friday 10:00 India time the page is on the next month')
 ok(cohortById('2027-01')?.saturday === '2027-01-30', 'the last weekend is found in any month (January 2027: 30th and 31st)')
+ok(closedNote(new Date('2026-11-27T04:00:00Z')) === '' && closedNote(new Date('2026-11-30T03:00:00Z')) === '', 'no note before registration closes, nor after the weekend is over')
+ok(/28 and 29 November 2026\) has closed/.test(closedNote(new Date('2026-11-27T06:00:00Z'))) && /next one: 26 and 27 December 2026/.test(closedNote(new Date('2026-11-28T08:00:00Z'))), 'on the closed days the visitor is told this month is closed and the seat is for the next weekend', closedNote(new Date('2026-11-27T06:00:00Z')))
 ok(WEEKEND.fee === 499 && WEEKEND.regularFee === 1999, 'the fee is 499 against a regular 1,999')
 for (const [i, info] of WEEKEND_EMAILS.entries()) {
   const mail = buildWeekendEmail(info.kind, { name: 'Priya <b>Sharma</b>' }, nov, { joinUrl: 'https://teams.example/join', payment: 'Pay by UPI to gennoor@upi\n<script>x</script>', kitUrl: 'https://example.com/kit' })

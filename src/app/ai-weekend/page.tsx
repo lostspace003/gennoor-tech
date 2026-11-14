@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import { pageMeta } from '@/lib/seo'
 import { CalendarDays, Clock, Video, Check, Hammer, Award, ShieldCheck, Package } from 'lucide-react'
-import { WEEKEND, DAYS, FOR_YOU, INCLUDED, HOW_YOU_LEARN, KIT, TOOLS, FAQS, nextCohort, timeLabel, DEMO_COUNT, DEMO_WORD } from '@/data/ai-weekend'
+import { WEEKEND, DAYS, FOR_YOU, INCLUDED, HOW_YOU_LEARN, KIT, TOOLS, FAQS, nextCohort, closedNote, timeLabel, DEMO_COUNT, DEMO_WORD } from '@/data/ai-weekend'
 import RegisterForm, { StickyRegister } from './RegisterForm'
 import WeekendFee from '@/components/WeekendFee'
 import { getRegistrations } from '@/lib/weekend'
@@ -274,7 +274,7 @@ export default async function AiWeekendPage() {
             </div>
           </div>
           <div className="rounded-2xl bg-raised border border-gray-200 p-5 sm:p-6">
-            <RegisterForm cohortLabel={cohort.label} full={full} online={online} />
+            <RegisterForm cohortLabel={cohort.label} full={full} online={online} closedNote={closedNote()} />
           </div>
         </div>
       </section>

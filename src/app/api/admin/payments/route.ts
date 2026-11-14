@@ -20,6 +20,9 @@ interface PaymentRow {
   paymentId: string
   /** The coupon code used, when there was one */
   coupon?: string
+  /** For an AI Weekend seat: which weekend, as "2026-11", and its dates in words. The Payments page filters by it. */
+  cohort?: string
+  cohortLabel?: string
 }
 
 /** Staff: every payment received (courses and AI Weekend seats) and the price of each course. */
@@ -37,7 +40,7 @@ export async function GET() {
       // AI Weekend seats marked Paid. Ones paid online carry a payment reference; ones marked by hand do not.
       ...registrations.filter((r) => r.payment === 'paid').map((r) => ({
         at: r.paidAt || r.at, kind: 'weekend' as const, what: `${WEEKEND.name}, ${cohortById(r.cohort)?.label || r.cohort}`,
-        name: r.name, email: r.email, amount: r.fee, currency: r.currency || ('INR' as const), paymentId: r.paymentId || '',
+        name: r.name, email: r.email, amount: r.fee, currency: r.currency || ('INR' as const), paymentId: r.paymentId || '', cohort: r.cohort, cohortLabel: cohortById(r.cohort)?.label || r.cohort,
       })),
     ].sort((a, b) => b.at.localeCompare(a.at))
 
