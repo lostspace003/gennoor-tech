@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { signOut } from 'next-auth/react'
 import RouteProgress from '@/components/portal/RouteProgress'
+import BusyPointer from '@/components/BusyPointer'
 import AdminThemeSwitch from '@/components/admin/AdminThemeSwitch'
 import {
   LayoutDashboard, Linkedin, Sparkles, GraduationCap, MessageSquare, Users, PhoneCall, Mail, Menu, X, ExternalLink, Wallet, PenLine, Bot, Network, History,
@@ -149,6 +150,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
   return (
     <div data-admin className="h-dvh flex bg-gray-50 text-gray-900">
       <RouteProgress />
+      <BusyPointer />
       {open && <div className="fixed inset-0 z-40 bg-gray-900/25 backdrop-blur-[2px] lg:hidden" onClick={() => setOpen(false)} aria-hidden="true" />}
 
       <aside

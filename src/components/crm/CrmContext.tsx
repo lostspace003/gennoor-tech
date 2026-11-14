@@ -85,6 +85,8 @@ export function CrmProvider({ children }: { children: React.ReactNode }) {
   const close = (value: string | null) => { question?.answer(value); setQuestion(null) }
   useEffect(() => { if (question?.input) field.current?.focus() }, [question])
 
+  // Set by the mailbox check below: asks it to look again in a little while (one pending look at a time)
+  const lookAgain = useRef<(() => void) | null>(null)
   const reload = useCallback(async () => {
     try {
       const res = await fetch('/api/admin/leads')
@@ -92,6 +94,12 @@ export function CrmProvider({ children }: { children: React.ReactNode }) {
       if (!res.ok) throw new Error(data.error || 'The leads could not be loaded')
       setLeads(data.leads || [])
       setLoadError('')
+      // An email the email service has taken and not confirmed yet: look again soon, so "on its way" turns into
+      // "sent" on the screen by itself. (Before this it changed only at the next look, up to three minutes later,
+      // or when the browser was refreshed.) Only for ten minutes after a send, every half minute.
+      const soon = Date.now() - 10 * 60_000
+      const waiting = (data.leads || []).some((l: Lead) => (l.emailHistory || []).some((e) => e.status === 'sent' && !e.confirmedAt && Date.parse(e.at) > soon))
+      if (waiting) lookAgain.current?.()
     } catch (e: any) {
       setLoadError(e.message)
     } finally {
@@ -121,7 +129,9 @@ export function CrmProvider({ children }: { children: React.ReactNode }) {
     }
     check()
     const timer = setInterval(check, 180_000)
-    return () => { stopped = true; clearInterval(timer) }
+    let soon: ReturnType<typeof setTimeout> | null = null
+    lookAgain.current = () => { if (!soon && !stopped) soon = setTimeout(() => { soon = null; check() }, 30_000) }
+    return () => { stopped = true; clearInterval(timer); if (soon) clearTimeout(soon); lookAgain.current = null }
   }, [status, reload])
 
   const canGo = !question?.input?.required || typed.trim().length > 0
