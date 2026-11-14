@@ -1,0 +1,1204 @@
+{
+ "film": "overview",
+ "duration": 95.281,
+ "sr": 44100,
+ "lines": [
+  {
+   "id": "o01",
+   "text": "Imagine a world where anyone can learn the skills that work asks for. And prove them.",
+   "start": 1.2,
+   "end": 6.748,
+   "words": [
+    {
+     "w": "Imagine",
+     "start": 1.3,
+     "end": 1.763
+    },
+    {
+     "w": "a",
+     "start": 1.863,
+     "end": 1.883
+    },
+    {
+     "w": "world",
+     "start": 1.964,
+     "end": 2.225
+    },
+    {
+     "w": "where",
+     "start": 2.325,
+     "end": 2.486
+    },
+    {
+     "w": "anyone",
+     "start": 2.687,
+     "end": 3.028
+    },
+    {
+     "w": "can",
+     "start": 3.089,
+     "end": 3.209
+    },
+    {
+     "w": "learn",
+     "start": 3.33,
+     "end": 3.491
+    },
+    {
+     "w": "the",
+     "start": 3.571,
+     "end": 3.651
+    },
+    {
+     "w": "skills",
+     "start": 3.712,
+     "end": 4.033
+    },
+    {
+     "w": "that",
+     "start": 4.093,
+     "end": 4.214
+    },
+    {
+     "w": "work",
+     "start": 4.334,
+     "end": 4.515
+    },
+    {
+     "w": "asks",
+     "start": 4.797,
+     "end": 5.038
+    },
+    {
+     "w": "for.",
+     "start": 5.178,
+     "end": 5.379
+    },
+    {
+     "w": "And",
+     "start": 5.979,
+     "end": 6.059
+    },
+    {
+     "w": "prove",
+     "start": 6.16,
+     "end": 6.401
+    },
+    {
+     "w": "them.",
+     "start": 6.481,
+     "end": 6.622
+    }
+   ]
+  },
+  {
+   "id": "o02",
+   "text": "That is what we are building.",
+   "start": 7.298,
+   "end": 9.008,
+   "words": [
+    {
+     "w": "That",
+     "start": 7.399,
+     "end": 7.561
+    },
+    {
+     "w": "is",
+     "start": 7.682,
+     "end": 7.803
+    },
+    {
+     "w": "what",
+     "start": 7.843,
+     "end": 8.025
+    },
+    {
+     "w": "we",
+     "start": 8.146,
+     "end": 8.227
+    },
+    {
+     "w": "are",
+     "start": 8.348,
+     "end": 8.429
+    },
+    {
+     "w": "building.",
+     "start": 8.53,
+     "end": 8.975
+    }
+   ]
+  },
+  {
+   "id": "o03",
+   "text": "Most training ends when the slides end. We think it should end when you can do the work.",
+   "start": 10.308,
+   "end": 15.127,
+   "words": [
+    {
+     "w": "Most",
+     "start": 10.408,
+     "end": 10.609
+    },
+    {
+     "w": "training",
+     "start": 10.709,
+     "end": 11.05
+    },
+    {
+     "w": "ends",
+     "start": 11.191,
+     "end": 11.351
+    },
+    {
+     "w": "when",
+     "start": 11.412,
+     "end": 11.532
+    },
+    {
+     "w": "the",
+     "start": 11.592,
+     "end": 11.652
+    },
+    {
+     "w": "slides",
+     "start": 11.712,
+     "end": 12.054
+    },
+    {
+     "w": "end.",
+     "start": 12.234,
+     "end": 12.334
+    },
+    {
+     "w": "We",
+     "start": 12.934,
+     "end": 13.015
+    },
+    {
+     "w": "think",
+     "start": 13.115,
+     "end": 13.255
+    },
+    {
+     "w": "it",
+     "start": 13.356,
+     "end": 13.396
+    },
+    {
+     "w": "should",
+     "start": 13.456,
+     "end": 13.637
+    },
+    {
+     "w": "end",
+     "start": 13.797,
+     "end": 13.897
+    },
+    {
+     "w": "when",
+     "start": 14.158,
+     "end": 14.259
+    },
+    {
+     "w": "you",
+     "start": 14.299,
+     "end": 14.379
+    },
+    {
+     "w": "can",
+     "start": 14.439,
+     "end": 14.519
+    },
+    {
+     "w": "do",
+     "start": 14.62,
+     "end": 14.7
+    },
+    {
+     "w": "the",
+     "start": 14.8,
+     "end": 14.861
+    },
+    {
+     "w": "work.",
+     "start": 14.921,
+     "end": 15.081
+    }
+   ]
+  },
+  {
+   "id": "o04",
+   "text": "So every course is built the same way. Short video lessons. Labs you run yourself, with a guide for every step.",
+   "start": 16.427,
+   "end": 23.975,
+   "words": [
+    {
+     "w": "So",
+     "start": 16.478,
+     "end": 16.558
+    },
+    {
+     "w": "every",
+     "start": 16.799,
+     "end": 16.999
+    },
+    {
+     "w": "course",
+     "start": 17.079,
+     "end": 17.34
+    },
+    {
+     "w": "is",
+     "start": 17.42,
+     "end": 17.52
+    },
+    {
+     "w": "built",
+     "start": 17.62,
+     "end": 17.841
+    },
+    {
+     "w": "the",
+     "start": 17.881,
+     "end": 18.121
+    },
+    {
+     "w": "same",
+     "start": 18.181,
+     "end": 18.442
+    },
+    {
+     "w": "way.",
+     "start": 18.562,
+     "end": 18.722
+    },
+    {
+     "w": "Short",
+     "start": 19.322,
+     "end": 19.542
+    },
+    {
+     "w": "video",
+     "start": 19.663,
+     "end": 19.923
+    },
+    {
+     "w": "lessons.",
+     "start": 20.003,
+     "end": 20.404
+    },
+    {
+     "w": "Labs",
+     "start": 21.004,
+     "end": 21.324
+    },
+    {
+     "w": "you",
+     "start": 21.384,
+     "end": 21.465
+    },
+    {
+     "w": "run",
+     "start": 21.565,
+     "end": 21.685
+    },
+    {
+     "w": "yourself,",
+     "start": 21.785,
+     "end": 22.166
+    },
+    {
+     "w": "with",
+     "start": 22.507,
+     "end": 22.627
+    },
+    {
+     "w": "a",
+     "start": 22.707,
+     "end": 22.727
+    },
+    {
+     "w": "guide",
+     "start": 22.807,
+     "end": 23.068
+    },
+    {
+     "w": "for",
+     "start": 23.148,
+     "end": 23.248
+    },
+    {
+     "w": "every",
+     "start": 23.408,
+     "end": 23.589
+    },
+    {
+     "w": "step.",
+     "start": 23.649,
+     "end": 23.869
+    }
+   ]
+  },
+  {
+   "id": "o05",
+   "text": "An assistant inside the lesson, that answers from the course. A quiz in every module. And a certificate at the end.",
+   "start": 24.475,
+   "end": 32.014,
+   "words": [
+    {
+     "w": "An",
+     "start": 24.535,
+     "end": 24.575
+    },
+    {
+     "w": "assistant",
+     "start": 24.655,
+     "end": 25.096
+    },
+    {
+     "w": "inside",
+     "start": 25.176,
+     "end": 25.557
+    },
+    {
+     "w": "the",
+     "start": 25.637,
+     "end": 25.718
+    },
+    {
+     "w": "lesson,",
+     "start": 25.778,
+     "end": 26.078
+    },
+    {
+     "w": "that",
+     "start": 26.378,
+     "end": 26.879
+    },
+    {
+     "w": "answers",
+     "start": 26.98,
+     "end": 27.32
+    },
+    {
+     "w": "from",
+     "start": 27.4,
+     "end": 27.541
+    },
+    {
+     "w": "the",
+     "start": 27.581,
+     "end": 27.721
+    },
+    {
+     "w": "course.",
+     "start": 27.781,
+     "end": 28.102
+    },
+    {
+     "w": "A",
+     "start": 28.723,
+     "end": 28.743
+    },
+    {
+     "w": "quiz",
+     "start": 28.823,
+     "end": 29.104
+    },
+    {
+     "w": "in",
+     "start": 29.264,
+     "end": 29.304
+    },
+    {
+     "w": "every",
+     "start": 29.405,
+     "end": 29.585
+    },
+    {
+     "w": "module.",
+     "start": 29.665,
+     "end": 30.086
+    },
+    {
+     "w": "And",
+     "start": 30.686,
+     "end": 30.746
+    },
+    {
+     "w": "a",
+     "start": 30.786,
+     "end": 30.826
+    },
+    {
+     "w": "certificate",
+     "start": 30.866,
+     "end": 31.387
+    },
+    {
+     "w": "at",
+     "start": 31.447,
+     "end": 31.487
+    },
+    {
+     "w": "the",
+     "start": 31.507,
+     "end": 31.648
+    },
+    {
+     "w": "end.",
+     "start": 31.768,
+     "end": 31.888
+    }
+   ]
+  },
+  {
+   "id": "o06",
+   "text": "Prepare for a certification. Build a real project. Or learn one useful skill in an hour.",
+   "start": 33.314,
+   "end": 39.701,
+   "words": [
+    {
+     "w": "Prepare",
+     "start": 33.336,
+     "end": 33.738
+    },
+    {
+     "w": "for",
+     "start": 33.818,
+     "end": 33.938
+    },
+    {
+     "w": "a",
+     "start": 33.998,
+     "end": 34.039
+    },
+    {
+     "w": "certification.",
+     "start": 34.079,
+     "end": 34.862
+    },
+    {
+     "w": "Build",
+     "start": 35.462,
+     "end": 35.663
+    },
+    {
+     "w": "a",
+     "start": 35.783,
+     "end": 35.803
+    },
+    {
+     "w": "real",
+     "start": 35.944,
+     "end": 36.185
+    },
+    {
+     "w": "project.",
+     "start": 36.285,
+     "end": 36.747
+    },
+    {
+     "w": "Or",
+     "start": 37.347,
+     "end": 37.387
+    },
+    {
+     "w": "learn",
+     "start": 37.708,
+     "end": 37.929
+    },
+    {
+     "w": "one",
+     "start": 38.15,
+     "end": 38.23
+    },
+    {
+     "w": "useful",
+     "start": 38.411,
+     "end": 38.672
+    },
+    {
+     "w": "skill",
+     "start": 38.752,
+     "end": 39.013
+    },
+    {
+     "w": "in",
+     "start": 39.153,
+     "end": 39.193
+    },
+    {
+     "w": "an",
+     "start": 39.254,
+     "end": 39.294
+    },
+    {
+     "w": "hour.",
+     "start": 39.354,
+     "end": 39.615
+    }
+   ]
+  },
+  {
+   "id": "o07",
+   "text": "For Claude, there is a guide and a practice exam for every certification.",
+   "start": 41.001,
+   "end": 45.29,
+   "words": [
+    {
+     "w": "For",
+     "start": 41.025,
+     "end": 41.146
+    },
+    {
+     "w": "Claude,",
+     "start": 41.246,
+     "end": 41.568
+    },
+    {
+     "w": "there",
+     "start": 41.868,
+     "end": 42.028
+    },
+    {
+     "w": "is",
+     "start": 42.109,
+     "end": 42.169
+    },
+    {
+     "w": "a",
+     "start": 42.229,
+     "end": 42.25
+    },
+    {
+     "w": "guide",
+     "start": 42.31,
+     "end": 42.591
+    },
+    {
+     "w": "and",
+     "start": 42.752,
+     "end": 42.832
+    },
+    {
+     "w": "a",
+     "start": 42.893,
+     "end": 42.913
+    },
+    {
+     "w": "practice",
+     "start": 42.993,
+     "end": 43.395
+    },
+    {
+     "w": "exam",
+     "start": 43.496,
+     "end": 43.757
+    },
+    {
+     "w": "for",
+     "start": 43.857,
+     "end": 43.958
+    },
+    {
+     "w": "every",
+     "start": 44.159,
+     "end": 44.4
+    },
+    {
+     "w": "certification.",
+     "start": 44.48,
+     "end": 45.224
+    }
+   ]
+  },
+  {
+   "id": "o08",
+   "text": "For your team, we go further. We learn your work, build the course around it, and teach it live.",
+   "start": 46.59,
+   "end": 52.69,
+   "words": [
+    {
+     "w": "For",
+     "start": 46.61,
+     "end": 46.73
+    },
+    {
+     "w": "your",
+     "start": 46.79,
+     "end": 46.931
+    },
+    {
+     "w": "team,",
+     "start": 47.031,
+     "end": 47.231
+    },
+    {
+     "w": "we",
+     "start": 47.672,
+     "end": 47.792
+    },
+    {
+     "w": "go",
+     "start": 47.912,
+     "end": 48.012
+    },
+    {
+     "w": "further.",
+     "start": 48.152,
+     "end": 48.493
+    },
+    {
+     "w": "We",
+     "start": 49.093,
+     "end": 49.194
+    },
+    {
+     "w": "learn",
+     "start": 49.294,
+     "end": 49.514
+    },
+    {
+     "w": "your",
+     "start": 49.594,
+     "end": 49.734
+    },
+    {
+     "w": "work,",
+     "start": 49.835,
+     "end": 50.015
+    },
+    {
+     "w": "build",
+     "start": 50.335,
+     "end": 50.556
+    },
+    {
+     "w": "the",
+     "start": 50.616,
+     "end": 50.676
+    },
+    {
+     "w": "course",
+     "start": 50.756,
+     "end": 50.976
+    },
+    {
+     "w": "around",
+     "start": 51.057,
+     "end": 51.337
+    },
+    {
+     "w": "it,",
+     "start": 51.437,
+     "end": 51.477
+    },
+    {
+     "w": "and",
+     "start": 51.777,
+     "end": 51.858
+    },
+    {
+     "w": "teach",
+     "start": 51.998,
+     "end": 52.218
+    },
+    {
+     "w": "it",
+     "start": 52.278,
+     "end": 52.358
+    },
+    {
+     "w": "live.",
+     "start": 52.438,
+     "end": 52.659
+    }
+   ]
+  },
+  {
+   "id": "o08b",
+   "text": "And we teach automation. One process your team runs, and a course built on it, so they can automate it themselves.",
+   "start": 53.89,
+   "end": 60.487,
+   "words": [
+    {
+     "w": "And",
+     "start": 53.93,
+     "end": 54.01
+    },
+    {
+     "w": "we",
+     "start": 54.091,
+     "end": 54.191
+    },
+    {
+     "w": "teach",
+     "start": 54.331,
+     "end": 54.532
+    },
+    {
+     "w": "automation.",
+     "start": 54.733,
+     "end": 55.274
+    },
+    {
+     "w": "One",
+     "start": 55.874,
+     "end": 55.974
+    },
+    {
+     "w": "process",
+     "start": 56.034,
+     "end": 56.395
+    },
+    {
+     "w": "your",
+     "start": 56.415,
+     "end": 56.536
+    },
+    {
+     "w": "team",
+     "start": 56.576,
+     "end": 56.736
+    },
+    {
+     "w": "runs,",
+     "start": 56.837,
+     "end": 57.097
+    },
+    {
+     "w": "and",
+     "start": 57.398,
+     "end": 57.479
+    },
+    {
+     "w": "a",
+     "start": 57.539,
+     "end": 57.559
+    },
+    {
+     "w": "course",
+     "start": 57.639,
+     "end": 57.86
+    },
+    {
+     "w": "built",
+     "start": 57.96,
+     "end": 58.141
+    },
+    {
+     "w": "on",
+     "start": 58.221,
+     "end": 58.281
+    },
+    {
+     "w": "it,",
+     "start": 58.361,
+     "end": 58.421
+    },
+    {
+     "w": "so",
+     "start": 58.721,
+     "end": 58.801
+    },
+    {
+     "w": "they",
+     "start": 58.882,
+     "end": 58.982
+    },
+    {
+     "w": "can",
+     "start": 59.042,
+     "end": 59.122
+    },
+    {
+     "w": "automate",
+     "start": 59.323,
+     "end": 59.664
+    },
+    {
+     "w": "it",
+     "start": 59.724,
+     "end": 59.764
+    },
+    {
+     "w": "themselves.",
+     "start": 59.905,
+     "end": 60.446
+    }
+   ]
+  },
+  {
+   "id": "o09",
+   "text": "We can even set up a learning platform for your company. Your courses. Your people. Your name.",
+   "start": 61.687,
+   "end": 69.434,
+   "words": [
+    {
+     "w": "We",
+     "start": 61.707,
+     "end": 61.787
+    },
+    {
+     "w": "can",
+     "start": 61.868,
+     "end": 61.968
+    },
+    {
+     "w": "even",
+     "start": 62.149,
+     "end": 62.329
+    },
+    {
+     "w": "set",
+     "start": 62.43,
+     "end": 62.61
+    },
+    {
+     "w": "up",
+     "start": 62.691,
+     "end": 62.751
+    },
+    {
+     "w": "a",
+     "start": 62.851,
+     "end": 62.891
+    },
+    {
+     "w": "learning",
+     "start": 63.012,
+     "end": 63.373
+    },
+    {
+     "w": "platform",
+     "start": 63.473,
+     "end": 63.975
+    },
+    {
+     "w": "for",
+     "start": 64.176,
+     "end": 64.316
+    },
+    {
+     "w": "your",
+     "start": 64.377,
+     "end": 64.517
+    },
+    {
+     "w": "company.",
+     "start": 64.618,
+     "end": 65.079
+    },
+    {
+     "w": "Your",
+     "start": 65.679,
+     "end": 65.839
+    },
+    {
+     "w": "courses.",
+     "start": 65.94,
+     "end": 66.442
+    },
+    {
+     "w": "Your",
+     "start": 67.042,
+     "end": 67.202
+    },
+    {
+     "w": "people.",
+     "start": 67.343,
+     "end": 67.744
+    },
+    {
+     "w": "Your",
+     "start": 68.344,
+     "end": 68.866
+    },
+    {
+     "w": "name.",
+     "start": 68.987,
+     "end": 69.248
+    }
+   ]
+  },
+  {
+   "id": "o10",
+   "text": "And if you want to see it work first, we build a prototype.",
+   "start": 70.734,
+   "end": 73.658,
+   "words": [
+    {
+     "w": "And",
+     "start": 70.795,
+     "end": 70.855
+    },
+    {
+     "w": "if",
+     "start": 70.916,
+     "end": 70.956
+    },
+    {
+     "w": "you",
+     "start": 70.996,
+     "end": 71.057
+    },
+    {
+     "w": "want",
+     "start": 71.137,
+     "end": 71.238
+    },
+    {
+     "w": "to",
+     "start": 71.279,
+     "end": 71.319
+    },
+    {
+     "w": "see",
+     "start": 71.379,
+     "end": 71.5
+    },
+    {
+     "w": "it",
+     "start": 71.561,
+     "end": 71.601
+    },
+    {
+     "w": "work",
+     "start": 71.682,
+     "end": 71.863
+    },
+    {
+     "w": "first,",
+     "start": 71.984,
+     "end": 72.206
+    },
+    {
+     "w": "we",
+     "start": 72.61,
+     "end": 72.69
+    },
+    {
+     "w": "build",
+     "start": 72.811,
+     "end": 72.973
+    },
+    {
+     "w": "a",
+     "start": 73.053,
+     "end": 73.074
+    },
+    {
+     "w": "prototype.",
+     "start": 73.114,
+     "end": 73.658
+    }
+   ]
+  },
+  {
+   "id": "o11",
+   "text": "On the last weekend of every month, there is the AI Weekend. Two live sessions. Seven working demos, built in front of you.",
+   "start": 74.958,
+   "end": 83.717,
+   "words": [
+    {
+     "w": "On",
+     "start": 75.018,
+     "end": 75.058
+    },
+    {
+     "w": "the",
+     "start": 75.138,
+     "end": 75.198
+    },
+    {
+     "w": "last",
+     "start": 75.299,
+     "end": 75.539
+    },
+    {
+     "w": "weekend",
+     "start": 75.639,
+     "end": 75.96
+    },
+    {
+     "w": "of",
+     "start": 76.04,
+     "end": 76.08
+    },
+    {
+     "w": "every",
+     "start": 76.38,
+     "end": 76.661
+    },
+    {
+     "w": "month,",
+     "start": 76.781,
+     "end": 77.002
+    },
+    {
+     "w": "there",
+     "start": 77.422,
+     "end": 77.603
+    },
+    {
+     "w": "is",
+     "start": 77.703,
+     "end": 77.763
+    },
+    {
+     "w": "the",
+     "start": 77.843,
+     "end": 77.943
+    },
+    {
+     "w": "AI",
+     "start": 78.123,
+     "end": 78.444
+    },
+    {
+     "w": "Weekend.",
+     "start": 78.564,
+     "end": 78.965
+    },
+    {
+     "w": "Two",
+     "start": 79.565,
+     "end": 79.705
+    },
+    {
+     "w": "live",
+     "start": 79.865,
+     "end": 80.106
+    },
+    {
+     "w": "sessions.",
+     "start": 80.186,
+     "end": 80.627
+    },
+    {
+     "w": "Seven",
+     "start": 81.227,
+     "end": 81.508
+    },
+    {
+     "w": "working",
+     "start": 81.608,
+     "end": 81.928
+    },
+    {
+     "w": "demos,",
+     "start": 82.008,
+     "end": 82.349
+    },
+    {
+     "w": "built",
+     "start": 82.67,
+     "end": 82.87
+    },
+    {
+     "w": "in",
+     "start": 82.97,
+     "end": 83.01
+    },
+    {
+     "w": "front",
+     "start": 83.11,
+     "end": 83.291
+    },
+    {
+     "w": "of",
+     "start": 83.371,
+     "end": 83.411
+    },
+    {
+     "w": "you.",
+     "start": 83.491,
+     "end": 83.631
+    }
+   ]
+  },
+  {
+   "id": "o12",
+   "text": "Train. Innovate. Build.",
+   "start": 85.117,
+   "end": 87.563,
+   "words": [
+    {
+     "w": "Train.",
+     "start": 85.157,
+     "end": 85.42
+    },
+    {
+     "w": "Innovate.",
+     "start": 86.024,
+     "end": 86.468
+    },
+    {
+     "w": "Build.",
+     "start": 87.068,
+     "end": 87.41
+    }
+   ]
+  },
+  {
+   "id": "o13",
+   "text": "Start with a preview lesson. Nothing to sign up for.",
+   "start": 88.263,
+   "end": 92.081,
+   "words": [
+    {
+     "w": "Start",
+     "start": 88.263,
+     "end": 88.565
+    },
+    {
+     "w": "with",
+     "start": 88.686,
+     "end": 88.807
+    },
+    {
+     "w": "a",
+     "start": 88.887,
+     "end": 88.907
+    },
+    {
+     "w": "preview",
+     "start": 89.048,
+     "end": 89.512
+    },
+    {
+     "w": "lesson.",
+     "start": 89.653,
+     "end": 89.975
+    },
+    {
+     "w": "Nothing",
+     "start": 90.575,
+     "end": 90.938
+    },
+    {
+     "w": "to",
+     "start": 91.058,
+     "end": 91.159
+    },
+    {
+     "w": "sign",
+     "start": 91.24,
+     "end": 91.461
+    },
+    {
+     "w": "up",
+     "start": 91.562,
+     "end": 91.622
+    },
+    {
+     "w": "for.",
+     "start": 91.743,
+     "end": 91.944
+    }
+   ]
+  }
+ ]
+}

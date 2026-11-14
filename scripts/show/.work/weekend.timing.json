@@ -1,0 +1,784 @@
+{
+ "film": "weekend",
+ "duration": 62.735,
+ "sr": 44100,
+ "lines": [
+  {
+   "id": "w01",
+   "text": "What could you build with AI in one weekend?",
+   "start": 1.0,
+   "end": 3.47,
+   "words": [
+    {
+     "w": "What",
+     "start": 1.022,
+     "end": 1.163
+    },
+    {
+     "w": "could",
+     "start": 1.244,
+     "end": 1.405
+    },
+    {
+     "w": "you",
+     "start": 1.446,
+     "end": 1.547
+    },
+    {
+     "w": "build",
+     "start": 1.688,
+     "end": 1.91
+    },
+    {
+     "w": "with",
+     "start": 1.97,
+     "end": 2.112
+    },
+    {
+     "w": "AI",
+     "start": 2.273,
+     "end": 2.495
+    },
+    {
+     "w": "in",
+     "start": 2.656,
+     "end": 2.697
+    },
+    {
+     "w": "one",
+     "start": 2.878,
+     "end": 2.979
+    },
+    {
+     "w": "weekend?",
+     "start": 3.06,
+     "end": 3.443
+    }
+   ]
+  },
+  {
+   "id": "w02",
+   "text": "Come and see. Two live sessions. One Saturday, one Sunday.",
+   "start": 4.57,
+   "end": 9.002,
+   "words": [
+    {
+     "w": "Come",
+     "start": 4.63,
+     "end": 4.791
+    },
+    {
+     "w": "and",
+     "start": 4.851,
+     "end": 4.931
+    },
+    {
+     "w": "see.",
+     "start": 5.012,
+     "end": 5.172
+    },
+    {
+     "w": "Two",
+     "start": 5.772,
+     "end": 5.913
+    },
+    {
+     "w": "live",
+     "start": 6.013,
+     "end": 6.234
+    },
+    {
+     "w": "sessions.",
+     "start": 6.315,
+     "end": 6.756
+    },
+    {
+     "w": "One",
+     "start": 7.356,
+     "end": 7.456
+    },
+    {
+     "w": "Saturday,",
+     "start": 7.537,
+     "end": 8.039
+    },
+    {
+     "w": "one",
+     "start": 8.42,
+     "end": 8.5
+    },
+    {
+     "w": "Sunday.",
+     "start": 8.581,
+     "end": 8.982
+    }
+   ]
+  },
+  {
+   "id": "w03",
+   "text": "On day one, we start with how AI works, and set it up to know your work. Then a weekly report, in minutes.",
+   "start": 10.202,
+   "end": 17.191,
+   "words": [
+    {
+     "w": "On",
+     "start": 10.282,
+     "end": 10.322
+    },
+    {
+     "w": "day",
+     "start": 10.443,
+     "end": 10.643
+    },
+    {
+     "w": "one,",
+     "start": 10.803,
+     "end": 10.904
+    },
+    {
+     "w": "we",
+     "start": 11.204,
+     "end": 11.284
+    },
+    {
+     "w": "start",
+     "start": 11.385,
+     "end": 11.645
+    },
+    {
+     "w": "with",
+     "start": 11.725,
+     "end": 11.866
+    },
+    {
+     "w": "how",
+     "start": 12.026,
+     "end": 12.206
+    },
+    {
+     "w": "AI",
+     "start": 12.447,
+     "end": 12.607
+    },
+    {
+     "w": "works,",
+     "start": 12.728,
+     "end": 12.968
+    },
+    {
+     "w": "and",
+     "start": 13.268,
+     "end": 13.349
+    },
+    {
+     "w": "set",
+     "start": 13.429,
+     "end": 13.609
+    },
+    {
+     "w": "it",
+     "start": 13.669,
+     "end": 13.709
+    },
+    {
+     "w": "up",
+     "start": 13.81,
+     "end": 13.87
+    },
+    {
+     "w": "to",
+     "start": 13.91,
+     "end": 13.99
+    },
+    {
+     "w": "know",
+     "start": 14.07,
+     "end": 14.211
+    },
+    {
+     "w": "your",
+     "start": 14.271,
+     "end": 14.411
+    },
+    {
+     "w": "work.",
+     "start": 14.451,
+     "end": 14.612
+    },
+    {
+     "w": "Then",
+     "start": 15.212,
+     "end": 15.352
+    },
+    {
+     "w": "a",
+     "start": 15.513,
+     "end": 15.533
+    },
+    {
+     "w": "weekly",
+     "start": 15.613,
+     "end": 15.934
+    },
+    {
+     "w": "report,",
+     "start": 16.014,
+     "end": 16.334
+    },
+    {
+     "w": "in",
+     "start": 16.634,
+     "end": 16.674
+    },
+    {
+     "w": "minutes.",
+     "start": 16.774,
+     "end": 17.095
+    }
+   ]
+  },
+  {
+   "id": "w04",
+   "text": "After that, pictures, video and sound, made with AI. And skills and connectors, so it can reach your files and your tools.",
+   "start": 17.691,
+   "end": 25.548,
+   "words": [
+    {
+     "w": "After",
+     "start": 17.771,
+     "end": 17.992
+    },
+    {
+     "w": "that,",
+     "start": 18.072,
+     "end": 18.233
+    },
+    {
+     "w": "pictures,",
+     "start": 18.534,
+     "end": 19.015
+    },
+    {
+     "w": "video",
+     "start": 19.315,
+     "end": 19.596
+    },
+    {
+     "w": "and",
+     "start": 19.736,
+     "end": 19.816
+    },
+    {
+     "w": "sound,",
+     "start": 19.917,
+     "end": 20.178
+    },
+    {
+     "w": "made",
+     "start": 20.639,
+     "end": 20.88
+    },
+    {
+     "w": "with",
+     "start": 20.94,
+     "end": 21.081
+    },
+    {
+     "w": "AI.",
+     "start": 21.241,
+     "end": 21.462
+    },
+    {
+     "w": "And",
+     "start": 22.062,
+     "end": 22.143
+    },
+    {
+     "w": "skills",
+     "start": 22.223,
+     "end": 22.524
+    },
+    {
+     "w": "and",
+     "start": 22.604,
+     "end": 22.684
+    },
+    {
+     "w": "connectors,",
+     "start": 22.745,
+     "end": 23.266
+    },
+    {
+     "w": "so",
+     "start": 23.566,
+     "end": 23.666
+    },
+    {
+     "w": "it",
+     "start": 23.766,
+     "end": 23.806
+    },
+    {
+     "w": "can",
+     "start": 23.887,
+     "end": 23.987
+    },
+    {
+     "w": "reach",
+     "start": 24.087,
+     "end": 24.268
+    },
+    {
+     "w": "your",
+     "start": 24.328,
+     "end": 24.449
+    },
+    {
+     "w": "files",
+     "start": 24.509,
+     "end": 24.81
+    },
+    {
+     "w": "and",
+     "start": 24.89,
+     "end": 24.97
+    },
+    {
+     "w": "your",
+     "start": 25.011,
+     "end": 25.131
+    },
+    {
+     "w": "tools.",
+     "start": 25.191,
+     "end": 25.472
+    }
+   ]
+  },
+  {
+   "id": "w05",
+   "text": "On day two, we automate a task you repeat every week. Then we build your first agent.",
+   "start": 26.748,
+   "end": 32.456,
+   "words": [
+    {
+     "w": "On",
+     "start": 26.828,
+     "end": 26.869
+    },
+    {
+     "w": "day",
+     "start": 26.929,
+     "end": 27.049
+    },
+    {
+     "w": "two,",
+     "start": 27.17,
+     "end": 27.331
+    },
+    {
+     "w": "we",
+     "start": 27.631,
+     "end": 27.712
+    },
+    {
+     "w": "automate",
+     "start": 27.792,
+     "end": 28.194
+    },
+    {
+     "w": "a",
+     "start": 28.254,
+     "end": 28.274
+    },
+    {
+     "w": "task",
+     "start": 28.355,
+     "end": 28.616
+    },
+    {
+     "w": "you",
+     "start": 28.716,
+     "end": 28.797
+    },
+    {
+     "w": "repeat",
+     "start": 28.877,
+     "end": 29.178
+    },
+    {
+     "w": "every",
+     "start": 29.299,
+     "end": 29.48
+    },
+    {
+     "w": "week.",
+     "start": 29.54,
+     "end": 29.721
+    },
+    {
+     "w": "Then",
+     "start": 30.321,
+     "end": 30.481
+    },
+    {
+     "w": "we",
+     "start": 30.622,
+     "end": 30.702
+    },
+    {
+     "w": "build",
+     "start": 30.883,
+     "end": 31.144
+    },
+    {
+     "w": "your",
+     "start": 31.205,
+     "end": 31.385
+    },
+    {
+     "w": "first",
+     "start": 31.466,
+     "end": 31.727
+    },
+    {
+     "w": "agent.",
+     "start": 32.008,
+     "end": 32.29
+    }
+   ]
+  },
+  {
+   "id": "w06",
+   "text": "Give it a goal, and it researches, drafts, and checks its own work. And last, a team of agents, working together.",
+   "start": 32.956,
+   "end": 40.539,
+   "words": [
+    {
+     "w": "Give",
+     "start": 32.976,
+     "end": 33.137
+    },
+    {
+     "w": "it",
+     "start": 33.137,
+     "end": 33.217
+    },
+    {
+     "w": "a",
+     "start": 33.277,
+     "end": 33.297
+    },
+    {
+     "w": "goal,",
+     "start": 33.357,
+     "end": 33.558
+    },
+    {
+     "w": "and",
+     "start": 33.879,
+     "end": 33.959
+    },
+    {
+     "w": "it",
+     "start": 34.04,
+     "end": 34.1
+    },
+    {
+     "w": "researches,",
+     "start": 34.16,
+     "end": 34.802
+    },
+    {
+     "w": "drafts,",
+     "start": 35.163,
+     "end": 35.525
+    },
+    {
+     "w": "and",
+     "start": 35.826,
+     "end": 35.906
+    },
+    {
+     "w": "checks",
+     "start": 36.026,
+     "end": 36.267
+    },
+    {
+     "w": "its",
+     "start": 36.407,
+     "end": 36.528
+    },
+    {
+     "w": "own",
+     "start": 36.688,
+     "end": 36.789
+    },
+    {
+     "w": "work.",
+     "start": 36.909,
+     "end": 37.13
+    },
+    {
+     "w": "And",
+     "start": 37.73,
+     "end": 37.851
+    },
+    {
+     "w": "last,",
+     "start": 37.891,
+     "end": 38.172
+    },
+    {
+     "w": "a",
+     "start": 38.513,
+     "end": 38.533
+    },
+    {
+     "w": "team",
+     "start": 38.613,
+     "end": 38.794
+    },
+    {
+     "w": "of",
+     "start": 38.894,
+     "end": 38.934
+    },
+    {
+     "w": "agents,",
+     "start": 39.135,
+     "end": 39.436
+    },
+    {
+     "w": "working",
+     "start": 39.736,
+     "end": 40.017
+    },
+    {
+     "w": "together.",
+     "start": 40.077,
+     "end": 40.518
+    }
+   ]
+  },
+  {
+   "id": "w07",
+   "text": "Everything is built live, step by step. Then you get the complete kit, so you can repeat it yourself.",
+   "start": 41.739,
+   "end": 48.246,
+   "words": [
+    {
+     "w": "Everything",
+     "start": 41.859,
+     "end": 42.241
+    },
+    {
+     "w": "is",
+     "start": 42.362,
+     "end": 42.422
+    },
+    {
+     "w": "built",
+     "start": 42.522,
+     "end": 42.743
+    },
+    {
+     "w": "live,",
+     "start": 43.004,
+     "end": 43.366
+    },
+    {
+     "w": "step",
+     "start": 43.666,
+     "end": 43.886
+    },
+    {
+     "w": "by",
+     "start": 43.967,
+     "end": 44.087
+    },
+    {
+     "w": "step.",
+     "start": 44.168,
+     "end": 44.388
+    },
+    {
+     "w": "Then",
+     "start": 44.988,
+     "end": 45.089
+    },
+    {
+     "w": "you",
+     "start": 45.149,
+     "end": 45.229
+    },
+    {
+     "w": "get",
+     "start": 45.33,
+     "end": 45.45
+    },
+    {
+     "w": "the",
+     "start": 45.531,
+     "end": 45.611
+    },
+    {
+     "w": "complete",
+     "start": 45.691,
+     "end": 46.133
+    },
+    {
+     "w": "kit,",
+     "start": 46.253,
+     "end": 46.434
+    },
+    {
+     "w": "so",
+     "start": 46.734,
+     "end": 46.814
+    },
+    {
+     "w": "you",
+     "start": 46.875,
+     "end": 46.975
+    },
+    {
+     "w": "can",
+     "start": 47.035,
+     "end": 47.116
+    },
+    {
+     "w": "repeat",
+     "start": 47.196,
+     "end": 47.537
+    },
+    {
+     "w": "it",
+     "start": 47.618,
+     "end": 47.718
+    },
+    {
+     "w": "yourself.",
+     "start": 47.738,
+     "end": 48.16
+    }
+   ]
+  },
+  {
+   "id": "w08",
+   "text": "The AI Weekend. Live, online, the last weekend of every month.",
+   "start": 49.446,
+   "end": 55.305,
+   "words": [
+    {
+     "w": "The",
+     "start": 49.546,
+     "end": 49.646
+    },
+    {
+     "w": "AI",
+     "start": 49.847,
+     "end": 50.207
+    },
+    {
+     "w": "Weekend.",
+     "start": 50.367,
+     "end": 50.928
+    },
+    {
+     "w": "Live,",
+     "start": 51.528,
+     "end": 51.989
+    },
+    {
+     "w": "online,",
+     "start": 52.509,
+     "end": 53.05
+    },
+    {
+     "w": "the",
+     "start": 53.411,
+     "end": 53.491
+    },
+    {
+     "w": "last",
+     "start": 53.571,
+     "end": 53.852
+    },
+    {
+     "w": "weekend",
+     "start": 53.972,
+     "end": 54.352
+    },
+    {
+     "w": "of",
+     "start": 54.432,
+     "end": 54.472
+    },
+    {
+     "w": "every",
+     "start": 54.613,
+     "end": 54.793
+    },
+    {
+     "w": "month.",
+     "start": 54.873,
+     "end": 55.113
+    }
+   ]
+  },
+  {
+   "id": "w09",
+   "text": "Reserve your seat. The link is on the screen.",
+   "start": 56.005,
+   "end": 59.735,
+   "words": [
+    {
+     "w": "Reserve",
+     "start": 56.077,
+     "end": 56.601
+    },
+    {
+     "w": "your",
+     "start": 56.661,
+     "end": 56.822
+    },
+    {
+     "w": "seat.",
+     "start": 56.943,
+     "end": 57.205
+    },
+    {
+     "w": "The",
+     "start": 57.805,
+     "end": 58.168
+    },
+    {
+     "w": "link",
+     "start": 58.289,
+     "end": 58.511
+    },
+    {
+     "w": "is",
+     "start": 58.672,
+     "end": 58.752
+    },
+    {
+     "w": "on",
+     "start": 58.913,
+     "end": 58.974
+    },
+    {
+     "w": "the",
+     "start": 59.075,
+     "end": 59.155
+    },
+    {
+     "w": "screen.",
+     "start": 59.216,
+     "end": 59.659
+    }
+   ]
+  }
+ ]
+}

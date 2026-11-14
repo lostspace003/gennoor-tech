@@ -114,12 +114,10 @@ rzp-key*
 rzp-webhook-secret.txt
 
 # Working files for the email pictures (scripts/email-art)
-scripts/email-art/.work/
-scripts/catalog/.work/
+# (kept on GitHub since 14 November 2026, at the owner's word: "push the work folders")
 
 # Working files for the deck and the films (scripts/show)
-scripts/show/.work/
-scripts/.avatar/
+# (kept on GitHub since 14 November 2026, at the owner's word. Office lock files in them stay out: `~$*` above.)
 
 # Python leaves compiled copies beside the agent service; they are made again on every run
 __pycache__/
