@@ -5,7 +5,7 @@ import * as XLSX from 'xlsx'
 import { Check, Download, ExternalLink, Loader2, Mail, RefreshCw, Send, Trash2, Users } from 'lucide-react'
 
 type Kind = 'invite' | 'payment' | 'reminder' | 'join' | 'kit'
-interface Reg { id: string; cohort: string; name: string; email: string; phone: string; company: string; role: string; at: string; payment: 'pending' | 'paid' | 'refunded'; fee: number; source: string; note?: string; emails?: Record<string, string>; paymentId?: string; paidAt?: string }
+interface Reg { id: string; cohort: string; name: string; email: string; phone: string; company: string; role: string; at: string; payment: 'pending' | 'paid' | 'refunded'; fee: number; currency?: 'INR' | 'USD'; source: string; note?: string; emails?: Record<string, string>; paymentId?: string; paidAt?: string }
 interface Settings { joinUrl: string; payment: string; kitUrl: string; invitedCount: number }
 interface EmailInfo { kind: Kind; title: string; when: string; to: string; needs?: 'joinUrl' | 'payment' | 'kitUrl'; needsLabel?: string }
 interface Data { current: string; seats: number; fee: number; cohorts: { id: string; label: string }[]; settings: Record<string, Settings>; emails: EmailInfo[]; inviteLimit: number; online: boolean; testMode: boolean; registrations: Reg[] }
@@ -118,7 +118,7 @@ export default function WeekendAdminPage() {
   function excel() {
     const sheet = XLSX.utils.json_to_sheet(rows.map((r) => ({
       Name: r.name, Email: r.email, Phone: r.phone, Company: r.company, Role: r.role,
-      Payment: PAY[r.payment], 'Fee (INR)': r.fee, 'Came from': r.source, 'Registered on': r.at.slice(0, 10),
+      Payment: PAY[r.payment], Fee: r.fee, 'Paid in': r.currency || 'INR', 'Came from': r.source, 'Registered on': r.at.slice(0, 10),
       'Emails sent': Object.keys(r.emails || {}).join(', '), 'Payment reference': r.paymentId || '',
     })))
     const wb = XLSX.utils.book_new()
@@ -157,7 +157,7 @@ export default function WeekendAdminPage() {
               [`${live.length}`, `of ${data.seats} seats taken`],
               [`${paid.length}`, 'have paid'],
               [`${pending.length}`, 'still to pay'],
-              [`₹${paid.reduce((n, r) => n + r.fee, 0).toLocaleString('en-IN')}`, 'received'],
+              [[`₹${paid.filter((r) => (r.currency || 'INR') === 'INR').reduce((n, r) => n + r.fee, 0).toLocaleString('en-IN')}`, ...(paid.some((r) => r.currency === 'USD') ? [`$${paid.filter((r) => r.currency === 'USD').reduce((n, r) => n + r.fee, 0).toFixed(2)}`] : [])].join(' + '), 'received'],
             ].map(([big, small]) => (
               <div key={small} className="rounded-xl border border-gray-200 bg-raised px-4 py-3">
                 <div className="text-2xl font-semibold tracking-tight">{big}</div>

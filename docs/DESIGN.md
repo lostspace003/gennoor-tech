@@ -243,9 +243,12 @@ sideways (a carousel) may hide its own.
 
 Light and compact; it does not take the stage look.
 
-**It has a dark look of its own** (owner, November 2026: a dark theme for the admin, "light stays default").
+**It follows the clock, like the public site** (owner, 14 November 2026: "in the admin panel, same process.
+In the day, it will be light, and in the night, it will be dark"): its light paper from 07:00 to 18:00, its dark
+look the rest of the time. The switch still works; a look chosen by hand holds until the next change of day
+and night. (Before that day light was the default and dark was only ever chosen by hand.)
 - The switch is `src/components/admin/AdminThemeSwitch.tsx`: a row at the foot of the admin menu, an icon button
-  in the CRM's top bar. The choice is kept in the browser under `gennoor.admin.theme` and is separate from the
+  in the CRM's top bar. The choice is kept in the browser under `gennoor.admin.theme` (as "look|until") and is separate from the
   public site's (`src/lib/theme.ts`, the end of the file). It is put on the page before anything is drawn.
 - Dark is the stage's own colour values (the class `stage` on `<html>`), nothing else of the stage. So there is
   no second set of colours to keep: **a page of the back office must write every colour by name**, exactly as a

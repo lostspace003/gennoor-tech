@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { Zap } from 'lucide-react'
 import { WEEKEND } from '@/data/ai-weekend'
+import WeekendFee from '@/components/WeekendFee'
 import { Ico } from '@/components/stage/Ico'
 
 /**
@@ -28,7 +29,7 @@ export default function WeekendStrip() {
             <span className="block text-[16.5px] sm:text-[17.5px] font-semibold leading-snug text-gray-900">{WEEKEND.name}: {WEEKEND.tagline.charAt(0).toLowerCase() + WEEKEND.tagline.slice(1)}</span>
             <span className="block text-[13.5px] text-gray-600 mt-0.5">
               Last weekend of every month · Saturday &amp; Sunday · live online ·{' '}
-              <span className="font-semibold text-gray-900">₹{WEEKEND.fee}</span> <s className="text-gray-400">₹{WEEKEND.regularFee.toLocaleString('en-IN')}</s>
+              <span className="font-semibold text-gray-900"><WeekendFee /></span> <s className="text-gray-400"><WeekendFee part="regular" /></s>
             </span>
           </span>
           <span className="st-pill st-gold st-sm shrink-0">Reserve a seat ›</span>

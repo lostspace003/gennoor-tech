@@ -3,6 +3,8 @@
 import { useEffect, useMemo, useState } from 'react'
 import Link from 'next/link'
 import { Filter, Layers, Play, X } from 'lucide-react'
+import { money } from '@/lib/money'
+import { useIndia } from '@/hooks/useIndia'
 import { FilterBar, Pagination, usePage, type SortKey } from './CatalogControls'
 import type { LmsCourseCard } from '@/lib/lms'
 import PromoPlayer from './PromoPlayer'
@@ -15,6 +17,7 @@ export default function LabsCatalog({ courses, custom = EMPTY_CUSTOM }: { course
   const opt = useMemo(() => mergedOptions(custom), [custom])
   const KINDS = opt.kinds
   const KIND_LABEL: Record<string, string> = Object.fromEntries(KINDS.map(k => [k.id, k.label]))
+  const india = useIndia()
   const [vendor, setVendor] = useState('all')
   const [kind, setKind] = useState('all')
   const [area, setArea] = useState('all')
@@ -192,8 +195,9 @@ export default function LabsCatalog({ courses, custom = EMPTY_CUSTOM }: { course
                         <div className="mt-4 pt-4 border-t border-gray-100 flex flex-wrap items-center justify-between gap-x-3 gap-y-2">
                           {c.priceUsd ? (
                             <span className="flex items-baseline gap-2">
-                              <span className="text-[20px] font-bold tracking-tight text-gray-900 tabular-nums">${c.priceUsd.toFixed(2)}</span>
-                              {c.offer && <s className="text-[14px] text-gray-400 tabular-nums">${c.offer.regularUsd.toFixed(2)}</s>}
+                              {/* One currency, by where the visitor is; nothing until the browser has said (src/lib/money.ts) */}
+                              <span className="text-[20px] font-bold tracking-tight text-gray-900 tabular-nums">{india === null ? '\u00a0' : india && c.priceInr ? money(c.priceInr, 'INR') : money(c.priceUsd, 'USD')}</span>
+                              {c.offer && india !== null && <s className="text-[14px] text-gray-400 tabular-nums">{india && c.offer.regularInr ? money(c.offer.regularInr, 'INR') : money(c.offer.regularUsd, 'USD')}</s>}
                             </span>
                           ) : (
                             <span className="text-[15px] font-semibold text-emerald-700">Free</span>

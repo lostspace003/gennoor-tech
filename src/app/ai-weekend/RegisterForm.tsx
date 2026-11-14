@@ -2,12 +2,16 @@
 
 import { useCallback, useEffect, useState } from 'react'
 import { CheckCircle2, Loader2, ShieldCheck } from 'lucide-react'
+import WeekendFee from '@/components/WeekendFee'
+import { useIndia } from '@/hooks/useIndia'
+import { weekendFee } from '@/data/ai-weekend'
+import { money } from '@/lib/money'
 
 const input = 'w-full rounded-xl border border-gray-300 bg-raised px-3.5 py-3 text-[15px] text-gray-900 placeholder:text-gray-400 focus:border-primary-600 focus:outline-none focus:ring-2 focus:ring-primary-600/20'
 const bigButton = 'st-pill st-gold w-full disabled:opacity-60'
 
 /** What the server sends so Razorpay's payment window can open. Nothing in it is secret. */
-interface Checkout { registrationId: string; token: string; keyId: string; orderId: string; amount: number; name: string; email: string; phone: string; description: string }
+interface Checkout { registrationId: string; token: string; keyId: string; orderId: string; amount: number; currency?: 'INR' | 'USD'; name: string; email: string; phone: string; description: string }
 type Stage = 'form' | 'sending' | 'paying' | 'confirming' | 'reserved' | 'paid'
 
 /** Where the visitor came from: the campaign tag if the link carried one, else the site that sent them. */
@@ -33,7 +37,9 @@ function loadRazorpay(): Promise<boolean> {
   })
 }
 
-export default function RegisterForm({ cohortLabel, fee, full, online }: { cohortLabel: string; fee: number; full?: boolean; online?: boolean }) {
+export default function RegisterForm({ cohortLabel, full, online }: { cohortLabel: string; full?: boolean; online?: boolean }) {
+  // Rupees in India, dollars everywhere else: one of the two, never both (src/lib/money.ts)
+  const india = useIndia()
   const [f, setF] = useState({ name: '', email: '', phone: '', company: '', role: '', website_hp: '' })
   const [stage, setStage] = useState<Stage>('form')
   const [error, setError] = useState('')
@@ -54,7 +60,7 @@ export default function RegisterForm({ cohortLabel, fee, full, online }: { cohor
       key: c.keyId,
       order_id: c.orderId,
       amount: c.amount,
-      currency: 'INR',
+      currency: c.currency || 'INR',
       name: 'Gennoor Tech',
       image: 'https://www.gennoor.com/logos/gennoor-tech-linkedin-profile-400x400.png',
       description: c.description,
@@ -101,7 +107,7 @@ export default function RegisterForm({ cohortLabel, fee, full, online }: { cohor
     setError('')
     setStage('sending')
     try {
-      const r = await fetch('/api/weekend/register', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ...f, source: sourceOf() }) })
+      const r = await fetch('/api/weekend/register', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ...f, india: india !== false, source: sourceOf() }) })
       const j = await r.json().catch(() => ({}))
       if (!r.ok) { setError(j.error || 'Something went wrong. Please try again.'); setStage('form'); return }
       setWho(f.name)
@@ -125,21 +131,26 @@ export default function RegisterForm({ cohortLabel, fee, full, online }: { cohor
     )
   }
 
+  // Once the server has opened a payment, the amount is the one it charges (someone coming back keeps their first currency)
+  const paysIn = checkout?.currency || (india === false ? 'USD' : 'INR')
+  const fee = checkout ? money(checkout.amount / 100, paysIn) : india === null ? '' : money(weekendFee(india).fee, paysIn)
+  const ways = paysIn === 'INR' ? 'UPI, card or net banking' : 'card'
+
   if (stage === 'reserved' || stage === 'paying' || stage === 'confirming') {
     return (
       <div className="py-6 text-center" role="status">
         {stage === 'reserved' ? <CheckCircle2 className="mx-auto h-12 w-12 text-green-600" /> : <Loader2 className="mx-auto h-10 w-10 animate-spin text-gray-400" />}
         <h3 className="mt-3 text-2xl font-bold">{stage === 'confirming' ? 'Confirming your payment…' : stage === 'paying' ? 'Complete your payment' : 'Your seat is reserved'}</h3>
-        {stage === 'paying' && <p className="mt-2 text-[15px] text-gray-600">The payment window is open. Pay ₹{fee} by UPI, card or net banking.</p>}
+        {stage === 'paying' && <p className="mt-2 text-[15px] text-gray-600">The payment window is open. Pay {fee} by {ways}.</p>}
         {stage === 'reserved' && (checkout ? (
           <>
-            <p className="mt-2 text-[15px] text-gray-600">One step is left: the fee of ₹{fee}. Your seat is confirmed the moment it is paid.</p>
-            <button onClick={() => pay(checkout)} className={`${bigButton} mt-4`}>Pay ₹{fee} now</button>
+            <p className="mt-2 text-[15px] text-gray-600">One step is left: the fee of {fee}. Your seat is confirmed the moment it is paid.</p>
+            <button onClick={() => pay(checkout)} className={`${bigButton} mt-4`}>Pay {fee} now</button>
             <p className="mt-3 text-sm text-gray-500">Prefer to pay later? We have emailed {checkout.email} a Pay now button.</p>
           </>
         ) : (
           <>
-            <p className="mt-2 text-[15px] text-gray-600">We have emailed {f.email} with the details for {cohortLabel}. The payment details for ₹{fee} follow in a separate email. After the weekend you receive the full kit.</p>
+            <p className="mt-2 text-[15px] text-gray-600">We have emailed {f.email} with the details for {cohortLabel}. The payment details for {fee} follow in a separate email. After the weekend you receive the full kit.</p>
             <p className="mt-3 text-sm text-gray-500">Nothing in your inbox? Check the spam folder, or write to admin@gennoor.com.</p>
           </>
         ))}
@@ -174,16 +185,16 @@ export default function RegisterForm({ cohortLabel, fee, full, online }: { cohor
       <input tabIndex={-1} autoComplete="off" value={f.website_hp} onChange={set('website_hp')} className="hidden" aria-hidden="true" name="website" />
       {error && <p className="rounded-lg bg-red-50 border border-red-200 px-3 py-2 text-sm text-red-700" role="alert">{error}</p>}
       <button disabled={sending} className={bigButton}>
-        {sending ? <><Loader2 className="h-4 w-4 animate-spin" /> One moment…</> : online ? `Continue to payment · ₹${fee}` : `Reserve my seat · ₹${fee}`}
+        {sending ? <><Loader2 className="h-4 w-4 animate-spin" /> One moment…</> : <>{online ? 'Continue to payment' : 'Reserve my seat'}{fee && ` · ${fee}`}</>}
       </button>
-      {online && <p className="flex items-center justify-center gap-1.5 text-xs text-gray-500"><ShieldCheck className="h-3.5 w-3.5 text-green-600" /> Secure payment by Razorpay: UPI, cards and net banking</p>}
+      {online && <p className="flex items-center justify-center gap-1.5 text-xs text-gray-500"><ShieldCheck className="h-3.5 w-3.5 text-green-600" /> Secure payment by Razorpay{india === null ? '' : india ? ': UPI, cards and net banking' : ': cards'}</p>}
       <p className="text-xs text-gray-500">We use these details only to run the workshop and to tell you about the next one. See our <a href="/privacy" className="underline">privacy policy</a>.</p>
     </form>
   )
 }
 
 /** The bar that stays at the bottom while you read; it steps aside once the form is on screen. */
-export function StickyRegister({ fee, regularFee, note }: { fee: number; regularFee: number; note: string }) {
+export function StickyRegister({ note }: { note: string }) {
   const [hidden, setHidden] = useState(false)
   useEffect(() => {
     const target = document.getElementById('register')
@@ -197,7 +208,7 @@ export function StickyRegister({ fee, regularFee, note }: { fee: number; regular
     <div className={`fixed left-1/2 bottom-[76px] sm:bottom-4 z-40 w-[min(92vw,520px)] -translate-x-1/2 rounded-2xl border border-gray-200 bg-surface/95 shadow-xl backdrop-blur transition-all duration-300 ${hidden ? 'pointer-events-none translate-y-6 opacity-0' : ''}`}>
       <div className="flex items-center justify-between gap-3 px-4 py-2.5">
         <div className="min-w-0">
-          <div className="leading-none"><span className="text-xl font-bold text-gray-900">₹{fee.toLocaleString('en-IN')}</span> <s className="text-sm text-gray-400">₹{regularFee.toLocaleString('en-IN')}</s></div>
+          <div className="leading-none"><span className="text-xl font-bold text-gray-900"><WeekendFee /></span> <s className="text-sm text-gray-400"><WeekendFee part="regular" /></s></div>
           <div className="mt-1 truncate text-xs text-gray-500">{note}</div>
         </div>
         <a href="#register" className="st-pill st-gold st-sm shrink-0">Reserve my seat</a>

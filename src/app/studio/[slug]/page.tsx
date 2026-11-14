@@ -6,7 +6,7 @@ import { BookOpen, Check, ChevronDown } from 'lucide-react'
 import { verifyLearnerSession } from '@/lib/learner-auth'
 import { getLmsCourse, getLmsProgress, imageUrl, promoUrl, toCard, type LmsProgressEntry } from '@/lib/lms'
 import { hasFullAccess, offerOf, previewIds, priceOf } from '@/lib/lms-access'
-import { BuyButton, CouponBox, CourseBuyProvider, CurrencyNote, LessonRow, PreviewList, PreviewProvider, PriceLine, type PreviewItem } from '@/components/academy/CourseAccess'
+import { BuyButton, CouponBox, CourseBuyProvider, LessonRow, PreviewList, PreviewProvider, PriceLine, type PreviewItem } from '@/components/academy/CourseAccess'
 import { OfferRibbon } from '@/components/academy/Offer'
 import { resumePoint } from '@/lib/lms-resume'
 import ResumePanel from '@/components/academy/ResumePanel'
@@ -150,8 +150,7 @@ export default async function LabsCoursePage({ params }: PageProps) {
                   <BuyButton />
                   <a href="#previews" className="text-[14px] font-semibold text-gray-900 underline underline-offset-4 hover:text-primary-600">Watch {previews.size} preview lessons</a>
                 </div>
-                <div className="mt-3 text-gray-500"><CurrencyNote className="hover:text-gray-900" /></div>
-                <CouponBox className="mt-2.5" />
+                <CouponBox className="mt-3" />
                 <p className="mt-2.5 text-[13px] text-gray-500">One payment. Every lesson, lab and quiz, and a certificate. Previews need no sign-in.</p>
               </div>
               ) : (
@@ -270,7 +269,6 @@ export default async function LabsCoursePage({ params }: PageProps) {
                 <div>
                   <div className="font-heading text-[19px] font-semibold text-gray-900">Get the full course</div>
                   <div className="text-[14px] text-gray-600 mt-1">{course.stats.lectures} video lessons, the labs, {course.stats.quizzes} quizzes and a certificate.</div>
-                  <div className="mt-2 text-gray-500"><CurrencyNote className="hover:text-gray-900" /></div>
                   <CouponBox className="mt-2" />
                 </div>
                 <BuyButton />

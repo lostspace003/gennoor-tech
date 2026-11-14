@@ -115,17 +115,25 @@ export const ADMIN_THEME_KEY = 'gennoor.admin.theme'
 /** Is this a page of the admin centre or the CRM? */
 export const isBackOffice = (pathname: string | null | undefined) => /^\/(admin|crm)(\/|$)/.test(pathname || '')
 
+/**
+ * The admin centre and the CRM follow the clock too (owner, 14 November 2026: "in the admin panel, same
+ * process. In the day, it will be light, and in the night, it will be dark"). A look switched by hand holds
+ * until the next change of day and night, exactly as on the public site: it is kept as "<look>|<until>".
+ * A choice kept the old way (the bare word, with no time) is no longer followed.
+ */
 export function readAdminTheme(): AdminTheme {
   try {
-    return window.localStorage.getItem(ADMIN_THEME_KEY) === 'dark' ? 'dark' : 'light'
+    const [look, until] = (window.localStorage.getItem(ADMIN_THEME_KEY) || '').split('|')
+    if ((look === 'light' || look === 'dark') && Number(until) > Date.now()) return look
   } catch {
-    return 'light'
+    /* no storage: the clock decides */
   }
+  return lookAt()
 }
 
 export function saveAdminTheme(theme: AdminTheme) {
   try {
-    window.localStorage.setItem(ADMIN_THEME_KEY, theme)
+    window.localStorage.setItem(ADMIN_THEME_KEY, `${theme}|${nextChange()}`)
   } catch {
     /* private mode: the choice lasts for this page only */
   }
@@ -150,4 +158,4 @@ export function showAdminTheme(theme: AdminTheme) {
  * It must also agree with isChromelessRoute() in src/lib/chrome.ts and isBackOffice() above:
  * the lesson players get no theme class; the admin centre and the CRM get their own choice.
  */
-export const THEME_SCRIPT = `(function(){try{var p=location.pathname,d=document.documentElement;if(/^\\/(admin|crm)(\\/|$)/.test(p)){var a=null;try{a=localStorage.getItem('${ADMIN_THEME_KEY}')}catch(e){}if(a==='dark')d.classList.add('stage');return}if(/^\\/studio\\/[^/]+\\/learn\\/?$/.test(p)||/^\\/ai-academy\\/[^/]+\\/[^/]+/.test(p))return;var n=new Date(),h=n.getHours(),t=h>=${DAY_FROM}&&h<${DAY_UNTIL}?'light':'dark';try{var s=localStorage;s.removeItem('${OLD_THEME_KEY}');var c=(s.getItem('${THEME_CHOICE_KEY}')||'').split('|');if((c[0]==='light'||c[0]==='dark')&&+c[1]>n.getTime())t=c[0]}catch(e){}d.classList.add(t==='light'?'day':'stage')}catch(e){}})()`
+export const THEME_SCRIPT = `(function(){try{var p=location.pathname,d=document.documentElement;if(/^\\/(admin|crm)(\\/|$)/.test(p)){var m=new Date(),g=m.getHours(),a=g>=${DAY_FROM}&&g<${DAY_UNTIL}?'light':'dark';try{var b=(localStorage.getItem('${ADMIN_THEME_KEY}')||'').split('|');if((b[0]==='light'||b[0]==='dark')&&+b[1]>m.getTime())a=b[0]}catch(e){}if(a==='dark')d.classList.add('stage');return}if(/^\\/studio\\/[^/]+\\/learn\\/?$/.test(p)||/^\\/ai-academy\\/[^/]+\\/[^/]+/.test(p))return;var n=new Date(),h=n.getHours(),t=h>=${DAY_FROM}&&h<${DAY_UNTIL}?'light':'dark';try{var s=localStorage;s.removeItem('${OLD_THEME_KEY}');var c=(s.getItem('${THEME_CHOICE_KEY}')||'').split('|');if((c[0]==='light'||c[0]==='dark')&&+c[1]>n.getTime())t=c[0]}catch(e){}d.classList.add(t==='light'?'day':'stage')}catch(e){}})()`
