@@ -75,8 +75,21 @@ export default function QueueView({ leads }: { leads: Lead[] }) {
   const nothing = t.replies.length + t.talking.length + t.pool.length + t.toStart.length + t.due.length + t.noEmail.length + t.finished.length + t.waiting.length === 0
   const quiet = t.talking.filter((l) => quietDays(l) >= QUIET_DAYS).length
 
+  // The email work of this desk in four numbers, beside the lists
+  const desk = leads.filter((l) => !l.dumped && (everyone || !l.owner || l.owner.toLowerCase() === me))
+  const weekAgo = Date.now() - 7 * 86_400_000
+  const sentThisWeek = desk.reduce((n, l) => n + (l.emailHistory || []).filter((e) => e.status === 'sent' && Date.parse(e.at) >= weekAgo).length, 0)
+  const didNotGo = desk.filter((l) => !!failedSeriesSend(l)).length
+  const side: Array<[string, number, string]> = [
+    ['Emails sent', sentThisWeek, 'in the last 7 days'],
+    ['Due now', t.due.length + t.toStart.length, 'ready to send'],
+    ['On its way', onItsWay, 'taken, not confirmed yet'],
+    ['Did not go', didNotGo, 'to send again'],
+  ]
+
   return (
-    <div className="p-3 sm:p-5 space-y-4 max-w-4xl">
+    <div className="p-3 sm:p-5 xl:grid xl:grid-cols-[minmax(0,56rem)_16rem] xl:gap-5 xl:items-start">
+    <div className="space-y-4 min-w-0">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div>
           <h2 className="text-base font-semibold text-gray-900">
@@ -278,6 +291,20 @@ export default function QueueView({ leads }: { leads: Lead[] }) {
           onSent={async () => { setSendTo(null); await reload() }}
         />
       )}
+    </div>
+    <aside className="mt-4 xl:mt-0 xl:sticky xl:top-4 rounded-xl border border-gray-200 bg-raised p-3.5 space-y-2.5">
+      <h3 className="text-sm font-semibold text-gray-900">Your emails</h3>
+      <div className="grid grid-cols-2 xl:grid-cols-1 gap-2">
+        {side.map(([label, value, sub]) => (
+          <div key={label} className="rounded-lg border border-gray-100 px-3 py-2">
+            <div className="text-[11px] text-gray-500">{label}</div>
+            <div className={`text-xl font-semibold tracking-tight ${label === 'Did not go' && value ? 'text-red-700' : 'text-gray-900'}`}>{value}</div>
+            <div className="text-[11px] text-gray-400">{sub}</div>
+          </div>
+        ))}
+      </div>
+      <Link href="/crm/emails" className="inline-block text-xs font-medium text-primary-600 hover:underline">Open the email tracker</Link>
+    </aside>
     </div>
   )
 }

@@ -7,7 +7,7 @@ import { Lead, LEAD_STEPS, STEP_LABELS, isAutoSource } from '@/lib/crm/types'
 import { LEAD_COLUMNS, mapHeaders, rowToLead, looksLikeEmail, leadToRow } from '@/lib/crm/import'
 import { sequenceProgress, stepNumber } from '@/lib/crm/sequence'
 import { CRM_USERS, shortName } from '@/lib/crm/users'
-import { StatusBadge, StepStrip, timeAgo, api, Spinner, MultiSelect, Pagination, useMinute } from './shared'
+import { SeriesDots, StatusBadge, StepStrip, timeAgo, api, Spinner, MultiSelect, Pagination, useMinute } from './shared'
 import { needsAnswer } from '@/lib/crm/replies'
 import { failedSeriesSend, lastSeriesSend, sendHint, sendLine, type SeriesSend } from '@/lib/crm/delivery'
 import { useCrm } from './CrmContext'
@@ -425,6 +425,7 @@ export default function LeadsView({ leads, canManage, onOpenLead, onReload, noti
                   <td className="px-4 py-2.5 whitespace-nowrap">
                     {series.last || series.next ? (
                       <>
+                        <div className="mb-1"><SeriesDots lead={lead} /></div>
                         {/* What has happened to the last email, then what comes next */}
                         {series.last && (
                           <div className={`text-xs flex items-center gap-1 ${SEND_TONE[series.last.state]}`} title={sendHint(series.last)}>
