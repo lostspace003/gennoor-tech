@@ -102,7 +102,7 @@ export default function SendStepModal({ leads, onClose, onSent, notify }: {
   // The email service allows about 100 an hour for the whole site; the CRM keeps to HOURLY_SEND_LIMIT of them
   const room = sendRoom(everyLead)
   const going = Math.min(total, room)
-  const copied = realEmail && realEmail.toLowerCase() !== 'admin@gennoor.com' ? `admin@gennoor.com and ${realEmail.toLowerCase()}` : 'admin@gennoor.com'
+  const copied = (realEmail || 'you').toLowerCase()
   const sample = groups.get(active)?.[0]
 
   // The preview is the real email for the first lead in the group, note included

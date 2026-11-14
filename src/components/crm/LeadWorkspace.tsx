@@ -497,7 +497,7 @@ function EmailComposer({ lead, replyTo, onClose, onSent, notify }: { lead: Lead;
         <div className="px-5 py-3.5 border-b border-gray-200 flex items-center justify-between shrink-0">
           <div className="min-w-0">
             <h3 className="text-base font-semibold text-gray-900">{replyTo ? `Reply to ${lead.name}` : `Email ${lead.name}`}</h3>
-            <p className="text-xs text-gray-500 truncate">To {lead.email} · from sales@gennoor.com · copy (CC) to admin@gennoor.com and the person sending</p>
+            <p className="text-xs text-gray-500 truncate">To {lead.email} · from sales@gennoor.com · a copy goes to you</p>
           </div>
           <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded" aria-label="Close"><X className="w-5 h-5 text-gray-500" /></button>
         </div>

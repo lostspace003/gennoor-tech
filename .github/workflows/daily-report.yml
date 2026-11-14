@@ -1,0 +1,24 @@
+name: Evening report
+
+# One email a day with everything that happened in the admin centre, and an Excel file of the detail.
+# 22:15 India time is 16:45 UTC. GitHub may start a scheduled run some minutes late.
+on:
+  schedule:
+    - cron: '45 16 * * *'
+  workflow_dispatch:
+
+jobs:
+  report:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send the evening report
+        run: |
+          STATUS=$(curl -s -o /tmp/out.json -w "%{http_code}" --max-time 280 -X POST \
+            -H "x-cron-secret: ${{ secrets.CRM_CRON_SECRET }}" \
+            https://gennoor-tech.azurewebsites.net/api/admin/daily-report)
+          # Only the numbers are printed; the answer holds no names
+          cat /tmp/out.json
+          if [ "$STATUS" != "200" ]; then
+            echo "::error::The evening report failed with status $STATUS"
+            exit 1
+          fi

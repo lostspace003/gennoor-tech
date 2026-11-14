@@ -428,7 +428,7 @@ export default function EmailBoard(p: Props) {
                   <div className="min-w-0">
                     <div className="text-[11px] font-medium text-primary-700">{stagedTitle}</div>
                     <div className="text-[15px] font-semibold text-gray-900 break-words">{preview?.subject || '…'}</div>
-                    <div className="text-xs text-gray-500 break-words">To {lead.email} · from {staged.campaign === 'series' ? 'sales@gennoor.com · a copy goes to admin@gennoor.com and to you' : 'webinar@gennoor.com'}</div>
+                    <div className="text-xs text-gray-500 break-words">To {lead.email} · from {staged.campaign === 'series' ? 'sales@gennoor.com · a copy goes to you' : 'webinar@gennoor.com'}</div>
                     {preview?.attachCatalogue && <div className="text-[11px] text-gray-500 flex items-center gap-1 mt-0.5"><Paperclip className="w-3 h-3" /> Gennoor-Tech-Catalog.xlsx is attached</div>}
                   </div>
                   <button onClick={() => { setStaged(null); setNote('') }} className="p-1.5 rounded hover:bg-gray-100 shrink-0" aria-label="Take this email off the board" title="Take it off the board"><X className="w-4 h-4 text-gray-500" /></button>
