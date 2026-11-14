@@ -391,7 +391,7 @@ export function DocumentsView({ canManage, notify }: { canManage: boolean; notif
 
   const load = () => {
     setLoading(true)
-    api<{ documents: Doc[] }>('/api/admin/leads/documents').then((r) => setDocs(r.documents)).catch((e) => notify(e.message, true)).finally(() => setLoading(false))
+    api<{ documents: Doc[] }>('/api/admin/leads/documents').then((r) => setDocs(r.documents || [])).catch((e) => notify(e.message, true)).finally(() => setLoading(false))
   }
   useEffect(load, []) // eslint-disable-line react-hooks/exhaustive-deps
 
