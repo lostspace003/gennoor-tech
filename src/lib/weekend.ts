@@ -46,6 +46,10 @@ export interface CohortSettings {
   kitUrl?: string
   /** Addresses the invitation has gone to, and when, so nobody is invited twice. */
   invited?: Record<string, string>
+  /** The same for the other campaign emails that go to people staff chose: by email kind, then by address. */
+  sentTo?: Record<string, Record<string, string>>
+  /** Only on the entry "_all": the order staff gave the campaign emails. */
+  order?: string[]
 }
 
 const SETTINGS_BLOB = 'weekend/settings.json'

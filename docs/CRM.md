@@ -157,7 +157,29 @@ made-up data (the sign-in check did not run under `next dev` on the owner's mach
 if it does, see the note in the `gennoor-site-design` skill). Look at 1366 and 390 wide. Never photograph
 or print real leads.
 
-## 9. Not to do
+## 9. The AI Weekend's own campaign
+
+The AI Weekend is not part of the nine-email series. It has its own emails on its own page (Admin centre,
+AI Weekend, Emails; `src/lib/weekend-emails.ts`, `src/app/api/admin/weekend/route.ts`), in two lists:
+
+- **The campaign**, five emails that bring people in: Invitation, What you will see built, Is it for you?,
+  Registration closes, Thank you. The first four go to people someone chooses, ticked from the leads
+  ("Choose from the leads") or pasted; the thank-you goes to everyone registered. Their order can be changed
+  by dragging, or with the arrows; the order is one for all weekends.
+- **After someone registers**: How to pay, Reminder, Joining link, The kit.
+
+Rules that hold for the campaign:
+
+- Nothing goes by itself. A person chooses who gets an email and presses Send. At most 50 at a time: the
+  email service allows the whole site about 100 an hour.
+- Left out whatever is ticked or pasted: anyone already registered for that weekend, anyone who already had
+  that email for that weekend, a lead whose emails were stopped or who replied "stop", and anyone who pressed
+  Unsubscribe. If that last check cannot be read, nothing is sent.
+- No amount in an email that goes to many people: the fee is in rupees in India and in dollars elsewhere.
+- The only urgency is the real closing time: registration closes one day before the weekend
+  (`closesWords`). No countdown, no seat count that nobody counted.
+
+## 10. Not to do
 
 - Do not send an email to try something. Not even one, unless the owner asks for that one email.
 - Do not write "sent" for an email the email service has only taken (section 6).
