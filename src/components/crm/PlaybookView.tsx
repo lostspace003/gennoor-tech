@@ -41,8 +41,16 @@ export default function PlaybookView() {
 
       {tab === 'call' && (
         <div className="space-y-3">
+          {/* The whole call in one line, so the place in it is never lost; each step jumps to its card */}
+          <nav aria-label="The steps of the call" className="sticky top-0 z-10 -mx-1 px-1 py-1.5 bg-gray-50 flex gap-1.5 overflow-x-auto">
+            {CALL_STEPS.map((s, i) => (
+              <a key={s.title} href={`#call-step-${i + 1}`} className="shrink-0 inline-flex items-center gap-1.5 rounded-full border border-gray-200 bg-raised px-2.5 py-1 text-xs text-gray-700 hover:border-gray-400">
+                <span className="inline-flex w-4 h-4 rounded-full bg-gray-900 text-white text-[10px] items-center justify-center">{i + 1}</span>{s.title}<span className="text-gray-400">{s.time}</span>
+              </a>
+            ))}
+          </nav>
           {CALL_STEPS.map((s, i) => (
-            <section key={s.title} className="bg-raised border border-gray-200 rounded-xl p-4">
+            <section key={s.title} id={`call-step-${i + 1}`} className="scroll-mt-14 bg-raised border border-gray-200 rounded-xl p-4">
               <div className="flex flex-wrap items-baseline justify-between gap-2">
                 <h3 className="text-sm font-semibold text-gray-900"><span className="inline-flex w-5 h-5 mr-2 rounded-full bg-gray-900 text-white text-[11px] items-center justify-center align-middle">{i + 1}</span>{s.title}</h3>
                 <span className="text-xs text-gray-400">{s.time}</span>

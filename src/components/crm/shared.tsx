@@ -5,6 +5,27 @@ import { createPortal } from 'react-dom'
 import Link from 'next/link'
 import { LeadStatus, LEAD_STEPS, STEP_LABELS, STEP_HINTS } from '@/lib/crm/types'
 import { IST, istInstant, leadTimeZone, formatInZone } from '@/lib/crm/timezones'
+import type { Lead } from '@/lib/crm/types'
+import { SEQUENCE, sequenceProgress } from '@/lib/crm/sequence'
+import { sendState, seriesRecord } from '@/lib/crm/delivery'
+
+/**
+ * The nine emails of the series as nine dots, for a list: green has gone, grey is on its way, amber was never
+ * confirmed, red did not go, the ringed one is next. The same marks as the email tracker, small enough for a row.
+ */
+export function SeriesDots({ lead }: { lead: Pick<Lead, 'sequence' | 'emailHistory'> }) {
+  const p = sequenceProgress(lead)
+  const sent = p.sentIds.length
+  return (
+    <span className="inline-flex items-center gap-[3px]" role="img" aria-label={`${sent} of ${SEQUENCE.length} emails of the series sent`} title={`${sent} of ${SEQUENCE.length} emails of the series sent`}>
+      {SEQUENCE.map((s) => {
+        const record = seriesRecord(lead, s.id)
+        const state = p.sentIds.includes(s.id) ? (record ? sendState(record) : 'sent') : record?.status === 'failed' ? 'failed' : p.next?.id === s.id ? 'next' : 'none'
+        return <span key={s.id} className={`w-1.5 h-1.5 rounded-full ${state === 'sent' ? 'bg-green-600' : state === 'onItsWay' ? 'bg-gray-500' : state === 'unconfirmed' ? 'bg-amber-500' : state === 'failed' ? 'bg-red-600' : state === 'next' ? 'ring-1 ring-primary-600 bg-raised' : 'bg-gray-200'}`} />
+      })}
+    </span>
+  )
+}
 
 // One chip says where a lead stands. Neutral while it is being worked, the
 // accent once there is a live conversation, a semantic colour at the two ends.

@@ -132,7 +132,8 @@ export default function LeadWorkspace({ lead, canManage, onClose, onReload, noti
       </div>
 
       <div className="flex-1 overflow-y-auto">
-        {tab === 'details' && <DetailsTab lead={lead} canManage={canManage} canWork={canWork} onReload={onReload} onClose={onClose} notify={notify} onEmails={() => setTab('emails')} />}
+        {tab !== 'emails' && <div className="px-3 sm:px-5 pt-3 sm:pt-5 max-w-6xl"><LeadGlance lead={lead} onEmails={() => setTab('emails')} /></div>}
+        {tab === 'details' && <DetailsTab lead={lead} canManage={canManage} canWork={canWork} onReload={onReload} onClose={onClose} notify={notify} />}
         {tab === 'emails' && <EmailsTab lead={lead} canWork={canWork} onReload={onReload} notify={notify} intent={intent} stage={stage} />}
         {tab === 'linkedin' && <LinkedInTab lead={lead} canWork={canWork} onReload={onReload} notify={notify} onEdit={() => setTab('details')} />}
         {tab === 'meeting' && <MeetingTab lead={lead} canWork={canWork} onReload={onReload} notify={notify} />}
@@ -148,8 +149,11 @@ const DETAIL_FIELDS: Array<[keyof Lead, string, string?]> = [
   ['designation', 'Designation'], ['country', 'Country'], ['linkedin', 'LinkedIn profile link'], ['website', 'Website'],
 ]
 
-function DetailsTab({ lead, canManage, canWork, onReload, onClose, notify, onEmails }: { lead: Lead; canManage: boolean; canWork: boolean; onReload: () => Promise<void>; onClose: () => void; notify: Notify; onEmails: () => void }) {
-  const { ask } = useCrm()
+/**
+ * The lead at a glance: where they stand and what to do next. The same four tiles sit at the top of the
+ * Details, LinkedIn and Meeting tabs (the Emails board has its own four), so the page never opens on a blank.
+ */
+function LeadGlance({ lead, onEmails }: { lead: Lead; onEmails: () => void }) {
   // The lead at a glance, in the same four tiles as the Emails board: where they stand and what to do next
   const progress = sequenceProgress(lead)
   const waiting = needsAnswer(lead)
@@ -165,6 +169,26 @@ function DetailsTab({ lead, canManage, canWork, onReload, onClose, notify, onEma
     ['Email series', `${progress.sentIds.length} of ${SEQUENCE.length} sent`, progress.stopped ? 'stopped' : progress.finished ? 'all sent' : 'open the Emails board', true],
     ['Last contact', contact ? timeAgo(contact) : 'none yet', lead.reply ? `they last wrote ${timeAgo(lead.reply.at).toLowerCase()}` : 'no reply yet', false],
   ]
+  return (
+    <div className="grid grid-cols-2 lg:grid-cols-4 gap-2">
+      {glance.map(([label, value, sub, link]) => {
+        const body = (
+          <>
+            <div className="text-[11px] text-gray-500">{label}</div>
+            <div className={`text-[15px] font-semibold truncate ${label === 'Next thing to do' && (waiting || progress.due) ? 'text-primary-700' : 'text-gray-900'}`}>{value}</div>
+            <div className="text-[11px] text-gray-500 truncate" title={sub}>{sub || ' '}</div>
+          </>
+        )
+        return link
+          ? <button key={label} onClick={onEmails} className="text-left rounded-xl border border-gray-200 bg-raised px-3 py-2 min-w-0 hover:border-gray-400">{body}</button>
+          : <div key={label} className="rounded-xl border border-gray-200 bg-raised px-3 py-2 min-w-0">{body}</div>
+      })}
+    </div>
+  )
+}
+
+function DetailsTab({ lead, canManage, canWork, onReload, onClose, notify }: { lead: Lead; canManage: boolean; canWork: boolean; onReload: () => Promise<void>; onClose: () => void; notify: Notify }) {
+  const { ask } = useCrm()
   const [editing, setEditing] = useState(false)
   const [form, setForm] = useState<Record<string, string>>({})
   const [saving, setSaving] = useState(false)
@@ -197,20 +221,6 @@ function DetailsTab({ lead, canManage, canWork, onReload, onClose, notify, onEma
 
   return (
     <div className="p-3 sm:p-5 max-w-6xl space-y-3">
-    <div className="grid grid-cols-2 lg:grid-cols-4 gap-2">
-      {glance.map(([label, value, sub, link]) => {
-        const body = (
-          <>
-            <div className="text-[11px] text-gray-500">{label}</div>
-            <div className={`text-[15px] font-semibold truncate ${label === 'Next thing to do' && (waiting || progress.due) ? 'text-primary-700' : 'text-gray-900'}`}>{value}</div>
-            <div className="text-[11px] text-gray-500 truncate" title={sub}>{sub || ' '}</div>
-          </>
-        )
-        return link
-          ? <button key={label} onClick={onEmails} className="text-left rounded-xl border border-gray-200 bg-raised px-3 py-2 min-w-0 hover:border-gray-400">{body}</button>
-          : <div key={label} className="rounded-xl border border-gray-200 bg-raised px-3 py-2 min-w-0">{body}</div>
-      })}
-    </div>
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-6">
       <div className="lg:col-span-2 space-y-4 min-w-0">
         <div className="flex items-center justify-between">
@@ -557,9 +567,10 @@ function LinkedInTab({ lead, canWork, onReload, notify, onEdit }: { lead: Lead; 
 
   if (!lead.linkedin) {
     return (
-      <div className="p-5 max-w-xl">
-        <div className="bg-gray-50 rounded-lg p-6 text-sm text-gray-600 space-y-3">
-          <p>This lead has no LinkedIn profile link yet.</p>
+      <div className="p-3 sm:p-5 max-w-xl">
+        <div className="rounded-xl border border-gray-200 bg-raised p-5 text-sm text-gray-600 space-y-3">
+          <p className="font-medium text-gray-900">No LinkedIn profile yet</p>
+          <p>Add the link to their profile and this tab offers the connection note and the first message, ready to send.</p>
           <button onClick={onEdit} className="px-3 py-2 bg-primary-600 text-white text-sm rounded-lg hover:bg-primary-700">Add it on the Details tab</button>
         </div>
       </div>
@@ -650,8 +661,8 @@ function MeetingTab({ lead, canWork, onReload, notify }: { lead: Lead; canWork: 
   }
 
   return (
-    <div className="p-3 sm:p-5 max-w-xl">
-      <div className="border border-gray-200 rounded-lg p-5 space-y-3">
+    <div className="p-3 sm:p-5 max-w-6xl grid grid-cols-1 lg:grid-cols-[minmax(0,36rem)_minmax(0,1fr)] gap-4 lg:gap-6 items-start">
+      <div className="rounded-xl border border-gray-200 bg-raised p-5 space-y-3">
         <h3 className="text-sm font-semibold text-gray-800 flex items-center gap-2"><Calendar className="w-4 h-4 text-primary-500" /> Book a Teams meeting</h3>
         {!lead.email && <p className="text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2">This lead has no email address, so an invitation cannot be sent. Add one on the Details tab.</p>}
         <input value={form.subject} onChange={(e) => setForm({ ...form, subject: e.target.value })} className={inputCls} placeholder="Meeting title" />
@@ -669,6 +680,16 @@ function MeetingTab({ lead, canWork, onReload, notify }: { lead: Lead; canWork: 
         </button>
         <p className="text-xs text-gray-400">The meeting is created in Teams and the lead receives the invitation by email. It then appears on the Meetings page, where it can be moved or cancelled.</p>
       </div>
+      <aside className="rounded-xl border border-gray-200 bg-raised p-5 space-y-3 text-sm">
+        <h3 className="text-sm font-semibold text-gray-800">Before the call</h3>
+        <dl className="space-y-2">
+          <div><dt className="text-[11px] text-gray-500">Last email we sent</dt><dd className="text-gray-900 break-words">{lead.emailHistory.find((e) => e.status === 'sent')?.subject || 'None yet'}</dd></div>
+          <div><dt className="text-[11px] text-gray-500">What they last wrote</dt><dd className="text-gray-900 break-words">{lead.reply?.preview ? `“${lead.reply.preview}”` : 'They have not written yet'}</dd></div>
+          <div><dt className="text-[11px] text-gray-500">Where they are</dt><dd className="text-gray-900">{[lead.city, lead.country].filter(Boolean).join(', ') || 'Not recorded'}</dd></div>
+          {lead.notes && <div><dt className="text-[11px] text-gray-500">Your notes</dt><dd className="text-gray-900 whitespace-pre-line break-words line-clamp-6">{lead.notes}</dd></div>}
+        </dl>
+        <a href="/crm/playbook" className="inline-block text-xs text-primary-600 hover:underline">Open the call guide</a>
+      </aside>
     </div>
   )
 }
