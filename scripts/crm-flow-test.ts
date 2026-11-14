@@ -111,7 +111,7 @@ ok(fillTokens(LINKEDIN_CONNECT_NOTE, lead).length <= 300, 'the LinkedIn connecti
 // ---- The AI Weekend: its dates and its own emails
 const nov = nextCohort(new Date('2026-11-12T06:00:00Z'))
 ok(nov.saturday === '2026-11-28' && nov.sunday === '2026-11-29', 'the November 2026 weekend is the 28th and 29th')
-ok(nextCohort(new Date('2026-11-28T05:00:00Z')).id === '2026-12', 'once Saturday has started, the page moves to the next month')
+ok(nextCohort(new Date('2026-11-27T04:29:00Z')).id === '2026-11' && nextCohort(new Date('2026-11-27T04:30:00Z')).id === '2026-12', 'registration closes one day before: from Friday 10:00 India time the page is on the next month')
 ok(cohortById('2027-01')?.saturday === '2027-01-30', 'the last weekend is found in any month (January 2027: 30th and 31st)')
 ok(WEEKEND.fee === 499 && WEEKEND.regularFee === 1999, 'the fee is 499 against a regular 1,999')
 for (const [i, info] of WEEKEND_EMAILS.entries()) {

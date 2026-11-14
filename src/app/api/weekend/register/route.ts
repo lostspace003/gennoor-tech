@@ -62,7 +62,7 @@ export async function POST(req: Request) {
       return 'new' as const
     })
     if (outcome === 'full') {
-      return NextResponse.json({ error: 'This cohort is now full. Registration for next month opens when this weekend begins.' }, { status: 409 })
+      return NextResponse.json({ error: 'This cohort is now full. Registration for next month opens the day before this weekend.' }, { status: 409 })
     }
     const fresh = outcome === 'new'
 

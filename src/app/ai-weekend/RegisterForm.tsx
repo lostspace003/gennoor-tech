@@ -163,7 +163,7 @@ export default function RegisterForm({ cohortLabel, full, online }: { cohortLabe
     return (
       <div className="py-8 text-center">
         <h3 className="text-2xl font-bold">This cohort is full</h3>
-        <p className="mt-2 text-[15px] text-gray-600">All the seats for {cohortLabel} are taken. Registration for the next month opens here as soon as this weekend begins.</p>
+        <p className="mt-2 text-[15px] text-gray-600">All the seats for {cohortLabel} are taken. Registration for the next month opens here the day before this weekend.</p>
         <p className="mt-3 text-sm text-gray-500">Want a place held for next month? Write to admin@gennoor.com.</p>
       </div>
     )

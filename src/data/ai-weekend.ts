@@ -174,8 +174,11 @@ function cohortOf(year: number, month: number): Cohort {
     sunday: ymd(sun),
     label: `${sat} and ${sun} ${MONTHS[month]} ${year}`,
     monthName: MONTHS[month],
-    // India time is UTC+5:30, with no daylight saving
-    closesAt: new Date(`${ymd(sat)}T${WEEKEND.startTime}:00+05:30`).toISOString(),
+    // Registration closes one day before the weekend begins: Friday, at the hour the Saturday session starts
+    // (owner, 14 November 2026: "the registration should close 1 day prior, and then a new list will
+    // auto-populate ... for the new month"). From that moment the page, the form and the admin list are on
+    // the next month. India time is UTC+5:30, with no daylight saving.
+    closesAt: new Date(new Date(`${ymd(sat)}T${WEEKEND.startTime}:00+05:30`).getTime() - 24 * 3_600_000).toISOString(),
   }
 }
 

@@ -5,7 +5,7 @@ import * as XLSX from 'xlsx'
 import { Download, Loader2, RefreshCw, Receipt, Tag, Ticket } from 'lucide-react'
 import Coupons from './Coupons'
 
-interface Payment { at: string; kind: 'course' | 'weekend'; what: string; name: string; email: string; amount: number; currency: 'USD' | 'INR'; paymentId: string; coupon?: string }
+interface Payment { at: string; kind: 'course' | 'weekend'; what: string; name: string; email: string; amount: number; currency: 'USD' | 'INR'; paymentId: string; coupon?: string; cohort?: string; cohortLabel?: string }
 interface PriceRow { slug: string; code: string; title: string; kind: string; price: { usd: number; inr: number } | null; custom: boolean; previews: number; offer: { on: boolean; percent: number }; regular: { usd: number; inr: number } | null }
 interface Data { payments: Payment[]; prices: PriceRow[]; defaultPrice: { usd: number; inr: number }; previewMax: number; online: boolean; testMode: boolean }
 
@@ -20,6 +20,8 @@ export default function PaymentsPage() {
   const [data, setData] = useState<Data | null>(null)
   const [tab, setTab] = useState<'payments' | 'prices' | 'coupons'>('payments')
   const [kind, setKind] = useState<'all' | 'course' | 'weekend'>('all')
+  // One AI Weekend at a time: each month's weekend has its own people and its own money
+  const [weekend, setWeekend] = useState('')
   const [q, setQ] = useState('')
   const [error, setError] = useState('')
   const [notice, setNotice] = useState('')
@@ -36,8 +38,9 @@ export default function PaymentsPage() {
 
   const rows = useMemo(() => {
     const n = q.trim().toLowerCase()
-    return (data?.payments || []).filter((p) => (kind === 'all' || p.kind === kind) && (!n || `${p.name} ${p.email} ${p.what} ${p.paymentId}`.toLowerCase().includes(n)))
-  }, [data, kind, q])
+    return (data?.payments || []).filter((p) => (kind === 'all' || p.kind === kind) && (!weekend || p.cohort === weekend) && (!n || `${p.name} ${p.email} ${p.what} ${p.paymentId}`.toLowerCase().includes(n)))
+  }, [data, kind, q, weekend])
+  const weekends = useMemo(() => [...new Map((data?.payments || []).filter((p) => p.cohort).map((p) => [p.cohort!, p.cohortLabel || p.cohort!])).entries()].sort((a, b) => b[0].localeCompare(a[0])), [data])
   const total = (currency: string) => rows.filter((p) => p.currency === currency).reduce((s, p) => s + p.amount, 0)
 
   async function savePrice(slug: string, body: Record<string, unknown>) {
@@ -100,8 +103,14 @@ export default function PaymentsPage() {
               <div className="flex flex-wrap items-center gap-2 mb-3">
                 <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search name, email, course, reference" className="text-sm border border-gray-200 rounded-md px-2.5 py-2 w-72" />
                 {(['all', 'course', 'weekend'] as const).map((k) => (
-                  <button key={k} onClick={() => setKind(k)} className={`px-2.5 py-1 text-xs rounded-full border ${kind === k ? 'bg-gray-800 text-white border-gray-800' : 'border-gray-200 text-gray-600 hover:bg-gray-50'}`}>{k === 'all' ? 'Everything' : k === 'course' ? 'Courses' : 'AI Weekend'}</button>
+                  <button key={k} onClick={() => { setKind(k); if (k === 'course') setWeekend('') }} className={`px-2.5 py-1 text-xs rounded-full border ${kind === k ? 'bg-gray-800 text-white border-gray-800' : 'border-gray-200 text-gray-600 hover:bg-gray-50'}`}>{k === 'all' ? 'Everything' : k === 'course' ? 'Courses' : 'AI Weekend'}</button>
                 ))}
+                {weekends.length > 0 && (
+                  <select value={weekend} onChange={(e) => { setWeekend(e.target.value); if (e.target.value) setKind('weekend') }} className="text-xs border border-gray-200 rounded-md px-2 py-1.5 bg-raised" aria-label="Which AI Weekend">
+                    <option value="">Every AI Weekend</option>
+                    {weekends.map(([id, label]) => <option key={id} value={id}>{label}</option>)}
+                  </select>
+                )}
                 <button onClick={excel} disabled={!rows.length} className={`${btn} ml-auto`}><Download className="w-3.5 h-3.5" />Download Excel</button>
               </div>
               <div className="rounded-xl border border-gray-200 bg-raised overflow-auto">
