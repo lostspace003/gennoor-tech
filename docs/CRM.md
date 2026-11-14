@@ -281,8 +281,13 @@ everything off lets them book with nothing to pay.
   `/api/admin/coupons`; managers only): how much it takes off (any percent; 100 leaves nothing to pay), until
   when, for how many people, and what it is good for: every course, one course, the AI Weekend, or every course
   and the AI Weekend. A code made before this day for "every course" stays for courses only.
-- **Typed by the buyer**: on a course page ("Have a coupon code?", `CourseAccess.tsx`) and in the AI Weekend's
-  registration form (`RegisterForm.tsx`). The lower price is shown before anything is paid.
+- **Typed by the buyer**, in a field that is always in view: on a course page, under the Buy button
+  (`CouponBox` in `CourseAccess.tsx`), and in the AI Weekend's registration form (`RegisterForm.tsx`). The
+  lower price is shown before anything is paid. It began as a small link, "Have a coupon code?", and the owner,
+  already inside the payment window, asked "where is coupon code option?". Never hide it behind a link again.
+- **The payment window is Razorpay's own**: nothing of ours can be put inside it. So the field is also on the
+  screen someone comes back to when they close that window ("Your seat is reserved"), and a code typed there is
+  taken off the seat they hold (`applyCouponToSeat` in `src/lib/weekend-pay.ts`, through `/api/weekend/pay`).
 - **The server decides the amount**, never the page: `couponProblem()`, `couponPrice()` (a course) and
   `couponAmount()` (the AI Weekend) in `src/lib/lms-coupons.ts`. The check a form makes uses nothing up; the
   code is checked again and counted when the course or the seat becomes theirs.

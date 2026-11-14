@@ -47,14 +47,16 @@ export default function RegisterForm({ cohortLabel, full, online, closedNote = '
   const [error, setError] = useState('')
   const [checkout, setCheckout] = useState<Checkout | null>(null)
   const [who, setWho] = useState('')
-  // The coupon code: the box is closed until someone says they have one
+  // The coupon code: its field is always in view. It was a small link at first, and the owner did not find it
+  // (14 November 2026: "where is coupon code option?", asked from inside the payment window).
   const [coupon, setCoupon] = useState<Applied | null>(null)
-  const [codeOpen, setCodeOpen] = useState(false)
   const [code, setCode] = useState('')
   const [codeBusy, setCodeBusy] = useState(false)
   const [codeError, setCodeError] = useState('')
   /** The seat was confirmed by a code that left nothing to pay: nothing is called a payment. */
   const [covered, setCovered] = useState(false)
+  /** A code was taken off the reserved seat: the amount on the button is already the lower one. */
+  const [seatCode, setSeatCode] = useState(false)
   const set = (k: keyof typeof f) => (e: React.ChangeEvent<HTMLInputElement>) => setF((x) => ({ ...x, [k]: e.target.value }))
 
   /** Open the payment window. Closing it without paying keeps the seat reserved. */
@@ -112,6 +114,24 @@ export default function RegisterForm({ cohortLabel, full, online, closedNote = '
       .catch(() => { setError('We could not reach the server. Check your connection and try again.'); setStage('form') })
   }, [pay])
 
+  /** A code typed after the seat is reserved (the payment window was closed, or they came from an email): it is taken off the seat itself. */
+  async function applyToSeat() {
+    if (!code.trim() || codeBusy || !checkout) return
+    setCodeError('')
+    setCodeBusy(true)
+    try {
+      const r = await fetch('/api/weekend/pay', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: checkout.registrationId, t: checkout.token, coupon: code }) })
+      const j = await r.json().catch(() => ({}))
+      if (j.paid) { setCovered(!!j.covered); setStage('paid'); return }
+      if (!r.ok || !j.checkout) { setCodeError(j.error || 'We could not check that code. Please try again.'); return }
+      setCheckout(j.checkout)
+      setCode('')
+      setSeatCode(true)
+    } catch {
+      setCodeError('We could not reach the server. Check your connection and try again.')
+    } finally { setCodeBusy(false) }
+  }
+
   async function applyCode() {
     if (!code.trim() || codeBusy) return
     setCodeError('')
@@ -133,7 +153,7 @@ export default function RegisterForm({ cohortLabel, full, online, closedNote = '
     try {
       const r = await fetch('/api/weekend/register', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ...f, india: india !== false, source: sourceOf(), coupon: coupon?.code }) })
       const j = await r.json().catch(() => ({}))
-      if (!r.ok) { if (j.couponRejected) { setCoupon(null); setCodeOpen(true) } setError(j.error || 'Something went wrong. Please try again.'); setStage('form'); return }
+      if (!r.ok) { if (j.couponRejected) setCoupon(null); setError(j.error || 'Something went wrong. Please try again.'); setStage('form'); return }
       setWho(f.name)
       if (j.paid) { setCovered(!!j.covered); setStage('paid'); return }
       if (j.checkout) { setCheckout(j.checkout); pay(j.checkout); return }
@@ -174,6 +194,19 @@ export default function RegisterForm({ cohortLabel, full, online, closedNote = '
         {stage === 'reserved' && (checkout ? (
           <>
             <p className="mt-2 text-[15px] text-gray-600">One step is left: the fee of {fee}. Your seat is confirmed the moment it is paid.</p>
+            {seatCode
+              ? <p className="mt-3 rounded-xl border border-green-200 bg-green-50 px-3.5 py-2.5 text-sm text-gray-900" role="status">Your code is applied: you pay {fee}.</p>
+              : (
+                <div className="mt-4 text-left">
+                  <label htmlFor="seat-code" className="mb-1 block text-sm font-medium text-gray-900">Coupon code <span className="font-normal text-gray-500">(if you have one)</span></label>
+                  <div className="flex gap-2">
+                    <input id="seat-code" className={input} value={code} onChange={(e) => { setCode(e.target.value.toUpperCase()); setCodeError('') }} onKeyDown={(e) => { if (e.key === 'Enter') applyToSeat() }}
+                      placeholder="Enter your code" autoComplete="off" spellCheck={false} maxLength={24} />
+                    <button type="button" onClick={applyToSeat} disabled={codeBusy || !code.trim()} className="st-pill st-ghost shrink-0 disabled:opacity-60">{codeBusy ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Apply'}</button>
+                  </div>
+                  {codeError && <p className="mt-1.5 text-sm text-red-700" role="alert">{codeError}</p>}
+                </div>
+              )}
             <button onClick={() => pay(checkout)} className={`${bigButton} mt-4`}>Pay {fee} now</button>
             <p className="mt-3 text-sm text-gray-500">Prefer to pay later? We have emailed {checkout.email} a Pay now button.</p>
           </>
@@ -217,19 +250,18 @@ export default function RegisterForm({ cohortLabel, full, online, closedNote = '
       {coupon ? (
         <p className="rounded-xl border border-green-200 bg-green-50 px-3.5 py-2.5 text-sm text-gray-900" role="status">
           Code <b className="font-semibold">{coupon.code}</b> applied: {nothingToPay ? 'nothing to pay' : <>{coupon.percent}% off, you pay {fee}{before && <> instead of <s>{before}</s></>}</>}.{' '}
-          <button type="button" onClick={() => { setCoupon(null); setCode(''); setCodeOpen(false) }} className="underline underline-offset-2">Remove</button>
+          <button type="button" onClick={() => { setCoupon(null); setCode('') }} className="underline underline-offset-2">Remove</button>
         </p>
-      ) : codeOpen ? (
+      ) : (
         <div>
+          <label htmlFor="coupon-code" className="mb-1 block text-sm font-medium text-gray-900">Coupon code <span className="font-normal text-gray-500">(if you have one)</span></label>
           <div className="flex gap-2">
-            <input className={input} value={code} onChange={(e) => { setCode(e.target.value.toUpperCase()); setCodeError('') }} onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); applyCode() } }}
-              aria-label="Coupon code" placeholder="Coupon code" autoComplete="off" spellCheck={false} maxLength={24} autoFocus />
+            <input id="coupon-code" className={input} value={code} onChange={(e) => { setCode(e.target.value.toUpperCase()); setCodeError('') }} onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); applyCode() } }}
+              placeholder="Enter your code" autoComplete="off" spellCheck={false} maxLength={24} />
             <button type="button" onClick={applyCode} disabled={codeBusy || !code.trim()} className="st-pill st-ghost shrink-0 disabled:opacity-60">{codeBusy ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Apply'}</button>
           </div>
           {codeError && <p className="mt-1.5 text-sm text-red-700" role="alert">{codeError}</p>}
         </div>
-      ) : (
-        <button type="button" onClick={() => setCodeOpen(true)} className="text-sm text-gray-600 underline underline-offset-2 hover:text-gray-900">Have a coupon code?</button>
       )}
       {error && <p className="rounded-lg bg-red-50 border border-red-200 px-3 py-2 text-sm text-red-700" role="alert">{error}</p>}
       <button disabled={sending} className={bigButton}>
