@@ -154,7 +154,7 @@ export interface Cohort {
   /** "28 and 29 November 2026" */
   label: string
   monthName: string
-  /** When registration closes: the start of the Saturday session (ISO instant). */
+  /** When registration closes: one day before the Saturday session starts (ISO instant). */
   closesAt: string
 }
 
@@ -194,6 +194,25 @@ export function nextCohort(now = new Date()): Cohort {
     if (m > 11) { m = 0; y++ }
   }
   return cohortOf(y, m)
+}
+
+/**
+ * The weekend whose registration has just closed and which is not over yet, or null.
+ * On those days (Friday 10:00 India time until the end of its Sunday) a visitor can still register, and is
+ * told plainly that this month is closed and the seat is for the next weekend (owner, 14 November 2026:
+ * "he will be given a short intimation ... this will be taken into the next month").
+ */
+export function closedCohort(now = new Date()): Cohort | null {
+  const ist = new Date(now.getTime() + 5.5 * 3_600_000)
+  const c = cohortOf(ist.getUTCFullYear(), ist.getUTCMonth())
+  const over = new Date(`${c.sunday}T23:59:59+05:30`).getTime()
+  return now.getTime() >= new Date(c.closesAt).getTime() && now.getTime() <= over ? c : null
+}
+
+/** The sentence shown on the form and in the confirmation email on those days. Empty on every other day. */
+export function closedNote(now = new Date()): string {
+  const closed = closedCohort(now)
+  return closed ? `Registration for this month's weekend (${closed.label}) has closed. Your seat is for the next one: ${nextCohort(now).label}.` : ''
 }
 
 export function cohortById(id: string): Cohort | null {

@@ -37,7 +37,7 @@ function loadRazorpay(): Promise<boolean> {
   })
 }
 
-export default function RegisterForm({ cohortLabel, full, online }: { cohortLabel: string; full?: boolean; online?: boolean }) {
+export default function RegisterForm({ cohortLabel, full, online, closedNote = '' }: { cohortLabel: string; full?: boolean; online?: boolean; /** Said above the form on the days when this month's weekend has closed and the seat is for the next one. */ closedNote?: string }) {
   // Rupees in India, dollars everywhere else: one of the two, never both (src/lib/money.ts)
   const india = useIndia()
   const [f, setF] = useState({ name: '', email: '', phone: '', company: '', role: '', website_hp: '' })
@@ -173,6 +173,7 @@ export default function RegisterForm({ cohortLabel, full, online }: { cohortLabe
   return (
     <form onSubmit={submit} className="space-y-3" noValidate={false}>
       <h3 className="text-xl font-bold">Your details</h3>
+      {closedNote && <p className="rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-gray-900" role="note">{closedNote}</p>}
       <p className="text-sm text-gray-600">You watch every demo built live, then receive the full kit to repeat it yourself.</p>
       <input className={input} required autoComplete="name" placeholder="Full name" value={f.name} onChange={set('name')} aria-label="Full name" />
       <input className={input} required type="email" autoComplete="email" placeholder="Email address" value={f.email} onChange={set('email')} aria-label="Email address" />
