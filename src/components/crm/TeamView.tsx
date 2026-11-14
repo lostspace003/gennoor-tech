@@ -4,6 +4,7 @@ import { useMemo, useState } from 'react'
 import Link from 'next/link'
 import { Users, Linkedin, Mail, StickyNote, Activity, ShieldAlert } from 'lucide-react'
 import { Lead, LeadActivity } from '@/lib/crm/types'
+import { CRM_USERS } from '@/lib/crm/users'
 import { formatDateTime, timeAgo, DateRangeFilter, DateRange, rangeBounds, rangeLabel } from './shared'
 
 interface MemberStats {
@@ -36,6 +37,13 @@ export default function TeamView({ leads, isManager }: { leads: Lead[]; isManage
       return members.get(email)!
     }
 
+    // The team is the people who can sign in today (src/lib/crm/users.ts), each with a card even before they
+    // have done anything. Someone whose access was removed is not shown, although what they did stays in each
+    // lead's history. (Before 14 November 2026 the page listed anyone who had ever acted on a lead: two people
+    // who had left were shown, and a new colleague with no actions yet was not.)
+    const team = CRM_USERS.map((e) => e.toLowerCase())
+    for (const email of team) get(email)
+
     for (const lead of leads) {
       if (lead.owner) get(lead.owner.toLowerCase()).owned++
       for (const a of lead.activities) {
@@ -54,7 +62,7 @@ export default function TeamView({ leads, isManager }: { leads: Lead[]; isManage
     }
 
     const out = [...members.values()]
-      .filter((m) => m.email.includes('@'))
+      .filter((m) => team.includes(m.email))
       .sort((a, b) => b.inRange - a.inRange || b.owned - a.owned)
     for (const m of out) m.recent.sort((a, b) => b.at.localeCompare(a.at))
     return out
