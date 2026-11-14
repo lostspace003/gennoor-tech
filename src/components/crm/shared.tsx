@@ -405,7 +405,9 @@ export function DateRangeFilter({ value, onChange, presets = [{ days: 1, label: 
   // Scheduler filters forward-looking dates; everything else caps at today
   allowFuture?: boolean
 }) {
-  const custom = value.days === 0
+  // "Custom" is lit only once dates are chosen. With no preset and no dates the page shows everything,
+  // and a lit "Custom" beside two empty date boxes read as a filter that was on.
+  const custom = value.days === 0 && !!(value.from || value.to)
   return (
     <span className="inline-flex items-center gap-1 flex-wrap">
       {presets.map((p) => (
