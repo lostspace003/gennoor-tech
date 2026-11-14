@@ -11,7 +11,7 @@ import { buildStepEmail } from '../src/lib/crm/sequence-emails'
 import { mapHeaders, rowToLead, LEAD_COLUMNS } from '../src/lib/crm/import'
 import { CRM_USERS, CRM_MANAGERS } from '../src/lib/crm/users'
 import { teamMember } from '../src/lib/crm/team'
-import { WEEKEND_EMAILS, buildWeekendEmail, buildPaidEmail } from '../src/lib/weekend-emails'
+import { WEEKEND_EMAILS, CAMPAIGN_KINDS, buildWeekendEmail, buildPaidEmail, closesWords } from '../src/lib/weekend-emails'
 import { hmacHex, validPaymentSignature, validWebhookSignature } from '../src/lib/razorpay'
 import { previewIds, isPreview, PREVIEW_MAX, DEFAULT_PRICE, formatUsd, formatInr } from '../src/lib/lms-access'
 import { WEEKEND, nextCohort, cohortById, weekendFee, closedNote } from '../src/data/ai-weekend'
@@ -124,6 +124,23 @@ for (const [i, info] of WEEKEND_EMAILS.entries()) {
   if (outDir) writeFileSync(path.join(outDir, `weekend-${i + 1}-${info.kind}.html`), `<!doctype html><meta charset="utf-8"><title>${mail.subject}</title>${mail.html}`)
 }
 ok(buildWeekendEmail('join', {}, nov, { joinUrl: 'https://teams.example/join' }).html.includes('href="https://teams.example/join"'), 'the joining email links to the saved Teams link')
+
+// ---- The AI Weekend campaign: from "what is it" to "registration closes" to "thank you"
+ok(CAMPAIGN_KINDS.join() === 'invite,inside,fit,closing,thanks', 'the campaign has five emails, from the invitation to the thank-you', CAMPAIGN_KINDS.join())
+for (const info of WEEKEND_EMAILS.filter((e) => e.outreach)) {
+  const mail = buildWeekendEmail(info.kind, {}, nov)
+  const words = mail.html.replace(/<[^>]+>/g, ' ')
+  ok(!/[₹$]\s?\d/.test(mail.subject + words), `campaign email "${info.kind}": names no amount (it goes to people in India and abroad)`)
+  ok(/Reply with the word stop/.test(words) && mail.html.includes('href="https://www.gennoor.com/ai-weekend"'), `campaign email "${info.kind}": a way to stop, and the link to the page`)
+  ok(!/\bfree\b/i.test(mail.subject + words) && !/Jalal/i.test(words), `campaign email "${info.kind}": nothing is called free and nobody is named as the trainer`)
+}
+{
+  const closing = buildWeekendEmail('closing', {}, nov)
+  ok(closesWords(nov).full === 'Friday 27 November at 10:00 AM India time', 'registration is said to close one day before, in words', closesWords(nov).full)
+  ok(closing.subject === `Registration closes on Friday 27 November: ${WEEKEND.name}` && closing.html.includes('Friday 27 November at 10:00 AM India time'), 'the closing email gives the real closing day and hour, and no other urgency', closing.subject)
+  const thanks = buildWeekendEmail('thanks', { name: 'Asha Rao' }, nov)
+  ok(/Thank you, Asha\./.test(thanks.html) && thanks.html.includes('gennoor.com/ai-weekend') && !/[₹$]\s?\d/.test(thanks.html), 'the thank-you greets the person, gives the page to pass on, and names no amount')
+}
 ok(WEEKEND.feeUsd === 9.99 && weekendFee(false).currency === 'USD' && weekendFee(true).fee === 499, 'outside India the fee is 9.99 dollars; in India 499 rupees')
 ok(!/[₹$]\s?\d/.test(buildWeekendEmail('invite', {}, nov).html), 'the invitation names no amount (it goes to people in India and abroad)')
 ok(buildWeekendEmail('payment', { name: 'A', fee: 9.99, currency: 'USD' }, nov, {}, undefined, 'https://x.example/pay').html.includes('$9.99') && !buildWeekendEmail('payment', { name: 'A', fee: 9.99, currency: 'USD' }, nov, {}, undefined, 'https://x.example/pay').html.includes('₹'), 'someone abroad is asked for dollars only')

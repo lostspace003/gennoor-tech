@@ -2,8 +2,10 @@ import { NextRequest, NextResponse } from 'next/server'
 import { requireCrmUser } from '@/lib/crm/access'
 import { getRegistrations, mutateRegistrations, getSettings, saveSettings, type PaymentState, type CohortSettings } from '@/lib/weekend'
 import { WEEKEND, nextCohort, cohortById } from '@/data/ai-weekend'
-import { WEEKEND_EMAILS, buildWeekendEmail, type WeekendEmailKind } from '@/lib/weekend-emails'
+import { WEEKEND_EMAILS, CAMPAIGN_KINDS, buildWeekendEmail, type WeekendEmailKind } from '@/lib/weekend-emails'
 import { sendEmail } from '@/lib/email-service'
+import { getLeads } from '@/lib/crm/store'
+import { getEnquiries } from '@/lib/azure-storage'
 import { razorpayConfigured, razorpayTestMode } from '@/lib/razorpay'
 import { payUrl } from '@/lib/weekend-pay'
 
@@ -11,10 +13,41 @@ export const dynamic = 'force-dynamic'
 export const maxDuration = 300
 
 const FROM = process.env.EMAIL_FROM_WEBINAR || 'webinar@gennoor.com'
-/** Most invitations in one send. Keeps a mistake small and the sending address in good standing. */
-const INVITE_LIMIT = 200
+/**
+ * Most people in one send of a campaign email. It was 200; the email service allows the whole site about 100
+ * emails an hour, and the codes that let learners sign in share that, so one send stays well under it.
+ */
+const INVITE_LIMIT = 50
 const isEmail = (s: string) => /^[^\s@,;<>]+@[^\s@,;<>]+\.[^\s@,;<>]+$/.test(s)
-const publicSettings = (s: CohortSettings = {}) => ({ joinUrl: s.joinUrl || '', payment: s.payment || '', kitUrl: s.kitUrl || '', invitedCount: Object.keys(s.invited || {}).length })
+/** Who has had a campaign email that goes to chosen people: the invitation keeps its own list, the others share one. */
+const hadIt = (s: CohortSettings, kind: string): Record<string, string> => (kind === 'invite' ? s.invited : s.sentTo?.[kind]) || {}
+const publicSettings = (s: CohortSettings = {}) => ({
+  joinUrl: s.joinUrl || '', payment: s.payment || '', kitUrl: s.kitUrl || '', invitedCount: Object.keys(s.invited || {}).length,
+  /** How many people each campaign email has gone to, for this weekend. No addresses. */
+  sent: Object.fromEntries(WEEKEND_EMAILS.filter((e) => e.outreach).map((e) => [e.kind, Object.keys(hadIt(s, e.kind)).length])),
+})
+
+/** The order of the campaign emails is one for all weekends, kept beside the weekends' own settings. */
+const ALL = '_all'
+function campaignOrder(settings: Record<string, CohortSettings>): WeekendEmailKind[] {
+  const saved = (settings[ALL]?.order || []).filter((k): k is WeekendEmailKind => CAMPAIGN_KINDS.includes(k as WeekendEmailKind))
+  return [...saved, ...CAMPAIGN_KINDS.filter((k) => !saved.includes(k))]
+}
+
+/**
+ * Addresses that must not get a campaign email: a lead whose emails were stopped (they asked, or the team
+ * stopped them), a lead who replied "stop", and anyone who pressed Unsubscribe in an email of ours.
+ */
+async function askedToStop(): Promise<Set<string>> {
+  const [leads, outs] = await Promise.all([getLeads(), getEnquiries('Unsubscribe', 3650)])
+  const set = new Set<string>()
+  for (const l of leads) {
+    if (!l.sequence?.stopped && l.reply?.kind !== 'stop') continue
+    for (const e of [l.email, ...(l.altEmails || [])]) if (e) set.add(e.trim().toLowerCase())
+  }
+  for (const o of outs) { const e = String(o.email || '').trim().toLowerCase(); if (e) set.add(e) }
+  return set
+}
 
 /**
  * Staff: the AI Weekend desk.
@@ -45,6 +78,7 @@ export async function GET(req: NextRequest) {
       cohorts: ids.map((id) => ({ id, label: cohortById(id)?.label || id })),
       settings: Object.fromEntries(ids.map((id) => [id, publicSettings(settings[id])])),
       emails: WEEKEND_EMAILS,
+      order: campaignOrder(settings),
       inviteLimit: INVITE_LIMIT,
       online: razorpayConfigured(),
       testMode: razorpayConfigured() && razorpayTestMode(),
@@ -56,12 +90,20 @@ export async function GET(req: NextRequest) {
   }
 }
 
-/** Staff: save what the emails need for one weekend. { cohort, joinUrl?, payment?, kitUrl? } */
+/**
+ * Staff: save what the emails need for one weekend. { cohort, joinUrl?, payment?, kitUrl? }
+ * Or the order of the campaign emails, which is the same for every weekend: { order: [kind, ...] }
+ */
 export async function PUT(req: NextRequest) {
   const user = await requireCrmUser()
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   try {
     const b = await req.json()
+    if (Array.isArray(b.order)) {
+      const order = [...new Set<string>((b.order as unknown[]).map(String))].filter((k) => CAMPAIGN_KINDS.includes(k as WeekendEmailKind))
+      await saveSettings(ALL, { order })
+      return NextResponse.json({ success: true, order: campaignOrder({ [ALL]: { order } }) })
+    }
     const cohort = cohortById(String(b.cohort || ''))
     if (!cohort) return NextResponse.json({ error: 'Unknown weekend' }, { status: 400 })
     const patch: CohortSettings = {}
@@ -82,9 +124,10 @@ export async function PUT(req: NextRequest) {
 /**
  * Staff: send one of the weekend's emails.
  *   { cohort, kind, onlyNew?, recipients? }
- * Each kind has a fixed audience (see WEEKEND_EMAILS). `recipients` is used by the
- * invitation only: one address per line, optionally "Name, address".
- * `onlyNew` (the default) skips anyone who already had this email.
+ * Each kind has a fixed audience (see WEEKEND_EMAILS). `recipients` is used by the campaign emails that go to
+ * chosen people (`outreach`): one address per line, optionally "Name, address". From those, three kinds of
+ * people are always left out: anyone already registered for this weekend, anyone who asked us to stop, and
+ * (unless `onlyNew` is false) anyone who already had this email.
  */
 export async function POST(req: NextRequest) {
   const user = await requireCrmUser()
@@ -105,14 +148,19 @@ export async function POST(req: NextRequest) {
     // Who gets it
     let people: Array<{ id?: string; name: string; email: string }>
     let skipped = 0
-    if (info.kind === 'invite') {
-      const already = new Set([...registered.map((r) => r.email), ...(onlyNew ? Object.keys(settings.invited || {}) : [])])
+    let stopped = 0
+    if (info.outreach) {
+      // If this cannot be read, nothing is sent: better no email than one to someone who asked for none
+      const never = await askedToStop().catch(() => null)
+      if (!never) return NextResponse.json({ error: 'Could not check who has asked us to stop. Nothing was sent. Please try again in a minute.' }, { status: 503 })
+      const already = new Set([...registered.map((r) => r.email), ...(onlyNew ? Object.keys(hadIt(settings, info.kind)) : [])])
       const seen = new Set<string>()
       people = []
       for (const line of String(b.recipients || '').split(/[\n;]+/)) {
         const parts = line.split(/[,\t<>]+/).map((s) => s.trim()).filter(Boolean)
         const email = (parts.find(isEmail) || '').toLowerCase()
         if (!email) continue
+        if (never.has(email)) { stopped++; continue }
         if (already.has(email) || seen.has(email)) { skipped++; continue }
         seen.add(email)
         people.push({ email, name: parts.find((x) => !isEmail(x)) || '' })
@@ -120,14 +168,14 @@ export async function POST(req: NextRequest) {
       if (people.length > INVITE_LIMIT) return NextResponse.json({ error: `That is ${people.length} people. Send at most ${INVITE_LIMIT} at a time.` }, { status: 400 })
     } else {
       const audience = info.kind === 'payment' ? registered.filter((r) => r.payment === 'pending')
-        : info.kind === 'reminder' ? registered
+        : info.kind === 'reminder' || info.kind === 'thanks' ? registered
         : registered.filter((r) => r.payment === 'paid')
       const fresh = onlyNew ? audience.filter((r) => !r.emails?.[info.kind]) : audience
       skipped = audience.length - fresh.length
       people = fresh.map((r) => ({ id: r.id, name: r.name, email: r.email }))
     }
     if (people.length === 0) {
-      return NextResponse.json({ error: skipped ? 'Everyone on the list has already had this email.' : info.kind === 'invite' ? 'Paste at least one email address.' : 'Nobody matches yet.' }, { status: 400 })
+      return NextResponse.json({ error: skipped ? 'Everyone on the list has already had this email, or is already registered.' : stopped ? 'Everyone on the list has asked us to stop writing.' : info.outreach ? 'Choose at least one person, or paste an email address.' : 'Nobody matches yet.' }, { status: 400 })
     }
 
     const sent: typeof people = []
@@ -141,13 +189,14 @@ export async function POST(req: NextRequest) {
 
     // Remember who had it, so "only people who have not had it" works next time
     const now = new Date().toISOString()
-    if (sent.length && info.kind === 'invite') {
-      await saveSettings(cohort.id, { invited: { ...(settings.invited || {}), ...Object.fromEntries(sent.map((x) => [x.email, now])) } })
+    if (sent.length && info.outreach) {
+      const had = { ...hadIt(settings, info.kind), ...Object.fromEntries(sent.map((x) => [x.email, now])) }
+      await saveSettings(cohort.id, info.kind === 'invite' ? { invited: had } : { sentTo: { ...(settings.sentTo || {}), [info.kind]: had } })
     } else if (sent.length) {
       const ids = new Set(sent.map((x) => x.id))
       await mutateRegistrations((rows) => { for (const r of rows) if (ids.has(r.id)) r.emails = { ...(r.emails || {}), [info.kind]: now } })
     }
-    return NextResponse.json({ success: failed.length === 0, sent: sent.length, skipped, failed })
+    return NextResponse.json({ success: failed.length === 0, sent: sent.length, skipped, stopped, failed })
   } catch (e) {
     console.error('weekend send failed', e)
     return NextResponse.json({ error: 'Could not send the email' }, { status: 500 })
