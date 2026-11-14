@@ -2,7 +2,7 @@
 
 import { Fragment, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import * as XLSX from 'xlsx'
-import { Check, ChevronDown, ChevronRight, Download, RefreshCw } from 'lucide-react'
+import { BarChart3, Check, ChevronDown, ChevronRight, Download, Maximize2, Minimize2, RefreshCw, X } from 'lucide-react'
 import type { CourseKind, CourseStat, DayStat, LearnerAnalytics, LearnerStat } from '@/lib/learner-analytics'
 
 /**
@@ -60,12 +60,109 @@ const btn = 'inline-flex items-center gap-1.5 px-3 py-1.5 text-[13px] font-mediu
 const card = 'rounded-xl border border-gray-200 bg-raised'
 const field = 'text-sm border border-gray-200 rounded-md bg-raised'
 
-function Tile({ label, value, note }: { label: string; value: string; note?: string }) {
-  return (
-    <div className={`${card} px-4 py-3 min-w-0`}>
-      <div className="text-xs text-gray-500">{label}</div>
+/** A figure. With `onOpen` it is a button: pressing it shows where the figure comes from, as a chart. */
+function Tile({ label, value, note, onOpen }: { label: string; value: string; note?: string; onOpen?: () => void }) {
+  const body = (
+    <>
+      <div className="flex items-center justify-between gap-2 text-xs text-gray-500">{label}{onOpen && <BarChart3 className="h-3.5 w-3.5 text-gray-400" aria-hidden="true" />}</div>
       <div className="text-2xl font-semibold tracking-tight text-gray-900 mt-0.5 break-words">{value}</div>
       {note && <div className="text-xs text-gray-400 mt-0.5">{note}</div>}
+    </>
+  )
+  return onOpen
+    ? <button type="button" onClick={onOpen} title={`See "${label}" as a chart`} className={`${card} px-4 py-3 min-w-0 text-left hover:border-gray-400`}>{body}</button>
+    : <div className={`${card} px-4 py-3 min-w-0`}>{body}</div>
+}
+
+/** What a chart window shows: one figure, split by course (bars), and for some figures the parts of a whole (ring). */
+interface ChartSpec {
+  title: string
+  note: string
+  /** How a value is written: "12", "3.5 hours", "$40". */
+  say: (n: number) => string
+  rows: { label: string; value: number }[]
+  ring?: { name: string; value: number; colour: string }[]
+}
+const TOP = 14
+
+/**
+ * A figure opened as a chart (owner, 14 November 2026: "can we also see those analytics when we click on any
+ * one of them via a chart ... with proper labels ... we can even see them as a full screen").
+ * Bars, not a pie, for the split by course: there are dozens of courses, and a pie of dozens cannot be read or
+ * labelled. A ring is drawn where the figure really is a few parts of one whole (where learners stand).
+ * Every bar carries its name, its value and its share; the same numbers are in the tables below the page.
+ */
+function ChartWindow({ spec, onClose }: { spec: ChartSpec; onClose: () => void }) {
+  const [full, setFull] = useState(false)
+  useEffect(() => {
+    const key = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose() }
+    window.addEventListener('keydown', key)
+    return () => window.removeEventListener('keydown', key)
+  }, [onClose])
+  const sorted = [...spec.rows].filter((r) => r.value > 0).sort((a, b) => b.value - a.value)
+  const shown = full ? sorted : sorted.slice(0, TOP)
+  const rest = sorted.slice(shown.length)
+  const bars = rest.length ? [...shown, { label: `${rest.length} other course${rest.length === 1 ? '' : 's'}`, value: rest.reduce((n, r) => n + r.value, 0) }] : shown
+  const total = sorted.reduce((n, r) => n + r.value, 0)
+  const most = Math.max(1, ...bars.map((r) => r.value))
+  const share = (v: number) => (total ? `${Math.round((v / total) * 100)}%` : '')
+  const ringTotal = (spec.ring || []).reduce((n, r) => n + r.value, 0)
+  let turned = 0
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-3" onClick={onClose}>
+      <div role="dialog" aria-modal="true" aria-label={spec.title} onClick={(e) => e.stopPropagation()}
+        className={`flex flex-col bg-raised ${full ? 'h-full w-full rounded-none sm:rounded-xl' : 'max-h-[88vh] w-full max-w-3xl rounded-xl'}`}>
+        <div className="flex items-start justify-between gap-3 border-b border-gray-200 px-5 py-3.5">
+          <div className="min-w-0">
+            <h3 className="text-base font-semibold text-gray-900">{spec.title}</h3>
+            <p className="text-xs text-gray-500">{spec.note}</p>
+          </div>
+          <div className="flex shrink-0 items-center gap-1">
+            <button type="button" onClick={() => setFull((v) => !v)} className="rounded p-2 hover:bg-gray-100" aria-label={full ? 'Leave full screen' : 'Full screen'} title={full ? 'Leave full screen' : 'Full screen: every course'}>{full ? <Minimize2 className="h-4 w-4 text-gray-600" /> : <Maximize2 className="h-4 w-4 text-gray-600" />}</button>
+            <button type="button" onClick={onClose} className="rounded p-2 hover:bg-gray-100" aria-label="Close"><X className="h-5 w-5 text-gray-500" /></button>
+          </div>
+        </div>
+        <div className={`overflow-y-auto px-5 py-4 ${spec.ring && ringTotal ? 'grid gap-6 lg:grid-cols-[220px_1fr]' : ''}`}>
+          {spec.ring && ringTotal > 0 && (
+            <div>
+              <svg viewBox="0 0 120 120" className="mx-auto h-44 w-44" role="img" aria-label={spec.ring.map((r) => `${r.name}: ${num(r.value)}`).join(', ')}>
+                {spec.ring.filter((r) => r.value > 0).map((r) => {
+                  const part = (r.value / ringTotal) * 301.6
+                  const el = <circle key={r.name} cx="60" cy="60" r="48" fill="none" stroke={r.colour} strokeWidth="18" strokeDasharray={`${Math.max(0, part - 1.5)} ${301.6}`} strokeDashoffset={-turned} transform="rotate(-90 60 60)"><title>{`${r.name}: ${num(r.value)} (${Math.round((r.value / ringTotal) * 100)}%)`}</title></circle>
+                  turned += part
+                  return el
+                })}
+                <text x="60" y="58" textAnchor="middle" className="fill-gray-900" style={{ fontSize: 18, fontWeight: 600 }}>{num(ringTotal)}</text>
+                <text x="60" y="72" textAnchor="middle" className="fill-gray-500" style={{ fontSize: 8 }}>enrolments</text>
+              </svg>
+              <ul className="mt-3 space-y-1.5 text-[13px]">
+                {spec.ring.map((r) => (
+                  <li key={r.name} className="flex items-center justify-between gap-3">
+                    <span className="inline-flex items-center gap-2 text-gray-700"><i className="h-2.5 w-2.5 rounded-full" style={{ background: r.colour }} />{r.name}</span>
+                    <span className="tabular-nums text-gray-900">{num(r.value)} <span className="text-gray-500">· {Math.round((r.value / ringTotal) * 100)}%</span></span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+          <div className="min-w-0">
+            {bars.length === 0 ? <p className="py-8 text-center text-sm text-gray-500">Nothing to show for this period.</p> : (
+              <ul className="space-y-2">
+                {bars.map((r) => (
+                  <li key={r.label}>
+                    <div className="flex items-baseline justify-between gap-3 text-[13px]">
+                      <span className="min-w-0 truncate text-gray-800" title={r.label}>{r.label}</span>
+                      <span className="shrink-0 tabular-nums font-medium text-gray-900">{spec.say(r.value)} <span className="font-normal text-gray-500">· {share(r.value)}</span></span>
+                    </div>
+                    <div className="mt-1 h-2.5 rounded-full bg-gray-100"><div className="h-2.5 rounded-full" style={{ width: `${Math.max(1.5, (r.value / most) * 100)}%`, background: SERIES }} /></div>
+                  </li>
+                ))}
+              </ul>
+            )}
+            {!full && rest.length > 0 && <button type="button" onClick={() => setFull(true)} className="mt-3 text-xs font-medium text-blue-700 hover:underline">Show all {sorted.length} courses, full screen</button>}
+          </div>
+        </div>
+      </div>
     </div>
   )
 }
@@ -190,6 +287,8 @@ export default function LearnerAnalyticsPage() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [tab, setTab] = useState<'courses' | 'students'>('courses')
+  // A figure opened as a chart
+  const [chart, setChart] = useState<ChartSpec | null>(null)
   const [sort, setSort] = useState<CourseSort>('enrolled')
   const [q, setQ] = useState('')
   const [course, setCourse] = useState('')
@@ -353,18 +452,34 @@ export default function LearnerAnalyticsPage() {
         </div>
       )}
 
+      {chart && <ChartWindow spec={chart} onClose={() => setChart(null)} />}
       {data && t && charts && (
         // While another period is being read, the last one stays where it is, a little faded
         <div className={`transition-opacity ${loading ? 'opacity-60' : ''}`}>
           <div className="mt-4 grid grid-cols-2 gap-2.5 lg:grid-cols-4">
-            <Tile label="Learners" value={num(t.learners)} note={`${num(t.joinedInRange)} joined in this period`} />
-            <Tile label="Active in this period" value={num(t.activeInRange)} note={`${many(t.questionsInRange, 'question')} put to the course assistant`} />
-            <Tile label="New enrolments" value={num(t.enrolmentsInRange)} note={`${num(t.enrolments)} in all`} />
-            <Tile label="On more than one course" value={num(t.onSeveralCourses)} note="learners, as of now" />
-            <Tile label="Lessons finished" value={num(t.lessonsInRange)} note="in this period" />
-            <Tile label="Hours of learning" value={num(t.hoursInRange)} note="in this period" />
-            <Tile label="Courses finished" value={num(t.finishedInRange)} note={`${many(t.certificatesInRange, 'certificate')} issued`} />
-            <Tile label="Money received" value={money(t.usdInRange, t.inrInRange) || '0'} note={`${many(t.paymentsInRange, 'payment')} in this period`} />
+            {(() => {
+              // Each figure, split by course. The ring is where everyone enrolled stands today.
+              // The code in front of the title, unless the title already begins with it ("AI-500: ...", "AI Foundations")
+              const name = (c: CourseStat) => (c.code && !c.title.toLowerCase().startsWith(c.code.toLowerCase()) ? `${c.code} · ${c.title}` : c.title)
+              const by = (pick: (c: CourseStat) => number) => data.courses.map((c) => ({ label: name(c), value: pick(c) }))
+              const ring = [['finished', DONE, (c: CourseStat) => c.finished], ['in progress', GOING, (c: CourseStat) => c.inProgress], ['not started', IDLE, (c: CourseStat) => c.notStarted]] as const
+              const stand = ring.map(([n, colour, pick]) => ({ name: n, colour, value: data.courses.reduce((s, c) => s + pick(c), 0) }))
+              const open = (title: string, note: string, pick: (c: CourseStat) => number, say: (n: number) => string = num, withRing = false) => () => setChart({ title, note, say, rows: by(pick), ...(withRing ? { ring: stand } : {}) })
+              const hours = (n: number) => `${num(Math.round(n * 10) / 10)} h`
+              const usdSum = data.courses.reduce((s, c) => s + c.usdInRange, 0)
+              return (
+                <>
+                  <Tile label="Learners" value={num(t.learners)} note={`${num(t.joinedInRange)} joined in this period`} onOpen={open('Learners, by course', 'Everyone ever enrolled in each course, and where they all stand today.', (c) => c.enrolled, num, true)} />
+                  <Tile label="Active in this period" value={num(t.activeInRange)} note={`${many(t.questionsInRange, 'question')} put to the course assistant`} onOpen={open('Active learners, by course', 'Learners who did something in each course in this period. One learner can be active in several.', (c) => c.activeInRange)} />
+                  <Tile label="New enrolments" value={num(t.enrolmentsInRange)} note={`${num(t.enrolments)} in all`} onOpen={open('New enrolments, by course', 'Enrolments made in this period.', (c) => c.enrolledInRange)} />
+                  <Tile label="On more than one course" value={num(t.onSeveralCourses)} note="learners, as of now" />
+                  <Tile label="Lessons finished" value={num(t.lessonsInRange)} note="in this period" onOpen={open('Lessons finished, by course', 'Lessons finished in this period.', (c) => c.lessonsInRange)} />
+                  <Tile label="Hours of learning" value={num(t.hoursInRange)} note="in this period" onOpen={open('Hours of learning, by course', 'Hours spent in each course in this period.', (c) => c.hoursInRange, hours)} />
+                  <Tile label="Courses finished" value={num(t.finishedInRange)} note={`${many(t.certificatesInRange, 'certificate')} issued`} onOpen={open('Certificates issued, by course', 'Certificates issued in this period, and where everyone enrolled stands today.', (c) => c.certificatesInRange, num, true)} />
+                  <Tile label="Money received" value={money(t.usdInRange, t.inrInRange) || '0'} note={`${many(t.paymentsInRange, 'payment')} in this period`} onOpen={usdSum > 0 ? open('Money received in dollars, by course', 'Payments in dollars in this period. Payments in rupees are in the table below.', (c) => c.usdInRange, usd) : open('Money received in rupees, by course', 'Payments in rupees in this period.', (c) => c.inrInRange, inr)} />
+                </>
+              )
+            })()}
           </div>
 
           <div className="mt-3 grid gap-2.5 lg:grid-cols-3">
