@@ -5,6 +5,7 @@ import { getRegistrations, mutateRegistrations, getSettings, type WeekendRegistr
 import { createOrder, razorpayConfigured, razorpayKeyId } from '@/lib/razorpay'
 import { buildPaidEmail } from '@/lib/weekend-emails'
 import { money } from '@/lib/money'
+import { redeemCoupon, weekendUse } from '@/lib/lms-coupons'
 
 // Paying for an AI Weekend seat. One registration has at most one open order;
 // the same order is reused if the person comes back to pay later.
@@ -82,6 +83,9 @@ export async function markPaid(match: { orderId?: string; registrationId?: strin
   if (result.state !== 'paid' || !result.reg) return result.state
 
   const reg = result.reg
+  // A seat taken with a coupon code counts as one use of it, once (counting the same person again does nothing)
+  if (reg.coupon) await redeemCoupon(reg.coupon, reg.email, weekendUse(reg.cohort), false).catch((e) => console.error('weekend coupon count failed', e))
+  const covered = !!reg.coupon && reg.fee === 0
   const cohort = cohortById(reg.cohort)
   if (cohort) {
     const settings = (await getSettings().catch(() => ({} as Awaited<ReturnType<typeof getSettings>>)))[cohort.id]
@@ -89,8 +93,8 @@ export async function markPaid(match: { orderId?: string; registrationId?: strin
     await sendEmail({ to: reg.email, from: FROM, fromName: 'Gennoor Tech', subject: mail.subject, html: mail.html }).catch((e) => console.error('weekend receipt email failed', e))
     await sendEmail({
       to: ADMIN, from: FROM, fromName: 'AI Weekend',
-      subject: `AI Weekend payment received: ${reg.name} (${money(reg.fee, reg.currency || 'INR')})`,
-      html: `<p>${reg.name.replace(/[<>&]/g, '')} paid ${money(reg.fee, reg.currency || 'INR')} for ${cohort.label}.</p><p>Razorpay payment: ${paymentId.replace(/[^\w]/g, '')}</p><p><a href="${SITE}/admin/weekend">Open the list</a></p>`,
+      subject: covered ? `AI Weekend seat confirmed with a coupon code: ${reg.name}` : `AI Weekend payment received: ${reg.name} (${money(reg.fee, reg.currency || 'INR')})`,
+      html: `<p>${reg.name.replace(/[<>&]/g, '')} ${covered ? `took a seat with the code ${reg.coupon}, nothing to pay,` : `paid ${money(reg.fee, reg.currency || 'INR')}${reg.coupon ? ` with the code ${reg.coupon}` : ''}`} for ${cohort.label}.</p>${paymentId ? `<p>Razorpay payment: ${paymentId.replace(/[^\w]/g, '')}</p>` : ''}<p><a href="${SITE}/admin/weekend">Open the list</a></p>`,
     }).catch(() => {})
   }
   return 'paid'

@@ -28,7 +28,7 @@ const short = (email: string) => (email || '').split('@')[0]
 
 export interface ReportInput {
   leads: Lead[]
-  registrations: Array<{ name: string; email: string; cohort: string; at: string; payment: string; fee: number; currency?: 'INR' | 'USD'; paidAt?: string; source?: string }>
+  registrations: Array<{ name: string; email: string; cohort: string; at: string; payment: string; fee: number; currency?: 'INR' | 'USD'; paidAt?: string; coupon?: string; source?: string }>
   purchases: Array<{ name: string; email: string; courseTitle: string; amount: number; currency: 'USD' | 'INR'; at: string; coupon?: string }>
   enquiries: Array<{ type?: string; name?: string; email?: string; createdAt?: string; company?: string }>
   /** The learners' day, already counted (lib/learner-analytics.ts). Null when it could not be read. */
@@ -84,7 +84,7 @@ export function buildDailyReport(input: ReportInput, day: string, now = Date.now
   const regs = input.registrations.filter((r) => today(r.at)).map((r) => ({ Time: istTime(r.at), Name: r.name, Email: r.email, Weekend: r.cohort, Payment: r.payment, 'Came from': r.source || '' }))
   const pay = [
     ...input.purchases.filter((p) => today(p.at)).map((p) => ({ Time: istTime(p.at), For: p.courseTitle, Type: 'Course', Name: p.name, Email: p.email, Amount: p.amount, Currency: p.currency, Coupon: p.coupon || '' })),
-    ...input.registrations.filter((r) => r.payment === 'paid' && today(r.paidAt)).map((r) => ({ Time: istTime(r.paidAt!), For: `AI Weekend ${r.cohort}`, Type: 'AI Weekend', Name: r.name, Email: r.email, Amount: r.fee, Currency: r.currency || 'INR', Coupon: '' })),
+    ...input.registrations.filter((r) => r.payment === 'paid' && today(r.paidAt)).map((r) => ({ Time: istTime(r.paidAt!), For: `AI Weekend ${r.cohort}`, Type: 'AI Weekend', Name: r.name, Email: r.email, Amount: r.fee, Currency: r.currency || 'INR', Coupon: r.coupon || '' })),
   ]
   const sum = (c: string) => pay.filter((p) => p.Currency === c).reduce((n, p) => n + p.Amount, 0)
   const money = [sum('INR') ? `₹${Math.round(sum('INR')).toLocaleString('en-IN')}` : '', sum('USD') ? `$${sum('USD').toFixed(2)}` : ''].filter(Boolean).join(' + ') || '0'

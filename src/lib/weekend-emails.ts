@@ -285,22 +285,25 @@ export function buildWeekendEmail(
 
 /** The receipt, sent the moment an online payment succeeds. */
 export function buildPaidEmail(
-  person: { name?: string; fee: number; currency?: 'INR' | 'USD' },
+  person: { name?: string; fee: number; currency?: 'INR' | 'USD'; coupon?: string },
   cohort: Cohort,
   paymentId: string,
   settings: CohortSettings = {},
   from = 'webinar@gennoor.com'
 ): { subject: string; html: string } {
   const first = escapeHtml((person.name || '').trim().split(/\s+/)[0] || '')
+  // A coupon code that took the whole fee off: nothing was paid, so nothing is called a payment
+  const covered = !!person.coupon && person.fee === 0
+  const paid = money(person.fee, person.currency || 'INR')
   return {
-    subject: `Payment received: your seat is confirmed, ${WEEKEND.name}`,
+    subject: covered ? `Your seat is confirmed: ${WEEKEND.name}` : `Payment received: your seat is confirmed, ${WEEKEND.name}`,
     html: emailShell(
-      emailTitle(first ? `You are confirmed, ${first}.` : 'You are confirmed.', `We have received your payment. Your seat on the ${WEEKEND.name} is confirmed.`) +
-        emailDetails('Your receipt', [
-          ['Paid', money(person.fee, person.currency || 'INR')],
+      emailTitle(first ? `You are confirmed, ${first}.` : 'You are confirmed.', `${covered ? 'Your code is accepted' : 'We have received your payment'}. Your seat on the ${WEEKEND.name} is confirmed.`) +
+        emailDetails(covered ? 'Your seat' : 'Your receipt', [
+          ['Paid', covered ? `Nothing to pay, with code ${person.coupon}` : person.coupon ? `${paid} with code ${person.coupon}` : paid],
           ['For', `${WEEKEND.name}, ${cohort.label}`],
-          ['Payment reference', paymentId],
-          ['Paid on', new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'Asia/Kolkata' })],
+          ...(paymentId ? [['Payment reference', paymentId] as [string, string]] : []),
+          [covered ? 'Confirmed on' : 'Paid on', new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'Asia/Kolkata' })],
         ]) +
         details(cohort) +
         (settings.joinUrl ? emailButton('Join the session', settings.joinUrl) : '') +
@@ -313,7 +316,7 @@ export function buildPaidEmail(
           'What happens next'
         ) +
         emailContact({ email: 'admin@gennoor.com' }),
-      { preheader: `${money(person.fee, person.currency || 'INR')} received. Your seat for ${cohort.label} is confirmed.`, senderEmail: from }
+      { preheader: `${covered ? 'Your code is accepted' : `${paid} received`}. Your seat for ${cohort.label} is confirmed.`, senderEmail: from }
     ),
   }
 }

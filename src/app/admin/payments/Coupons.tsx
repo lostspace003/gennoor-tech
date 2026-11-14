@@ -11,7 +11,8 @@ const primary = 'inline-flex items-center gap-1.5 px-3.5 py-2 text-[13px] font-m
 const field = 'text-sm border border-gray-200 rounded-md px-2.5 py-2 bg-raised'
 const chip = (on: boolean) => `px-3 py-1.5 text-[13px] rounded-full border ${on ? 'bg-gray-800 text-white border-gray-800' : 'border-gray-200 text-gray-700 bg-raised hover:bg-gray-50'}`
 
-const DISCOUNTS = [[100, 'Free (100% off)'], [80, '80% off'], [50, '50% off'], [20, '20% off']] as const
+const SCOPES: Record<string, string> = { '': 'Every course', 'ai-weekend': 'The AI Weekend', '*': 'Every course and the AI Weekend' }
+const DISCOUNTS = [[100, 'Nothing to pay (100% off)'], [80, '80% off'], [50, '50% off'], [20, '20% off']] as const
 const PERIODS = [['24', '24 hours'], ['72', '3 days'], ['168', '7 days'], ['720', '30 days'], ['2160', '90 days'], ['never', 'No end date'], ['pick', 'Pick a date and time']] as const
 
 const when = (iso: string) => new Date(iso).toLocaleString('en-IN', { day: 'numeric', month: 'short', year: 'numeric', hour: 'numeric', minute: '2-digit' })
@@ -74,7 +75,7 @@ export default function Coupons({ courses }: { courses: CourseOption[] }) {
   }
 
   const copy = (c: string) => navigator.clipboard?.writeText(c).then(() => { setCopied(c); setTimeout(() => setCopied(''), 1500) }).catch(() => {})
-  const title = (s: string) => courses.find((c) => c.slug === s)?.title || s
+  const title = (s: string) => SCOPES[s] || courses.find((c) => c.slug === s)?.title || s
 
   return (
     <>
@@ -108,9 +109,9 @@ export default function Coupons({ courses }: { courses: CourseOption[] }) {
             <input value={maxUses} onChange={(e) => setMaxUses(e.target.value.replace(/\D/g, ''))} inputMode="numeric" placeholder="No limit" className={`${field} w-full`} />
           </label>
           <label className="block">
-            <span className="block text-xs text-gray-500 mb-1.5">Course</span>
+            <span className="block text-xs text-gray-500 mb-1.5">Good for</span>
             <select value={slug} onChange={(e) => setSlug(e.target.value)} className={`${field} w-full`}>
-              <option value="">Every course</option>
+              {Object.entries(SCOPES).map(([v, label]) => <option key={v} value={v}>{label}</option>)}
               {courses.map((c) => <option key={c.slug} value={c.slug}>{c.title}</option>)}
             </select>
           </label>
@@ -135,7 +136,7 @@ export default function Coupons({ courses }: { courses: CourseOption[] }) {
         <div className="rounded-xl border border-gray-200 bg-raised overflow-auto">
           <table className="w-full text-[13px] min-w-[820px]">
             <thead className="bg-gray-50 text-xs text-gray-500">
-              <tr>{['Code', 'Gives', 'Course', 'Used', 'Works until', 'Status', ''].map((h) => <th key={h} className="text-left px-3 py-2 font-medium">{h}</th>)}</tr>
+              <tr>{['Code', 'Gives', 'Good for', 'Used', 'Works until', 'Status', ''].map((h) => <th key={h} className="text-left px-3 py-2 font-medium">{h}</th>)}</tr>
             </thead>
             <tbody>
               {coupons.map((c) => {
@@ -148,15 +149,15 @@ export default function Coupons({ courses }: { courses: CourseOption[] }) {
                       </button>
                       {c.note && <div className="text-xs text-gray-400 mt-0.5">{c.note}</div>}
                     </td>
-                    <td className="px-3 py-2.5 whitespace-nowrap font-medium">{c.percent >= 100 ? 'Free' : `${c.percent}% off`}</td>
-                    <td className="px-3 py-2.5 text-gray-600">{c.slug ? title(c.slug) : 'Every course'}</td>
+                    <td className="px-3 py-2.5 whitespace-nowrap font-medium">{c.percent >= 100 ? 'Nothing to pay' : `${c.percent}% off`}</td>
+                    <td className="px-3 py-2.5 text-gray-600">{title(c.slug)}</td>
                     <td className="px-3 py-2.5 whitespace-nowrap tabular-nums">{c.uses}{c.maxUses > 0 ? ` of ${c.maxUses}` : ''} <span className="text-gray-400">{c.maxUses > 0 ? '' : 'people, no limit'}</span></td>
                     <td className="px-3 py-2.5 whitespace-nowrap text-gray-600">{c.expiresAt ? when(c.expiresAt) : 'No end date'}</td>
                     <td className="px-3 py-2.5"><span className={`inline-block rounded-full px-2 py-0.5 text-xs font-medium ${s.tone}`}>{s.label}</span></td>
                     <td className="px-3 py-2.5">
                       <div className="flex items-center justify-end gap-1.5">
                         <button onClick={() => change('PATCH', { code: c.code, active: !c.active })} disabled={busy === c.code} className={btn}>{c.active ? 'Switch off' : 'Switch on'}</button>
-                        <button onClick={() => { if (confirm(`Delete the code ${c.code}? People who already used it keep their course.`)) change('DELETE', { code: c.code }) }} disabled={busy === c.code} aria-label={`Delete ${c.code}`} className={btn}><Trash2 className="w-3.5 h-3.5" /></button>
+                        <button onClick={() => { if (confirm(`Delete the code ${c.code}? People who already used it keep what they got.`)) change('DELETE', { code: c.code }) }} disabled={busy === c.code} aria-label={`Delete ${c.code}`} className={btn}><Trash2 className="w-3.5 h-3.5" /></button>
                       </div>
                     </td>
                   </tr>
@@ -167,7 +168,7 @@ export default function Coupons({ courses }: { courses: CourseOption[] }) {
           {coupons.length === 0 && <div className="p-8 text-sm text-gray-500 text-center">No coupon codes yet. Make the first one above.</div>}
         </div>
       )}
-      <p className="text-xs text-gray-400 mt-3">A buyer types the code on the course page. Each person counts once per course, when the course becomes theirs. A code is taken off the price the buyer pays. Only managers can make or change codes.</p>
+      <p className="text-xs text-gray-400 mt-3">A buyer types the code on the course page, or in the AI Weekend's registration form, and sees the lower price before paying. A code that takes 100% off leaves nothing to pay. Each person counts once per course or per weekend, when it becomes theirs. Only managers can make or change codes.</p>
     </>
   )
 }

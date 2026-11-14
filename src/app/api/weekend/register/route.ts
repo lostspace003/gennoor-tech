@@ -8,14 +8,18 @@ import { money } from '@/lib/money'
 import { mutateRegistrations, newRegistrationId, getSettings, getRegistrations, type WeekendRegistration } from '@/lib/weekend'
 import { buildWeekendEmail } from '@/lib/weekend-emails'
 import { razorpayConfigured } from '@/lib/razorpay'
-import { startPayment, payUrl } from '@/lib/weekend-pay'
+import { startPayment, payUrl, markPaid } from '@/lib/weekend-pay'
+import { couponAmount, couponProblem, getCoupon, normalCode, redeemCoupon, weekendUse, WEEKEND_SCOPE } from '@/lib/lms-coupons'
 
 export const dynamic = 'force-dynamic'
 
 const ADMIN = process.env.EMAIL_ADMIN || 'admin@gennoor.com'
 const FROM = process.env.EMAIL_FROM_WEBINAR || 'webinar@gennoor.com'
 
-/** Public: reserve a seat on the next AI Weekend. Payment is collected separately. */
+/**
+ * Public: reserve a seat on the next AI Weekend. Payment is collected separately.
+ * A coupon code (`coupon`) lowers the fee; one that takes 100 percent off confirms the seat at once, with no payment.
+ */
 export async function POST(req: Request) {
   try {
     if (!rateLimit(`weekend-register:${clientIp(req.headers)}`, 6, 10 * 60_000)) {
@@ -39,6 +43,13 @@ export async function POST(req: Request) {
     // Rupees in India, dollars everywhere else. The page says which (from the visitor's device); the amount
     // itself is always decided here. A page that does not say is an older copy of the form: rupees, as before.
     const charge = weekendFee(b.india !== false)
+    // A coupon code is checked before anything is saved, so a wrong one can be corrected in the form
+    const code = normalCode(b.coupon)
+    const coupon = code ? await getCoupon(code) : null
+    if (code) {
+      const problem = couponProblem(coupon, WEEKEND_SCOPE)
+      if (problem || !coupon) return NextResponse.json({ error: problem || 'That code is not valid.', couponRejected: true }, { status: 400 })
+    }
     const reg: WeekendRegistration = {
       id: newRegistrationId(),
       cohort: cohort.id,
@@ -49,9 +60,10 @@ export async function POST(req: Request) {
       role: clean(b.role, 80),
       at: new Date().toISOString(),
       payment: 'pending',
-      fee: charge.fee,
+      fee: coupon ? couponAmount(charge.fee, charge.currency, coupon.percent) : charge.fee,
       currency: charge.currency,
       source: clean(b.source, 160),
+      ...(coupon ? { coupon: code } : {}),
     }
 
     const outcome = await mutateRegistrations((rows) => {
@@ -67,8 +79,31 @@ export async function POST(req: Request) {
     const fresh = outcome === 'new'
 
     // Someone registering again with the same email: carry on with the seat they already hold
-    const seat = fresh ? reg : (await getRegistrations()).find((r) => r.cohort === cohort.id && r.email === email && r.payment !== 'refunded') || reg
+    let seat = fresh ? reg : (await getRegistrations()).find((r) => r.cohort === cohort.id && r.email === email && r.payment !== 'refunded') || reg
     if (seat.payment === 'paid') return NextResponse.json({ success: true, cohort: cohort.label, paid: true })
+
+    // Someone who reserved earlier and comes back with a code: the code is taken off the fee of the seat they
+    // hold, in the money it was reserved in. The order opened for the old amount is dropped; a new one follows.
+    if (coupon && !fresh && seat.coupon !== code) {
+      const cur = seat.currency || 'INR'
+      const fee = couponAmount(weekendFee(cur === 'INR').fee, cur, coupon.percent)
+      const id = seat.id
+      await mutateRegistrations((rows) => { const r = rows.find((x) => x.id === id); if (r && r.payment === 'pending') { r.fee = fee; r.coupon = code; delete r.orderId } })
+      seat = { ...seat, fee, coupon: code, orderId: undefined }
+    }
+
+    // A code that takes the whole fee off: the seat is confirmed here and now, and nothing is paid.
+    // The use is counted first, so a code that has just run out gives nothing.
+    if (coupon && seat.fee === 0) {
+      if (!(await redeemCoupon(code, email, weekendUse(cohort.id), true))) {
+        const id = seat.id, cur = seat.currency || 'INR'
+        await mutateRegistrations((rows) => { const r = rows.find((x) => x.id === id); if (r && r.payment === 'pending') { r.fee = weekendFee(cur === 'INR').fee; delete r.coupon } })
+        return NextResponse.json({ error: 'That code has already been used the maximum number of times. Your seat is still reserved: press the button again to pay, or try another code.', couponRejected: true }, { status: 400 })
+      }
+      // markPaid sends the person their confirmation and tells the admin mailbox
+      await markPaid({ registrationId: seat.id }, '')
+      return NextResponse.json({ success: true, cohort: cohort.label, paid: true, covered: true })
+    }
 
     // With online payment switched on, the payment window opens straight after the form
     const online = razorpayConfigured()
@@ -97,7 +132,7 @@ export async function POST(req: Request) {
             ['Dates', cohort.label],
             ['Time', `${timeLabel()}, both days`],
             ['Where', WEEKEND.mode],
-            ['Fee', `${due} (regular price ${regular})`],
+            ['Fee', `${due}${seat.coupon ? ` with code ${seat.coupon}` : ''} (regular price ${regular})`],
           ]) +
           (payLink ? emailButton(`Pay ${due} now`, payLink) : '') +
           emailSteps(

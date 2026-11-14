@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { requireCrmUser } from '@/lib/crm/access'
 import { getLmsCourse } from '@/lib/lms'
-import { createCoupon, deleteCoupon, getCoupon, listCoupons, newCode, normalCode, setCouponActive, validCode } from '@/lib/lms-coupons'
+import { createCoupon, deleteCoupon, getCoupon, listCoupons, newCode, normalCode, setCouponActive, validCode, WEEKEND_SCOPE, EVERYTHING } from '@/lib/lms-coupons'
 
 export const dynamic = 'force-dynamic'
 
@@ -21,7 +21,7 @@ export async function GET() {
  * Managers: make a coupon code.
  *   { code?, percent, expiresAt?, maxUses?, slug?, note? }
  * No code given: one is made up. No expiresAt: it never ends. No maxUses: no limit.
- * No slug: it works for every course.
+ * No slug: it works for every course. slug "ai-weekend": the AI Weekend. slug "*": every course and the AI Weekend.
  */
 export async function POST(req: NextRequest) {
   const user = await requireCrmUser()
@@ -41,7 +41,8 @@ export async function POST(req: NextRequest) {
     if (!(maxUses >= 0 && maxUses <= 1_000_000)) return NextResponse.json({ error: 'The number of people must be 1 or more, or empty for no limit.' }, { status: 400 })
 
     const slug = String(b.slug || '')
-    if (slug && !(await getLmsCourse(slug))) return NextResponse.json({ error: 'Unknown course' }, { status: 404 })
+    // One course, every course (''), the AI Weekend, or everything
+    if (slug && slug !== WEEKEND_SCOPE && slug !== EVERYTHING && !(await getLmsCourse(slug))) return NextResponse.json({ error: 'Unknown course' }, { status: 404 })
 
     const typed = normalCode(b.code)
     if (typed && !validCode(typed)) return NextResponse.json({ error: 'A code is 3 to 24 letters, digits or dashes.' }, { status: 400 })

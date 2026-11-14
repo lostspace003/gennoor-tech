@@ -270,3 +270,25 @@ Someone who has paid for a course or an AI Weekend is a customer, not a prospect
 - A lead is marked once. If a person starts the series again by hand for a customer, it stays started.
 - They stay in the leads list, with a green "paid" mark.
 - `npx tsx scripts/customers-check.ts` checks it with made-up people.
+
+## 14. Coupon codes
+
+The owner (14 November 2026): "at the time of checkout, do you have coupon code ... 20% off, 50% off, whatever
+coupon code they apply ... they'll just enter and that will show the discounted price", and a code that takes
+everything off lets them book with nothing to pay.
+
+- **Made by staff**, Admin centre, Payments, "Coupon codes" (`src/app/admin/payments/Coupons.tsx`,
+  `/api/admin/coupons`; managers only): how much it takes off (any percent; 100 leaves nothing to pay), until
+  when, for how many people, and what it is good for: every course, one course, the AI Weekend, or every course
+  and the AI Weekend. A code made before this day for "every course" stays for courses only.
+- **Typed by the buyer**: on a course page ("Have a coupon code?", `CourseAccess.tsx`) and in the AI Weekend's
+  registration form (`RegisterForm.tsx`). The lower price is shown before anything is paid.
+- **The server decides the amount**, never the page: `couponProblem()`, `couponPrice()` (a course) and
+  `couponAmount()` (the AI Weekend) in `src/lib/lms-coupons.ts`. The check a form makes uses nothing up; the
+  code is checked again and counted when the course or the seat becomes theirs.
+- **Nothing to pay**: a course opens at once (`grantCourseByCoupon`); an AI Weekend seat is confirmed at once
+  (`/api/weekend/register`), and its email says "Your seat is confirmed" and never "payment".
+- Each person counts once per course, or once per weekend. A seat or a course taken with a code shows the code
+  on the Payments page, the AI Weekend list and the evening report. Someone who took a seat with a full code is
+  listed with the paid customers, with the amount 0: they are attending, so they get no promotional email.
+- `npx tsx scripts/crm-flow-test.ts` checks what a code is good for and what it takes off.

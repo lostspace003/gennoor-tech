@@ -15,6 +15,7 @@ import { WEEKEND_EMAILS, CAMPAIGN_KINDS, buildWeekendEmail, buildPaidEmail, clos
 import { hmacHex, validPaymentSignature, validWebhookSignature } from '../src/lib/razorpay'
 import { previewIds, isPreview, PREVIEW_MAX, DEFAULT_PRICE, formatUsd, formatInr } from '../src/lib/lms-access'
 import { WEEKEND, CAMPAIGN_OUTREACH, nextCohort, cohortById, weekendFee, closedNote } from '../src/data/ai-weekend'
+import { couponProblem, couponAmount, couponPrice, WEEKEND_SCOPE, EVERYTHING, type Coupon } from '../src/lib/lms-coupons'
 
 let pass = 0, fail = 0
 const ok = (c: boolean, n: string) => { c ? pass++ : (fail++, console.log('  FAIL:', n)); if (c) console.log('  ok  :', n) }
@@ -170,6 +171,21 @@ ok(!validWebhookSignature(hook, hmacHex('whsec', hook), ''), 'webhooks are refus
 const withLink = buildWeekendEmail('payment', { name: 'Priya' }, nov, {}, 'webinar@gennoor.com', 'https://www.gennoor.com/ai-weekend?pay=WK-1&t=abc')
 ok(withLink.html.includes('Pay ₹499 now') && withLink.html.includes('pay=WK-1'), 'the payment email carries the person\'s own Pay now link when online payment is on')
 ok(buildPaidEmail({ name: 'Priya', fee: 499 }, nov, 'pay_XYZ').html.includes('pay_XYZ'), 'the receipt shows the payment reference')
+
+// ---- Coupon codes: a course, every course, the AI Weekend, or everything
+const cp = (slug: string, more: Partial<Coupon> = {}): Coupon => ({ code: 'GEN-TEST22', percent: 50, slug, expiresAt: '', maxUses: 0, uses: 0, active: true, note: '', createdAt: '', createdBy: '', ...more })
+ok(couponProblem(cp(''), 'some-course') === null && couponProblem(cp(''), WEEKEND_SCOPE) !== null, 'a code for every course works for a course and not for the AI Weekend')
+ok(couponProblem(cp(WEEKEND_SCOPE), WEEKEND_SCOPE) === null && couponProblem(cp(WEEKEND_SCOPE), 'some-course') !== null, 'a code for the AI Weekend works there and not for a course')
+ok(couponProblem(cp(EVERYTHING), WEEKEND_SCOPE) === null && couponProblem(cp(EVERYTHING), 'some-course') === null, 'a code for everything works for both')
+ok(couponProblem(cp('course-a'), 'course-a') === null && couponProblem(cp('course-a'), 'course-b') !== null && couponProblem(cp('course-a'), WEEKEND_SCOPE) !== null, 'a code for one course works for that course only')
+ok(couponProblem(cp(EVERYTHING, { active: false }), WEEKEND_SCOPE) !== null && couponProblem(cp(EVERYTHING, { expiresAt: '2020-01-01T00:00:00Z' }), WEEKEND_SCOPE) !== null && couponProblem(cp(EVERYTHING, { maxUses: 2, uses: 2 }), WEEKEND_SCOPE) !== null && couponProblem(null, WEEKEND_SCOPE) !== null, 'a code that is switched off, expired, used up or unknown is refused')
+ok(couponAmount(499, 'INR', 100) === 0 && couponAmount(9.99, 'USD', 100) === 0, 'a code of 100 percent leaves nothing to pay for the AI Weekend')
+ok(couponAmount(499, 'INR', 20) === 399 && couponAmount(499, 'INR', 50) === 250 && couponAmount(9.99, 'USD', 50) === 5 && couponAmount(9.99, 'USD', 20) === 7.99, 'a code of 20 or 50 percent takes that much off, in rupees and in dollars')
+ok(couponAmount(499, 'INR', 99.9) >= 1 && couponAmount(9.99, 'USD', 99) >= 0.5, 'a reduced fee is never smaller than the payment service accepts')
+ok(couponPrice({ usd: 19.99, inr: 849 }, 100).usd === 0 && couponPrice({ usd: 19.99, inr: 849 }, 50).inr === 425, 'a course takes the same codes')
+const coveredMail = buildPaidEmail({ name: 'Priya', fee: 0, coupon: 'GEN-TEST22' }, nov, '')
+ok(/Your seat is confirmed/.test(coveredMail.subject) && !/Payment received/i.test(coveredMail.subject + coveredMail.html) && coveredMail.html.includes('Nothing to pay, with code GEN-TEST22') && !coveredMail.html.includes('Payment reference'), 'a seat taken with a full code is confirmed without the word payment and without a payment reference')
+ok(buildPaidEmail({ name: 'Priya', fee: 250, coupon: 'GEN-TEST22' }, nov, 'pay_XYZ').html.includes('with code GEN-TEST22'), 'a receipt for a reduced fee names the code')
 
 // ---- Course previews: a few lessons open to everyone, never more than six
 const lesson = (id: string, preview: boolean) => ({ id, type: 'lecture' as const, kind: 'lecture', title: id, description: '', preview, video: '', caption: null, resources: [] })

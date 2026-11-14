@@ -5,7 +5,7 @@ import * as XLSX from 'xlsx'
 import { Check, ChevronDown, ChevronUp, Download, ExternalLink, GripVertical, Loader2, Mail, RefreshCw, Send, Trash2, UserPlus, Users, X } from 'lucide-react'
 
 type Kind = 'invite' | 'inside' | 'fit' | 'closing' | 'thanks' | 'payment' | 'reminder' | 'join' | 'kit'
-interface Reg { id: string; cohort: string; name: string; email: string; phone: string; company: string; role: string; at: string; payment: 'pending' | 'paid' | 'refunded'; fee: number; currency?: 'INR' | 'USD'; source: string; note?: string; emails?: Record<string, string>; paymentId?: string; paidAt?: string }
+interface Reg { id: string; cohort: string; name: string; email: string; phone: string; company: string; role: string; at: string; payment: 'pending' | 'paid' | 'refunded'; fee: number; currency?: 'INR' | 'USD'; source: string; note?: string; emails?: Record<string, string>; paymentId?: string; paidAt?: string; coupon?: string }
 interface Settings { joinUrl: string; payment: string; kitUrl: string; invitedCount: number; sent?: Record<string, number> }
 interface EmailInfo { kind: Kind; title: string; when: string; to: string; group: 'campaign' | 'desk'; outreach?: boolean; needs?: 'joinUrl' | 'payment' | 'kitUrl'; needsLabel?: string }
 /** A lead, as far as choosing who gets a campaign email needs it. */
@@ -151,7 +151,7 @@ export default function WeekendAdminPage() {
     const sheet = XLSX.utils.json_to_sheet(rows.map((r) => ({
       Name: r.name, Email: r.email, Phone: r.phone, Company: r.company, Role: r.role,
       Payment: PAY[r.payment], Fee: r.fee, 'Paid in': r.currency || 'INR', 'Came from': r.source, 'Registered on': r.at.slice(0, 10),
-      'Emails sent': Object.keys(r.emails || {}).join(', '), 'Payment reference': r.paymentId || '',
+      'Emails sent': Object.keys(r.emails || {}).join(', '), 'Payment reference': r.paymentId || '', 'Coupon code': r.coupon || '',
     })))
     const wb = XLSX.utils.book_new()
     XLSX.utils.book_append_sheet(wb, sheet, 'Registrations')
@@ -230,6 +230,7 @@ export default function WeekendAdminPage() {
                             {(Object.keys(PAY) as Reg['payment'][]).map((k) => <option key={k} value={k}>{PAY[k]}</option>)}
                           </select>
                           {r.paymentId && <div className="mt-1 text-[11px] text-gray-400" title={r.paidAt ? `Paid online ${new Date(r.paidAt).toLocaleString('en-IN')}` : undefined}>online · {r.paymentId}</div>}
+                          {r.coupon && <div className="mt-1 text-[11px] text-gray-500">{r.fee === 0 ? 'nothing to pay, ' : ''}code {r.coupon}</div>}
                         </td>
                         <td className="px-3 py-2">
                           <div className="flex flex-wrap gap-1">
