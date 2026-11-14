@@ -15,6 +15,7 @@ export async function GET() {
         Phone: '+91 98765 43210',
         Organization: 'Example Industries',
         Designation: 'Head of Learning',
+        Type: 'Business professional',
         Country: 'India',
         LinkedIn: 'https://www.linkedin.com/in/example',
         Notes: 'Met at the AI summit. Wants training for 40 engineers.',
@@ -25,13 +26,14 @@ export async function GET() {
         Phone: '',
         Organization: 'Example Bank',
         Designation: '',
+        Type: 'Technical professional',
         Country: 'UAE',
         LinkedIn: '',
         Notes: 'Blank cells are fine. Fill in what you have.',
       },
     ]
     const sheet = XLSX.utils.json_to_sheet(rows, { header: [...LEAD_COLUMNS] })
-    sheet['!cols'] = [{ wch: 24 }, { wch: 32 }, { wch: 18 }, { wch: 28 }, { wch: 26 }, { wch: 14 }, { wch: 38 }, { wch: 50 }]
+    sheet['!cols'] = [{ wch: 24 }, { wch: 32 }, { wch: 18 }, { wch: 28 }, { wch: 26 }, { wch: 24 }, { wch: 14 }, { wch: 38 }, { wch: 50 }]
     XLSX.utils.book_append_sheet(workbook, sheet, 'Leads')
 
     const help = XLSX.utils.aoa_to_sheet([
@@ -44,6 +46,8 @@ export async function GET() {
       ['Name is the only column you must fill. Rows without a name are skipped.'],
       ['Organization is the company the person works for. Leads are grouped by it.'],
       ['Email is needed before the email series can start. You can add it later.'],
+      ['Type is one of two: "Technical professional" or "Business professional".'],
+      ['"Technical" or "Business" alone is read the same way. Leave it blank if you do not know.'],
       [''],
       ['Uploading the same sheet twice is safe. A lead that is already in the CRM'],
       ['(same email, or same name and organization) is updated, not added again,'],

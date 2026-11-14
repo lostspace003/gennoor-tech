@@ -3,11 +3,11 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import * as XLSX from 'xlsx'
 import { Search, Upload, Download, Trash2, X, Hand, Undo2, Archive, UserPlus, Send, Linkedin, Mail, Check, Clock, AlertTriangle } from 'lucide-react'
-import { Lead, LEAD_STEPS, STEP_LABELS, isAutoSource } from '@/lib/crm/types'
+import { Lead, LEAD_STEPS, STEP_LABELS, LEAD_PROFILES, PROFILE_LABELS, PROFILE_SHORT, isAutoSource } from '@/lib/crm/types'
 import { LEAD_COLUMNS, mapHeaders, rowToLead, looksLikeEmail, leadToRow } from '@/lib/crm/import'
 import { sequenceProgress, stepNumber } from '@/lib/crm/sequence'
 import { CRM_USERS, shortName } from '@/lib/crm/users'
-import { SeriesDots, StatusBadge, StepStrip, timeAgo, api, Spinner, MultiSelect, Pagination, useMinute } from './shared'
+import { SeriesDots, StatusBadge, StepStrip, Hint, timeAgo, api, Spinner, MultiSelect, Pagination, useMinute } from './shared'
 import { needsAnswer } from '@/lib/crm/replies'
 import { failedSeriesSend, lastSeriesSend, sendHint, sendLine, type SeriesSend } from '@/lib/crm/delivery'
 import { useCrm } from './CrmContext'
@@ -16,6 +16,16 @@ import FindOnLinkedIn from './FindOnLinkedIn'
 
 const PER_PAGE = 25
 type Scope = 'all' | 'replied' | 'pool' | 'mine' | 'site' | 'archived'
+
+/** A few words for each view, said when the pointer is on it. */
+const SCOPE_HINTS: Record<Scope, string> = {
+  all: 'Every lead that is not archived',
+  replied: 'They wrote to us and nobody has answered yet',
+  pool: 'Nobody has picked these up yet',
+  mine: 'The leads you hold',
+  site: 'Added by the website: a form, a purchase, a finished course or a review',
+  archived: 'Put aside with a reason. They can be restored',
+}
 
 interface Props {
   leads: Lead[]
@@ -54,7 +64,10 @@ export default function LeadsView({ leads, canManage, onOpenLead, onReload, noti
   const [scope, setScope] = useState<Scope>('all')
   const [search, setSearch] = useState('')
   const [orgFilter, setOrgFilter] = useState<string[]>([])
-  const [stepFilter, setStepFilter] = useState<string[]>([])
+  // The page opens on New: the leads nothing has been sent to yet (owner, 14 November 2026). One step at a
+  // time: pressing another step moves to it, pressing the chosen one again shows every step.
+  const [stepFilter, setStepFilter] = useState<string[]>(['new'])
+  const [typeFilter, setTypeFilter] = useState<string[]>([])
   const [ownerFilter, setOwnerFilter] = useState<string[]>([])
   const [sourceFilter, setSourceFilter] = useState<string[]>([])
   const [page, setPage] = useState(1)
@@ -77,7 +90,8 @@ export default function LeadsView({ leads, canManage, onOpenLead, onReload, noti
     let touched = false
     if (params.get('new') === '1') { setAdding(true); params.delete('new'); touched = true }
     const s = params.get('scope')
-    if (s === 'pool' || s === 'mine' || s === 'site' || s === 'archived' || s === 'replied') { setScope(s); params.delete('scope'); touched = true }
+    // A link that asks for a view (from Today, from the menu's red number) means every step of that view
+    if (s === 'pool' || s === 'mine' || s === 'site' || s === 'archived' || s === 'replied') { setScope(s); setStepFilter([]); params.delete('scope'); touched = true }
     const step = params.get('step')
     if (step && (LEAD_STEPS as string[]).includes(step)) { setStepFilter([step]); params.delete('step'); touched = true }
     if (touched) {
@@ -125,10 +139,11 @@ export default function LeadsView({ leads, canManage, onOpenLead, onReload, noti
     if (sourceFilter.length) out = out.filter((l) => sourceFilter.includes(l.source?.trim() || 'Not recorded'))
     if (term) out = out.filter((l) => [l.name, l.company, l.email, l.designation, l.country].some((v) => (v || '').toLowerCase().includes(term)))
     if (orgFilter.length) out = out.filter((l) => orgFilter.includes(l.company?.trim() || ''))
+    if (typeFilter.length) out = out.filter((l) => typeFilter.includes(l.profile || 'none'))
     if (stepFilter.length) out = out.filter((l) => stepFilter.includes(l.status))
     if (ownerFilter.length) out = out.filter((l) => ownerFilter.includes(l.owner ? l.owner.toLowerCase() : 'pool'))
     return out
-  }, [leads, live, scope, search, orgFilter, stepFilter, ownerFilter, sourceFilter, me])
+  }, [leads, live, scope, search, orgFilter, typeFilter, stepFilter, ownerFilter, sourceFilter, me])
 
   // The row of steps counts the leads the other choices leave, before the step itself is chosen
   const stepCounts = useMemo(() => {
@@ -141,15 +156,18 @@ export default function LeadsView({ leads, canManage, onOpenLead, onReload, noti
     if (sourceFilter.length) out = out.filter((l) => sourceFilter.includes(l.source?.trim() || 'Not recorded'))
     if (term) out = out.filter((l) => [l.name, l.company, l.email, l.designation, l.country].some((v) => (v || '').toLowerCase().includes(term)))
     if (orgFilter.length) out = out.filter((l) => orgFilter.includes(l.company?.trim() || ''))
+    if (typeFilter.length) out = out.filter((l) => typeFilter.includes(l.profile || 'none'))
     if (ownerFilter.length) out = out.filter((l) => ownerFilter.includes(l.owner ? l.owner.toLowerCase() : 'pool'))
     return Object.fromEntries(LEAD_STEPS.map((st) => [st, out.filter((l) => l.status === st).length]))
-  }, [leads, live, scope, search, orgFilter, ownerFilter, sourceFilter, me])
+  }, [leads, live, scope, search, orgFilter, typeFilter, ownerFilter, sourceFilter, me])
+  // Leads the other choices leave at the steps that are not chosen: said when the list comes up empty
+  const atOtherSteps = stepFilter.length ? LEAD_STEPS.filter((st) => !stepFilter.includes(st)).reduce((n, st) => n + (stepCounts[st] || 0), 0) : 0
 
   const pages = Math.max(1, Math.ceil(filtered.length / PER_PAGE))
   const safePage = Math.min(page, pages)
   const pageLeads = filtered.slice((safePage - 1) * PER_PAGE, safePage * PER_PAGE)
   const chosen = leads.filter((l) => selected.includes(l.id))
-  const filtersOn = !!(search || orgFilter.length || stepFilter.length || ownerFilter.length || sourceFilter.length)
+  const filtersOn = !!(search || orgFilter.length || typeFilter.length || stepFilter.length || ownerFilter.length || sourceFilter.length)
   const reset = () => { setPage(1); setSelected([]) }
 
   const hold = async (action: 'claim' | 'release' | 'dump' | 'restore' | 'assign', assignee?: string) => {
@@ -210,6 +228,8 @@ export default function LeadsView({ leads, canManage, onOpenLead, onReload, noti
           if (!Object.values(row).some((v) => String(v).trim())) continue
           const lead = rowToLead(row, map)
           if (!lead) { skipped++; continue }
+          const typeCell = map.Type ? String(row[map.Type] ?? '').trim() : ''
+          if (typeCell && !/^(na|n\/a|-|none|null)$/i.test(typeCell) && !lead.profile) notes.push(`${lead.name}: type "${typeCell.slice(0, 40)}" is neither Technical nor Business, left blank`)
           if (lead.email && !looksLikeEmail(lead.email)) notes.push(`${lead.name}: "${lead.email}" does not look like an email address`)
           rows.push(lead)
         }
@@ -238,6 +258,7 @@ export default function LeadsView({ leads, canManage, onOpenLead, onReload, noti
       notify(`${res.added} new lead${res.added === 1 ? '' : 's'} added${res.updated ? `, ${res.updated} already here and updated` : ''}`)
       setUpload(null)
       setScope('pool')
+      setStepFilter(['new'])
     } catch (e: any) { notify(e.message, true) } finally { setBusy('') }
   }
 
@@ -270,10 +291,11 @@ export default function LeadsView({ leads, canManage, onOpenLead, onReload, noti
             />
           </div>
           <MultiSelect label="Organization" options={orgs.slice(0, 200).map(([name, n]) => ({ value: name, label: `${name} (${n})` }))} values={orgFilter} onChange={(v) => { setOrgFilter(v); reset() }} />
+          <MultiSelect label="Type" options={[...LEAD_PROFILES.map((p) => ({ value: p as string, label: PROFILE_LABELS[p] })), { value: 'none', label: 'Type not set' }]} values={typeFilter} onChange={(v) => { setTypeFilter(v); reset() }} />
           <MultiSelect label="Owner" options={[{ value: 'pool', label: 'Unassigned' }, ...CRM_USERS.map((u) => ({ value: u, label: shortName(u) }))]} values={ownerFilter} onChange={(v) => { setOwnerFilter(v); reset() }} />
           <MultiSelect label="Came from" options={sources.map(([name, n]) => ({ value: name, label: `${name} (${n})` }))} values={sourceFilter} onChange={(v) => { setSourceFilter(v); reset() }} />
           {filtersOn && (
-            <button onClick={() => { setSearch(''); setOrgFilter([]); setStepFilter([]); setOwnerFilter([]); setSourceFilter([]); reset() }} className="text-xs text-primary-600 hover:underline">Clear filters</button>
+            <button onClick={() => { setSearch(''); setOrgFilter([]); setTypeFilter([]); setStepFilter([]); setOwnerFilter([]); setSourceFilter([]); reset() }} className="text-xs text-primary-600 hover:underline">Clear filters</button>
           )}
           <div className="ml-auto flex flex-wrap items-center gap-2">
             <button onClick={() => setAdding(true)} className="px-3 py-2 bg-primary-600 text-white text-sm rounded-lg hover:bg-primary-700 flex items-center gap-1.5">
@@ -295,7 +317,7 @@ export default function LeadsView({ leads, canManage, onOpenLead, onReload, noti
           </div>
         </div>
         <div className="flex flex-wrap items-center justify-between gap-2">
-          <div className="flex items-center gap-1.5">
+          <div className="flex flex-wrap items-center gap-1.5">
             {([
               ['all', `All (${counts.all})`],
               ['replied', `Needs an answer (${counts.replied})`],
@@ -304,20 +326,23 @@ export default function LeadsView({ leads, canManage, onOpenLead, onReload, noti
               ['site', `From the website (${counts.site})`],
               ['archived', `Archived (${counts.archived})`],
             ] as Array<[Scope, string]>).map(([key, label]) => (
-              <button
-                key={key}
-                onClick={() => { setScope(key); reset() }}
-                className={`px-2.5 py-1 text-xs rounded-full border transition-colors ${scope === key ? 'bg-primary-600 text-white border-primary-600' : 'border-gray-200 text-gray-600 hover:bg-gray-50'}`}
-              >
-                {label}
-              </button>
+              <Hint key={key} text={SCOPE_HINTS[key]}>
+                <button
+                  // Someone who replied is no longer at New: that view shows every step
+                  onClick={() => { setScope(key); if (key === 'replied') setStepFilter([]); reset() }}
+                  aria-pressed={scope === key}
+                  className={`px-2.5 py-1 text-xs rounded-full border transition-colors ${scope === key ? 'bg-primary-600 text-white border-primary-600' : 'border-gray-200 text-gray-600 hover:bg-gray-50'}`}
+                >
+                  {label}
+                </button>
+              </Hint>
             ))}
           </div>
           <div className="text-xs text-gray-500">{filtered.length} lead{filtered.length === 1 ? '' : 's'}</div>
         </div>
-        {/* Where they stand, in one row. Press a step to see only its leads; press it again to see all. */}
+        {/* Where they stand, in one row. One step at a time: press a step to see its leads, press it again to see all. */}
         {scope !== 'archived' && (
-          <StepStrip counts={stepCounts} active={stepFilter} onPick={(st) => { setStepFilter(stepFilter.includes(st) ? stepFilter.filter((x) => x !== st) : [...stepFilter, st]); reset() }} />
+          <StepStrip counts={stepCounts} active={stepFilter} onPick={(st) => { setStepFilter(stepFilter.includes(st) ? [] : [st]); reset() }} />
         )}
       </div>
 
@@ -367,7 +392,7 @@ export default function LeadsView({ leads, canManage, onOpenLead, onReload, noti
 
       {/* The list */}
       <div className="bg-raised overflow-x-auto">
-        <table className="w-full min-w-[720px]">
+        <table className="w-full min-w-[800px]">
           <thead className="bg-gray-50 border-b border-gray-200">
             <tr>
               <th className="px-4 py-2.5 text-left w-10">
@@ -379,7 +404,7 @@ export default function LeadsView({ leads, canManage, onOpenLead, onReload, noti
                   onChange={(e) => setSelected(e.target.checked ? [...new Set([...selected, ...pageLeads.map((l) => l.id)])] : selected.filter((id) => !pageLeads.some((l) => l.id === id)))}
                 />
               </th>
-              {['Lead', 'Organization', 'Step', 'Email series', 'Owner'].map((h) => (
+              {['Lead', 'Organization', 'Type', 'Step', 'Email series', 'Owner'].map((h) => (
                 <th key={h} className="px-4 py-2.5 text-left text-xs font-medium text-gray-500">{h}</th>
               ))}
             </tr>
@@ -387,10 +412,12 @@ export default function LeadsView({ leads, canManage, onOpenLead, onReload, noti
           <tbody className="divide-y divide-gray-100">
             {pageLeads.length === 0 && (
               <tr>
-                <td colSpan={6} className="px-6 py-14 text-center text-sm text-gray-400">
+                <td colSpan={7} className="px-6 py-14 text-center text-sm text-gray-500">
                   {leads.length === 0
                     ? 'No leads yet. Press Add lead, Import a lead sheet, or Find on LinkedIn.'
-                    : 'No leads match. Clear the filters to see more.'}
+                    : atOtherSteps > 0 && scope !== 'archived'
+                      ? <>No leads here at {stepFilter.map((st) => STEP_LABELS[st as Lead['status']]).join(', ')}. <button onClick={() => { setStepFilter([]); reset() }} className="text-primary-600 hover:underline">Show the {atOtherSteps} at other steps</button></>
+                      : 'No leads match. Clear the filters to see more.'}
                 </td>
               </tr>
             )}
@@ -419,6 +446,11 @@ export default function LeadsView({ leads, canManage, onOpenLead, onReload, noti
                   <td className="px-4 py-2.5 max-w-[240px]">
                     <div className="text-sm text-gray-900 truncate">{lead.company || <span className="text-gray-300">not set</span>}</div>
                     <div className="text-xs text-gray-500 truncate">{[lead.designation, lead.country, isAutoSource(lead.source) ? lead.source : ''].filter(Boolean).join(' · ')}</div>
+                  </td>
+                  <td className="px-4 py-2.5 whitespace-nowrap">
+                    {lead.profile
+                      ? <span className="text-xs text-gray-700" title={PROFILE_LABELS[lead.profile]}>{PROFILE_SHORT[lead.profile]}</span>
+                      : <span className="text-xs text-gray-400">not set</span>}
                   </td>
                   <td className="px-4 py-2.5">
                     {lead.dumped ? <span className="text-[11px] bg-gray-200 text-gray-600 rounded-full px-2 py-0.5" title={lead.dumped.reason}>Archived</span> : <StatusBadge status={lead.status} />}
@@ -488,7 +520,7 @@ export default function LeadsView({ leads, canManage, onOpenLead, onReload, noti
                 <div className="border border-gray-200 rounded-lg overflow-x-auto">
                   <table className="w-full text-xs">
                     <thead className="bg-gray-50">
-                      <tr>{['Name', 'Email', 'Organization', 'Designation', 'Country'].map((h) => <th key={h} className="px-3 py-2 text-left font-medium text-gray-500">{h}</th>)}</tr>
+                      <tr>{['Name', 'Email', 'Organization', 'Designation', 'Type', 'Country'].map((h) => <th key={h} className="px-3 py-2 text-left font-medium text-gray-500">{h}</th>)}</tr>
                     </thead>
                     <tbody className="divide-y divide-gray-100">
                       {upload.rows.slice(0, 8).map((l, i) => (
@@ -497,6 +529,7 @@ export default function LeadsView({ leads, canManage, onOpenLead, onReload, noti
                           <td className="px-3 py-1.5 text-gray-600">{l.email || <span className="text-amber-600">blank</span>}</td>
                           <td className="px-3 py-1.5 text-gray-600">{l.company || <span className="text-amber-600">blank</span>}</td>
                           <td className="px-3 py-1.5 text-gray-600">{l.designation}</td>
+                          <td className="px-3 py-1.5 text-gray-600">{l.profile ? PROFILE_SHORT[l.profile] : ''}</td>
                           <td className="px-3 py-1.5 text-gray-600">{l.country}</td>
                         </tr>
                       ))}
@@ -534,9 +567,9 @@ function AddLeadModal({ userEmail, onClose, onAdded, notify }: {
   onAdded: () => Promise<void>
   notify: (msg: string, isError?: boolean) => void
 }) {
-  const [form, setForm] = useState({ name: '', email: '', phone: '', company: '', designation: '', country: '', linkedin: '', notes: '' })
+  const [form, setForm] = useState({ name: '', email: '', phone: '', company: '', designation: '', profile: '', country: '', linkedin: '', notes: '' })
   const [saving, setSaving] = useState(false)
-  const set = (k: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => setForm((f) => ({ ...f, [k]: e.target.value }))
+  const set = (k: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => setForm((f) => ({ ...f, [k]: e.target.value }))
   const cls = 'w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-primary-500 focus:border-transparent'
 
   const save = async () => {
@@ -564,6 +597,10 @@ function AddLeadModal({ userEmail, onClose, onAdded, notify }: {
             <input value={form.phone} onChange={set('phone')} className={cls} placeholder="Phone" />
             <input value={form.designation} onChange={set('designation')} className={cls} placeholder="Designation" />
             <input value={form.country} onChange={set('country')} className={cls} placeholder="Country" />
+            <select value={form.profile} onChange={set('profile')} className={`${cls} bg-raised ${form.profile ? 'text-gray-900' : 'text-gray-500'}`} aria-label="Type">
+              <option value="">Type: not set</option>
+              {LEAD_PROFILES.map((p) => <option key={p} value={p}>{PROFILE_LABELS[p]}</option>)}
+            </select>
           </div>
           <input value={form.linkedin} onChange={set('linkedin')} className={cls} placeholder="LinkedIn profile link" />
           <textarea value={form.notes} onChange={set('notes')} rows={3} className={cls} placeholder="Notes: where you met, what they need" />

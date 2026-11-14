@@ -2,7 +2,7 @@ import { sendLeadConversion } from '@/lib/linkedin-ads'
 import { NextRequest, NextResponse } from 'next/server'
 import { requireCrmUser, canWorkLead } from '@/lib/crm/access'
 import { getLeads, mutateLeads, touch } from '@/lib/crm/store'
-import { newLead, Lead, LEAD_STEPS, STEP_LABELS } from '@/lib/crm/types'
+import { newLead, Lead, LEAD_STEPS, STEP_LABELS, readProfile } from '@/lib/crm/types'
 import { syncAutoLeadsIfDue } from '@/lib/crm/auto-leads'
 import { syncCustomersIfDue } from '@/lib/crm/customers-live'
 
@@ -64,6 +64,8 @@ export async function PUT(req: NextRequest) {
       for (const field of EDITABLE) {
         if (field in data) (lead as any)[field] = data[field]
       }
+      // The type is one of two, or not set; nothing else is stored
+      if ('profile' in data) lead.profile = readProfile(data.profile) || undefined
       if (!LEAD_STEPS.includes(lead.status)) lead.status = previousStatus as Lead['status']
       const moved = lead.status !== previousStatus
       touch(lead, {

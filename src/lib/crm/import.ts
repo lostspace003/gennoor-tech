@@ -1,10 +1,11 @@
-import type { Lead } from './types'
+import { PROFILE_LABELS, readProfile, type Lead } from './types'
 
-// The lead sheet: seven columns, only Name required. Used by the template
+// The lead sheet: nine columns, only Name required. Used by the template
 // download, the import and the export, so the three can never drift apart.
 // Safe to import in the browser.
+// Type is "Technical professional" or "Business professional" (readProfile in ./types.ts reads shorter spellings too).
 
-export const LEAD_COLUMNS = ['Name', 'Email', 'Phone', 'Organization', 'Designation', 'Country', 'LinkedIn', 'Notes'] as const
+export const LEAD_COLUMNS = ['Name', 'Email', 'Phone', 'Organization', 'Designation', 'Type', 'Country', 'LinkedIn', 'Notes'] as const
 export type LeadColumn = (typeof LEAD_COLUMNS)[number]
 
 /** Other headings people commonly use for each column. Matched without regard to case or spacing. */
@@ -14,6 +15,8 @@ const ALIASES: Record<LeadColumn, string[]> = {
   Phone: ['phone', 'phone number', 'mobile', 'contact number', 'whatsapp', 'tel'],
   Organization: ['organization', 'organisation', 'company', 'company name', 'company / org', 'org', 'employer', 'account'],
   Designation: ['designation', 'title', 'job title', 'role', 'position'],
+  // Not "profile": that heading means the LinkedIn profile
+  Type: ['type', 'lead type', 'professional type', 'type of professional', 'audience', 'persona', 'technical or business', 'technical business'],
   Country: ['country', 'location', 'region'],
   LinkedIn: ['linkedin', 'linkedin url', 'linkedin profile', 'profile'],
   Notes: ['notes', 'note', 'comments', 'remarks', 'requirement', 'interest'],
@@ -21,7 +24,7 @@ const ALIASES: Record<LeadColumn, string[]> = {
 
 const FIELD: Record<LeadColumn, keyof Lead> = {
   Name: 'name', Email: 'email', Phone: 'phone', Organization: 'company',
-  Designation: 'designation', Country: 'country', LinkedIn: 'linkedin', Notes: 'notes',
+  Designation: 'designation', Type: 'profile', Country: 'country', LinkedIn: 'linkedin', Notes: 'notes',
 }
 
 const norm = (s: unknown) => String(s ?? '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim()
@@ -57,7 +60,9 @@ export function rowToLead(row: Record<string, unknown>, map: Partial<Record<Lead
   const lead: Partial<Lead> = { name }
   for (const col of LEAD_COLUMNS) {
     if (col === 'Name') continue
-    const v = cell(map[col])
+    let v = cell(map[col])
+    // A type that is neither of the two is left blank (the import says so), never guessed
+    if (col === 'Type') v = readProfile(v)
     if (v) (lead as any)[FIELD[col]] = col === 'Email' ? v.toLowerCase() : v
   }
   return lead
@@ -69,6 +74,6 @@ export const looksLikeEmail = (s: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s
 export function leadToRow(l: Lead): Record<LeadColumn, string> {
   return {
     Name: l.name, Email: l.email, Phone: l.phone, Organization: l.company,
-    Designation: l.designation, Country: l.country, LinkedIn: l.linkedin, Notes: l.notes,
+    Designation: l.designation, Type: l.profile ? PROFILE_LABELS[l.profile] : '', Country: l.country, LinkedIn: l.linkedin, Notes: l.notes,
   }
 }
