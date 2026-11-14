@@ -10,6 +10,8 @@ import {
   PanelLeftClose, PanelLeftOpen, ChevronDown,
 } from 'lucide-react'
 import { CrmProvider, useCrm } from '@/components/crm/CrmContext'
+import RouteProgress from '@/components/portal/RouteProgress'
+import BusyPointer from '@/components/BusyPointer'
 import AdminThemeSwitch from '@/components/admin/AdminThemeSwitch'
 import { needsAnswer } from '@/lib/crm/replies'
 
@@ -201,6 +203,9 @@ function Frame({ children }: { children: React.ReactNode }) {
 
   return (
     <div className="h-dvh bg-gray-50 flex overflow-hidden">
+      {/* The thin bar at the top while a page of the CRM is opening, and the circle at the pointer while something pressed is still working */}
+      <RouteProgress />
+      <BusyPointer />
       {/* Desktop sidebar — expanded panel or collapsed icon rail */}
       <aside
         className={`hidden lg:block border-r border-gray-200 shrink-0 transition-[width] duration-200 ease-out ${collapsed ? 'w-[60px]' : 'w-[216px]'}`}
