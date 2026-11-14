@@ -71,7 +71,10 @@ session gives.
 
 ## Never commit
 
-- `~$*.pptx`, `~$*.xlsx` (Office lock files), anything in `scripts/show/.work`, `.env.local`, keys or tokens.
+- `~$*.pptx`, `~$*.xlsx` (Office lock files), `.env.local`, keys or tokens.
+- The working folders of the scripts (`scripts/show/.work`, `scripts/email-art/.work`, `scripts/catalog/.work`,
+  `scripts/.avatar`) ARE kept on GitHub since 14 November 2026: the owner wants the local folder and GitHub to
+  hold the same. No single file over 100 MB (GitHub refuses it): such a film goes to the media store.
 - Videos over about 10 MB: they go to the media store, not the repository.
 
 ## On this machine
