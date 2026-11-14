@@ -6,10 +6,11 @@ import {
   User, Paperclip, X,
 } from 'lucide-react'
 import { Lead, LeadStatus, STEP_LABELS, STEP_HINTS } from '@/lib/crm/types'
-import { stepNumber, fillTokens, LINKEDIN_CONNECT_NOTE, LINKEDIN_FIRST_MESSAGE } from '@/lib/crm/sequence'
+import { SEQUENCE, sequenceProgress, stepNumber, fillTokens, LINKEDIN_CONNECT_NOTE, LINKEDIN_FIRST_MESSAGE } from '@/lib/crm/sequence'
+import { lastContactAt, needsAnswer } from '@/lib/crm/replies'
 import { istInstant } from '@/lib/crm/timezones'
 import { shortName } from '@/lib/crm/users'
-import { StatusBadge, StepSelect, api, formatDateTime, DurationSlider, TimeSlider, LeadLocalTime } from './shared'
+import { StepSelect, api, formatDateTime, timeAgo, DurationSlider, TimeSlider, LeadLocalTime } from './shared'
 import { useCrm } from './CrmContext'
 import SendStepModal from './SendStep'
 import EmailBoard, { type InboundMessage } from './EmailBoard'
@@ -131,7 +132,7 @@ export default function LeadWorkspace({ lead, canManage, onClose, onReload, noti
       </div>
 
       <div className="flex-1 overflow-y-auto">
-        {tab === 'details' && <DetailsTab lead={lead} canManage={canManage} canWork={canWork} onReload={onReload} onClose={onClose} notify={notify} />}
+        {tab === 'details' && <DetailsTab lead={lead} canManage={canManage} canWork={canWork} onReload={onReload} onClose={onClose} notify={notify} onEmails={() => setTab('emails')} />}
         {tab === 'emails' && <EmailsTab lead={lead} canWork={canWork} onReload={onReload} notify={notify} intent={intent} stage={stage} />}
         {tab === 'linkedin' && <LinkedInTab lead={lead} canWork={canWork} onReload={onReload} notify={notify} onEdit={() => setTab('details')} />}
         {tab === 'meeting' && <MeetingTab lead={lead} canWork={canWork} onReload={onReload} notify={notify} />}
@@ -147,8 +148,23 @@ const DETAIL_FIELDS: Array<[keyof Lead, string, string?]> = [
   ['designation', 'Designation'], ['country', 'Country'], ['linkedin', 'LinkedIn profile link'], ['website', 'Website'],
 ]
 
-function DetailsTab({ lead, canManage, canWork, onReload, onClose, notify }: { lead: Lead; canManage: boolean; canWork: boolean; onReload: () => Promise<void>; onClose: () => void; notify: Notify }) {
+function DetailsTab({ lead, canManage, canWork, onReload, onClose, notify, onEmails }: { lead: Lead; canManage: boolean; canWork: boolean; onReload: () => Promise<void>; onClose: () => void; notify: Notify; onEmails: () => void }) {
   const { ask } = useCrm()
+  // The lead at a glance, in the same four tiles as the Emails board: where they stand and what to do next
+  const progress = sequenceProgress(lead)
+  const waiting = needsAnswer(lead)
+  const contact = lastContactAt(lead)
+  const todo = waiting ? (lead.reply?.kind === 'stop' ? 'They asked us to stop' : 'Answer their reply')
+    : !lead.email ? 'Add an email address'
+    : progress.stopped ? 'Emails are stopped'
+    : progress.finished ? 'Write to them directly'
+    : progress.next ? (progress.due ? `Send email ${stepNumber(progress.next.id)}` : `Email ${stepNumber(progress.next.id)} in ${progress.daysUntil} day${progress.daysUntil === 1 ? '' : 's'}`) : 'Nothing due'
+  const glance: Array<[string, string, string, boolean]> = [
+    ['Step', STEP_LABELS[lead.status], STEP_HINTS[lead.status] || '', false],
+    ['Next thing to do', todo, waiting || progress.due ? 'open the Emails board' : '', true],
+    ['Email series', `${progress.sentIds.length} of ${SEQUENCE.length} sent`, progress.stopped ? 'stopped' : progress.finished ? 'all sent' : 'open the Emails board', true],
+    ['Last contact', contact ? timeAgo(contact) : 'none yet', lead.reply ? `they last wrote ${timeAgo(lead.reply.at).toLowerCase()}` : 'no reply yet', false],
+  ]
   const [editing, setEditing] = useState(false)
   const [form, setForm] = useState<Record<string, string>>({})
   const [saving, setSaving] = useState(false)
@@ -180,7 +196,22 @@ function DetailsTab({ lead, canManage, canWork, onReload, onClose, notify }: { l
   }
 
   return (
-    <div className="p-3 sm:p-5 grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-6 max-w-6xl">
+    <div className="p-3 sm:p-5 max-w-6xl space-y-3">
+    <div className="grid grid-cols-2 lg:grid-cols-4 gap-2">
+      {glance.map(([label, value, sub, link]) => {
+        const body = (
+          <>
+            <div className="text-[11px] text-gray-500">{label}</div>
+            <div className={`text-[15px] font-semibold truncate ${label === 'Next thing to do' && (waiting || progress.due) ? 'text-primary-700' : 'text-gray-900'}`}>{value}</div>
+            <div className="text-[11px] text-gray-500 truncate" title={sub}>{sub || ' '}</div>
+          </>
+        )
+        return link
+          ? <button key={label} onClick={onEmails} className="text-left rounded-xl border border-gray-200 bg-raised px-3 py-2 min-w-0 hover:border-gray-400">{body}</button>
+          : <div key={label} className="rounded-xl border border-gray-200 bg-raised px-3 py-2 min-w-0">{body}</div>
+      })}
+    </div>
+    <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-6">
       <div className="lg:col-span-2 space-y-4 min-w-0">
         <div className="flex items-center justify-between">
           <h3 className="text-sm font-medium text-gray-500">Contact</h3>
@@ -217,7 +248,7 @@ function DetailsTab({ lead, canManage, canWork, onReload, onClose, notify }: { l
           </div>
         ) : (
           <>
-            <div className="bg-gray-50 rounded-lg p-4 grid grid-cols-1 md:grid-cols-2 gap-3">
+            <div className="rounded-xl border border-gray-200 bg-raised p-4 grid grid-cols-1 md:grid-cols-2 gap-3">
               <InfoRow icon={Mail} value={lead.email} href={lead.email ? `mailto:${lead.email}` : ''} placeholder="No email. Add one to start the email series." />
               <InfoRow icon={Phone} value={lead.phone} href={lead.phone ? `tel:${lead.phone.replace(/[^\d+]/g, '')}` : ''} placeholder="No phone" />
               <InfoRow icon={Building2} value={[lead.company, lead.designation].filter(Boolean).join(' · ')} placeholder="No organization" />
@@ -226,7 +257,6 @@ function DetailsTab({ lead, canManage, canWork, onReload, onClose, notify }: { l
               <InfoRow icon={Globe} value={lead.website} href={lead.website ? externalUrl(lead.website) : ''} placeholder="No website" />
             </div>
             <div className="text-xs text-gray-400 flex flex-wrap gap-x-4 gap-y-1">
-              <span>Step: <StatusBadge status={lead.status} /></span>
               <span>Source: {lead.source || 'not recorded'}</span>
               <span>Added {lead.createdAt ? formatDateTime(lead.createdAt) : ''}</span>
             </div>
@@ -256,6 +286,7 @@ function DetailsTab({ lead, canManage, canWork, onReload, onClose, notify }: { l
           ))}
         </div>
       </div>
+    </div>
     </div>
   )
 }
