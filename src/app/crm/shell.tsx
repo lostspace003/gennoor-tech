@@ -19,7 +19,7 @@ const NAV = [
   { href: '/crm/leads', label: 'Leads', icon: Users },
   { href: '/crm/inbox', label: 'Replies', icon: Inbox },
   { href: '/crm/scheduler', label: 'Meetings', icon: Calendar },
-  { href: '/crm/emails', label: 'Email series', icon: Mail },
+  { href: '/crm/emails', label: 'Emails', icon: Mail },
   { href: '/crm/playbook', label: 'Call guide', icon: Phone },
   { href: '/crm/enquiries', label: 'Website enquiries', icon: MessageSquare, more: true },
   { href: '/crm/documents', label: 'Files', icon: FolderOpen, more: true },

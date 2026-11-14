@@ -118,8 +118,8 @@ Rules that must stay:
 - "Sent" is never written on a screen for an email that nothing has confirmed.
 - An email that is on its way, or that has gone, is never sent twice. Only a failed one, or one that
   nothing confirmed for a day, can go again, and only when a person says so.
-- A series email that failed stops counting as sent (`failSend`), so nobody is sent email 2 without
-  having had email 1.
+- A series email that failed stops counting as sent (`failSend`), so the series does not move on by itself
+  past an email that never went. (A person may still choose to send any email: section 10.)
 - The number of a send is kept even while the send is still in progress (`sendNumberOf`). Before this it
   was kept only for a send that finished within the first seconds, so a slow one could never be asked about.
 - Emails recorded before `TRACKED_FROM` count as sent: until that day every send finished at once.
@@ -179,7 +179,38 @@ Rules that hold for the campaign:
 - The only urgency is the real closing time: registration closes one day before the weekend
   (`closesWords`). No countdown, no seat count that nobody counted.
 
-## 10. Not to do
+## 10. The Emails board and the tracker
+
+The owner (14 November 2026): "I'll drag into the canvas and then I'll say send ... I hover over it, it will
+tell me the timeline ... I can click on it, it will show a pop-up what was being sent", and "a dashboard canvas
+feel, which makes it very easy for us to track individuals ... very simple filters but very effective".
+
+**A lead's Emails tab is a board** (`src/components/crm/EmailBoard.tsx`).
+
+- Left: the emails that can go, for the nine-email series or for the AI Weekend campaign. **Any of them can be
+  sent next**: drag it onto the board (or press it), read the real email, press Send. The series no longer has
+  to go in its written order.
+- **The order is the lead's own.** Dragging one email onto another (or its arrows) changes the order of the
+  emails not sent yet, for that lead only (`sequence.order`, `orderFor()` and `setOrder()` in
+  `src/lib/crm/sequence.ts`). The next email, on Today and in a send to many, is the first one in that order.
+- **The wait belongs to the rhythm, not to an email** (`gapAfter()`): the second email to go waits four days,
+  the third six, whichever emails they are.
+- Right: everything sent and received as cards, newest first, with five filters. Resting the pointer on a card
+  says when it went and what became of it; pressing it opens what was sent.
+- An AI Weekend email sent to a lead (from the board, or from the AI Weekend page) is written on that lead
+  (`EmailRecord.weekend`, `src/lib/crm/weekend-outreach.ts`), so it shows here beside the series.
+- A lead who replied and is waiting for an answer is sent nothing until that is answered; the board says so.
+- A finger cannot drag: every card also works by pressing it, and the order has arrows. Keep both.
+
+**Emails, in the menu, is the tracker** (`src/components/crm/EmailTracker.tsx`): one row a lead, one column an
+email. The six numbers at the top are the filters. Pressing an email that went shows what was sent; pressing
+one that has not gone opens the lead's board with that email ready (`?tab=emails&stage=<step>`). The emails
+themselves (the plan and how each looks) are the second tab.
+
+Try both with made-up leads before shipping a change to them: every request answered by the test, nothing
+sent. Never open them with real leads in a script.
+
+## 11. Not to do
 
 - Do not send an email to try something. Not even one, unless the owner asks for that one email.
 - Do not write "sent" for an email the email service has only taken (section 6).

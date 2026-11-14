@@ -46,6 +46,18 @@ export const WEEKEND = {
   },
 }
 
+/**
+ * The campaign emails that go to people someone chooses, by name, in the order they were written. The CRM shows
+ * them beside the nine-email series (the lead's Emails board, the email tracker). The emails themselves are in
+ * lib/weekend-emails.ts; a check keeps this list and that file in step.
+ */
+export const CAMPAIGN_OUTREACH: Array<{ kind: string; title: string; short: string }> = [
+  { kind: 'invite', title: 'Invitation', short: 'Invite' },
+  { kind: 'inside', title: 'What you will see built', short: 'Demos' },
+  { kind: 'fit', title: 'Is it for you?', short: 'For you' },
+  { kind: 'closing', title: 'Registration closes', short: 'Closing' },
+]
+
 /** The fee in the visitor's own money: rupees in India, dollars everywhere else. */
 export function weekendFee(india: boolean): { fee: number; regular: number; currency: 'INR' | 'USD' } {
   return india

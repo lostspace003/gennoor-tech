@@ -40,6 +40,7 @@ export default function LeadPage({ params }: { params: Promise<{ id: string[] }>
       notify={notify}
       initialTab={searchParams.get('tab') || undefined}
       intent={searchParams.get('reply') === '1' ? 'reply' : searchParams.get('write') === '1' ? 'write' : undefined}
+      stage={searchParams.get('stage') || undefined}
     />
   )
 }
