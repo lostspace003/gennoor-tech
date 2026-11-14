@@ -7,7 +7,6 @@ import { emailShell, textToHtml, markdownToEmailHtml } from '@/lib/crm/email-the
 import { teamMember } from '@/lib/crm/team'
 import { sendRoom, HOURLY_SEND_LIMIT } from '@/lib/crm/replies'
 
-const ADMIN_CC = process.env.EMAIL_ADMIN || 'admin@gennoor.com'
 // Outreach ALWAYS goes out as sales@gennoor.com (user rule, 2026-07-28)
 const FROM = process.env.EMAIL_FROM_SALES || 'sales@gennoor.com'
 
@@ -64,9 +63,8 @@ export async function POST(request: Request) {
     const results: Array<{ leadId: string; to: string; success: boolean; error?: string; op?: string; done?: boolean }> = []
 
     // One email per lead so each lead gets an individually addressed message.
-    // admin@ AND the team member sending are ALWAYS on CC regardless of what
-    // the caller passes — the sender sees replies in their own mailbox too.
-    const ccList = [ADMIN_CC, user.email, ...(Array.isArray(extraCc) ? extraCc.filter(Boolean) : [])]
+    // A copy to the person sending, and to anyone they added. No copy to the admin mailbox (see leads/sequence).
+    const ccList = [user.email, ...(Array.isArray(extraCc) ? extraCc.filter(Boolean) : [])]
     const bccList = Array.isArray(bcc) ? bcc.filter(Boolean) : []
     for (const lead of sendable) {
       const to = [lead.email, ...(Array.isArray(extraTo) ? extraTo.filter(Boolean) : [])]
@@ -119,7 +117,7 @@ export async function POST(request: Request) {
       failed: failed.length,
       skippedNoEmail: missingEmail.map((l) => l.name),
       errors: failed.map((f) => `${f.to}: ${f.error}`),
-      message: `Sent ${sent}/${sendable.length} emails from ${FROM} (CC ${ADMIN_CC} + you)`,
+      message: `Sent ${sent}/${sendable.length} emails from ${FROM} (a copy to you)`,
     })
   } catch (error) {
     console.error('Email send error:', error)

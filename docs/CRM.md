@@ -58,8 +58,8 @@ Rules that must stay:
 - A closed or archived lead who writes back is still shown. A machine never reopens or closes a lead on a
   free-text reply; a person decides.
 - The mailbox check reads the first lines of a message, never stores the body, and writes the store only
-  when something changed. It leaves out mail from our own addresses (every outreach email is copied to
-  admin and to its sender, and those copies used to push the real replies out of "the newest 50").
+  when something changed. It leaves out mail from our own addresses (an outreach email is copied to
+  its sender, and such copies used to push the real replies out of "the newest 50").
 
 ## 4. Today
 
@@ -82,7 +82,9 @@ stands. It is on Today (as links) and on the Leads page (as the step filter). Do
   said so; it is never queued in secret.
 - Several leads at once: those whose next email is not due yet are left out unless the box is unticked.
   One lead can be taken out with the cross beside their name.
-- Every email copies admin and the sender, and greets by the rule in `greeting.ts` (a name only when it is
+- Every email copies the person who sends it, and nobody else (owner, 14 November 2026: the copy to the
+  admin mailbox used up one of the hour's emails each time; the evening report replaces it, section 12),
+  and greets by the rule in `greeting.ts` (a name only when it is
   clearly a first name; never "there").
 - The reply window writes a first draft by itself (`/api/admin/leads/generate-email`). A person reads,
   corrects and sends. Nothing drafted goes out by itself.
@@ -100,15 +102,15 @@ So each email has a state (`sendState()` in `src/lib/crm/delivery.ts`), and the 
 | State | It means | What a person does |
 |---|---|---|
 | **on its way** | The email service has taken it and has not finished it. | Nothing. Never send it again: it is in the queue. |
-| **sent** | Confirmed: the service finished it, or our own copy of it arrived in the admin mailbox. | Nothing. |
+| **sent** | Confirmed: the email service finished it. | Nothing. |
 | **not confirmed** | A day has passed and nothing confirmed it. | Decide: "Send it again" on the lead's Emails tab makes that email due again. |
 | **did not go** | The service refused it, or gave up on it later. | A series email is due again by itself; the lead goes back to New if it was their only email. |
 
 `confirmSends()` in `delivery-sync.ts` looks for the proof, with the reply check (every 15 minutes from the
 heartbeat, every three minutes while the CRM is open):
 
-1. **Our own copy.** Every outreach email is copied to the admin mailbox. A copy with the same subject, to
-   the same person, that arrived after the send is proof that the email has left (`matchCopies`).
+1. **Our own copy** in the admin mailbox (`matchCopies`). Since 14 November 2026 outreach emails are no
+   longer copied there, so this finds nothing for new emails; the proof is the email service, below.
 2. **The email service**, by the number it gave the send (`emailSendState()` in `src/lib/email-service.ts`).
    Azure allows the whole site about 200 questions an hour and each send already uses up to two, so this
    asks six every ten minutes and goes round all the waiting emails. Do not raise that without counting.
@@ -219,3 +221,17 @@ sent. Never open them with real leads in a script.
 - Do not print or log a lead's name, address or message. Counts and ids only.
 - Do not match an imported row to a lead by its position in the list (`upsertLeads` once filled in the
   blanks of the wrong person that way): match by the lead itself.
+
+## 12. The evening report
+
+One email a day, at 22:15 India time, to Yusuf and Jalal with a copy to admin: what happened today
+(emails sent and by whom, emails that did not go, replies, new leads, where every lead stands, AI Weekend
+registrations, payments, website enquiries, learners), with an Excel file of the detail, one tab for each part.
+
+- The counting is ordinary code in `src/lib/daily-report.ts`; no model writes or counts anything.
+- `/api/admin/daily-report` is called by `.github/workflows/daily-report.yml` with the cron secret.
+  `?dry=1` answers with the numbers and sends nothing; `?day=YYYY-MM-DD` is another day.
+- Who gets it: the settings `DAILY_REPORT_TO` and `DAILY_REPORT_CC`, or the two lines at the top of the route.
+- `npx tsx scripts/daily-report-check.ts <folder>` makes the report from made-up people and writes the
+  email and the Excel file into the folder, to look at.
+- The amounts in it are for the three readers only. It is never sent to a list.

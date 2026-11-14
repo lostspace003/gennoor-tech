@@ -10,7 +10,6 @@ import { needsAnswer, sendRoom, sentInLastHour, HOURLY_SEND_LIMIT } from '@/lib/
 import { sendAgain } from '@/lib/crm/delivery'
 import { syncRepliesBriefly } from '@/lib/crm/reply-sync'
 
-const ADMIN_CC = process.env.EMAIL_ADMIN || 'admin@gennoor.com'
 // Outreach always leaves as sales@gennoor.com
 const FROM = process.env.EMAIL_FROM_SALES || 'sales@gennoor.com'
 const MAX_PER_CALL = 50
@@ -101,7 +100,11 @@ export async function POST(request: Request) {
     const needsCatalogue = jobs.some((j) => stepById(j.step)?.attachCatalogue)
     const catalogue = needsCatalogue ? await catalogExcelAttachment() : null
 
-    const cc = [...new Set([ADMIN_CC, user.email])]
+    // A copy goes to the person sending, so the lead's answer and the thread are in their own mailbox. No copy to
+    // the admin mailbox any more (owner, 14 November 2026: "sending a CC for every email just wastes the email"):
+    // what went is on the Emails tracker and in the report sent every evening. One email now uses two of the
+    // hour's deliveries instead of three.
+    const cc = [user.email]
     // `done` is false when the email service has taken the email and not finished sending it yet (see lib/crm/delivery.ts)
     const results: Array<{ leadId: string; ok: boolean; error?: string; op?: string; done?: boolean }> = []
     for (const job of jobs) {
