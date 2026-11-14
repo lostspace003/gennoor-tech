@@ -3,14 +3,14 @@
 import { useEffect, useRef, useState } from 'react'
 import {
   ArrowLeft, Mail, Phone, Building2, Linkedin, Globe, Send, Sparkles, Calendar, Trash2,
-  User, Paperclip, X,
+  User, Paperclip, X, Briefcase,
 } from 'lucide-react'
-import { Lead, LeadStatus, STEP_LABELS, STEP_HINTS } from '@/lib/crm/types'
+import { Lead, LeadStatus, STEP_LABELS, STEP_HINTS, LEAD_PROFILES, PROFILE_LABELS } from '@/lib/crm/types'
 import { SEQUENCE, sequenceProgress, stepNumber, fillTokens, LINKEDIN_CONNECT_NOTE, LINKEDIN_FIRST_MESSAGE } from '@/lib/crm/sequence'
 import { lastContactAt, needsAnswer } from '@/lib/crm/replies'
 import { istInstant } from '@/lib/crm/timezones'
 import { shortName } from '@/lib/crm/users'
-import { StepSelect, api, formatDateTime, timeAgo, DurationSlider, TimeSlider, LeadLocalTime } from './shared'
+import { StepSelect, Hint, api, formatDateTime, timeAgo, DurationSlider, TimeSlider, LeadLocalTime } from './shared'
 import { useCrm } from './CrmContext'
 import SendStepModal from './SendStep'
 import EmailBoard, { type InboundMessage } from './EmailBoard'
@@ -23,6 +23,13 @@ const TABS: Array<[Tab, string, any]> = [
   ['meeting', 'Meeting', Calendar],
 ]
 // Older links used other tab names; send them somewhere sensible
+/** A few words for each tab, said when the pointer is on it. */
+const TAB_HINTS: Record<Tab, string> = {
+  details: 'Who they are, your notes and the history',
+  emails: 'Send the next email, and see what was sent and received',
+  linkedin: 'Send a connection request or a message on LinkedIn',
+  meeting: 'Book a call with them',
+}
 const TAB_ALIASES: Record<string, Tab> = { overview: 'details', research: 'details', email: 'emails', schedule: 'meeting' }
 
 const externalUrl = (url: string) => (/^https?:\/\//i.test(url) ? url : `https://${url}`)
@@ -120,13 +127,14 @@ export default function LeadWorkspace({ lead, canManage, onClose, onReload, noti
         </div>
         <div className="flex items-center gap-1 mt-2.5 overflow-x-auto">
           {TABS.map(([id, label, Icon]) => (
-            <button
-              key={id}
-              onClick={() => setTab(id)}
-              className={`px-3 py-2 text-sm font-medium border-b-2 flex items-center gap-1.5 whitespace-nowrap transition-colors ${tab === id ? 'border-primary-600 text-primary-600' : 'border-transparent text-gray-500 hover:text-gray-800'}`}
-            >
-              <Icon className="w-4 h-4" /> {label}
-            </button>
+            <Hint key={id} text={TAB_HINTS[id]}>
+              <button
+                onClick={() => setTab(id)}
+                className={`px-3 py-2 text-sm font-medium border-b-2 flex items-center gap-1.5 whitespace-nowrap transition-colors ${tab === id ? 'border-primary-600 text-primary-600' : 'border-transparent text-gray-500 hover:text-gray-800'}`}
+              >
+                <Icon className="w-4 h-4" /> {label}
+              </button>
+            </Hint>
           ))}
         </div>
       </div>
@@ -194,7 +202,7 @@ function DetailsTab({ lead, canManage, canWork, onReload, onClose, notify }: { l
   const [saving, setSaving] = useState(false)
 
   const startEdit = () => {
-    setForm(Object.fromEntries([...DETAIL_FIELDS.map(([k]) => [k, String(lead[k] || '')]), ['notes', lead.notes || '']]))
+    setForm(Object.fromEntries([...DETAIL_FIELDS.map(([k]) => [k, String(lead[k] || '')]), ['notes', lead.notes || ''], ['profile', lead.profile || '']]))
     setEditing(true)
   }
 
@@ -246,6 +254,13 @@ function DetailsTab({ lead, canManage, canWork, onReload, onClose, notify }: { l
                   <input type={type || 'text'} value={form[key] || ''} onChange={(e) => setForm({ ...form, [key]: e.target.value })} className={inputCls} />
                 </div>
               ))}
+              <div>
+                <label htmlFor="lead-type" className="block text-xs text-gray-500 mb-1">Type</label>
+                <select id="lead-type" value={form.profile || ''} onChange={(e) => setForm({ ...form, profile: e.target.value })} className={`${inputCls} bg-raised`}>
+                  <option value="">Not set</option>
+                  {LEAD_PROFILES.map((p) => <option key={p} value={p}>{PROFILE_LABELS[p]}</option>)}
+                </select>
+              </div>
             </div>
             <div>
               <label className="block text-xs text-gray-500 mb-1">Notes</label>
@@ -262,6 +277,7 @@ function DetailsTab({ lead, canManage, canWork, onReload, onClose, notify }: { l
               <InfoRow icon={Mail} value={lead.email} href={lead.email ? `mailto:${lead.email}` : ''} placeholder="No email. Add one to start the email series." />
               <InfoRow icon={Phone} value={lead.phone} href={lead.phone ? `tel:${lead.phone.replace(/[^\d+]/g, '')}` : ''} placeholder="No phone" />
               <InfoRow icon={Building2} value={[lead.company, lead.designation].filter(Boolean).join(' · ')} placeholder="No organization" />
+              <InfoRow icon={Briefcase} value={lead.profile ? PROFILE_LABELS[lead.profile] : ''} placeholder="Type not set: technical or business" />
               <InfoRow icon={Globe} value={[lead.city, lead.country].filter(Boolean).join(', ')} placeholder="No country" />
               <InfoRow icon={Linkedin} value={lead.linkedin ? 'LinkedIn profile' : ''} href={lead.linkedin ? externalUrl(lead.linkedin) : ''} placeholder="No LinkedIn profile" />
               <InfoRow icon={Globe} value={lead.website} href={lead.website ? externalUrl(lead.website) : ''} placeholder="No website" />

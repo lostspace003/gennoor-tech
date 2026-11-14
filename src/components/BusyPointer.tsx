@@ -19,8 +19,18 @@ import { useEffect, useRef, useState } from 'react'
  * held, so a slow list does not lock the screen. The hold lets go by itself after HOLD_AT_MOST_MS, so a
  * request that never answers cannot freeze the page.
  * One circle only: the browser's own "busy" pointer is not switched on as well.
+ *
+ * The hold lasts until the page SHOWS the change, not only until the server has taken it (owner, 14 November
+ * 2026, moving a lead from New to Emailed: "it should lock the screen until it is shifted from one option to
+ * another. That is not there"). A page saves, then reads its list again; the hold used to let go between the
+ * two, so for a few seconds the old step was on screen and everything could be pressed. Now the reading that
+ * follows a change is held too (for FOLLOW_AT_MOST_MS at the longest).
+ * Choosing from a drop-down list counts as an action as well: a browser's own list sends no pointer event to
+ * the page, so a choice made slowly was not seen as something a person did, and nothing was held at all.
  */
 const HOLD_AT_MOST_MS = 20_000
+const FOLLOW_AT_MOST_MS = 10_000
+const FOLLOW_WITHIN_MS = 300
 const SHOW_AFTER_MS = 250
 const CLICK_WINDOW_MS = 4000
 
@@ -48,22 +58,37 @@ export default function BusyPointer() {
     window.fetch = async (...args: Parameters<typeof fetch>) => {
       const url = typeof args[0] === 'string' ? args[0] : args[0] instanceof URL ? args[0].pathname : (args[0] as Request).url
       const ours = /^\/api\/|^https?:\/\/[^/]+\/api\//.test(url) && !/\/api\/auth\//.test(url)
-      const shown = ours && Date.now() - lastAct < CLICK_WINDOW_MS
+      // A request made while a change is being held belongs to that change: the page reading its list again
+      const follows = ours && writes > 0
+      const shown = ours && (follows || Date.now() - lastAct < CLICK_WINDOW_MS)
       if (!shown) return real(...args)
       const method = String((args[1] as RequestInit | undefined)?.method || (args[0] instanceof Request ? args[0].method : 'GET')).toUpperCase()
       const change = method !== 'GET' && method !== 'HEAD'
       start()
-      if (change) hold()
-      try { return await real(...args) } finally { end(); if (change) release() }
+      if (change) {
+        hold()
+        // Let go a moment after the answer, so the reading the page starts next is caught by the hold
+        try { return await real(...args) } finally { end(); setTimeout(release, FOLLOW_WITHIN_MS) }
+      }
+      if (follows) {
+        hold()
+        let over = false
+        const off = () => { if (!over) { over = true; release() } }
+        const cap = setTimeout(off, FOLLOW_AT_MOST_MS)
+        try { return await real(...args) } finally { end(); clearTimeout(cap); off() }
+      }
+      try { return await real(...args) } finally { end() }
     }
     window.addEventListener('pointermove', move, { passive: true })
     window.addEventListener('pointerdown', acted, true)
     window.addEventListener('keydown', acted, true)
+    window.addEventListener('change', acted, true)
     return () => {
       window.fetch = real
       window.removeEventListener('pointermove', move)
       window.removeEventListener('pointerdown', acted, true)
       window.removeEventListener('keydown', acted, true)
+      window.removeEventListener('change', acted, true)
       if (timer) clearTimeout(timer)
       if (letGo) clearTimeout(letGo)
     }

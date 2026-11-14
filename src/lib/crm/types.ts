@@ -28,12 +28,32 @@ export const STEP_LABELS: Record<LeadStatus, string> = {
 /** One line per step, shown as help text wherever the step is chosen. */
 export const STEP_HINTS: Record<LeadStatus, string> = {
   new: 'Added, nothing sent yet',
-  contacted: 'We have emailed them and they have not replied yet. The next email of the series follows when it is due',
-  qualified: 'They replied or a call is booked',
+  contacted: 'We emailed them, no reply yet',
+  qualified: 'They replied, or a call is booked',
   proposal: 'A proposal or quote is with them',
   negotiation: 'A proposal or quote is with them',
   won: 'They bought',
   lost: 'Not going ahead for now',
+}
+
+/**
+ * The type of a lead: who we are writing to (owner, 14 November 2026: "technical professional or business
+ * professional, just two types"). It is a fact about the person, set in the lead sheet or by hand. It is not a
+ * step and moves nothing. Blank is allowed: "not set".
+ */
+export type LeadProfile = 'technical' | 'business'
+export const LEAD_PROFILES: LeadProfile[] = ['technical', 'business']
+export const PROFILE_LABELS: Record<LeadProfile, string> = { technical: 'Technical professional', business: 'Business professional' }
+/** For a narrow place: a column of a list. */
+export const PROFILE_SHORT: Record<LeadProfile, string> = { technical: 'Technical', business: 'Business' }
+
+/** What someone typed in the Type column, as one of the two types. Anything else is blank, never a guess. */
+export function readProfile(text: unknown): LeadProfile | '' {
+  const t = String(text ?? '').toLowerCase().replace(/[^a-z]+/g, ' ').trim()
+  if (!t) return ''
+  if (/\bnon ?tech/.test(t) || /\bbusiness\b/.test(t)) return 'business'
+  if (/\btech/.test(t)) return 'technical'
+  return ''
 }
 
 // Legacy fields. Nothing on screen reads these any more; they stay in the type
@@ -123,6 +143,8 @@ export interface Lead {
   /** The organization. Leads are grouped and filtered by this. */
   company: string
   designation: string
+  /** Technical professional or business professional. Not set: nobody has said. */
+  profile?: LeadProfile
   linkedin: string
   website: string
   status: LeadStatus
@@ -188,6 +210,7 @@ export function newLead(partial: Partial<Lead> & { name: string }, by: string): 
     phone: partial.phone || '',
     company: partial.company || '',
     designation: partial.designation || '',
+    profile: readProfile(partial.profile) || undefined,
     linkedin: partial.linkedin || '',
     website: partial.website || '',
     status: partial.status || 'new',

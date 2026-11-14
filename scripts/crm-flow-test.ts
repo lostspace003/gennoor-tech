@@ -69,7 +69,15 @@ ok(row?.name === 'Asha Rao' && row.email === 'asha@example.com' && row.company =
 ok(!row?.designation && !('Favourite colour' in (row as object)), '"NA" counts as blank and unknown columns are ignored')
 ok(rowToLead({ 'Full Name': '', 'E-mail': 'x@example.com' }, map) === null, 'a row without a name is skipped')
 ok(rowToLead({ 'First Name': 'Sam', 'Last Name': 'Lee' }, mapHeaders(['First Name', 'Last Name']))?.name === 'Sam Lee', 'first name + last name columns are joined')
-ok(LEAD_COLUMNS.length === 8 && LEAD_COLUMNS[0] === 'Name', 'the sheet has eight columns, Name first')
+ok(LEAD_COLUMNS.length === 9 && LEAD_COLUMNS[0] === 'Name', 'the sheet has nine columns, Name first')
+// The type: one of two, however it is spelled; anything else stays blank
+const typeMap = mapHeaders(['Name', 'Type', 'LinkedIn Profile'])
+ok(typeMap.Type === 'Type' && typeMap.LinkedIn === 'LinkedIn Profile', 'the Type column is recognised and is not confused with the LinkedIn profile')
+const typed = (v: string) => rowToLead({ Name: 'A B', Type: v }, typeMap)?.profile
+ok(typed('Technical professional') === 'technical' && typed('tech') === 'technical' && typed(' TECHNICAL ') === 'technical', 'Technical is read in its common spellings')
+ok(typed('Business professional') === 'business' && typed('Business') === 'business' && typed('Non-technical') === 'business', 'Business is read in its common spellings')
+ok(typed('') === undefined && typed('Manager') === undefined && typed('NA') === undefined, 'a blank or unknown type stays not set')
+ok(newLead({ name: 'X', profile: 'wizard' as any }, 'x@gennoor.com').profile === undefined && newLead({ name: 'X', profile: 'business' }, 'x@gennoor.com').profile === 'business', 'only the two types are ever stored')
 
 // ---- The emails
 const signer = teamMember('yusufchaudhary@gennoor.com')

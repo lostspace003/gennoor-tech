@@ -112,6 +112,7 @@ export async function upsertLeads(incoming: Lead[], by: string): Promise<{ added
         for (const field of ['phone', 'designation', 'linkedin', 'website', 'country', 'city', 'notes'] as const) {
           if (!existing[field] && lead[field]) (existing as any)[field] = lead[field]
         }
+        if (!existing.profile && lead.profile) existing.profile = lead.profile
         touch(existing, { at: new Date().toISOString(), by, type: 'imported', description: 'Refreshed from Excel import' })
         updated++
       } else {

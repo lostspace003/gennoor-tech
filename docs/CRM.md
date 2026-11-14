@@ -72,6 +72,27 @@ due**, **Missing an email address**, **Series finished, no reply**, **Waiting**.
 The row of six numbers at the top (`StepStrip` in `shared.tsx`) is the one view of where every lead
 stands. It is on Today (as links) and on the Leads page (as the step filter). Do not add a board.
 
+## 4a. The Leads page
+
+The owner (14 November 2026):
+
+- **It opens on New**: the leads nothing has been sent to yet. A link that asks for a step or a view
+  (`?step=`, `?scope=`) wins over that.
+- **One step at a time.** Pressing another step moves to it; pressing the chosen one again shows every
+  step. When the chosen step is empty and the other choices leave leads elsewhere, the list says how many
+  and offers them.
+- **A lead has a type: Technical professional or Business professional**, or it is not set (`profile` on
+  the lead; `readProfile()` in `src/lib/crm/types.ts` is the one place that reads what someone typed).
+  It is a column of the lead sheet ("Type"), a column and a filter of the list, a field when adding or
+  editing a lead, and a column of the export. A sheet's type that is neither is left blank and the check
+  before importing says so; it is never guessed. It is a fact about the person, not a step: it moves
+  nothing and no email depends on it yet.
+- **Every step, view and tab says what it is the moment the pointer is on it** (`Hint` in `shared.tsx`,
+  a few words; the step words are `STEP_HINTS`). Not the browser's own `title`, which waits a second.
+- **The page is held until a change shows.** `src/components/BusyPointer.tsx` holds the page from the
+  press until the list has been read again, and the step control shows the chosen step at once
+  (`StepSelect`). Before this the old step stayed on screen for some seconds and looked stuck.
+
 ## 5. Sending
 
 - The series is never sent to someone who is waiting for an answer from us. The server checks the

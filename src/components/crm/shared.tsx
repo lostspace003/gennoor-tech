@@ -59,6 +59,33 @@ export function StatusBadge({ status }: { status: LeadStatus }) {
 }
 
 /**
+ * A few words about a button, shown the moment the pointer is on it or the keyboard reaches it (owner,
+ * 14 November 2026: "the moment we hover over it, it should also just tell it in very short, what does this
+ * option mean"). The browser's own `title` waits a second and many people never see it. Keep the words short:
+ * one line. It is drawn over the page, so a row that scrolls sideways cannot cut it off.
+ */
+export function Hint({ text, children, className = 'inline-flex' }: { text: string; children: React.ReactNode; className?: string }) {
+  const [at, setAt] = useState<{ x: number; y: number } | null>(null)
+  const show = (e: React.SyntheticEvent<HTMLElement>) => {
+    const r = e.currentTarget.getBoundingClientRect()
+    const half = Math.min(130, window.innerWidth / 2 - 8)
+    setAt({ x: Math.min(Math.max(r.left + r.width / 2, half + 8), window.innerWidth - half - 8), y: r.bottom + 6 })
+  }
+  const hide = () => setAt(null)
+  return (
+    <span className={className} onMouseEnter={show} onMouseLeave={hide} onFocus={show} onBlur={hide}>
+      {children}
+      {at && text && createPortal(
+        <span role="tooltip" style={{ left: at.x, top: at.y }} className="pointer-events-none fixed z-[150] -translate-x-1/2 w-max max-w-[260px] rounded-md bg-inverse px-2 py-1 text-[11px] leading-snug text-[#fff] shadow-lg">
+          {text}
+        </span>,
+        document.body,
+      )}
+    </span>
+  )
+}
+
+/**
  * Where the leads stand, in one row: a count under each step, in the order a lead moves through them.
  * The owner asked to "track those users in a single frame" (13 November 2026): this is that frame, on Today
  * and on the Leads page. A step is a link (`hrefFor`) or a button that filters the list (`onPick`).
@@ -71,7 +98,7 @@ export function StepStrip({ counts, active = [], onPick, hrefFor }: {
 }) {
   const tile = (s: LeadStatus) => {
     const on = active.includes(s)
-    const cls = `flex-1 min-w-[5.5rem] rounded-lg border px-3 py-2 text-left transition-colors ${on ? 'border-primary-400 bg-primary-50' : 'border-gray-200 bg-raised hover:border-primary-300'}`
+    const cls = `w-full rounded-lg border px-3 py-2 text-left transition-colors ${on ? 'border-primary-400 bg-primary-50' : 'border-gray-200 bg-raised hover:border-primary-300'}`
     const inner = (
       <>
         <span className="flex items-center gap-1.5 text-[11px] text-gray-500">
@@ -80,20 +107,32 @@ export function StepStrip({ counts, active = [], onPick, hrefFor }: {
         <span className="block text-lg font-semibold leading-tight text-gray-900 tabular-nums">{counts[s] || 0}</span>
       </>
     )
-    return hrefFor
-      ? <Link key={s} href={hrefFor(s)} className={cls} title={STEP_HINTS[s]}>{inner}</Link>
-      : <button key={s} type="button" onClick={() => onPick?.(s)} aria-pressed={on} className={cls} title={STEP_HINTS[s]}>{inner}</button>
+    return (
+      <Hint key={s} text={STEP_HINTS[s]} className="flex flex-1 min-w-[5.5rem]">
+        {hrefFor
+          ? <Link href={hrefFor(s)} className={cls}>{inner}</Link>
+          : <button type="button" onClick={() => onPick?.(s)} aria-pressed={on} className={cls}>{inner}</button>}
+      </Hint>
+    )
   }
   return <div className="flex flex-wrap gap-2" role="group" aria-label="Leads at each step">{LEAD_STEPS.map(tile)}</div>
 }
 
 /** The step as a dropdown: the one control that moves a lead along. */
-export function StepSelect({ value, onChange, disabled }: { value: LeadStatus; onChange: (s: LeadStatus) => void; disabled?: boolean }) {
+export function StepSelect({ value, onChange, disabled }: { value: LeadStatus; onChange: (s: LeadStatus) => void | Promise<void>; disabled?: boolean }) {
+  // The step that was just chosen is shown at once and the control is held until the change is saved and the
+  // lead read again. It used to jump back to the old step for the seconds that took, which read as "it is not
+  // moving" (owner, 14 November 2026).
+  const [picked, setPicked] = useState<LeadStatus | null>(null)
   return (
     <select
-      value={value}
-      disabled={disabled}
-      onChange={(e) => onChange(e.target.value as LeadStatus)}
+      value={picked ?? value}
+      disabled={disabled || picked !== null}
+      onChange={(e) => {
+        const next = e.target.value as LeadStatus
+        setPicked(next)
+        Promise.resolve(onChange(next)).finally(() => setPicked(null))
+      }}
       onClick={(e) => e.stopPropagation()}
       title={STEP_HINTS[value]}
       className="text-xs border border-gray-300 rounded-lg px-2 py-1.5 bg-raised text-gray-800 hover:border-primary-400 disabled:opacity-60"
