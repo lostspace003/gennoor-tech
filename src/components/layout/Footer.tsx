@@ -1,12 +1,11 @@
 'use client'
 
 import { ClaudePartnerFooterLine } from '@/components/ClaudePartner'
-import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { siteConfig } from '@/lib/site-config'
 import { isChromelessRoute } from '@/lib/chrome'
-import EmailOTP from '@/components/EmailOTP'
+import { useSubscribe } from '@/hooks/useSubscribe'
 
 /**
  * Site footer in the Apple idiom (per the redesign handoff):
@@ -19,29 +18,15 @@ import EmailOTP from '@/components/EmailOTP'
 export default function Footer() {
   const currentYear = new Date().getFullYear()
   const pathname = usePathname()
-  const [email, setEmail] = useState('')
-  const [emailVerified, setEmailVerified] = useState(false)
-  const [subscribed, setSubscribed] = useState(false)
-
-  useEffect(() => {
-    setEmailVerified(false)
-  }, [email])
-
-  const handleSubscribe = async (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!email) return
-    try {
-      await fetch('/api/newsletter-subscribe', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, source: 'footer' }),
-      })
-    } catch { /* show success regardless — the OTP already verified the address */ }
-    setSubscribed(true)
-  }
+  // One field and one button; the address is confirmed from the email we send (src/hooks/useSubscribe.ts)
+  const sub = useSubscribe('footer')
 
   // App surfaces (CRM, admin, chapter player) have no marketing footer
   if (isChromelessRoute(pathname)) return null
+
+  // One way to sign up per page. The blog and every article carry their own, larger box just above this
+  // footer, so the box here would be a second one asking the same thing.
+  const pageHasOwnBox = (pathname || '').startsWith('/resources/blog')
 
   return (
     <footer className="bg-gray-50 border-t border-gray-200">
@@ -68,39 +53,41 @@ export default function Footer() {
         </div>
 
         {/* Newsletter — kept from the previous footer, restated quietly */}
+        {!pageHasOwnBox && (
         <div className="border-t border-gray-300 mt-9 pt-6 flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-6">
           <div className="flex-1">
-            <p className="text-xs font-semibold text-gray-900">Stay in touch</p>
+            <p className="text-xs font-semibold text-gray-900">Get new posts by email</p>
             <p className="text-xs text-gray-400 mt-0.5">
-              Occasional notes on AI training and automation.
+              One email a week, on Thursday, with that week&apos;s posts. No spam.
             </p>
           </div>
-          {subscribed ? (
-            <p className="text-xs font-medium text-green-600">
-              ✓ Subscribed — you&rsquo;ll get the next issue.
+          {sub.done ? (
+            <p className="text-xs font-medium text-green-700 sm:max-w-[360px]" role="status">
+              {sub.said}
             </p>
           ) : (
-            <form onSubmit={handleSubscribe} className="flex flex-wrap gap-2 w-full sm:w-auto items-center">
+            <form onSubmit={sub.submit} className="flex flex-wrap gap-2 w-full sm:w-auto items-center">
               <input
                 type="email"
-                value={email}
-                onChange={e => setEmail(e.target.value)}
+                value={sub.email}
+                onChange={e => sub.setEmail(e.target.value)}
                 placeholder="Enter your email"
-                aria-label="Email address for newsletter"
+                aria-label="Email address for new posts by email"
                 required
                 className="flex-1 sm:w-[220px] px-3.5 py-2 text-xs rounded-full bg-raised border border-gray-300 text-gray-900 placeholder:text-gray-400 focus:border-primary-600 focus:ring-0"
               />
-              <EmailOTP email={email} onVerified={() => setEmailVerified(true)} verified={emailVerified} compact />
               <button
                 type="submit"
-                disabled={!emailVerified}
+                disabled={sub.state === 'sending'}
                 className="px-4 py-2 text-xs font-semibold text-white bg-primary-600 hover:bg-primary-500 rounded-full transition-colors disabled:opacity-50"
               >
-                Subscribe
+                {sub.state === 'sending' ? 'Sending' : 'Subscribe'}
               </button>
+              {sub.state === 'error' && <p className="basis-full text-xs text-red-700" role="alert">{sub.said}</p>}
             </form>
           )}
         </div>
+        )}
 
         <ClaudePartnerFooterLine />
 

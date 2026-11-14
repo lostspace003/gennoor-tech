@@ -114,6 +114,14 @@ rules are in `docs/DESIGN.md`, section 9. Every colour is written by name there 
 - **A chat bubble stood in for WhatsApp.** Use `src/components/icons/WhatsAppIcon.tsx`.
 - **Justified text on a phone opened gaps between words.** `st-justify` justifies from tablet width up only.
 - **Menus inside menus** were removed on purpose (owner's request). Do not add a row that only opens a list.
+- **A dark bar with dark words in the light look** (the green bar of the process drawing on the Automation
+  page): its ground was a fixed dark value in `style={{}}` while its words followed the look. A ground and
+  the words on it change together: use a kit class that follows the look (`st-run`, `st-deep`, `st-solid`).
+  The contrast check missed it because it skipped words inside drawings; it reads them now.
+- **Words that appear only after a button is pressed were never measured** (a form's green "sent" line, its
+  red error line, the hint inside a field): three of them were too faint in one look. The contrast check
+  sees a page as it opens. Press the button, look, and measure those words by hand (4.5 to 1).
+- **Two subscribe boxes on one page** (the blog's own and the foot's). One box per page: `docs/NEWSLETTER.md`.
 - **A video said "Play with sound" in words, and had no slider.** The owner: "just having that simple icon
   can be good" and "we should be able to see the video slider ... the moment we hover over it". A button
   on a video is a round icon with no words, and every player of ours uses the one bar,

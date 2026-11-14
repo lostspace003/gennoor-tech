@@ -256,6 +256,10 @@
   --st-q-line: #c6d0e0;
   --st-deep: linear-gradient(180deg, #dce7f8, #d2deef);
   --st-deep-line: #b9c8de;
+  /* the "now it runs by itself" bar of a drawing: a light green tint here, with the look's dark words on it */
+  --st-run: linear-gradient(180deg, #e1f6eb, #cdeedd);
+  --st-run-line: rgba(18, 140, 92, 0.6);
+  --st-run-glow: 0 0 30px -12px rgba(18, 140, 92, 0.5);
   --st-gold-ink: #8a5200;
   --st-claude-ink: #a8481f;
   --st-art-mix: 30%;
@@ -673,6 +677,10 @@ a.st-chip:hover { background: var(--st-chip-hover); }
 .st-win-bar > b:nth-child(2) { background: #ffc24b; }
 .st-win-bar > b:nth-child(3) { background: #3ed598; }
 .st-win-bar > span { margin-left: 6px; min-width: 0; }
+
+/* The bar of a drawing that says a thing now runs by itself: deep green on the stage, a light green tint on the
+   day look (set there as --st-run). Its words are written with the colour names, so they follow the look too. */
+.st-run { background: var(--st-run, linear-gradient(180deg, #164237, #0d2b27)); border: 1px solid var(--st-run-line, rgba(62, 213, 152, 0.6)); box-shadow: var(--st-run-glow, 0 0 34px -6px rgba(62, 213, 152, 0.65)); }
 
 .st-track { height: 6px; border-radius: 99px; background: var(--st-track, rgba(255, 255, 255, 0.16)); overflow: hidden; }
 .st-track > i { display: block; height: 100%; border-radius: 99px; background: linear-gradient(90deg, #3d94ff, #62e0e8); }

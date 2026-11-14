@@ -39,7 +39,7 @@ export function emailFoot(opts?: { name?: string; tagline?: string; emails?: str
     <p style="color:#64748b;margin:0 0 8px;font-size:11px;letter-spacing:1.2px">${opts?.tagline || 'TRAIN · INNOVATE · BUILD'}</p>
     <p style="color:#475569;margin:0;font-size:12.5px;line-height:1.6">${contact}</p>
     <p style="color:#64748b;margin:8px 0 0;font-size:11px">${opts?.note || 'Gennoor Tech · Mumbai, India'}</p>
-    ${opts?.unsubscribeUrl ? `<p style="color:#64748b;margin:10px 0 0;font-size:11px;line-height:1.5">You are receiving this because you subscribed on gennoor.com. <a href="${opts.unsubscribeUrl}" style="color:#475569;text-decoration:underline">Unsubscribe</a></p>` : ''}
+    ${opts?.unsubscribeUrl ? `<p style="color:#64748b;margin:10px 0 0;font-size:11px;line-height:1.5">You get this once a week because you asked for new posts by email on gennoor.com. <a href="${opts.unsubscribeUrl}" style="color:#475569;text-decoration:underline">Unsubscribe</a></p>` : ''}
   </div>`
 }
 const ICON = (name: string) => `${SITE}/email/icon-${name}.png`

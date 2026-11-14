@@ -86,6 +86,7 @@ React pieces are in `src/components/stage/`; their classes start with `st-`.
 | `<Reveal>` | Holds the arrival of what is inside until it is on screen. |
 | `<Ring>`, `<Mark>` | The dotted ring of the logo. The only ornament. Behind a statement, never behind a list. |
 | `<ProcessFlow>` | The picture of a process done by hand, then running by itself. |
+| `st-run` | The green bar of such a picture ("now it runs by itself"): deep green on the stage, a light green tint on the day look, with the look's own words on it. |
 | `st-card` | A card. `st-gold` for the AI Weekend, `st-lit` for the one to notice, `st-solid` for one with more weight (navy on the stage, a deeper tint on the day look). |
 | `st-deep` | A deep panel where a card would be too light: the top of a course page. Follows the theme like `st-solid`. |
 | `st-ico` with `<b>3</b>` inside | A numbered tile: the step of a path, the number of a module. |
@@ -316,6 +317,12 @@ never says "nothing yet" before the answer has arrived.
    The owner's rule (13 November 2026): "when you change it to the light mode, the font should be
    properly visible." So measure it as well as look: `node scripts/contrast-check.mjs <pages>` opens each
    page in both looks and lists every piece of text that is hard to read. It must find none.
+   It reads the words inside a drawing too. Until 14 November 2026 it skipped them (a drawing is hidden
+   from screen readers, and the check took that to mean "not text"), and a dark bar with dark words on the
+   Automation page went unnoticed until the owner saw it. It still cannot judge very large ghost numbers,
+   the figure on an icon tile, or words over a photograph: look at those. And it sees a page as it opens,
+   so a message that appears only after a button is pressed (a form's "sent", its error line, the hint
+   inside a field) has to be looked at and measured by hand: 4.5 to 1 for small words.
 4. A link, a form field name or an API address must not change when only the look changes.
 5. A new page, or a page whose title changed: `node scripts/seo-head.mjs http://localhost:3111 <page>`
    and read what it prints against `docs/SEO.md`. Open its share picture (`/og/<key>`) and look at it.
@@ -360,6 +367,12 @@ words. Two things went wrong once, and the rules now cover them:
 - **A video player's own controls went dark on its black picture**, because the same rule reached inside
   it. `st-keep` on a thing, or on anything around it, leaves its colours alone. A player carries it
   (`PromoPlayer`).
+- **A ground written as a fixed dark value, with words that follow the look** (the green bar of
+  `ProcessFlow`, 14 November 2026): in the light look the words turned dark and the bar stayed dark.
+  A ground and the words on it must change together. Give the ground a kit class that follows the look
+  (`st-run`, `st-deep`, `st-solid`), never `style={{ background: ... }}` with a dark value.
+- **The hint inside a field on such a block** is `placeholder:text-gray-500`. `-400` is too faint there in
+  both looks (3.5 to 1 on the stage, 3.7 on the day look).
 
 ## Not to do
 

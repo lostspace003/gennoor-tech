@@ -9,7 +9,7 @@ import AdminThemeSwitch from '@/components/admin/AdminThemeSwitch'
 import {
   LayoutDashboard, Linkedin, Sparkles, GraduationCap, MessageSquare, Users, PhoneCall, Mail, Menu, X, ExternalLink, Wallet, PenLine, Bot, Network, History,
   ChevronLeft, ChevronRight, PanelLeftOpen, BarChart3, TrendingUp, Activity, BookOpen, Send, Calendar, Settings, HardDrive, Search, Globe, Lock, LogOut, Briefcase, MessageCircle,
-  Film, CalendarDays, LineChart, Megaphone, } from 'lucide-react'
+  Film, CalendarDays, LineChart, Megaphone, MailCheck, } from 'lucide-react'
 
 /**
  * The frame of the admin centre: the menu on the left, where you are at the top.
@@ -60,6 +60,7 @@ const GROUPS = [
   { title: 'Content', items: [
     { href: '/admin/social', label: 'Social studio', icon: Sparkles },
     { href: '/admin/blog', label: 'Blog studio', icon: PenLine },
+    { href: '/admin/newsletter', label: 'Weekly email', icon: MailCheck },
     { href: '/admin/video-series', label: 'Cert videos', icon: Film },
   ] },
   { title: 'Learners', items: [

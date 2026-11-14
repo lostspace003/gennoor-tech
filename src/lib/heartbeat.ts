@@ -11,12 +11,13 @@ import { blogScheduleTick, socialScheduleTick } from '@/lib/scheduled-publish'
 import { videoSeriesTick } from '@/lib/video-series'
 import { campaignTick } from '@/lib/promo-campaign'
 import { replyTick } from '@/lib/crm/reply-sync'
+import { weeklyEmailTick } from '@/lib/newsletter-live'
 
 let running = false
 
 /**
  * One heartbeat drives: the LinkedIn autopilot, posts and blogs you scheduled by hand, the Claude video series, the campaign for the two films,
- * the blog publishing flow (merge, live, share) and the daily blog.
+ * the blog publishing flow (merge, live, share), the daily blog, and the weekly email of new posts.
  * Used by the cron route and by the in-app timer, so both do exactly the same work. A run already going is not doubled.
  */
 export async function runHeartbeat(): Promise<void> {
@@ -38,6 +39,8 @@ export async function runHeartbeat(): Promise<void> {
     await run('linkedin-jobs', () => jobsTick())
     if (adsAppConfigured()) await run('linkedin-leadgen', async () => { const r = await syncLeadGenLeads(); return [`imported ${r.imported} of ${r.scanned}`] })
     await run('blog-auto', () => blogAutoTick(liveAutoDeps()))
+    // The weekly email of new posts to the people who asked for it: one issue on Thursday, a few emails at a time
+    await run('newsletter', () => weeklyEmailTick())
   } finally {
     running = false
   }
