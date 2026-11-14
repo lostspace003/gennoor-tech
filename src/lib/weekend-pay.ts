@@ -1,11 +1,11 @@
 import { createHmac, timingSafeEqual } from 'crypto'
 import { sendEmail } from '@/lib/email-service'
-import { WEEKEND, cohortById } from '@/data/ai-weekend'
+import { WEEKEND, cohortById, weekendFee } from '@/data/ai-weekend'
 import { getRegistrations, mutateRegistrations, getSettings, type WeekendRegistration } from '@/lib/weekend'
 import { createOrder, razorpayConfigured, razorpayKeyId } from '@/lib/razorpay'
 import { buildPaidEmail } from '@/lib/weekend-emails'
 import { money } from '@/lib/money'
-import { redeemCoupon, weekendUse } from '@/lib/lms-coupons'
+import { couponAmount, couponProblem, getCoupon, normalCode, redeemCoupon, weekendUse, WEEKEND_SCOPE } from '@/lib/lms-coupons'
 
 // Paying for an AI Weekend seat. One registration has at most one open order;
 // the same order is reused if the person comes back to pay later.
@@ -98,6 +98,28 @@ export async function markPaid(match: { orderId?: string; registrationId?: strin
     }).catch(() => {})
   }
   return 'paid'
+}
+
+/**
+ * Take a coupon code off a seat that is reserved and not yet paid: from the screen someone returns to after
+ * closing the payment window, or after the "Pay now" button of an email. The fee becomes the listed fee with
+ * the code taken off, in the money the seat was reserved in, and the order opened for the old amount is dropped.
+ * A code that leaves nothing to pay confirms the seat here (the use is counted first, so a code that has just
+ * run out gives nothing).
+ */
+export async function applyCouponToSeat(reg: WeekendRegistration, raw: unknown): Promise<{ error: string } | { reg: WeekendRegistration; covered: boolean }> {
+  const code = normalCode(raw)
+  const coupon = await getCoupon(code)
+  const problem = couponProblem(coupon, WEEKEND_SCOPE)
+  if (problem || !coupon) return { error: problem || 'That code is not valid.' }
+  if (reg.payment !== 'pending') return { error: 'This seat is already settled.' }
+  const cur = reg.currency || 'INR'
+  const fee = couponAmount(weekendFee(cur === 'INR').fee, cur, coupon.percent)
+  if (fee === 0 && !(await redeemCoupon(code, reg.email, weekendUse(reg.cohort), true))) return { error: 'That code has already been used the maximum number of times.' }
+  await mutateRegistrations((rows) => { const r = rows.find((x) => x.id === reg.id); if (r && r.payment === 'pending') { r.fee = fee; r.coupon = code; delete r.orderId } })
+  const next: WeekendRegistration = { ...reg, fee, coupon: code, orderId: undefined }
+  if (fee === 0) { await markPaid({ registrationId: reg.id }, ''); return { reg: { ...next, payment: 'paid' }, covered: true } }
+  return { reg: next, covered: false }
 }
 
 export const findRegistration = async (id: string) => (await getRegistrations()).find((r) => r.id === id) || null

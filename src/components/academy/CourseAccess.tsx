@@ -162,10 +162,9 @@ export function PriceLine({ className = '' }: { className?: string }) {
   )
 }
 
-/** "Have a coupon code?": opens a small box to type one in. It follows the theme, like the panels it sits on. */
+/** The coupon code field, always in view beside the price (it was a link that had to be found first). It follows the theme, like the panels it sits on. */
 export function CouponBox({ className = '' }: { className?: string }) {
   const b = useBuy()
-  const [open, setOpen] = useState(false)
   const [code, setCode] = useState('')
   const [checking, setChecking] = useState(false)
   const [problem, setProblem] = useState('')
@@ -175,12 +174,9 @@ export function CouponBox({ className = '' }: { className?: string }) {
     return (
       <p className={`text-[13px] text-gray-600 ${className}`}>
         Code <b className="font-semibold text-gray-900">{b.coupon.code}</b> applied: {b.coupon.percent >= 100 ? 'the course is free' : `${b.coupon.percent}% off`}.{' '}
-        <button type="button" onClick={() => { b.clearCoupon(); setCode(''); setOpen(false) }} className="underline underline-offset-2 hover:text-gray-900">Remove</button>
+        <button type="button" onClick={() => { b.clearCoupon(); setCode('') }} className="underline underline-offset-2 hover:text-gray-900">Remove</button>
       </p>
     )
-  }
-  if (!open) {
-    return <button type="button" onClick={() => setOpen(true)} className={`text-[13px] text-gray-500 underline underline-offset-2 hover:text-gray-900 ${className}`}>Have a coupon code?</button>
   }
   const apply = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -194,7 +190,7 @@ export function CouponBox({ className = '' }: { className?: string }) {
     <form onSubmit={apply} className={className}>
       <div className="flex items-center gap-2">
         <input
-          value={code} onChange={(e) => { setCode(e.target.value.toUpperCase()); setProblem('') }} autoFocus maxLength={24}
+          value={code} onChange={(e) => { setCode(e.target.value.toUpperCase()); setProblem('') }} maxLength={24}
           aria-label="Coupon code" placeholder="Coupon code" autoComplete="off" spellCheck={false}
           className="w-44 rounded-full border border-gray-300 bg-raised px-4 py-2 text-[14px] font-medium tracking-wide text-gray-900 placeholder:font-normal placeholder:tracking-normal placeholder:text-gray-400 focus:border-primary-400 focus:ring-0"
         />
