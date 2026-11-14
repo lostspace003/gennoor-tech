@@ -6,6 +6,7 @@ import { WEEKEND_EMAILS, CAMPAIGN_KINDS, buildWeekendEmail, type WeekendEmailKin
 import { sendEmail } from '@/lib/email-service'
 import { getLeads } from '@/lib/crm/store'
 import { getEnquiries } from '@/lib/azure-storage'
+import { paidAddresses } from '@/lib/crm/customers-live'
 import { ALL_WEEKENDS as ALL, campaignOrder, hadIt, noteWeekendEmails, type WeekendSend } from '@/lib/crm/weekend-outreach'
 import { razorpayConfigured, razorpayTestMode } from '@/lib/razorpay'
 import { payUrl } from '@/lib/weekend-pay'
@@ -31,8 +32,9 @@ const publicSettings = (s: CohortSettings = {}) => ({
  * stopped them), a lead who replied "stop", and anyone who pressed Unsubscribe in an email of ours.
  */
 async function askedToStop(): Promise<Set<string>> {
-  const [leads, outs] = await Promise.all([getLeads(), getEnquiries('Unsubscribe', 3650)])
-  const set = new Set<string>()
+  const [leads, outs, paid] = await Promise.all([getLeads(), getEnquiries('Unsubscribe', 3650), paidAddresses()])
+  // Someone who has paid, for a course or any weekend, gets no campaign email (owner, 14 November 2026)
+  const set = new Set<string>(paid)
   for (const l of leads) {
     if (!l.sequence?.stopped && l.reply?.kind !== 'stop') continue
     for (const e of [l.email, ...(l.altEmails || [])]) if (e) set.add(e.trim().toLowerCase())

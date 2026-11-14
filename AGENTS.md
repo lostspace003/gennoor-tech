@@ -67,6 +67,7 @@ npx tsx scripts/campaign-check.ts                      # the LinkedIn film campa
 npx tsx scripts/autopilot-check.ts                     # the autopilot: what it sends is whole and fits, the day's plan, the writing rules (no network)
 npx tsx scripts/crm-check.ts                           # the CRM: what a reply does, the Today lists, the hourly limit, has an email really gone (made-up leads)
 npx tsx scripts/daily-report-check.ts <folder>         # the evening report from made-up people: the numbers, the email and the Excel file to look at
+npx tsx scripts/customers-check.ts                     # paid customers: one row a person, their lead marked, the series stopped once (made-up people)
 npx tsx scripts/newsletter-check.ts                    # new posts by email: which Thursday, which posts, who, never twice, the confirm link (made-up posts and people)
 node scripts/email-art/logo.mjs --look <folder>        # draws the logo at the top of every email, in the brand's own lettering
 npx tsx --env-file=.env.local scripts/autopilot-live-check.ts --fresh   # research now and one post written for real; nothing saved

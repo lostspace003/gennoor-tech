@@ -4,6 +4,7 @@ import { requireCrmUser, canWorkLead } from '@/lib/crm/access'
 import { getLeads, mutateLeads, touch } from '@/lib/crm/store'
 import { newLead, Lead, LEAD_STEPS, STEP_LABELS } from '@/lib/crm/types'
 import { syncAutoLeadsIfDue } from '@/lib/crm/auto-leads'
+import { syncCustomersIfDue } from '@/lib/crm/customers-live'
 
 export async function GET() {
   const user = await requireCrmUser()
@@ -12,6 +13,8 @@ export async function GET() {
   try {
     // People who bought or finished a course, or sent a form, are added as leads first
     await syncAutoLeadsIfDue()
+    // Then those who have paid are marked: the promotional emails stop for them
+    await syncCustomersIfDue()
     const leads = await getLeads()
     return NextResponse.json({ leads, total: leads.length })
   } catch (error) {
