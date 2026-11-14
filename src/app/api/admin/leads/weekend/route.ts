@@ -89,6 +89,7 @@ export async function POST(req: NextRequest) {
     if (!canWorkLead(lead, user)) return refuse(`This lead is held by ${lead.owner.split('@')[0]}.`, 403)
     if (!isOpen(lead)) return refuse('This lead is archived or closed.')
     if (!lead.email) return refuse('This lead has no email address.')
+    if (lead.customer) return refuse('This person has already paid. Promotional emails are not sent to paid customers. Nothing was sent.')
     if (lead.sequence?.stopped || lead.reply?.kind === 'stop') return refuse('The emails for this lead were stopped. Nothing was sent.')
     if (needsAnswer(lead)) return refuse('They replied and are waiting for an answer. Answer first; nothing was sent.')
     const mine = addressesOf(lead)

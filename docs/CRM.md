@@ -235,3 +235,17 @@ registrations, payments, website enquiries, learners), with an Excel file of the
 - `npx tsx scripts/daily-report-check.ts <folder>` makes the report from made-up people and writes the
   email and the Excel file into the folder, to look at.
 - The amounts in it are for the three readers only. It is never sent to a list.
+
+## 13. Paid customers
+
+Someone who has paid for a course or an AI Weekend is a customer, not a prospect (owner, 14 November 2026).
+
+- **Their own page:** CRM, "Paid customers" (`/crm/customers`): who, what they paid for, how much, when, and
+  their lead. Read from the course purchases and the paid AI Weekend registrations; a refund is not a payment.
+- **No promotional email:** their lead is marked `customer` and the email series is stopped with the reason
+  "Paid customer" (`markCustomers` in `src/lib/crm/customers.ts`, run when the leads are read). The AI Weekend
+  campaign leaves out every paid address, lead or not. The emails about what they bought (payment received,
+  the joining link, the kit) still go, and so does the weekly email they subscribed to themselves.
+- A lead is marked once. If a person starts the series again by hand for a customer, it stays started.
+- They stay in the leads list, with a green "paid" mark.
+- `npx tsx scripts/customers-check.ts` checks it with made-up people.

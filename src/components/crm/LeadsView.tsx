@@ -411,6 +411,7 @@ export default function LeadsView({ leads, canManage, onOpenLead, onReload, noti
                   <td className="px-4 py-2.5 max-w-[240px]">
                     <div className="text-sm font-medium text-gray-900 truncate">
                       {lead.name}
+                      {lead.customer && <span className="ml-2 align-middle text-[10.5px] font-semibold rounded-full px-1.5 py-0.5 bg-green-100 text-green-700">paid</span>}
                       {needsAnswer(lead) && <span className={`ml-2 align-middle text-[10.5px] font-semibold rounded-full px-1.5 py-0.5 ${lead.reply?.kind === 'stop' ? 'bg-gray-200 text-gray-700' : 'bg-red-100 text-red-700'}`}>{lead.reply?.kind === 'stop' ? 'asked to stop' : 'replied'}</span>}
                     </div>
                     <div className="text-xs text-gray-500 truncate">{lead.email || <span className="text-amber-600">no email</span>}</div>

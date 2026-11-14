@@ -135,6 +135,8 @@ export interface Lead {
   // owner === '' means unassigned (visible to all, anyone can pick it up).
   // Archived leads are parked with a reason and can be restored.
   dumped?: { at: string; by: string; reason: string }
+  /** Set once this person has paid for a course or an AI Weekend (lib/crm/customers.ts): no promotional emails. */
+  customer?: { since: string; at: string }
   sequence?: SequenceState
   /** The last thing they wrote to us, kept by the mailbox check (see ./replies.ts and ./reply-sync.ts). */
   reply?: LeadReply

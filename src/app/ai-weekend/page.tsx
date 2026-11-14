@@ -33,7 +33,8 @@ export default async function AiWeekendPage() {
   // Online payment is on once the Razorpay keys are set; until then people reserve and pay later
   const online = razorpayConfigured()
   // The fee is added to the ribbon in the visitor's own money (rupees in India, dollars elsewhere): <WeekendFee>
-  const ribbon = `Limited cohort of ${WEEKEND.seats} · ${cohort.label}`
+  // How many seats there are, and how many are left, is for the admin centre only (owner, 14 November 2026)
+  const ribbon = `Limited cohort · ${cohort.label}`
 
   return (
     <main className="text-gray-900 pb-28">
@@ -71,7 +72,7 @@ export default async function AiWeekendPage() {
                 </a>
                 <div className="text-sm leading-tight">
                   <div><s className="text-white/55"><WeekendFee part="regular" /></s> <span className="font-semibold text-white"><WeekendFee /></span> <span className="text-white/70">for this cohort</span></div>
-                  {left !== null && <div className="mt-1 font-semibold text-amber-300">{full ? 'This cohort is full' : `${left} of ${WEEKEND.seats} seats left`}</div>}
+                  {left !== null && <div className="mt-1 font-semibold text-amber-300">{full ? 'This cohort is full' : 'Few seats remaining'}</div>}
                 </div>
               </div>
             </div>
@@ -235,23 +236,13 @@ export default async function AiWeekendPage() {
           <div>
             <h2 className="text-3xl sm:text-4xl font-bold tracking-tight">Reserve your seat</h2>
             <p className="mt-2 text-gray-600">{cohort.label} · {time}</p>
-            <div className="mt-5 inline-flex items-center rounded-full st-night px-3 py-1 text-xs font-semibold text-amber-300">Limited cohort · {WEEKEND.seats} seats</div>
+            <div className="mt-5 inline-flex items-center rounded-full st-night px-3 py-1 text-xs font-semibold text-amber-300">Limited cohort</div>
             <div className="mt-3 flex flex-wrap items-baseline gap-x-3 gap-y-1">
               <s className="text-2xl font-semibold text-gray-400"><span className="sr-only">Regular price </span><WeekendFee part="regular" /></s>
               <span className="min-h-[48px] text-5xl font-bold tracking-tight text-gray-900"><WeekendFee /></span>
               <span className="text-sm text-gray-500">for both days</span>
             </div>
-            {left !== null && taken !== null && (
-              <div className="mt-4 max-w-sm">
-                <div className="flex justify-between text-sm">
-                  <span className="font-semibold text-gray-900">{full ? 'This cohort is full' : `${left} seats left`}</span>
-                  <span className="text-gray-500">{taken} of {WEEKEND.seats} taken</span>
-                </div>
-                <div className="mt-1.5 h-2 rounded-full bg-raised" role="progressbar" aria-valuemin={0} aria-valuemax={WEEKEND.seats} aria-valuenow={taken} aria-label="Seats taken">
-                  <div className="h-2 rounded-full bg-[#f5a623]" style={{ width: `${Math.min(100, (taken / WEEKEND.seats) * 100)}%` }} />
-                </div>
-              </div>
-            )}
+            {left !== null && <p className="mt-4 text-sm font-semibold text-gray-900">{full ? 'This cohort is full' : 'Few seats remaining'}</p>}
             <ul className="mt-6 space-y-3">
               {INCLUDED.map((x) => (
                 <li key={x} className="flex gap-3 text-[15px] text-gray-800"><Check className="w-4 h-4 mt-1 shrink-0 text-green-600" />{x}</li>
@@ -306,7 +297,7 @@ export default async function AiWeekendPage() {
         </div>
       </section>
 
-      <StickyRegister note={left === null ? cohort.label : full ? 'This cohort is full' : `${left} seats left · ${cohort.label}`} />
+      <StickyRegister note={left === null ? cohort.label : full ? 'This cohort is full' : `Few seats remaining · ${cohort.label}`} />
 
       <style>{`
         .weekend-ribbon { animation: weekend-ribbon 38s linear infinite; width: max-content; }

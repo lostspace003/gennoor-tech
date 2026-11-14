@@ -7,7 +7,7 @@ import { SessionProvider, useSession, signOut } from 'next-auth/react'
 import {
   Users, Inbox, Calendar, FolderOpen, Mail, MessageSquare, Phone,
   LogOut, RefreshCw, Menu, X, AlertCircle, Zap, UsersRound, MessageCircle,
-  PanelLeftClose, PanelLeftOpen, ChevronDown,
+  PanelLeftClose, PanelLeftOpen, ChevronDown, BadgeCheck,
 } from 'lucide-react'
 import { CrmProvider, useCrm } from '@/components/crm/CrmContext'
 import RouteProgress from '@/components/portal/RouteProgress'
@@ -22,6 +22,7 @@ const NAV = [
   { href: '/crm/inbox', label: 'Replies', icon: Inbox },
   { href: '/crm/scheduler', label: 'Meetings', icon: Calendar },
   { href: '/crm/emails', label: 'Emails', icon: Mail },
+  { href: '/crm/customers', label: 'Paid customers', icon: BadgeCheck },
   { href: '/crm/playbook', label: 'Call guide', icon: Phone },
   { href: '/crm/enquiries', label: 'Website enquiries', icon: MessageSquare, more: true },
   { href: '/crm/documents', label: 'Files', icon: FolderOpen, more: true },
