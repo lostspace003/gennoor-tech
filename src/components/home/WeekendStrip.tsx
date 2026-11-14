@@ -26,7 +26,7 @@ export default function WeekendStrip() {
             <span className="rounded-full bg-[#ffc24b]/15 border border-[#ffc24b]/40 px-2.5 py-0.5 text-[11.5px] font-bold uppercase tracking-[0.1em] st-gold-ink">Live · every month</span>
           </span>
           <span className="min-w-0 flex-1 basis-[280px]">
-            <span className="block text-[16.5px] sm:text-[17.5px] font-semibold leading-snug text-gray-900">{WEEKEND.name}: {WEEKEND.tagline.charAt(0).toLowerCase() + WEEKEND.tagline.slice(1)}</span>
+            <span className="block text-[16.5px] sm:text-[17.5px] font-semibold leading-snug text-gray-900">{WEEKEND.heading}: {WEEKEND.tagline}</span>
             <span className="block text-[13.5px] text-gray-600 mt-0.5">
               Last weekend of every month · Saturday &amp; Sunday · live online ·{' '}
               <span className="font-semibold text-gray-900"><WeekendFee /></span> <s className="text-gray-400"><WeekendFee part="regular" /></s>
