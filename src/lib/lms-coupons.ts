@@ -2,20 +2,29 @@ import { randomInt } from 'crypto'
 import { key, table, type CoursePrice } from '@/lib/lms-access'
 
 /**
- * Coupon codes for Learning Studio courses.
+ * Coupon codes for Learning Studio courses and for the AI Weekend.
  *
- * Staff create a code on the Payments page: how much it takes off (100 makes
- * the course free), until when it works, how many people may use it, and
- * whether it is for every course or one. A buyer types the code on the course
- * page. Each person counts once per course, and a use is counted when the
- * course becomes theirs (payment confirmed, or at once for a free code).
+ * Staff create a code on the Payments page: how much it takes off (100 leaves
+ * nothing to pay), until when it works, how many people may use it, and what
+ * it is good for: every course, one course, the AI Weekend, or everything.
+ * A buyer types the code on the course page, or in the AI Weekend's form.
+ * Each person counts once per course (or per weekend), and a use is counted
+ * when the course or the seat becomes theirs (payment confirmed, or at once
+ * for a code that leaves nothing to pay).
  */
+
+/** In a coupon's `slug`: the code is for the AI Weekend. No course has this address. */
+export const WEEKEND_SCOPE = 'ai-weekend'
+/** In a coupon's `slug`: the code is for every course and for the AI Weekend. */
+export const EVERYTHING = '*'
+/** What a use of a code for one weekend is counted under, so the same person can use a code again another month. */
+export const weekendUse = (cohort: string) => `${WEEKEND_SCOPE}:${cohort}`
 
 export interface Coupon {
   code: string
   /** Percent taken off the course price, 1 to 100. 100 gives the course free. */
   percent: number
-  /** The one course it works for, or '' for every course */
+  /** The one course it works for; '' for every course; WEEKEND_SCOPE for the AI Weekend; EVERYTHING for both */
   slug: string
   /** ISO time after which it stops working, or '' for no end */
   expiresAt: string
@@ -94,7 +103,13 @@ export async function deleteCoupon(code: string): Promise<void> {
 export function couponProblem(c: Coupon | null, slug: string): string | null {
   if (!c || !c.active) return 'That code is not valid.'
   if (c.expiresAt && Date.parse(c.expiresAt) <= Date.now()) return 'That code has expired.'
-  if (c.slug && c.slug !== slug) return 'That code is for a different course.'
+  // `slug` is the course being bought, or WEEKEND_SCOPE for a seat on the AI Weekend
+  const weekend = slug === WEEKEND_SCOPE
+  if (c.slug !== EVERYTHING) {
+    if (weekend && c.slug !== WEEKEND_SCOPE) return 'That code is for a course, not for the AI Weekend.'
+    if (!weekend && c.slug === WEEKEND_SCOPE) return 'That code is for the AI Weekend, not for a course.'
+    if (!weekend && c.slug && c.slug !== slug) return 'That code is for a different course.'
+  }
   if (c.maxUses > 0 && c.uses >= c.maxUses) return 'That code has already been used the maximum number of times.'
   return null
 }
@@ -107,6 +122,13 @@ export function couponPrice(price: CoursePrice, percent: number): CoursePrice {
     usd: Math.max(0.5, Math.round(price.usd * (100 - percent)) / 100),
     inr: Math.max(1, Math.round((price.inr * (100 - percent)) / 100)),
   }
+}
+
+/** What the AI Weekend costs with a percent taken off, in one currency. Zero means nothing to pay. */
+export function couponAmount(fee: number, currency: 'INR' | 'USD', percent: number): number {
+  if (percent >= 100) return 0
+  // Razorpay will not take a payment smaller than these
+  return currency === 'INR' ? Math.max(1, Math.round((fee * (100 - percent)) / 100)) : Math.max(0.5, Math.round(fee * (100 - percent)) / 100)
 }
 
 /**

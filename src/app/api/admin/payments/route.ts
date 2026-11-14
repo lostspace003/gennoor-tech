@@ -40,7 +40,7 @@ export async function GET() {
       // AI Weekend seats marked Paid. Ones paid online carry a payment reference; ones marked by hand do not.
       ...registrations.filter((r) => r.payment === 'paid').map((r) => ({
         at: r.paidAt || r.at, kind: 'weekend' as const, what: `${WEEKEND.name}, ${cohortById(r.cohort)?.label || r.cohort}`,
-        name: r.name, email: r.email, amount: r.fee, currency: r.currency || ('INR' as const), paymentId: r.paymentId || '', cohort: r.cohort, cohortLabel: cohortById(r.cohort)?.label || r.cohort,
+        name: r.name, email: r.email, amount: r.fee, currency: r.currency || ('INR' as const), paymentId: r.paymentId || '', coupon: r.coupon, cohort: r.cohort, cohortLabel: cohortById(r.cohort)?.label || r.cohort,
       })),
     ].sort((a, b) => b.at.localeCompare(a.at))
 

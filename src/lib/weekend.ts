@@ -32,6 +32,8 @@ export interface WeekendRegistration {
   orderId?: string
   paymentId?: string
   paidAt?: string
+  /** The coupon code used for this seat, if any (lib/lms-coupons.ts). `fee` is then the amount with the code taken off: 0 means nothing was paid. */
+  coupon?: string
   /** When each of the weekend's emails was last sent to them, by kind (see weekend-emails.ts). */
   emails?: Record<string, string>
 }
