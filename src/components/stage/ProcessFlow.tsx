@@ -49,9 +49,11 @@ export default function ProcessFlow({ className, caption = 'One process your tea
             <Ico icon={Timer} tone="ink" size={34} />
             <span className="text-[14.5px] sm:text-[16.5px] font-semibold text-gray-600">Done by hand, every week</span>
           </div>
+          {/* st-run follows the look: deep green on the stage, a light green tint on the day look. Its ground was
+              a fixed dark green here, and the words (which do follow the look) were dark on dark by day. */}
           <div
-            className="st-pop col-start-1 row-start-1 flex min-h-14 flex-wrap items-center gap-x-2.5 gap-y-1.5 sm:gap-x-3 rounded-2xl px-3 py-2 sm:px-4"
-            style={{ ...turn(12), background: 'linear-gradient(180deg,#164237,#0d2b27)', border: '1px solid rgba(62,213,152,.6)', boxShadow: '0 0 34px -6px rgba(62,213,152,.65)' }}
+            className="st-pop st-run col-start-1 row-start-1 flex min-h-14 flex-wrap items-center gap-x-2.5 gap-y-1.5 sm:gap-x-3 rounded-2xl px-3 py-2 sm:px-4"
+            style={turn(12)}
           >
             <Ico icon={Zap} tone="gold" round size={34} />
             <span className="flex-1 basis-[150px] text-[14px] sm:text-[16.5px] font-semibold leading-tight text-gray-900">Now it runs when they ask</span>

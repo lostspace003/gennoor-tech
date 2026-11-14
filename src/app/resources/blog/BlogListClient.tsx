@@ -1,10 +1,10 @@
 'use client'
 
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useMemo } from 'react'
 import Link from 'next/link'
 import { type BlogPostMeta } from '@/data/blog-posts'
 import { CheckCircle } from 'lucide-react'
-import EmailOTP from '@/components/EmailOTP'
+import { useSubscribe } from '@/hooks/useSubscribe'
 import { FilterBar, Pagination, usePage } from '@/components/academy/CatalogControls'
 import BlogArt from '@/components/blog/BlogArt'
 
@@ -27,13 +27,8 @@ export default function BlogListClient({ posts, categories }: BlogListClientProp
   const [activeCategory, setActiveCategory] = useState<string | null>(null)
   const [sortOrder, setSortOrder] = useState<SortOrder>('newest')
   const [timeFilter, setTimeFilter] = useState<TimeFilter>('all')
-  const [email, setEmail] = useState('')
-  const [subscribed, setSubscribed] = useState(false)
-  const [emailVerified, setEmailVerified] = useState(false)
-
-  useEffect(() => {
-    setEmailVerified(false)
-  }, [email])
+  // One field and one button; the address is confirmed from the email we send (src/hooks/useSubscribe.ts)
+  const sub = useSubscribe('blog-list')
 
   const filtered = useMemo(() => {
     let result = [...posts]
@@ -69,19 +64,6 @@ export default function BlogListClient({ posts, categories }: BlogListClientProp
   const rest = filtered.filter(p => p.slug !== hero?.slug)
   const pg = usePage(`${activeCategory}|${sortOrder}|${timeFilter}`, rest.length, 9)
   const activeFilters = (activeCategory ? 1 : 0) + (timeFilter !== 'all' ? 1 : 0)
-
-  const handleSubscribe = async (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!email) return
-    try {
-      await fetch('/api/newsletter-subscribe', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, source: 'blog-list' }),
-      })
-    } catch { /* show success */ }
-    setSubscribed(true)
-  }
 
   return (
     <>
@@ -192,12 +174,10 @@ export default function BlogListClient({ posts, categories }: BlogListClientProp
 
           {/* Newsletter — preserved feature, quiet dark panel */}
           <div className="st-night mt-10 bg-gray-900 rounded-3xl px-7 sm:px-10 py-7">
-            {subscribed ? (
-              <div className="flex items-center gap-3 text-white">
-                <CheckCircle className="h-5 w-5 text-green-400" aria-hidden="true" />
-                <p className="text-sm font-medium">
-                  Subscribed. You will get one email a week, on Thursday, with the new posts.
-                </p>
+            {sub.done ? (
+              <div className="flex items-center gap-3 text-white" role="status">
+                <CheckCircle className="h-5 w-5 shrink-0 text-green-400" aria-hidden="true" />
+                <p className="text-sm font-medium">{sub.said}</p>
               </div>
             ) : (
               <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
@@ -205,24 +185,24 @@ export default function BlogListClient({ posts, categories }: BlogListClientProp
                   <h3 className="text-[15px] font-bold text-white mb-0.5">Get new posts by email</h3>
                   <p className="text-[13px] text-gray-400">One email a week, on Thursday, with that week&apos;s posts. No spam.</p>
                 </div>
-                <form onSubmit={handleSubscribe} className="flex flex-wrap gap-2 w-full sm:w-auto">
+                <form onSubmit={sub.submit} className="flex flex-wrap gap-2 w-full sm:w-auto">
                   <input
                     type="email"
                     required
-                    value={email}
-                    onChange={e => setEmail(e.target.value)}
+                    value={sub.email}
+                    onChange={e => sub.setEmail(e.target.value)}
                     placeholder="Your email"
-                    aria-label="Email address for newsletter"
-                    className="flex-1 sm:w-56 px-4 py-2.5 rounded-full text-sm bg-white/10 text-white placeholder:text-gray-400 border border-white/10 focus:outline-none focus:border-primary-600"
+                    aria-label="Email address for new posts by email"
+                    className="flex-1 sm:w-56 px-4 py-2.5 rounded-full text-sm bg-white/10 text-white placeholder:text-gray-500 border border-white/10 focus:outline-none focus:border-primary-600"
                   />
-                  <EmailOTP email={email} onVerified={() => setEmailVerified(true)} verified={emailVerified} compact />
                   <button
                     type="submit"
-                    disabled={!emailVerified}
+                    disabled={sub.state === 'sending'}
                     className="shrink-0 px-5 py-2.5 bg-primary-600 hover:bg-primary-500 text-white font-semibold text-sm rounded-full transition-colors disabled:opacity-50"
                   >
-                    Subscribe
+                    {sub.state === 'sending' ? 'Sending' : 'Subscribe'}
                   </button>
+                  {sub.state === 'error' && <p className="basis-full text-[13px] text-red-300" role="alert">{sub.said}</p>}
                 </form>
               </div>
             )}

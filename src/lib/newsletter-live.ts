@@ -1,9 +1,9 @@
 import { blogPostsMeta } from '@/data/blog-posts'
-import { getEmailLogs, getEnquiries } from '@/lib/azure-storage'
+import { getEmailLogs, getEnquiries, saveEnquiry } from '@/lib/azure-storage'
 import { sendEmail } from '@/lib/email-service'
 import { readBlob, writeBlob } from '@/lib/social/studio'
-import { unsubscribeUrl } from '@/lib/unsubscribe'
-import { digestEmail } from './newsletter-email'
+import { confirmUrl, unsubscribeUrl } from '@/lib/unsubscribe'
+import { confirmEmail, digestEmail } from './newsletter-email'
 import { issueFor, issueTime, newsletterTick, nextIssue, postsFor, subscribed, PER_HOUR, PER_TICK, type DigestPost, type Mark, type NewsletterDeps, type NewsletterState } from './newsletter'
 
 /**
@@ -34,6 +34,50 @@ async function signUps() {
   return { subs, outs, people: subscribed(marks(subs), marks(outs)) }
 }
 
+// ---- Signing up: type the address, press the button in the email ---------------------------------------------------
+
+const REQUESTS = 'newsletter/requests.json'
+/** One address typed into a box, until its owner confirms it. Kept so the admin page can say how many are waiting. */
+interface Request { email: string; source: string; at: string }
+
+async function requests(): Promise<Request[]> {
+  const file = await readBlob(REQUESTS).catch(() => null)
+  if (!file) return []
+  try { return JSON.parse(file.toString('utf-8')) as Request[] } catch { return [] }
+}
+
+/** Is this address on the list now? */
+export async function isSubscribed(email: string): Promise<boolean> {
+  return (await signUps()).people.includes(email.trim().toLowerCase())
+}
+
+/**
+ * Someone typed an address into a subscribe box: send it the "Confirm your email" message. It is NOT on the list
+ * yet. 'already' when the address is on the list (nothing is sent); 'failed' when the email service did not
+ * take the message, so the page can say so instead of pretending.
+ */
+export async function askToConfirm(email: string, source: string): Promise<'sent' | 'already' | 'failed'> {
+  const address = email.trim().toLowerCase()
+  if (await isSubscribed(address)) return 'already'
+  const mail = confirmEmail(confirmUrl(address, source))
+  const result = await sendEmail({ to: address, from: FROM, fromName: 'Gennoor Tech', subject: mail.subject, html: mail.html })
+  if (!result.success) return 'failed'
+  // Remembered for the admin page only; if this cannot be written, the sign-up still works
+  try {
+    const list = [{ email: address, source, at: new Date().toISOString() }, ...(await requests()).filter((r) => r.email !== address)].slice(0, 500)
+    await writeBlob(REQUESTS, JSON.stringify(list), 'application/json')
+  } catch (e) { console.error('Newsletter request note failed:', e) }
+  return 'sent'
+}
+
+/** The owner of an address pressed the button in the email: put it on the list (once). */
+export async function confirmSignUp(email: string, source: string): Promise<'added' | 'already'> {
+  const address = email.trim().toLowerCase()
+  if (await isSubscribed(address)) return 'already'
+  await saveEnquiry('NewsletterSubscription', { email: address, source, subscribedAt: new Date().toISOString(), confirmed: true })
+  return 'added'
+}
+
 /** How many more emails the site as a whole can still send this hour. */
 async function siteRoom(): Promise<number> {
   const since = Date.now() - 3_600_000
@@ -41,9 +85,9 @@ async function siteRoom(): Promise<number> {
   return Math.max(0, SITE_HOURLY_CEILING - lastHour)
 }
 
-async function sendIssue(email: string, issue: string, posts: DigestPost[]): Promise<boolean> {
+async function sendIssue(email: string, _issue: string, posts: DigestPost[]): Promise<boolean> {
   const link = unsubscribeUrl(email)
-  const mail = digestEmail(posts, issue, link)
+  const mail = digestEmail(posts, link)
   // unsubscribeUrl also sets the one-click headers Gmail and Outlook expect from a sender of many emails
   const result = await sendEmail({ to: email, from: FROM, fromName: 'Gennoor Tech', subject: mail.subject, html: mail.html, unsubscribeUrl: link })
   return result.success
@@ -66,13 +110,15 @@ export const weeklyEmailTick = () => newsletterTick(liveNewsletterDeps())
 
 /** Everything the admin page shows. `me` is the signed-in person: the preview carries their own unsubscribe link. */
 export async function newsletterStatus(me: string, now = Date.now()) {
-  const [state, { subs, outs, people }] = await Promise.all([loadNewsletter(), signUps()])
+  const [state, { subs, outs, people }, asked] = await Promise.all([loadNewsletter(), signUps(), requests()])
+  // Typed their address in the last two weeks and have not pressed the button in the email yet
+  const waitingToConfirm = asked.filter((r) => !people.includes(r.email) && now - Date.parse(r.at) < 14 * 86_400_000).length
   const due = issueFor(now)
   // The email that goes next: the one going out now, else this week's if the heartbeat has not started it yet, else next Thursday's
   const upcoming = state?.current?.issue || (state && !state.history.some((h) => h.issue === due) ? due : nextIssue(now))
   const sentBefore = (state?.history || []).flatMap((h) => h.slugs)
   const posts = state?.current ? state.current.slugs.map((s) => blogPostsMeta.find((p) => p.slug === s)).filter((p): p is (typeof blogPostsMeta)[number] => !!p) : postsFor(upcoming, blogPostsMeta, sentBefore)
-  const preview = posts.length ? digestEmail(posts, upcoming, unsubscribeUrl(me)) : null
+  const preview = posts.length ? digestEmail(posts, unsubscribeUrl(me)) : null
   const since = new Map<string, { at: string; source: string }>()
   for (const r of subs) {
     const e = String(r.email || '').trim().toLowerCase()
@@ -82,6 +128,7 @@ export async function newsletterStatus(me: string, now = Date.now()) {
   return {
     people: people.map((email) => ({ email, since: since.get(email)?.at || '', source: since.get(email)?.source || '' })).reverse(),
     signedUp: since.size,
+    waitingToConfirm,
     stopped: new Set(outs.map((r) => String(r.email || '').trim().toLowerCase()).filter(Boolean)).size,
     upcoming: { issue: upcoming, goesAt: new Date(issueTime(upcoming)).toISOString(), posts: posts.map((p) => ({ slug: p.slug, title: p.title, date: p.date })) },
     current: state?.current ? { issue: state.current.issue, sent: state.current.sent.length, waiting: people.filter((e) => !state.current!.sent.some((s) => s.email === e)).length, startedAt: state.current.startedAt } : null,

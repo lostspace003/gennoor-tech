@@ -4,7 +4,7 @@ import { useState, useEffect, useMemo } from 'react'
 import Link from 'next/link'
 import dynamic from 'next/dynamic'
 import { type BlogPost, type BlogPostMeta } from '@/data/blog-posts'
-import EmailOTP from '@/components/EmailOTP'
+import { useSubscribe } from '@/hooks/useSubscribe'
 import { CheckCircle } from 'lucide-react'
 import AuthorByline from '@/components/blog/AuthorByline'
 import KeyTakeaways from '@/components/blog/KeyTakeaways'
@@ -224,34 +224,16 @@ export default function BlogPostClient({ post, slug, relatedPosts }: {
   slug: string
   relatedPosts: BlogPostMeta[]
 }) {
-  const [email, setEmail] = useState('')
-  const [subscribed, setSubscribed] = useState(false)
+  // One field and one button; the address is confirmed from the email we send (src/hooks/useSubscribe.ts)
+  const sub = useSubscribe(`blog:${post.slug}`)
   const [scrolled, setScrolled] = useState(false)
-  const [emailVerified, setEmailVerified] = useState(false)
   const [showSummary, setShowSummary] = useState(false)
-
-  useEffect(() => {
-    setEmailVerified(false)
-  }, [email])
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 200)
     window.addEventListener('scroll', handleScroll)
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
-
-  const handleSubscribe = async (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!email) return
-    try {
-      await fetch('/api/newsletter-subscribe', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, source: `blog:${post.slug}` }),
-      })
-    } catch { /* show success */ }
-    setSubscribed(true)
-  }
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: 'rgb(var(--gray-100))' }}>
@@ -422,13 +404,11 @@ export default function BlogPostClient({ post, slug, relatedPosts }: {
         {/* A band that follows the theme: navy on the stage, a deep tint with dark words on the day look */}
         <div className="st-night mt-8 rounded-2xl shadow-lg overflow-hidden">
           <div className="px-6 sm:px-10 py-10 text-center">
-            {subscribed ? (
-              <div className="flex flex-col items-center gap-3">
-                <CheckCircle className="h-10 w-10" style={{ color: '#4ade80' }} />
-                <h3 className="text-xl font-bold text-white">You&apos;re subscribed!</h3>
-                <p className="max-w-md text-sm text-white/70">
-                  You will get one email a week, on Thursday, with the new posts.
-                </p>
+            {sub.done ? (
+              <div className="flex flex-col items-center gap-3" role="status">
+                <CheckCircle className="h-10 w-10 text-green-400" aria-hidden="true" />
+                <h3 className="text-xl font-bold text-white">{sub.title}</h3>
+                <p className="max-w-md text-sm text-white/70">{sub.detail}</p>
               </div>
             ) : (
               <>
@@ -436,15 +416,14 @@ export default function BlogPostClient({ post, slug, relatedPosts }: {
                 <p className="mb-6 max-w-md mx-auto text-sm text-white/70">
                   One email a week, on Thursday, with that week&apos;s posts. No spam.
                 </p>
-                <form onSubmit={handleSubscribe} className="flex flex-col sm:flex-row items-center justify-center gap-3 max-w-sm mx-auto">
-                  <input type="email" required value={email} onChange={e => setEmail(e.target.value)} placeholder="Enter your email"
-                    aria-label="Email address for newsletter"
-                    className="w-full sm:flex-1 px-4 py-2.5 rounded-lg text-sm focus:outline-none bg-white/10 text-white border border-white/15 placeholder:text-gray-400" />
-                  <EmailOTP email={email} onVerified={() => setEmailVerified(true)} verified={emailVerified} compact />
-                  <button type="submit" disabled={!emailVerified} className="shrink-0 px-5 py-2.5 font-semibold text-sm rounded-lg transition-colors hover:opacity-90 bg-primary-600 text-white"
-                    style={{ opacity: !emailVerified ? 0.5 : 1 }}>
-                    Subscribe
+                <form onSubmit={sub.submit} className="flex flex-col sm:flex-row flex-wrap items-center justify-center gap-3 max-w-sm mx-auto">
+                  <input type="email" required value={sub.email} onChange={e => sub.setEmail(e.target.value)} placeholder="Enter your email"
+                    aria-label="Email address for new posts by email"
+                    className="w-full sm:flex-1 px-4 py-2.5 rounded-lg text-sm focus:outline-none bg-white/10 text-white border border-white/15 placeholder:text-gray-500" />
+                  <button type="submit" disabled={sub.state === 'sending'} className="shrink-0 px-5 py-2.5 font-semibold text-sm rounded-lg transition-colors hover:opacity-90 bg-primary-600 text-white disabled:opacity-50">
+                    {sub.state === 'sending' ? 'Sending' : 'Subscribe'}
                   </button>
+                  {sub.state === 'error' && <p className="basis-full text-[13px] text-red-300" role="alert">{sub.said}</p>}
                 </form>
               </>
             )}

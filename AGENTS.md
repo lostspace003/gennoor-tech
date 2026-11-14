@@ -14,6 +14,7 @@ guide before doing that kind of work.
 | A new page, a title or a description, the picture a shared link shows, a blog post, the sitemap | `docs/SEO.md` | `gennoor-site-design` |
 | A LinkedIn post, a blog article, the autopilot, the film campaign, what any writer or reviewer is told | `docs/LINKEDIN.md` and `src/lib/writing-rules.ts` | |
 | The CRM: leads, replies, the email series, the Today page | `docs/CRM.md` | |
+| "Get new posts by email": a subscribe box, the email that confirms an address, the weekly email of new posts | `docs/NEWSLETTER.md` | |
 | An email the site sends: its top, its foot, its logo | `docs/DESIGN.md`, "Emails" | `gennoor-site-design` |
 | Finishing: branch, pull request, merge, deploy | `.claude/skills/gennoor-ship/SKILL.md` | `gennoor-ship` |
 
@@ -60,6 +61,7 @@ python scripts/stage-codemod.py --admin                # fixed colours in the ad
 npx tsx scripts/campaign-check.ts                      # the LinkedIn film campaign: the plan and all its posts
 npx tsx scripts/autopilot-check.ts                     # the autopilot: what it sends is whole and fits, the day's plan, the writing rules (no network)
 npx tsx scripts/crm-check.ts                           # the CRM: what a reply does, the Today lists, the hourly limit, has an email really gone (made-up leads)
+npx tsx scripts/newsletter-check.ts                    # new posts by email: which Thursday, which posts, who, never twice, the confirm link (made-up posts and people)
 node scripts/email-art/logo.mjs --look <folder>        # draws the logo at the top of every email, in the brand's own lettering
 npx tsx --env-file=.env.local scripts/autopilot-live-check.ts --fresh   # research now and one post written for real; nothing saved
 npx tsx --env-file=.env.local scripts/blog-live-check.ts       # one whole article written for real; nothing saved

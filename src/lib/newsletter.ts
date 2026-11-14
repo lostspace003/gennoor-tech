@@ -7,8 +7,9 @@
  * ever followed. The site was promising something it did not do.
  *
  * Now, once a week:
- *  - on Thursday at 10:00 India time an issue is due. It holds the posts published in the seven days up to and
- *    including that Thursday, newest first. A post is never sent in two issues.
+ *  - on Thursday at 10:00 India time an issue is due. It holds the posts published since the last one, newest
+ *    first: from the Thursday before (a post that came out that day after the email had gone belongs to this
+ *    one) up to and including its own Thursday. A post is never sent in two issues, and none falls between two.
  *  - it goes to everyone who signed up and has not asked to stop since. One email a week, never one a post:
  *    the blog publishes every day, and the box says "No spam".
  *  - it goes out a few at a time (PER_TICK each heartbeat, PER_HOUR an hour), because the email service allows
@@ -31,8 +32,8 @@ export interface DigestPost {
 /** Thursday (0 is Sunday), at 10:00, India time. Change the two numbers here and nowhere else. */
 export const ISSUE_DAY = 4
 export const ISSUE_HOUR = 10
-/** No more posts than this in one email: a week of daily posts. */
-export const MAX_POSTS = 7
+/** No more posts than this in one email: a week of daily posts, and one that came out late the Thursday before. */
+export const MAX_POSTS = 8
 /** How many emails go at each heartbeat (every 15 minutes), and in any one hour. */
 export const PER_TICK = 5
 export const PER_HOUR = 20
@@ -59,9 +60,15 @@ export const nextIssue = (now: number): string => dayOf(Date.parse(issueFor(now)
 /** The moment an issue becomes due, as a time. */
 export const issueTime = (issue: string): number => Date.parse(`${issue}T00:00:00Z`) + ISSUE_HOUR * 3_600_000 - IST_MS
 
-/** The posts of an issue: published in the seven days up to and including its Thursday, and not sent before. */
+/**
+ * The posts of an issue: published from the Thursday before up to and including its own Thursday, and not sent
+ * before. The Thursday before is included on purpose. The blog's daily post usually reaches the site a little
+ * after 09:00 India time, but some days it comes later; a post that came out on a Thursday after that week's
+ * email had gone would otherwise be in no email at all. What went last week is left out by its name
+ * (`sentBefore`), so nothing is sent twice.
+ */
 export function postsFor<P extends DigestPost>(issue: string, posts: P[], sentBefore: string[] = []): P[] {
-  const from = dayOf(Date.parse(issue) - 6 * DAY_MS)
+  const from = dayOf(Date.parse(issue) - 7 * DAY_MS)
   const gone = new Set(sentBefore)
   return posts
     .filter((p) => p.date >= from && p.date <= issue && !gone.has(p.slug))

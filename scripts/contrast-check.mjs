@@ -111,7 +111,16 @@ for (const theme of themes) {
         const el = n.parentElement
         if (text.length < 2 || !el || seen.has(el)) continue
         seen.add(el)
-        if (el.closest('script,style,noscript,svg,[aria-hidden="true"],.sr-only,option,button:disabled,[aria-disabled="true"]')) continue
+        if (el.closest('script,style,noscript,svg,.sr-only,option,button:disabled,[aria-disabled="true"]')) continue
+        // A drawing made of real words (a process, a window, a chart) is marked aria-hidden so a screen reader
+        // hears its one description instead; a person who can see still reads every word of it. Those words
+        // were skipped here until 14 November 2026, and a dark bar with dark words on the Automation page went
+        // unnoticed. Only very large ghost text behind a card (a faint "01") is still left out.
+        if (el.closest('[aria-hidden="true"]') && parseFloat(getComputedStyle(el).fontSize) >= 40) continue
+        // A number or a code drawn ON an icon tile (.st-ico) is white, bold, with a dark shadow, on the tile's own
+        // colour; it is the same on every look. This measure sees neither the shadow nor where on the tile's
+        // glossy gradient the figure sits, so it would call every such tile unreadable. Look at them instead.
+        if (el.closest('.st-ico')) continue
         // the logo is drawn in the brand's own colours, letter by letter: it is a picture, not text to be judged
         if (/^Gennoor\s*Tech/i.test((el.parentElement?.textContent || '').trim()) && text.length <= 4) continue
         const cs = getComputedStyle(el)

@@ -8,6 +8,7 @@ interface Done { issue: string; slugs: string[]; sent: number; finishedAt: strin
 interface Data {
   people: Person[]
   signedUp: number
+  waitingToConfirm: number
   stopped: number
   upcoming: { issue: string; goesAt: string; posts: { slug: string; title: string; date: string }[] }
   current: { issue: string; sent: number; waiting: number; startedAt: string } | null
@@ -54,7 +55,7 @@ export default function NewsletterPage() {
         <div>
           <h1 className="text-xl font-semibold text-gray-900">Weekly email</h1>
           <p className="text-[13px] text-gray-500 mt-0.5 max-w-2xl">
-            People who typed their address into &quot;Get new posts by email&quot; get one email a week, on Thursday at 10:00 India time, with the posts of that week. It goes by itself. A week with no new post sends nothing.
+            Someone types their address into &quot;Get new posts by email&quot; (at the foot of a page, on the blog, on every article) and presses the button in the email we send to confirm it. From then on they get one email a week, on Thursday at 10:00 India time, with the posts of that week. It goes by itself. A week with no new post sends nothing.
           </p>
         </div>
         <div className="flex gap-2">
@@ -75,7 +76,7 @@ export default function NewsletterPage() {
             <div className={tile}>
               <div className="text-[12px] text-gray-500 flex items-center gap-1.5"><Users className="w-3.5 h-3.5" /> Subscribed now</div>
               <div className="text-2xl font-semibold text-gray-900 tabular-nums mt-0.5">{data.people.length}</div>
-              <div className="text-[12px] text-gray-500">{data.signedUp} signed up in all, {data.stopped} asked to stop</div>
+              <div className="text-[12px] text-gray-500">{data.waitingToConfirm} still to press the button in their email, {data.stopped} asked to stop</div>
             </div>
             <div className={tile}>
               <div className="text-[12px] text-gray-500 flex items-center gap-1.5"><CalendarClock className="w-3.5 h-3.5" /> {data.current ? 'Going out now' : 'Next email'}</div>

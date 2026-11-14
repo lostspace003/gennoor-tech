@@ -45,6 +45,38 @@ export function siteUrl(): string {
   return (process.env.NEXT_PUBLIC_SITE_URL || 'https://www.gennoor.com').replace(/\/$/, '')
 }
 
+// ---- Confirming a sign-up -----------------------------------------------------------------------------------------
+//
+// Someone types an address into "Get new posts by email". Before that address is put on the list, its owner
+// must press a button in an email sent to it: otherwise anyone could sign up anyone. The link carries the
+// address inside a signed token (not as a plain part of the address bar), so nothing has to be stored to
+// issue one, and a link is good only for the address it was made for. It stops working after two weeks.
+
+const CONFIRM_DAYS = 14
+
+/** The link in the "Confirm your email" message. `source` says which box they used (footer, blog...). */
+export function confirmUrl(email: string, source = 'site', now = Date.now()): string {
+  const payload = Buffer.from(JSON.stringify({ e: normalise(email), s: String(source).slice(0, 40), t: now })).toString('base64url')
+  const signature = createHmac('sha256', secret()).update(`confirm:${payload}`).digest('hex').slice(0, 32)
+  return `${siteUrl()}/api/newsletter-confirm?t=${payload}.${signature}`
+}
+
+/** Who a confirm link was made for, or null when it is not one of ours, was changed, or is too old. */
+export function readConfirmToken(token: string, now = Date.now()): { email: string; source: string } | null {
+  const [payload, signature] = String(token || '').split('.')
+  if (!payload || !signature) return null
+  const expected = createHmac('sha256', secret()).update(`confirm:${payload}`).digest('hex').slice(0, 32)
+  try {
+    if (signature.length !== expected.length || !timingSafeEqual(Buffer.from(expected), Buffer.from(signature))) return null
+    const data = JSON.parse(Buffer.from(payload, 'base64url').toString('utf-8')) as { e?: string; s?: string; t?: number }
+    if (!data.e || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.e)) return null
+    if (!data.t || now - data.t > CONFIRM_DAYS * 86_400_000 || data.t - now > 86_400_000) return null
+    return { email: data.e, source: String(data.s || 'site') }
+  } catch {
+    return null
+  }
+}
+
 /** Absolute unsubscribe URL to embed in a marketing email footer. */
 export function unsubscribeUrl(email: string): string {
   const e = encodeURIComponent(normalise(email))
