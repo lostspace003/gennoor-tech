@@ -2,6 +2,17 @@
 @tailwind components;
 @tailwind utilities;
 
+/* A link that has been pressed and whose page is still on its way (components/portal/RouteProgress.tsx):
+   it is ringed in the accent and breathes, so a press is seen at once even when the page takes a moment. */
+a[data-pending='1'] {
+  outline: 2px solid rgb(var(--primary-600) / 0.55);
+  outline-offset: -2px;
+  border-radius: 10px;
+  animation: link-pending 0.9s ease-in-out infinite;
+}
+@keyframes link-pending { 50% { opacity: 0.55; } }
+@media (prefers-reduced-motion: reduce) { a[data-pending='1'] { animation: none; } }
+
 /**
  * ── Gennoor foundation ──────────────────────────────────────────────────────
  *
