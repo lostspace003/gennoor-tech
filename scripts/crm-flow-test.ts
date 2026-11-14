@@ -14,7 +14,7 @@ import { teamMember } from '../src/lib/crm/team'
 import { WEEKEND_EMAILS, CAMPAIGN_KINDS, buildWeekendEmail, buildPaidEmail, closesWords } from '../src/lib/weekend-emails'
 import { hmacHex, validPaymentSignature, validWebhookSignature } from '../src/lib/razorpay'
 import { previewIds, isPreview, PREVIEW_MAX, DEFAULT_PRICE, formatUsd, formatInr } from '../src/lib/lms-access'
-import { WEEKEND, nextCohort, cohortById, weekendFee, closedNote } from '../src/data/ai-weekend'
+import { WEEKEND, CAMPAIGN_OUTREACH, nextCohort, cohortById, weekendFee, closedNote } from '../src/data/ai-weekend'
 
 let pass = 0, fail = 0
 const ok = (c: boolean, n: string) => { c ? pass++ : (fail++, console.log('  FAIL:', n)); if (c) console.log('  ok  :', n) }
@@ -126,6 +126,7 @@ for (const [i, info] of WEEKEND_EMAILS.entries()) {
 ok(buildWeekendEmail('join', {}, nov, { joinUrl: 'https://teams.example/join' }).html.includes('href="https://teams.example/join"'), 'the joining email links to the saved Teams link')
 
 // ---- The AI Weekend campaign: from "what is it" to "registration closes" to "thank you"
+ok(CAMPAIGN_OUTREACH.map((e) => `${e.kind}:${e.title}`).join('|') === WEEKEND_EMAILS.filter((e) => e.outreach).map((e) => `${e.kind}:${e.title}`).join('|'), 'the names the CRM shows for the campaign emails are the ones the emails carry')
 ok(CAMPAIGN_KINDS.join() === 'invite,inside,fit,closing,thanks', 'the campaign has five emails, from the invitation to the thank-you', CAMPAIGN_KINDS.join())
 for (const info of WEEKEND_EMAILS.filter((e) => e.outreach)) {
   const mail = buildWeekendEmail(info.kind, {}, nov)

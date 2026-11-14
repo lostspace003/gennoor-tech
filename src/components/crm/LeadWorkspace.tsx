@@ -1,20 +1,18 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
-import DOMPurify from 'dompurify'
 import {
   ArrowLeft, Mail, Phone, Building2, Linkedin, Globe, Send, Sparkles, Calendar, Trash2,
-  User, RefreshCw, Paperclip, Reply, Check, CircleDashed, Ban, Play, X, Clock, AlertTriangle,
+  User, Paperclip, X,
 } from 'lucide-react'
 import { Lead, LeadStatus, STEP_LABELS, STEP_HINTS } from '@/lib/crm/types'
-import { SEQUENCE, sequenceProgress, stepNumber, fillTokens, LINKEDIN_CONNECT_NOTE, LINKEDIN_FIRST_MESSAGE } from '@/lib/crm/sequence'
+import { stepNumber, fillTokens, LINKEDIN_CONNECT_NOTE, LINKEDIN_FIRST_MESSAGE } from '@/lib/crm/sequence'
 import { istInstant } from '@/lib/crm/timezones'
 import { shortName } from '@/lib/crm/users'
-import { StatusBadge, StepSelect, api, formatDateTime, timeAgo, Spinner, DurationSlider, TimeSlider, LeadLocalTime } from './shared'
+import { StatusBadge, StepSelect, api, formatDateTime, DurationSlider, TimeSlider, LeadLocalTime } from './shared'
 import { useCrm } from './CrmContext'
 import SendStepModal from './SendStep'
-import { needsAnswer } from '@/lib/crm/replies'
-import { sendHint, sendState, seriesRecord, span, type SendState } from '@/lib/crm/delivery'
+import EmailBoard, { type InboundMessage } from './EmailBoard'
 
 type Tab = 'details' | 'emails' | 'linkedin' | 'meeting'
 const TABS: Array<[Tab, string, any]> = [
@@ -29,7 +27,6 @@ const TAB_ALIASES: Record<string, Tab> = { overview: 'details', research: 'detai
 const externalUrl = (url: string) => (/^https?:\/\//i.test(url) ? url : `https://${url}`)
 const inputCls = 'w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-primary-500 focus:border-transparent'
 
-interface InboundMessage { id: string; from: string; subject: string; preview: string; body: string; receivedAt: string; mailboxes?: string[] }
 type Notify = (msg: string, isError?: boolean) => void
 
 interface Props {
@@ -41,9 +38,11 @@ interface Props {
   initialTab?: string
   /** They came from Today to answer a reply, or to write a follow-up: the right window opens by itself. */
   intent?: 'reply' | 'write'
+  /** An email to put on the Emails board at once (the email tracker links here with it). */
+  stage?: string
 }
 
-export default function LeadWorkspace({ lead, canManage, onClose, onReload, notify, initialTab, intent }: Props) {
+export default function LeadWorkspace({ lead, canManage, onClose, onReload, notify, initialTab, intent, stage }: Props) {
   const pickTab = (t?: string): Tab => (TABS.some(([id]) => id === t) ? (t as Tab) : TAB_ALIASES[t || ''] || 'details')
   const [tab, setTab] = useState<Tab>(pickTab(initialTab))
   const { userEmail, isManager, ask } = useCrm()
@@ -133,7 +132,7 @@ export default function LeadWorkspace({ lead, canManage, onClose, onReload, noti
 
       <div className="flex-1 overflow-y-auto">
         {tab === 'details' && <DetailsTab lead={lead} canManage={canManage} canWork={canWork} onReload={onReload} onClose={onClose} notify={notify} />}
-        {tab === 'emails' && <EmailsTab lead={lead} canWork={canWork} onReload={onReload} notify={notify} intent={intent} />}
+        {tab === 'emails' && <EmailsTab lead={lead} canWork={canWork} onReload={onReload} notify={notify} intent={intent} stage={stage} />}
         {tab === 'linkedin' && <LinkedInTab lead={lead} canWork={canWork} onReload={onReload} notify={notify} onEdit={() => setTab('details')} />}
         {tab === 'meeting' && <MeetingTab lead={lead} canWork={canWork} onReload={onReload} notify={notify} />}
       </div>
@@ -295,7 +294,7 @@ function InfoRow({ icon: Icon, value, href, placeholder }: { icon: any; value: s
 
 /* ---------------- Emails: the series, then the conversation ---------------- */
 
-function EmailsTab({ lead, canWork, onReload, notify, intent }: { lead: Lead; canWork: boolean; onReload: () => Promise<void>; notify: Notify; intent?: 'reply' | 'write' }) {
+function EmailsTab({ lead, canWork, onReload, notify, intent, stage }: { lead: Lead; canWork: boolean; onReload: () => Promise<void>; notify: Notify; intent?: 'reply' | 'write'; stage?: string }) {
   const { ask } = useCrm()
   const [opened, setOpened] = useState(false)
   const [inbound, setInbound] = useState<InboundMessage[]>([])
@@ -303,8 +302,6 @@ function EmailsTab({ lead, canWork, onReload, notify, intent }: { lead: Lead; ca
   const [loading, setLoading] = useState(true)
   const [sending, setSending] = useState(false)
   const [composing, setComposing] = useState<{ replyTo: InboundMessage | null } | null>(null)
-  const [expanded, setExpanded] = useState<number | null>(null)
-  const progress = sequenceProgress(lead)
 
   const loadInbox = async () => {
     setLoading(true)
@@ -331,7 +328,6 @@ function EmailsTab({ lead, canWork, onReload, notify, intent }: { lead: Lead; ca
   }
 
   // They came here to answer or to follow up: open the right window once, when the mail has been read
-  const waiting = needsAnswer(lead)
   useEffect(() => {
     if (opened || loading || !canWork || !lead.email || !intent) return
     setOpened(true)
@@ -362,167 +358,27 @@ function EmailsTab({ lead, canWork, onReload, notify, intent }: { lead: Lead; ca
     try {
       await api('/api/admin/leads/sequence', { method: 'PATCH', body: JSON.stringify({ leadIds: [lead.id], action: 'again', step }) })
       await onReload()
-      notify(`Email ${stepNumber(step)} is due again. Review and send it.`)
+      notify(`Email ${stepNumber(step)} is due again. Drag it onto the board to send it.`)
     } catch (e: any) { notify(e.message, true) }
   }
 
-  // Emails of the series the email service has taken and nothing has confirmed yet (and those a day old, still unconfirmed)
-  const stateOfStep = (step: string) => { const r = seriesRecord(lead, step); return r ? sendState(r) : 'sent' }
-  const waitingToGo = (lead.sequence?.sent || []).filter((x) => stateOfStep(x.step) === 'onItsWay').length
-  const neverConfirmed = (lead.sequence?.sent || []).filter((x) => stateOfStep(x.step) === 'unconfirmed').length
-
-  // What each email we sent has come to: gone, on its way, never confirmed, or failed (lib/crm/delivery.ts)
-  const STATE_WORDS: Record<SendState, string> = { sent: '', onItsWay: ' · on its way', unconfirmed: ' · not confirmed', failed: ' · DID NOT GO' }
-
-  const thread = [
-    ...lead.emailHistory.map((e) => ({
-      kind: 'sent' as const, at: e.at, subject: e.subject, status: sendState(e) as string,
-      detail: `to ${e.to}${e.step ? ` · email ${stepNumber(e.step)} of the series` : ''}`,
-      note: sendState(e) === 'sent' ? '' : sendHint({ at: e.at, state: sendState(e), error: e.error }),
-      body: e.body || '', html: '', raw: null as InboundMessage | null,
-    })),
-    ...inbound.map((m) => ({
-      kind: 'received' as const, at: m.receivedAt, subject: m.subject, status: 'received',
-      detail: `from ${m.from}`, note: '',
-      body: (m.body || m.preview).replace(/<style[\s\S]*?<\/style>/gi, '').replace(/<[^>]+>/g, ' ').replace(/\s{3,}/g, '\n').trim(),
-      html: /<[a-z][\s\S]*>/i.test(m.body || '') ? m.body : '', raw: m,
-    })),
-  ].sort((a, b) => b.at.localeCompare(a.at))
-
+  // The board draws everything; this keeps the windows that open over it (components/crm/EmailBoard.tsx)
   return (
-    <div className="p-3 sm:p-5 grid grid-cols-1 lg:grid-cols-[320px_1fr] gap-4 lg:gap-6 max-w-6xl">
-      {/* The series */}
-      <div className="space-y-3">
-        <div className="flex items-center justify-between">
-          <h3 className="text-sm font-medium text-gray-500">Email series</h3>
-          <span className="text-xs text-gray-400">{progress.sentIds.length - waitingToGo - neverConfirmed} of {SEQUENCE.length} sent{waitingToGo ? `, ${waitingToGo} on its way` : ''}{neverConfirmed ? `, ${neverConfirmed} not confirmed` : ''}</span>
-        </div>
-
-        {!lead.email ? (
-          <p className="text-xs bg-amber-50 border border-amber-200 text-amber-800 rounded-lg px-3 py-2">This lead has no email address. Add one on the Details tab, or reach them on the LinkedIn tab.</p>
-        ) : progress.stopped ? (
-          <div className="text-xs bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 space-y-1.5">
-            <div className="text-gray-700">Stopped: {lead.sequence?.stopped?.reason}</div>
-            {canWork && <button onClick={() => stopOrResume('resume')} className="text-primary-600 hover:underline flex items-center gap-1"><Play className="w-3 h-3" /> Resume the series</button>}
-          </div>
-        ) : progress.next && canWork ? (
-          <button onClick={() => setSending(true)} className={`w-full px-4 py-2.5 rounded-lg text-sm font-medium flex items-center justify-center gap-2 ${progress.due ? 'bg-primary-600 text-white hover:bg-primary-700' : 'border border-gray-300 text-gray-700 hover:bg-gray-50'}`}>
-            <Send className="w-4 h-4" />
-            {progress.due ? `Review and send email ${stepNumber(progress.next.id)}` : `Send email ${stepNumber(progress.next.id)} early (due in ${progress.daysUntil}d)`}
-          </button>
-        ) : progress.finished ? (
-          <p className="text-xs bg-green-50 border border-green-200 text-green-800 rounded-lg px-3 py-2">All {SEQUENCE.length} emails have been sent. Write to them directly from here on.</p>
-        ) : null}
-
-        {(lead.status === 'qualified' || lead.status === 'proposal') && !progress.stopped && !progress.finished && (
-          <p className="text-[11px] text-gray-500">You are in conversation with this lead, so the series is not on your Today list. Send its next email only if it helps.</p>
-        )}
-
-        <ol className="space-y-0.5">
-          {SEQUENCE.map((s, i) => {
-            const sent = lead.sequence?.sent.find((x) => x.step === s.id)
-            const isNext = !progress.stopped && progress.next?.id === s.id
-            // Has it really gone? "sent" is said only once the email service, or our own copy, has confirmed it
-            const record = seriesRecord(lead, s.id)
-            const state: SendState | null = sent ? (record ? sendState(record) : 'sent') : record?.status === 'failed' ? 'failed' : null
-            return (
-              <li key={s.id} className={`flex gap-2.5 px-2.5 py-2 rounded-lg ${isNext ? 'bg-primary-50' : ''}`}>
-                <span className="mt-0.5 shrink-0">
-                  {state === 'sent' ? <Check className="w-4 h-4 text-green-600" />
-                    : state === 'onItsWay' ? <Clock className="w-4 h-4 text-gray-500" />
-                    : state === 'unconfirmed' ? <AlertTriangle className="w-4 h-4 text-amber-600" />
-                    : state === 'failed' ? <AlertTriangle className="w-4 h-4 text-red-600" />
-                    : <CircleDashed className={`w-4 h-4 ${isNext ? 'text-primary-600' : 'text-gray-300'}`} />}
-                </span>
-                <div className="min-w-0">
-                  <div className={`text-sm ${sent ? 'text-gray-500' : isNext ? 'text-primary-800 font-medium' : 'text-gray-700'}`}>{i + 1}. {s.title}</div>
-                  <div className={`text-[11px] ${state === 'failed' ? 'text-red-700' : state === 'unconfirmed' ? 'text-amber-700' : state === 'onItsWay' ? 'text-gray-600' : 'text-gray-400'}`}>
-                    {sent && state === 'sent' ? `sent ${timeAgo(sent.at)} by ${shortName(sent.by)}`
-                      : sent && state === 'onItsWay' ? `on its way for ${span(sent.at)}: the email service has it and has not confirmed yet`
-                      : sent && state === 'unconfirmed' ? `handed to the email service ${span(sent.at)} ago and never confirmed as gone`
-                      : state === 'failed' ? `did not go${record?.error ? `: ${record.error}` : ''}. ${isNext ? 'It is due again.' : ''}`
-                      : isNext ? (progress.due ? 'due now' : `due in ${progress.daysUntil} day${progress.daysUntil === 1 ? '' : 's'}`)
-                      : s.gapDays ? `${s.gapDays} days after email ${i}` : 'sent first'}
-                  </div>
-                  {sent && state === 'unconfirmed' && canWork && (
-                    <button onClick={() => again(s.id)} className="mt-1 text-[11px] font-medium text-amber-800 underline">Send it again</button>
-                  )}
-                </div>
-              </li>
-            )
-          })}
-        </ol>
-
-        {lead.email && !progress.stopped && !progress.finished && canWork && (
-          <button onClick={() => stopOrResume('stop')} className="text-xs text-gray-400 hover:text-red-600 flex items-center gap-1"><Ban className="w-3 h-3" /> Stop the emails for this lead</button>
-        )}
-      </div>
-
-      {/* The conversation */}
-      <div className="space-y-3 min-w-0">
-        <div className="flex flex-wrap items-center justify-between gap-2">
-          <h3 className="text-sm font-medium text-gray-500">Conversation</h3>
-          <div className="flex gap-2">
-            <button onClick={loadInbox} className="p-2 border border-gray-200 rounded-lg hover:bg-gray-50" title="Check for replies" aria-label="Check for replies"><RefreshCw className="w-4 h-4 text-gray-500" /></button>
-            {canWork && (
-              <button onClick={() => setComposing({ replyTo: null })} disabled={!lead.email} className="px-3 py-2 border border-gray-300 text-gray-800 text-sm rounded-lg hover:bg-gray-50 flex items-center gap-1.5 disabled:opacity-50">
-                <Mail className="w-4 h-4" /> Write an email
-              </button>
-            )}
-          </div>
-        </div>
-
-        {waiting && lead.reply && (
-          <div className={`rounded-lg border px-3.5 py-3 flex flex-wrap items-center justify-between gap-x-4 gap-y-2 ${lead.reply.kind === 'stop' ? 'border-gray-300 bg-gray-50' : 'border-red-200 bg-red-50'}`}>
-            <div className="min-w-0 flex-1 basis-64">
-              <div className={`text-sm font-semibold ${lead.reply.kind === 'stop' ? 'text-gray-800' : 'text-red-800'}`}>
-                {lead.reply.kind === 'stop' ? `${lead.name} asked us to stop. The email series has stopped.` : `${lead.name} replied ${timeAgo(lead.reply.at).toLowerCase()} and is waiting for an answer.`}
-              </div>
-              {lead.reply.preview && <p className="text-xs text-gray-600 mt-0.5 line-clamp-2">“{lead.reply.preview}”</p>}
-            </div>
-            {canWork && (
-              <div className="flex items-center gap-2">
-                <button onClick={noAnswerNeeded} className="text-xs text-gray-600 hover:text-gray-900">No reply needed</button>
-                {lead.reply.kind === 'stop'
-                  ? <button onClick={closeLead} className="px-3 py-1.5 bg-gray-800 text-white text-xs rounded-lg hover:bg-gray-900">Close lead</button>
-                  : <button onClick={() => setComposing({ replyTo: inbound[0] || null })} disabled={!lead.email} className="px-3 py-1.5 bg-red-600 text-white text-xs rounded-lg hover:bg-red-700 flex items-center gap-1.5 disabled:opacity-50"><Reply className="w-3.5 h-3.5" /> Reply</button>}
-              </div>
-            )}
-          </div>
-        )}
-        {inboundNote && <p className="text-xs bg-amber-50 border border-amber-200 text-amber-800 rounded-lg px-3 py-2">{inboundNote}</p>}
-        {loading && thread.length === 0 && <Spinner label="Loading…" />}
-        {!loading && thread.length === 0 && <div className="bg-gray-50 rounded-lg p-8 text-center text-sm text-gray-400">Nothing sent yet. Start with email 1 of the series.</div>}
-
-        {thread.map((item, i) => (
-          <div key={i} className={`rounded-lg border p-3 ${item.kind === 'received' ? 'border-green-200 bg-green-50' : 'border-gray-200 bg-raised'}`}>
-            <div className="flex items-start justify-between gap-3">
-              <button className="min-w-0 text-left flex-1" onClick={() => setExpanded(expanded === i ? null : i)}>
-                <div className="text-sm font-medium text-gray-900 truncate">{item.subject || '(no subject)'}</div>
-                <div className="text-xs text-gray-500">{item.kind === 'received' ? 'Received' : item.status === 'sent' ? 'Sent' : 'Written'} {item.detail} · {formatDateTime(item.at)}{item.kind === 'sent' ? <span className={item.status === 'failed' ? 'text-red-700 font-medium' : item.status === 'unconfirmed' ? 'text-amber-700 font-medium' : 'font-medium'}>{STATE_WORDS[item.status as SendState] || ''}</span> : null}</div>
-                {item.note && <div className={`text-[11px] mt-0.5 ${item.status === 'failed' ? 'text-red-700' : item.status === 'unconfirmed' ? 'text-amber-700' : 'text-gray-500'}`}>{item.note}</div>}
-              </button>
-              {item.kind === 'received' && canWork && (
-                <button onClick={() => setComposing({ replyTo: item.raw })} className="px-2.5 py-1.5 bg-green-600 text-white text-xs rounded-lg hover:bg-green-700 flex items-center gap-1.5 shrink-0">
-                  <Reply className="w-3.5 h-3.5" /> Reply
-                </button>
-              )}
-            </div>
-            {item.body && (expanded === i && item.html ? (
-              <div className="email-html-body text-sm text-gray-700 mt-2 break-words max-h-[28rem] overflow-y-auto bg-raised rounded-lg border border-gray-100 p-3"
-                dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(item.html, { FORBID_TAGS: ['style', 'form', 'input'], FORBID_ATTR: ['onerror', 'onclick'] }) }} />
-            ) : (
-              <p className={`text-sm text-gray-600 mt-2 break-words whitespace-pre-line ${expanded === i ? '' : 'line-clamp-2'}`}>{item.body}</p>
-            ))}
-          </div>
-        ))}
-      </div>
-
+    <>
+      <EmailBoard
+        lead={lead} canWork={canWork} notify={notify} onReload={onReload}
+        inbound={inbound} inboundNote={inboundNote} loading={loading} onCheckReplies={loadInbox}
+        onWrite={(replyTo) => setComposing({ replyTo: replyTo || null })}
+        onReview={() => setSending(true)}
+        onStop={() => stopOrResume('stop')} onResume={() => stopOrResume('resume')}
+        onAgain={again} onNoAnswerNeeded={noAnswerNeeded} onCloseLead={closeLead}
+        stageFirst={stage}
+      />
       {sending && <SendStepModal leads={[lead]} notify={notify} onClose={() => setSending(false)} onSent={async () => { setSending(false); await onReload() }} />}
       {composing && (
         <EmailComposer lead={lead} replyTo={composing.replyTo} notify={notify} onClose={() => setComposing(null)} onSent={async () => { setComposing(null); await onReload(); await loadInbox() }} />
       )}
-    </div>
+    </>
   )
 }
 

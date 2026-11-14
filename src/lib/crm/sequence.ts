@@ -126,6 +126,43 @@ export function subjectFor(step: SequenceStep, lead: Named): string {
   return fillTokens(missing && step.subjectBare ? step.subjectBare : step.subject, lead)
 }
 
+/**
+ * The series in the order it goes for ONE lead (owner, 14 November 2026: "I can drag and move the emails
+ * whichever I want to send ... it still follows the sequence strictly"). What has been sent comes first, in the
+ * order it went. The rest follow in the order someone gave them on the lead's Emails board, and after those,
+ * anything not placed, in the plan's own order. With nothing changed this is simply SEQUENCE.
+ */
+export function orderFor(lead: Pick<Lead, 'sequence'>): SequenceStep[] {
+  const sent = [...(lead.sequence?.sent || [])].sort((a, b) => a.at.localeCompare(b.at)).map((s) => s.step)
+  const ids: string[] = []
+  for (const id of [...sent, ...(lead.sequence?.order || []), ...SEQUENCE.map((s) => s.id)]) if (stepById(id) && !ids.includes(id)) ids.push(id)
+  return ids.map((id) => stepById(id)!)
+}
+
+/**
+ * Put the emails not sent yet in a new order for one lead. `order` is the wish, as step ids; ids that are
+ * unknown or already sent are dropped, and what the wish leaves out keeps its place after it. Returns the
+ * order as it now stands (the unsent emails only). An order equal to the plan's own is not kept at all.
+ */
+export function setOrder(lead: Pick<Lead, 'sequence'>, order: string[]): string[] {
+  const sentIds = (lead.sequence?.sent || []).map((s) => s.step)
+  const wanted: string[] = []
+  for (const id of order) if (stepById(id) && !sentIds.includes(id) && !wanted.includes(id)) wanted.push(id)
+  const rest = SEQUENCE.map((s) => s.id).filter((id) => !sentIds.includes(id) && !wanted.includes(id))
+  const next = [...wanted, ...rest]
+  const plain = SEQUENCE.map((s) => s.id).filter((id) => !sentIds.includes(id))
+  lead.sequence = lead.sequence || { sent: [] }
+  if (next.join() === plain.join()) delete lead.sequence.order
+  else lead.sequence.order = next
+  return next
+}
+
+/**
+ * How long to wait before the next email, by how many have gone. The waits belong to the rhythm of the series
+ * (4 days after the first, then 6, then 11 ...), not to one email: whichever email goes second waits four days.
+ */
+export const gapAfter = (sentCount: number): number => SEQUENCE[Math.min(Math.max(sentCount, 0), SEQUENCE.length - 1)].gapDays
+
 export interface SequenceProgress {
   /** Steps already sent, in order. */
   sentIds: string[]
@@ -146,12 +183,13 @@ export function sequenceProgress(lead: Pick<Lead, 'sequence'>, now = Date.now())
   const sent = lead.sequence?.sent || []
   const sentIds = sent.map((s) => s.step)
   const stopped = !!lead.sequence?.stopped
-  const next = SEQUENCE.find((s) => !sentIds.includes(s.id)) || null
+  // The next email is the first one not sent yet in THIS lead's order (orderFor above)
+  const next = orderFor(lead).find((s) => !sentIds.includes(s.id)) || null
   if (!next || stopped) {
     return { sentIds, next: stopped ? null : next, dueAt: null, due: false, daysUntil: 0, finished: !next, stopped }
   }
   const last = sent.length ? sent.reduce((a, b) => (a.at > b.at ? a : b)) : null
-  const dueMs = last ? new Date(last.at).getTime() + next.gapDays * 86_400_000 : now
+  const dueMs = last ? new Date(last.at).getTime() + gapAfter(new Set(sentIds).size) * 86_400_000 : now
   const daysUntil = Math.max(0, Math.ceil((dueMs - now) / 86_400_000))
   return { sentIds, next, dueAt: new Date(dueMs).toISOString(), due: dueMs <= now, daysUntil, finished: false, stopped: false }
 }

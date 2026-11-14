@@ -6,6 +6,7 @@ import { WEEKEND_EMAILS, CAMPAIGN_KINDS, buildWeekendEmail, type WeekendEmailKin
 import { sendEmail } from '@/lib/email-service'
 import { getLeads } from '@/lib/crm/store'
 import { getEnquiries } from '@/lib/azure-storage'
+import { ALL_WEEKENDS as ALL, campaignOrder, hadIt, noteWeekendEmails, type WeekendSend } from '@/lib/crm/weekend-outreach'
 import { razorpayConfigured, razorpayTestMode } from '@/lib/razorpay'
 import { payUrl } from '@/lib/weekend-pay'
 
@@ -19,20 +20,11 @@ const FROM = process.env.EMAIL_FROM_WEBINAR || 'webinar@gennoor.com'
  */
 const INVITE_LIMIT = 50
 const isEmail = (s: string) => /^[^\s@,;<>]+@[^\s@,;<>]+\.[^\s@,;<>]+$/.test(s)
-/** Who has had a campaign email that goes to chosen people: the invitation keeps its own list, the others share one. */
-const hadIt = (s: CohortSettings, kind: string): Record<string, string> => (kind === 'invite' ? s.invited : s.sentTo?.[kind]) || {}
 const publicSettings = (s: CohortSettings = {}) => ({
   joinUrl: s.joinUrl || '', payment: s.payment || '', kitUrl: s.kitUrl || '', invitedCount: Object.keys(s.invited || {}).length,
   /** How many people each campaign email has gone to, for this weekend. No addresses. */
   sent: Object.fromEntries(WEEKEND_EMAILS.filter((e) => e.outreach).map((e) => [e.kind, Object.keys(hadIt(s, e.kind)).length])),
 })
-
-/** The order of the campaign emails is one for all weekends, kept beside the weekends' own settings. */
-const ALL = '_all'
-function campaignOrder(settings: Record<string, CohortSettings>): WeekendEmailKind[] {
-  const saved = (settings[ALL]?.order || []).filter((k): k is WeekendEmailKind => CAMPAIGN_KINDS.includes(k as WeekendEmailKind))
-  return [...saved, ...CAMPAIGN_KINDS.filter((k) => !saved.includes(k))]
-}
 
 /**
  * Addresses that must not get a campaign email: a lead whose emails were stopped (they asked, or the team
@@ -180,10 +172,12 @@ export async function POST(req: NextRequest) {
 
     const sent: typeof people = []
     const failed: string[] = []
+    // What went, for the leads' own records (the Emails board and the email tracker of the CRM)
+    const went: WeekendSend[] = []
     for (const person of people) {
       const mail = buildWeekendEmail(info.kind, person, cohort, settings, FROM, info.kind === 'payment' && online && person.id ? payUrl(person.id) : '')
-      const r = await sendEmail({ to: person.email, from: FROM, fromName: 'Gennoor Tech', subject: mail.subject, html: mail.html }).catch((e) => ({ success: false, error: String(e) }))
-      if (r.success) sent.push(person)
+      const r: { success: boolean; messageId?: string; done?: boolean } = await sendEmail({ to: person.email, from: FROM, fromName: 'Gennoor Tech', subject: mail.subject, html: mail.html }).catch(() => ({ success: false }))
+      if (r.success) { sent.push(person); went.push({ email: person.email, subject: mail.subject, html: mail.html, op: r.messageId, done: r.done }) }
       else failed.push(person.email)
     }
 
@@ -196,6 +190,9 @@ export async function POST(req: NextRequest) {
       const ids = new Set(sent.map((x) => x.id))
       await mutateRegistrations((rows) => { for (const r of rows) if (ids.has(r.id)) r.emails = { ...(r.emails || {}), [info.kind]: now } })
     }
+    // A campaign email that went to someone who is a lead is written on that lead too. The send has happened;
+    // if this note cannot be written, the email is not sent again because of it.
+    if (went.length && info.group === 'campaign') await noteWeekendEmails(went, info.kind, cohort.id, user.email, { now }).catch((e) => console.error('weekend email not noted on the leads', e))
     return NextResponse.json({ success: failed.length === 0, sent: sent.length, skipped, stopped, failed })
   } catch (e) {
     console.error('weekend send failed', e)

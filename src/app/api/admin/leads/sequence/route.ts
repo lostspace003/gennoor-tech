@@ -3,7 +3,7 @@ import { requireCrmUser, canWorkLead } from '@/lib/crm/access'
 import { getLeads, mutateLeads, touch } from '@/lib/crm/store'
 import { sendEmail, catalogExcelAttachment } from '@/lib/email-service'
 import { teamMember } from '@/lib/crm/team'
-import { SEQUENCE, stepById, stepNumber, sequenceProgress, isOpen } from '@/lib/crm/sequence'
+import { SEQUENCE, stepById, stepNumber, sequenceProgress, isOpen, setOrder } from '@/lib/crm/sequence'
 import { buildStepEmail } from '@/lib/crm/sequence-emails'
 import { newLead } from '@/lib/crm/types'
 import { needsAnswer, sendRoom, sentInLastHour, HOURLY_SEND_LIMIT } from '@/lib/crm/replies'
@@ -157,15 +157,30 @@ export async function POST(request: Request) {
  * Stop or resume the series for leads: { leadIds, action: 'stop' | 'resume', reason? }
  * Make one email of the series due again: { leadIds: [id], action: 'again', step }. Only for an email that
  * failed, or that nothing confirmed for a day (lib/crm/delivery.ts decides); never for one that has gone.
+ * Put the emails not sent yet in another order for ONE lead: { leadIds: [id], action: 'order', order: [step, ...] }.
  */
 export async function PATCH(request: Request) {
   const user = await requireCrmUser()
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   try {
-    const { leadIds, action, reason, step } = await request.json()
-    if (!Array.isArray(leadIds) || !['stop', 'resume', 'again'].includes(action)) return NextResponse.json({ error: 'leadIds and action required' }, { status: 400 })
+    const { leadIds, action, reason, step, order } = await request.json()
+    if (!Array.isArray(leadIds) || !['stop', 'resume', 'again', 'order'].includes(action)) return NextResponse.json({ error: 'leadIds and action required' }, { status: 400 })
     const now = new Date().toISOString()
+    if (action === 'order') {
+      const body: unknown = order
+      if (!Array.isArray(body)) return NextResponse.json({ error: 'order required' }, { status: 400 })
+      const kept = await mutateLeads((leads) => {
+        const lead = leads.find((l) => l.id === leadIds[0])
+        if (!lead || !canWorkLead(lead, user)) return null
+        // Moving an email is planning, not contact with the lead: it is not written in the lead's history
+        const next = setOrder(lead, body.map(String))
+        lead.updatedAt = now
+        return next
+      })
+      if (!kept) return NextResponse.json({ error: 'This lead is held by someone else, or no longer exists.' }, { status: 409 })
+      return NextResponse.json({ success: true, order: kept })
+    }
     if (action === 'again') {
       if (!stepById(step)) return NextResponse.json({ error: 'Unknown step' }, { status: 400 })
       const due = await mutateLeads((leads) => {

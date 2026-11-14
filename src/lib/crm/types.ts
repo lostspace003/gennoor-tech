@@ -68,6 +68,8 @@ export interface EmailRecord {
   confirmedBy?: 'service' | 'copy'
   /** Why it failed, when the email service refused it or gave up on it later. */
   error?: string
+  /** Set when this was an email of the AI Weekend campaign (lib/weekend-emails.ts): which email, for which weekend ("2026-11"). */
+  weekend?: { kind: string; cohort: string }
 }
 
 export interface FollowUp {
@@ -93,6 +95,11 @@ export interface SequenceState {
   sent: Array<{ step: string; at: string; by: string }>
   /** Set when the lead asked us to stop, or the team stopped the series. */
   stopped?: { at: string; by: string; reason: string }
+  /**
+   * The order the emails not sent yet go in for this lead, when someone changed it on the lead's Emails board
+   * (step ids). Absent: the plan's own order. See orderFor() in ./sequence.ts.
+   */
+  order?: string[]
 }
 
 /** What we did on LinkedIn for this lead, through the LinkedIn hub. */

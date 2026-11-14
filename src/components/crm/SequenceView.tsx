@@ -39,7 +39,7 @@ export default function SequenceView() {
         <div>
           <h2 className="text-base font-semibold text-gray-900">The email series</h2>
           <p className="text-xs text-gray-500 mt-0.5">
-            {SEQUENCE.length} emails over about {Math.round(SEQUENCE_DAYS / 30)} months. Every lead gets the same ones in the same order. You send each one from Today when it is due.
+            {SEQUENCE.length} emails over about {Math.round(SEQUENCE_DAYS / 30)} months. Every lead gets the same ones, in this order unless you change it on that lead's Emails board. You send each one when it is due, or any of them sooner.
           </p>
         </div>
         {phases.map((phase) => (

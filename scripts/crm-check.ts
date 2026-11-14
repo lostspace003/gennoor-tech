@@ -11,7 +11,7 @@
  */
 import { applyReplies, HOURLY_SEND_LIMIT, isAutoReply, kindOf, needsAnswer, ownWords, sendRoom, wantsStop, type Received } from '@/lib/crm/replies'
 import { needsYou, QUIET_DAYS, quietDays, todayLists } from '@/lib/crm/today'
-import { SEQUENCE } from '@/lib/crm/sequence'
+import { SEQUENCE, gapAfter, orderFor, sequenceProgress, setOrder } from '@/lib/crm/sequence'
 import { newLead, STEP_LABELS, type Lead } from '@/lib/crm/types'
 import { applyDelivery, failedSeriesSend, lastSeriesSend, matchCopies, pendingSends, sendAgain, sendLine, sendState, TRACKED_FROM } from '@/lib/crm/delivery'
 
@@ -187,6 +187,38 @@ ok('a real reply is a reply', kindOf({ from: 'a@example.com', subject: 'Re: Samp
   ok('an email on its way cannot be sent again', !sendAgain(waiting, 'intro', ME, minsAgo(0)) && waiting.sequence!.sent.length === 1)
   ok('an email that has gone cannot be sent again', !sendAgain(gone, 'intro', ME, minsAgo(0)) && gone.sequence!.sent.length === 1)
   ok('an email nothing confirmed for a day can', sendAgain(stale, 'intro', ME, minsAgo(0)) && stale.sequence!.sent.length === 0 && stale.emailHistory[0].status === 'failed')
+}
+
+// ---- The order of the series is the lead's own: any email can go next, and the rest keep their order
+{
+  const ids = (l: Lead) => orderFor(l).map((s) => s.id).join(',')
+  const plain = SEQUENCE.map((s) => s.id).join(',')
+  const fresh = lead('o1')
+  ok('with nothing changed, a lead follows the plan as it is written', ids(fresh) === plain && sequenceProgress(fresh, NOW).next?.id === 'intro')
+
+  const two = lead('o2', { sent: 1, lastDays: 1 })
+  const kept = setOrder(two, ['claude', 'support'])
+  ok('the emails not sent yet can be put in another order; what the wish leaves out follows in the plan\'s order', kept.join(',') === 'claude,support,samples,custom,time,projects,platform,checkin', kept.join(','))
+  ok('what has been sent stays first, the rest follow the lead\'s own order', ids(two) === `intro,${kept.join(',')}`, ids(two))
+  ok('the next email is the first one in that order', sequenceProgress(two, NOW).next?.id === 'claude')
+  // The second email waits four days whichever email it is: the wait belongs to the rhythm, not to one email
+  ok('the wait before the next email follows how many have gone, not which email it is', gapAfter(1) === 4 && gapAfter(2) === 6 && sequenceProgress(two, NOW).daysUntil === 3 && !sequenceProgress(two, NOW).due, `${sequenceProgress(two, NOW).daysUntil} days`)
+  ok('and it is due once those days have passed', sequenceProgress(two, NOW + 4 * 86_400_000).due)
+
+  const junk = setOrder(two, ['intro', 'nonsense', 'claude', 'claude', 'checkin'])
+  ok('an order cannot name an email already sent, an unknown one, or one twice', junk.join(',') === 'claude,checkin,samples,custom,time,projects,support,platform', junk.join(','))
+  setOrder(two, SEQUENCE.map((s) => s.id))
+  ok('putting the plan\'s own order back keeps nothing on the lead', two.sequence!.order === undefined && sequenceProgress(two, NOW).next?.id === 'samples')
+
+  // An email sent out of turn (dragged to the board and sent): it counts as sent, and the rest carry on
+  const jump = lead('o3', { sent: 1, lastDays: 10 })
+  jump.sequence!.sent.push({ step: 'projects', at: ago(2), by: ME })
+  ok('an email sent out of turn is not offered again, and the series carries on with the first one left', sequenceProgress(jump, NOW).next?.id === 'samples' && ids(jump).startsWith('intro,projects,samples'), ids(jump))
+  ok('nine emails in any order still finish the series', (() => { const all = lead('o4'); all.sequence = { sent: [...SEQUENCE].reverse().map((s, i) => ({ step: s.id, at: ago(40 - i), by: ME })) }; const p = sequenceProgress(all, NOW); return p.finished && p.next === null })())
+  const stopped = lead('o5', { sent: 1 })
+  stopped.sequence!.stopped = { at: ago(0), by: ME, reason: 'asked' }
+  setOrder(stopped, ['claude'])
+  ok('a lead whose emails were stopped is offered nothing, whatever the order', sequenceProgress(stopped, NOW).next === null && sequenceProgress(stopped, NOW).stopped)
 }
 
 console.log(failed ? `\n${failed} CHECK(S) FAILED` : '\nALL OK')
