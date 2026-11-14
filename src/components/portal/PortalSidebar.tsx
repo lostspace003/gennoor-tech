@@ -48,7 +48,7 @@ const ICON_ACTIVE = 'text-primary-600'
 
 const WHATSAPP_URL =
   'https://wa.me/919326352241?text=' +
-  encodeURIComponent('Hi Jalal, I visited gennoor.com and would like to talk about AI training and automation for my organization.')
+  encodeURIComponent('Hi Gennoor team, I visited gennoor.com and would like to talk about AI training and automation for my organization.')
 
 /** The name of an icon, beside it, when the menu is folded. */
 function RailTip({ label }: { label: string }) {
