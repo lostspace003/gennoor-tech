@@ -168,7 +168,10 @@ export function linkOf(p: { text: string; film: Film }): string {
   return `https://gennoor.com${page}?utm_source=linkedin&utm_medium=post&utm_campaign=${p.film === 'weekend' ? 'ai-weekend-film' : 'what-we-do-film'}`
 }
 
-const commentOf = (p: { text: string; film: Film }) => (p.film === 'weekend' ? `Reserve your seat for the AI Weekend: ${linkOf(p)}` : `See it on the website: ${linkOf(p)}`)
+// The first comment under an AI Weekend post says how to enroll and gives the link (owner, 14 November 2026:
+// "the first comment should also be there. To enroll and then sharing the link"). The admin page shows the same words.
+export const ENROLL_COMMENT = 'To enroll in the AI Weekend, reserve your seat here: '
+const commentOf = (p: { text: string; film: Film }) => (p.film === 'weekend' ? `${ENROLL_COMMENT}${linkOf(p)}` : `See it on the website: ${linkOf(p)}`)
 
 /** The film itself. The wide films are in the site's own files; the tall ones are in the media store. */
 async function videoOf(film: Film, shape: 'tall' | 'wide'): Promise<Buffer> {

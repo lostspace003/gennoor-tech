@@ -198,7 +198,7 @@ export default function CampaignPage() {
                       </div>
                       <div>
                         <div className="text-xs font-semibold text-gray-500">First comment, from your profile</div>
-                        <div className="mt-1 text-sm text-gray-800 break-all">{i.film === 'weekend' ? 'Reserve your seat for the AI Weekend: ' : 'See it on the website: '}{i.link}</div>
+                        <div className="mt-1 text-sm text-gray-800 break-all">{i.film === 'weekend' ? 'To enroll in the AI Weekend, reserve your seat here: ' : 'See it on the website: '}{i.link}</div>
                       </div>
                       <div>
                         <div className="text-xs font-semibold text-gray-500">The company page, when it reposts</div>
