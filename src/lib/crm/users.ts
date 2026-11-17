@@ -21,6 +21,7 @@ export const ADMIN_USERS = [
 /** The CRM only (they also may sign in, but see nothing of the admin centre). */
 const CRM_ONLY_USERS = [
   'luthermarak@gennoor.com',
+  'yuvrajsingh@gennoor.com',
 ]
 
 /** Everyone who may sign in and use the CRM. */
