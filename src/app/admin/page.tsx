@@ -154,6 +154,7 @@ export default function AdminDashboard() {
   const { data: session, status } = useSession()
   const router = useRouter()
   const [loading, setLoading] = useState(false)
+  const [reportState, setReportState] = useState<{ busy: boolean; msg?: string; ok?: boolean }>({ busy: false })
   const [error, setError] = useState('')
   const [days, setDays] = useState(7)
   const [activeFilter, setActiveFilter] = useState<string>('7')
@@ -286,6 +287,15 @@ export default function AdminDashboard() {
   }, [status])
 
   function handleRefresh() { fetchAll(days) }
+  async function generateReport() {
+    if (reportState.busy || !window.confirm("Generate today's report and email it to the report recipients now?")) return
+    setReportState({ busy: true })
+    try {
+      const r = await fetch('/api/admin/daily-report', { method: 'POST' })
+      const j = await r.json().catch(() => ({}))
+      setReportState({ busy: false, ok: r.ok, msg: r.ok ? 'Report sent by email.' : (j.error || 'The report could not be sent.') })
+    } catch { setReportState({ busy: false, ok: false, msg: 'The report could not be sent.' }) }
+  }
   function handleDaysChange(d: number, filter: string) { setDays(d); setActiveFilter(filter); fetchAll(d) }
   function handleCustomDate(dateStr: string) {
     setCustomDate(dateStr)
@@ -661,6 +671,10 @@ export default function AdminDashboard() {
             <button onClick={() => setAutoRefresh(!autoRefresh)} className={`px-2.5 py-1.5 text-xs rounded-md transition-colors ${autoRefresh ? 'bg-gray-100 text-gray-700' : 'text-gray-400 hover:text-gray-600'}`} title={autoRefresh ? 'Auto-refresh ON (60s)' : 'Auto-refresh OFF'}>
               <Clock className="w-3.5 h-3.5" />
             </button>
+            <button onClick={generateReport} disabled={reportState.busy} className="flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-medium rounded-md bg-primary-600 hover:bg-primary-700 text-white transition-colors disabled:opacity-60" title="Make today's report and email it with the Excel file">
+              <FileText className="w-3.5 h-3.5" /> {reportState.busy ? 'Generating…' : 'Generate report'}
+            </button>
+            {reportState.msg && <span role="status" className={`text-xs ${reportState.ok ? 'text-green-600' : 'text-red-600'}`}>{reportState.msg}</span>}
             <button onClick={handleRefresh} disabled={loading} className="p-2 text-gray-400 hover:text-primary-600 transition-colors"><RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} /></button>
           </div>
         </div>
