@@ -46,7 +46,7 @@ export async function POST(req: NextRequest) {
     }, day)
 
     if (req.nextUrl.searchParams.get('dry') === '1') return NextResponse.json({ day, subject: report.subject, totals: report.totals, html: report.html, to: TO.length, cc: CC.length })
-    const r = await sendEmail({ to: TO.join(','), cc: CC, from: FROM, fromName: 'Gennoor Tech', subject: report.subject, html: report.html, attachments: [{ filename: report.filename, content: report.workbook, contentType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }] })
+    const r = await sendEmail({ to: TO, cc: CC, from: FROM, fromName: 'Gennoor Tech', subject: report.subject, html: report.html, attachments: [{ filename: report.filename, content: report.workbook, contentType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }] })
     if (!r.success) return NextResponse.json({ error: `The email service did not take the report: ${r.error || 'unknown'}`, totals: report.totals }, { status: 502 })
     return NextResponse.json({ success: true, day, totals: report.totals })
   } catch (e) {
