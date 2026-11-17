@@ -7,6 +7,7 @@ import { buildLearnerAnalytics } from '@/lib/learner-analytics'
 import { sendEmail } from '@/lib/email-service'
 import { syncReplies } from '@/lib/crm/reply-sync'
 import { buildDailyReport, istDay } from '@/lib/daily-report'
+import { verifyAdmin } from '@/lib/admin-auth'
 
 export const dynamic = 'force-dynamic'
 export const maxDuration = 300
@@ -19,13 +20,15 @@ const CC = (process.env.DAILY_REPORT_CC || process.env.EMAIL_ADMIN || 'admin@gen
 /**
  * The evening report (lib/daily-report.ts). Called by the schedule in .github/workflows/daily-report.yml at
  * 22:15 India time, with the cron secret; never by a browser.
- *   POST            reads the day, sends the email with the Excel file
+ *   POST            (the schedule, or a signed-in admin) reads the day, sends the email with the Excel file
  *   POST ?dry=1     reads the day and answers with the numbers and the email, sending nothing
  *   POST ?day=YYYY-MM-DD   another day than today (India time)
  */
 export async function POST(req: NextRequest) {
+  // The schedule comes with the cron secret; a person comes from the admin centre's "Generate report" button
   const secret = process.env.CRM_CRON_SECRET
-  if (!secret || req.headers.get('x-cron-secret') !== secret) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  const byCron = !!secret && req.headers.get('x-cron-secret') === secret
+  if (!byCron && !(await verifyAdmin(req)).authorized) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   try {
     const wanted = req.nextUrl.searchParams.get('day') || ''
     const day = /^\d{4}-\d{2}-\d{2}$/.test(wanted) ? wanted : istDay(Date.now())
