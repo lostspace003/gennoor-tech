@@ -319,7 +319,19 @@ never says "nothing yet" before the answer has arrived.
 
 - **The frame** is `src/components/admin/AdminShell.tsx`: the one-level menu (`GROUPS`), a line that says
   where you are, and on the dashboard its sections as two rows of tabs. On a phone the top bar says where
-  you are and the menu is a drawer. A new page is one new row in `GROUPS`, nothing more.
+  you are and the menu is a drawer. In the drawer each group folds under its title, and only the group of
+  the page you are on is open at first (owner, 19 November 2026); on a desktop the groups are always open.
+  A group title is a fold, not a menu: the rows under it are still pages. A new page is one new row in
+  `GROUPS`, nothing more.
+- **Every list can be narrowed.** A list of records has a search and a date filter (`useListView` and
+  `ListToolbar` in `src/components/admin/ListControls.tsx`, or `DateRangeFilter` beside the page's own
+  filters). On the dashboard the period at the top applies to every section that has dates, and is hidden on
+  the sections that have none (SEO health, indexing, setup), so no filter is ever shown that does nothing.
+- **One circle at a time.** `src/components/BusyPointer.tsx` turns a small circle by the pointer while
+  something pressed is working. It never switches on the browser's busy pointer, it stays away when the
+  pressed button turns its own circle, opening another page is shown only by the thin bar at the top, and a
+  reading stops turning after a few seconds (owner, 19 November 2026: two circles, and a circle on a page
+  that was already there).
 - **A page of figures** follows `src/app/admin/learners/page.tsx` (Learner analytics):
   - The period comes first, in one row above everything it scopes: ready-made periods, then your own dates.
     While another period is being read, the last figures stay in place, faded. No spinner in their place.

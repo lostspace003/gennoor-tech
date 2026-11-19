@@ -27,16 +27,39 @@ import { useEffect, useRef, useState } from 'react'
  * follows a change is held too (for FOLLOW_AT_MOST_MS at the longest).
  * Choosing from a drop-down list counts as an action as well: a browser's own list sends no pointer event to
  * the page, so a choice made slowly was not seen as something a person did, and nothing was held at all.
+ *
+ * Never two circles, and never a circle on a page that is already there (owner, 19 November 2026: "i see two
+ * refresh circles many a times when i click on buttons" and "the page has already been loaded and i still see
+ * circle rotating"). So:
+ *  - the hold does not switch on the browser's own busy pointer (on Windows that is a second turning circle);
+ *  - when the button that was pressed already turns its own circle, this one stays away;
+ *  - opening another page is shown by the thin bar at the top (RouteProgress), not here: the readings the new
+ *    page makes while it arrives do not count as something the person pressed;
+ *  - a READING shows the circle for READ_AT_MOST_MS at the longest: by then the page shows what it has, and a
+ *    slow background reading must not spin on beside it. A change (a send, a save) shows it until it is done.
  */
 const HOLD_AT_MOST_MS = 20_000
 const FOLLOW_AT_MOST_MS = 10_000
 const FOLLOW_WITHIN_MS = 300
 const SHOW_AFTER_MS = 250
 const CLICK_WINDOW_MS = 4000
+const READ_AT_MOST_MS = 6000
+
+/** Is some other turning circle on screen already (a button's own, a "Refreshing" icon)? */
+function otherSpinnerShowing(mine: Element | null): boolean {
+  const all = document.querySelectorAll('.animate-spin')
+  for (const el of Array.from(all)) {
+    if (mine && mine.contains(el)) continue
+    const r = (el as HTMLElement).getBoundingClientRect()
+    if (r.width > 0 && r.height > 0 && r.bottom > 0 && r.top < window.innerHeight) return true
+  }
+  return false
+}
 
 export default function BusyPointer() {
   const [busy, setBusy] = useState(false)
   const [held, setHeld] = useState(false)
+  const [quiet, setQuiet] = useState(false) // another circle is already turning: do not add a second
   const dot = useRef<HTMLDivElement>(null)
   const at = useRef({ x: -100, y: -100, seen: false })
 
@@ -51,6 +74,9 @@ export default function BusyPointer() {
     const place = () => { if (dot.current && at.current.seen) dot.current.style.transform = `translate(${at.current.x + 14}px, ${at.current.y + 14}px)` }
     const move = (e: PointerEvent) => { if (e.pointerType === 'mouse') { at.current = { x: e.clientX, y: e.clientY, seen: true }; place() } }
     const acted = () => { lastAct = Date.now() }
+    // A press that opens another page: the bar at the top shows that wait, and what the new page reads as it
+    // arrives is not something the person pressed
+    const onRoute = (e: Event) => { if ((e as CustomEvent).detail) lastAct = 0 }
     const start = () => { active++; if (!timer) timer = setTimeout(() => { timer = null; if (active > 0) { setBusy(true); requestAnimationFrame(place) } }, SHOW_AFTER_MS) }
     const end = () => { active = Math.max(0, active - 1); if (active === 0) { if (timer) { clearTimeout(timer); timer = null } setBusy(false) } }
 
@@ -77,14 +103,20 @@ export default function BusyPointer() {
         const cap = setTimeout(off, FOLLOW_AT_MOST_MS)
         try { return await real(...args) } finally { end(); clearTimeout(cap); off() }
       }
-      try { return await real(...args) } finally { end() }
+      // A reading: the circle goes after READ_AT_MOST_MS even if the answer is slow
+      let ended = false
+      const stop = () => { if (!ended) { ended = true; end() } }
+      const cap = setTimeout(stop, READ_AT_MOST_MS)
+      try { return await real(...args) } finally { clearTimeout(cap); stop() }
     }
+    window.addEventListener('route:pending', onRoute)
     window.addEventListener('pointermove', move, { passive: true })
     window.addEventListener('pointerdown', acted, true)
     window.addEventListener('keydown', acted, true)
     window.addEventListener('change', acted, true)
     return () => {
       window.fetch = real
+      window.removeEventListener('route:pending', onRoute)
       window.removeEventListener('pointermove', move)
       window.removeEventListener('pointerdown', acted, true)
       window.removeEventListener('keydown', acted, true)
@@ -94,11 +126,20 @@ export default function BusyPointer() {
     }
   }, [])
 
+  // While busy, look a few times a second whether the page shows its own circle; if it does, this one hides
+  useEffect(() => {
+    if (!busy) { setQuiet(false); return }
+    const look = () => setQuiet(otherSpinnerShowing(dot.current))
+    look()
+    const id = setInterval(look, 200)
+    return () => clearInterval(id)
+  }, [busy])
+
   if (!busy && !held) return null
   return (
     <>
-    {held && <div className="fixed inset-0 z-[190] cursor-wait" aria-hidden="true" onClickCapture={(e) => { e.preventDefault(); e.stopPropagation() }} />}
-    {busy && <div ref={dot} role="status" aria-label="Working" className={`pointer-events-none fixed z-[200] ${at.current.seen ? 'left-0 top-0' : 'right-4 top-16'}`}>
+    {held && <div className="fixed inset-0 z-[190]" aria-hidden="true" onClickCapture={(e) => { e.preventDefault(); e.stopPropagation() }} />}
+    {busy && <div ref={dot} style={quiet ? { visibility: 'hidden' } : undefined} role="status" aria-label="Working" className={`pointer-events-none fixed z-[200] ${at.current.seen ? 'left-0 top-0' : 'right-4 top-16'}`}>
       <span className="block h-5 w-5 rounded-full border-2 border-gray-300 border-t-primary-600 animate-spin motion-reduce:animate-none bg-raised/80 shadow-sm" />
     </div>}
     </>

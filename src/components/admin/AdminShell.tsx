@@ -9,7 +9,7 @@ import BusyPointer from '@/components/BusyPointer'
 import AdminThemeSwitch from '@/components/admin/AdminThemeSwitch'
 import {
   LayoutDashboard, Linkedin, Sparkles, GraduationCap, MessageSquare, Users, PhoneCall, Mail, Menu, X, ExternalLink, Wallet, PenLine, Bot, Network, History,
-  ChevronLeft, ChevronRight, PanelLeftOpen, BarChart3, TrendingUp, Activity, BookOpen, Send, Calendar, Settings, HardDrive, Search, Globe, Lock, LogOut, Briefcase, MessageCircle,
+  ChevronLeft, ChevronRight, ChevronDown, PanelLeftOpen, BarChart3, TrendingUp, Activity, BookOpen, Send, Calendar, Settings, HardDrive, Search, Globe, Lock, LogOut, Briefcase, MessageCircle,
   Film, CalendarDays, LineChart, Megaphone, MailCheck, } from 'lucide-react'
 
 /**
@@ -112,9 +112,18 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
   const [collapsed, setCollapsed] = useState(false) // desktop: icons only
   const [tab, setTab] = useState('overview')
   const [badges, setBadges] = useState<Record<string, number>>({})
+  // Phone and tablet drawer: each group folds under its title (owner, 19 November 2026: "the menu in the
+  // hamburger should be collapsable"). Only the group of the page you are on is open at first. On a desktop
+  // the groups are always open: the rail is short enough and folds to icons instead.
+  const [unfolded, setUnfolded] = useState<Set<string>>(new Set())
 
   useEffect(() => { try { setCollapsed(localStorage.getItem('admin-rail') === 'collapsed') } catch { /* default open */ } }, [])
   useEffect(() => { setOpen(false) }, [path])
+  useEffect(() => {
+    const here = GROUPS.find(g => g.items.some(i => (i.href === '/admin' ? path === '/admin' : path === i.href || path.startsWith(i.href + '/'))))
+    if (here) setUnfolded(s => (s.has(here.title) ? s : new Set(s).add(here.title)))
+  }, [path])
+  const fold = (title: string) => setUnfolded(s => { const n = new Set(s); if (n.has(title)) n.delete(title); else n.add(title); return n })
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') setOpen(false) }
     const onTab = (e: Event) => setTab(String((e as CustomEvent).detail))
@@ -134,7 +143,8 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
 
   const onDash = path === '/admin'
   const current = GROUPS.flatMap(g => g.items).find(i => (i.href === '/admin' ? onDash : path === i.href || path.startsWith(i.href + '/')))
-  const labels = !collapsed
+  // The drawer always has words, even if the desktop rail was folded to icons in this browser
+  const labels = !collapsed || open
   const section = GROUPS.find(g => g.items.some(i => i === current))
   const dashGroup = DASH_GROUPS.find(g => g.tabs.some(t => t.key === tab)) ?? DASH_GROUPS[0]
   const dashTab = dashGroup.tabs.find(t => t.key === tab) ?? dashGroup.tabs[0]
@@ -182,10 +192,23 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
 
         {/* One level: groups of pages. Every row is a page. */}
         <nav className="flex-1 overflow-y-auto px-3 py-1.5" aria-label="Admin sections">
-          {GROUPS.map((g, gi) => (
+          {GROUPS.map((g, gi) => {
+            const isOpen = unfolded.has(g.title)
+            const listId = `admin-menu-${g.title.toLowerCase()}`
+            return (
             <div key={g.title} className={gi > 0 ? 'mt-1.5 pt-1.5 border-t border-gray-200' : ''}>
-              {labels && <div className="px-3 pt-1.5 pb-1 text-[11.5px] font-semibold uppercase tracking-[0.06em] text-gray-500">{g.title}</div>}
-              <ul className="space-y-0.5">
+              {labels && (
+                <>
+                  {/* Phone and tablet: the title folds the group */}
+                  <button type="button" onClick={() => fold(g.title)} aria-expanded={isOpen} aria-controls={listId}
+                    className="lg:hidden w-full flex items-center justify-between rounded-lg px-3 py-2 text-[11.5px] font-semibold uppercase tracking-[0.06em] text-gray-500 hover:bg-gray-100">
+                    <span>{g.title}</span>
+                    <ChevronDown className={`w-4 h-4 text-gray-400 transition-transform duration-150 ${isOpen ? 'rotate-180' : ''}`} strokeWidth={2} aria-hidden="true" />
+                  </button>
+                  <div className="hidden lg:block px-3 pt-1.5 pb-1 text-[11.5px] font-semibold uppercase tracking-[0.06em] text-gray-500">{g.title}</div>
+                </>
+              )}
+              <ul id={listId} className={`space-y-0.5 ${labels && !isOpen ? 'hidden lg:block' : ''}`}>
                 {g.items.map(n => {
                   const on = n === current
                   return (
@@ -200,7 +223,8 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
                 })}
               </ul>
             </div>
-          ))}
+            )
+          })}
         </nav>
 
         <div className={`border-t border-gray-200 ${labels ? 'p-3' : 'p-2'} space-y-0.5`}>
