@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import * as XLSX from 'xlsx'
 import { Download, Loader2, RefreshCw, Receipt, Tag, Ticket } from 'lucide-react'
 import Coupons from './Coupons'
+import { DateRangeFilter, rangeBounds, type DateRange } from '@/components/crm/shared'
 
 interface Payment { at: string; kind: 'course' | 'weekend'; what: string; name: string; email: string; amount: number; currency: 'USD' | 'INR'; paymentId: string; coupon?: string; cohort?: string; cohortLabel?: string }
 interface PriceRow { slug: string; code: string; title: string; kind: string; price: { usd: number; inr: number } | null; custom: boolean; previews: number; offer: { on: boolean; percent: number }; regular: { usd: number; inr: number } | null }
@@ -23,6 +24,7 @@ export default function PaymentsPage() {
   // One AI Weekend at a time: each month's weekend has its own people and its own money
   const [weekend, setWeekend] = useState('')
   const [q, setQ] = useState('')
+  const [range, setRange] = useState<DateRange | null>(null) // null = all time
   const [error, setError] = useState('')
   const [notice, setNotice] = useState('')
   const [busy, setBusy] = useState('')
@@ -38,8 +40,10 @@ export default function PaymentsPage() {
 
   const rows = useMemo(() => {
     const n = q.trim().toLowerCase()
-    return (data?.payments || []).filter((p) => (kind === 'all' || p.kind === kind) && (!weekend || p.cohort === weekend) && (!n || `${p.name} ${p.email} ${p.what} ${p.paymentId}`.toLowerCase().includes(n)))
-  }, [data, kind, q, weekend])
+    const b = range ? rangeBounds(range) : null
+    const inRange = (at: string) => { if (!b) return true; const t = Date.parse(at); return t >= b.fromMs && t <= b.toMs }
+    return (data?.payments || []).filter((p) => (kind === 'all' || p.kind === kind) && (!weekend || p.cohort === weekend) && inRange(p.at) && (!n || `${p.name} ${p.email} ${p.what} ${p.paymentId}`.toLowerCase().includes(n)))
+  }, [data, kind, q, weekend, range])
   const weekends = useMemo(() => [...new Map((data?.payments || []).filter((p) => p.cohort).map((p) => [p.cohort!, p.cohortLabel || p.cohort!])).entries()].sort((a, b) => b[0].localeCompare(a[0])), [data])
   const total = (currency: string) => rows.filter((p) => p.currency === currency).reduce((s, p) => s + p.amount, 0)
 
@@ -111,6 +115,10 @@ export default function PaymentsPage() {
                     {weekends.map(([id, label]) => <option key={id} value={id}>{label}</option>)}
                   </select>
                 )}
+                <span className="inline-flex flex-wrap items-center gap-1">
+                  <button type="button" onClick={() => setRange(null)} className={`px-2.5 py-1 text-xs rounded-full border ${!range ? 'bg-primary-600 text-white border-primary-600' : 'border-gray-200 text-gray-600 hover:bg-gray-50'}`}>All time</button>
+                  <DateRangeFilter value={range || { days: -1, from: '', to: '' }} onChange={setRange} />
+                </span>
                 <button onClick={excel} disabled={!rows.length} className={`${btn} ml-auto`}><Download className="w-3.5 h-3.5" />Download Excel</button>
               </div>
               <div className="rounded-xl border border-gray-200 bg-raised overflow-auto">

@@ -9,10 +9,10 @@ export async function POST(request: NextRequest) {
 
     const { days = 7 } = await request.json()
 
-    const [rawPageViews, comments, enquiries, events, firstSeen] = await Promise.all([
+    const [rawPageViews, comments, enquiriesRaw, events, firstSeen] = await Promise.all([
       getPageViews(days).catch((err) => { console.error('Failed to fetch page views:', err); return [] }),
       getAllComments().catch((err) => { console.error('Failed to fetch comments:', err); return [] }),
-      getEnquiries(undefined, days).catch((err) => { console.error('Failed to fetch enquiries:', err); return [] }),
+      getEnquiries(undefined, days + 1).catch((err) => { console.error('Failed to fetch enquiries:', err); return [] }),
       getEvents(days).catch((err) => { console.error('Failed to fetch events:', err); return [] }),
       getVisitorFirstSeen().catch((err) => { console.error('Failed to fetch visitors:', err); return new Map<string, string>() }),
     ])
@@ -22,6 +22,8 @@ export async function POST(request: NextRequest) {
 
     // Range start as a YYYY-MM-DD partition (UTC), same cut getPageViews uses
     const rangeStart = new Date(Date.now() - days * 86_400_000).toISOString().slice(0, 10)
+    // The same cut for enquiries: with "Today" (days = 0) asking for the last 0 days returned none at all
+    const enquiries = enquiriesRaw.filter((e) => String(e.createdAt || '').slice(0, 10) >= rangeStart)
     // Rows written before visitor ids existed are keyed by IP so history still counts
     const visitorOf = (v: { visitorId?: string; ip?: string }) => v.visitorId || `ip:${v.ip || 'unknown'}`
 

@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from 'react'
 import { CalendarClock, Loader2, MailCheck, RefreshCw, Send, Users } from 'lucide-react'
+import { ListToolbar, Pager, useListView } from '@/components/admin/ListControls'
 
 interface Person { email: string; since: string; source: string }
 interface Done { issue: string; slugs: string[]; sent: number; finishedAt: string; note?: string }
@@ -29,6 +30,8 @@ export default function NewsletterPage() {
   const [error, setError] = useState('')
   const [notice, setNotice] = useState('')
   const [busy, setBusy] = useState(false)
+  const vp = useListView(data?.people ?? [], { date: p => p.since, text: p => `${p.email} ${p.source}`, pageSize: 25 })
+  const vh = useListView(data?.history ?? [], { date: h => h.finishedAt || h.issue, pageSize: 10 })
 
   const load = useCallback(async () => {
     setError('')
@@ -105,28 +108,33 @@ export default function NewsletterPage() {
               <section className="rounded-lg border border-gray-200 bg-raised">
                 <h2 className="px-4 py-2.5 border-b border-gray-200 text-sm font-semibold text-gray-900">Who gets it ({data.people.length})</h2>
                 {data.people.length === 0 && <p className="px-4 py-4 text-[13px] text-gray-500">Nobody yet. The box is at the foot of the blog and of every article.</p>}
+                {data.people.length > 0 && <div className="px-4 pt-3"><ListToolbar v={vp} noun="subscriber" /></div>}
+                {data.people.length > 0 && vp.rows.length === 0 && <p className="px-4 pb-3 text-[13px] text-gray-500">Nobody matches that search or those dates.</p>}
                 <ul className="divide-y divide-gray-100 max-h-72 overflow-y-auto">
-                  {data.people.slice(0, 200).map((p) => (
+                  {vp.rows.map((p) => (
                     <li key={p.email} className="px-4 py-2">
                       <div className="text-[13px] text-gray-900 break-all">{p.email}</div>
                       <div className="text-[11.5px] text-gray-500">since {day(p.since)}{p.source ? `, from ${p.source}` : ''}</div>
                     </li>
                   ))}
                 </ul>
-                {data.people.length > 200 && <p className="px-4 py-2 text-[12px] text-gray-500 border-t border-gray-100">and {data.people.length - 200} more</p>}
+                <div className="px-4 pb-3"><Pager v={vp} /></div>
               </section>
 
               <section className="rounded-lg border border-gray-200 bg-raised">
                 <h2 className="px-4 py-2.5 border-b border-gray-200 text-sm font-semibold text-gray-900">What has gone</h2>
                 {data.history.length === 0 && <p className="px-4 py-4 text-[13px] text-gray-500">Nothing yet. The first email goes on {day(data.upcoming.issue)}.</p>}
+                {data.history.length > 0 && <div className="px-4 pt-3"><ListToolbar v={vh} noun="email" /></div>}
+                {data.history.length > 0 && vh.rows.length === 0 && <p className="px-4 pb-3 text-[13px] text-gray-500">No email went out in those dates.</p>}
                 <ul className="divide-y divide-gray-100">
-                  {data.history.map((h) => (
+                  {vh.rows.map((h) => (
                     <li key={h.issue} className="px-4 py-2 flex items-baseline justify-between gap-3">
                       <span className="text-[13px] text-gray-900">{day(h.issue)}</span>
                       <span className="text-[12px] text-gray-500 text-right">{h.sent ? `${h.slugs.length} post${h.slugs.length === 1 ? '' : 's'} to ${h.sent}` : h.note || 'nothing sent'}</span>
                     </li>
                   ))}
                 </ul>
+                <div className="px-4 pb-3"><Pager v={vh} /></div>
               </section>
             </div>
           </div>

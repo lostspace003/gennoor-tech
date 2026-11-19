@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import * as XLSX from 'xlsx'
 import { Check, ChevronDown, ChevronUp, Download, ExternalLink, GripVertical, Loader2, Mail, RefreshCw, Send, Trash2, UserPlus, Users, X } from 'lucide-react'
+import { DateRangeFilter, rangeBounds, type DateRange } from '@/components/crm/shared'
 
 type Kind = 'invite' | 'inside' | 'fit' | 'closing' | 'thanks' | 'payment' | 'reminder' | 'join' | 'kit'
 interface Reg { id: string; cohort: string; name: string; email: string; phone: string; company: string; role: string; at: string; payment: 'pending' | 'paid' | 'refunded'; fee: number; currency?: 'INR' | 'USD'; source: string; note?: string; emails?: Record<string, string>; paymentId?: string; paidAt?: string; coupon?: string }
@@ -72,10 +73,17 @@ export default function WeekendAdminPage() {
   const live = all.filter((r) => r.payment !== 'refunded')
   const paid = all.filter((r) => r.payment === 'paid')
   const pending = all.filter((r) => r.payment === 'pending')
+  const [range, setRange] = useState<DateRange | null>(null) // null = every date
+  const [payShown, setPayShown] = useState<'all' | Reg['payment']>('all')
   const rows = useMemo(() => {
     const n = q.trim().toLowerCase()
-    return n ? all.filter((r) => `${r.name} ${r.email} ${r.company} ${r.phone}`.toLowerCase().includes(n)) : all
-  }, [all, q])
+    const b = range ? rangeBounds(range) : null
+    return all.filter((r) => {
+      if (payShown !== 'all' && r.payment !== payShown) return false
+      if (b) { const t = Date.parse(r.at); if (!(t >= b.fromMs && t <= b.toMs)) return false }
+      return !n || `${r.name} ${r.email} ${r.company} ${r.phone}`.toLowerCase().includes(n)
+    })
+  }, [all, q, range, payShown])
 
   const info = data?.emails.find((e) => e.kind === kind)
   // A campaign email that goes to people you choose (the leads, or pasted), not to the people who registered
@@ -208,6 +216,17 @@ export default function WeekendAdminPage() {
             <>
               <div className="flex flex-wrap items-center gap-2 mb-3">
                 <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search name, email, company" className="text-sm border border-gray-200 rounded-md px-2.5 py-2 w-64" />
+                <select value={payShown} onChange={(e) => setPayShown(e.target.value as typeof payShown)} aria-label="Payment" className="text-xs border border-gray-200 rounded-md px-2 py-1.5 bg-raised">
+                  <option value="all">Every payment state</option>
+                  <option value="paid">Paid</option>
+                  <option value="pending">Not paid yet</option>
+                  <option value="refunded">Refunded</option>
+                </select>
+                <span className="inline-flex flex-wrap items-center gap-1">
+                  <button type="button" onClick={() => setRange(null)} className={`px-2.5 py-1 text-xs rounded-full border ${!range ? 'bg-primary-600 text-white border-primary-600' : 'border-gray-200 text-gray-600 hover:bg-gray-50'}`}>Any date</button>
+                  <DateRangeFilter value={range || { days: -1, from: '', to: '' }} onChange={setRange} />
+                </span>
+                <span className="text-xs text-gray-400">{rows.length === all.length ? `${all.length} registered` : `${rows.length} of ${all.length}`}</span>
                 <span className="text-xs text-gray-500">{data.online ? 'Online payments are marked Paid by themselves. Change it by hand only for money received another way.' : 'Change Payment to Paid when the fee arrives.'}</span>
                 <button onClick={excel} disabled={!rows.length} className={`${btn} ml-auto`}><Download className="w-3.5 h-3.5" />Download Excel</button>
               </div>

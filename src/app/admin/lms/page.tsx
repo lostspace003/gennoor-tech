@@ -98,6 +98,8 @@ function Checks({ label, options, value, onChange }: { label: string; options: r
 
 export default function AdminLmsPage() {
   const [rows, setRows] = useState<Row[]>([])
+  const [courseQ, setCourseQ] = useState('')
+  const [pubShown, setPubShown] = useState<'all' | 'published' | 'draft'>('all')
   // The list takes a few seconds to arrive (the server counts every file of every course), so the page says so
   const [listState, setListState] = useState<'loading' | 'ready' | 'failed'>('loading')
   const [refreshing, setRefreshing] = useState(false)
@@ -212,6 +214,13 @@ export default function AdminLmsPage() {
     load()
   }
 
+  const shownRows = rows.filter(r => {
+    if (pubShown === 'published' && !r.published) return false
+    if (pubShown === 'draft' && r.published) return false
+    const n = courseQ.trim().toLowerCase()
+    return !n || `${r.code} ${r.title} ${r.slug}`.toLowerCase().includes(n)
+  })
+
   return (
     <div className="w-full p-4 lg:p-5">
       <h1 className="text-xl font-semibold tracking-tight text-gray-900">Learning Studio courses</h1>
@@ -221,8 +230,18 @@ export default function AdminLmsPage() {
           <h2 className="text-sm font-semibold text-gray-900">Courses</h2>
           <button type="button" onClick={load} disabled={refreshing} className="text-xs text-gray-600 hover:text-gray-900 inline-flex items-center gap-1 rounded-md border border-gray-200 bg-raised px-2.5 py-1 disabled:opacity-60"><RefreshCw className={`w-3.5 h-3.5 ${refreshing ? 'animate-spin' : ''}`} /> {refreshing ? 'Loading…' : 'Refresh'}</button>
         </div>
+        {rows.length > 0 && (
+          <div className="flex flex-wrap items-center gap-2 mb-3">
+            <input value={courseQ} onChange={e => setCourseQ(e.target.value)} placeholder="Search courses" aria-label="Search courses" className="text-[13px] border border-gray-200 rounded-md px-2.5 py-1.5 w-52 bg-raised" />
+            {(['all', 'published', 'draft'] as const).map(k => (
+              <button key={k} type="button" onClick={() => setPubShown(k)} className={`px-2.5 py-1 text-xs rounded-full border ${pubShown === k ? 'bg-primary-600 text-white border-primary-600' : 'border-gray-200 text-gray-600 hover:bg-gray-50'}`}>{k === 'all' ? 'All' : k === 'published' ? 'Published' : 'Drafts'}</button>
+            ))}
+            <span className="text-xs text-gray-400 ml-auto">{shownRows.length === rows.length ? `${rows.length} courses` : `${shownRows.length} of ${rows.length}`}</span>
+          </div>
+        )}
         <div className="divide-y divide-gray-200 border border-gray-200 rounded-xl bg-raised shadow-sm max-h-[28rem] overflow-y-auto">
-          {rows.map(r => {
+          {rows.length > 0 && shownRows.length === 0 && <div className="p-4 text-xs text-gray-500">No course matches that search.</div>}
+          {shownRows.map(r => {
             const done = r.copy ? r.copy.success === r.copy.total : false
             return (
               <div key={r.slug} className="px-4 py-3 flex flex-wrap items-center justify-between gap-4">

@@ -1,8 +1,8 @@
 'use client'
 
 import { useCallback, useEffect, useState } from 'react'
-import { Loader2 } from 'lucide-react'
 import InfoTip from '@/components/admin/InfoTip'
+import { ListToolbar, Pager, useListView } from '@/components/admin/ListControls'
 
 interface Kind { id: string; label: string; hint: string }
 interface Ev {
@@ -23,6 +23,10 @@ export default function EventsPage() {
   const [open, setOpen] = useState('')
   const [at, setAt] = useState('')
   const [cover, setCover] = useState<File | null>(null)
+  // Most events are still ahead, so the choice is upcoming or past rather than the last week or month
+  const [whenShown, setWhenShown] = useState<'upcoming' | 'past' | 'all'>('all')
+  const shown = (events ?? []).filter(e => whenShown === 'all' || (whenShown === 'upcoming' ? Date.parse(e.startsAt) >= Date.now() : Date.parse(e.startsAt) < Date.now()))
+  const v = useListView(shown, { text: e => `${e.title} ${e.kind} ${e.description} ${e.registrations.map(r => `${r.name} ${r.email} ${r.company || ''}`).join(' ')}`, pageSize: 15 })
   async function uploadCover(id: string, file: File) {
     const fd = new FormData(); fd.append('id', id); fd.append('file', file)
     const r = await fetch('/api/admin/events/image', { method: 'POST', body: fd })
@@ -91,10 +95,18 @@ export default function EventsPage() {
       </div>
 
       <div className="mb-2 flex flex-wrap items-center gap-2 text-xs text-gray-600">Schedule the LinkedIn buttons for<input type="datetime-local" className={`${field} !w-auto`} value={at} onChange={e => setAt(e.target.value)} />{at && <button className="underline" onClick={() => setAt('')}>post now instead</button>}</div>
-      {!events ? <Loader2 className="w-5 h-5 animate-spin text-gray-400" /> : (
+      {!events ? <p className="text-sm text-gray-500">Loading the events…</p> : (
+        <>
+        <ListToolbar v={v} noun="event">
+          <span className="inline-flex items-center gap-1">
+            {(['all', 'upcoming', 'past'] as const).map(k => (
+              <button key={k} type="button" onClick={() => setWhenShown(k)} className={`px-2.5 py-1 text-xs rounded-full border ${whenShown === k ? 'bg-primary-600 text-white border-primary-600' : 'border-gray-200 text-gray-600 hover:bg-gray-50'}`}>{k === 'all' ? 'All' : k === 'upcoming' ? 'Upcoming' : 'Past'}</button>
+            ))}
+          </span>
+        </ListToolbar>
         <ul className="divide-y divide-gray-100 rounded-lg border border-gray-200 bg-raised">
-          {events.length === 0 && <li className="px-3 py-4 text-sm text-gray-500">No events yet.</li>}
-          {events.map(e => (
+          {v.rows.length === 0 && <li className="px-3 py-4 text-sm text-gray-500">{events.length ? 'No event matches that search.' : 'No events yet.'}</li>}
+          {v.rows.map(e => (
             <li key={e.id} className="px-3 py-2">
               <div className="flex items-center gap-2">
                 <div className="min-w-0 flex-1">
@@ -120,6 +132,8 @@ export default function EventsPage() {
             </li>
           ))}
         </ul>
+        <Pager v={v} />
+        </>
       )}
     </div>
   )

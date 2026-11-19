@@ -60,15 +60,18 @@ export default function RouteProgress() {
       let url: URL
       try { url = new URL(a.href, window.location.href) } catch { return }
       if (url.origin !== window.location.origin) return
-      // The same page (or only a place on it): nothing to wait for
-      if (url.pathname === window.location.pathname && url.search === window.location.search) return
+      // The same page (or only a place on it, or only its ?query): nothing to wait for. A change of the query
+      // alone does not change the path, so the bar would never be told the page is there and crept on for 15 s.
+      if (url.pathname === window.location.pathname) return
       pressed.current?.removeAttribute('data-pending')
       pressed.current = a
       a.setAttribute('data-pending', '1')
       start(url.pathname)
     }
-    document.addEventListener('click', onClick)
-    return () => { document.removeEventListener('click', onClick); if (giveUp.current) window.clearTimeout(giveUp.current) }
+    // Listened for on the way DOWN (capture): a Next.js <Link> cancels the browser's own click in its handler,
+    // so on the way back up every press on a menu row looked "already handled" and the bar never started
+    document.addEventListener('click', onClick, true)
+    return () => { document.removeEventListener('click', onClick, true); if (giveUp.current) window.clearTimeout(giveUp.current) }
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   // The new page is here
