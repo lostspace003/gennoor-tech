@@ -3,12 +3,23 @@ import { cookies } from 'next/headers'
 import type { NextResponse } from 'next/server'
 
 const COOKIE_NAME = 'learner-session'
-if (!process.env.LEARNER_JWT_SECRET && !process.env.AUTH_SECRET) {
-  // Follow-up (docs/FOLLOW-UPS.md): hard-fail in production instead of falling back.
-  console.error('[learner-auth] SECURITY: no LEARNER_JWT_SECRET or AUTH_SECRET set — using insecure dev fallback secret')
-}
-const JWT_SECRET = new TextEncoder().encode(process.env.LEARNER_JWT_SECRET || process.env.AUTH_SECRET || 'gennoor-academy-fallback-secret')
 const JWT_EXPIRY = '30d'
+
+/**
+ * The secret every learner sign-in pass is signed with. It comes from the server's settings
+ * (LEARNER_JWT_SECRET, or AUTH_SECRET). On the live site there is NO fallback: a secret written in the code is
+ * known to everyone who can read the code, and whoever knows it can make a pass for any learner. So if the
+ * setting is ever missing in production this throws, sign-in stops and everyone reads as signed out, which is
+ * the safe way to fail (docs/SECURITY.md, "Secrets"). Only `next dev` on a developer's machine uses the
+ * built-in value.
+ */
+export function learnerSecretText(): string {
+  const set = process.env.LEARNER_JWT_SECRET || process.env.AUTH_SECRET
+  if (set) return set
+  if (process.env.NODE_ENV === 'production') throw new Error('LEARNER_JWT_SECRET (or AUTH_SECRET) is not set on the server: learner sign-in is closed until it is')
+  return 'gennoor-academy-fallback-secret'
+}
+const learnerKey = () => new TextEncoder().encode(learnerSecretText())
 
 export interface LearnerPayload {
   email: string
@@ -23,7 +34,7 @@ export async function createLearnerToken(payload: LearnerPayload): Promise<strin
     .setProtectedHeader({ alg: 'HS256' })
     .setIssuedAt()
     .setExpirationTime(JWT_EXPIRY)
-    .sign(JWT_SECRET)
+    .sign(learnerKey())
 }
 
 export async function verifyLearnerSession(): Promise<LearnerPayload | null> {
@@ -31,7 +42,7 @@ export async function verifyLearnerSession(): Promise<LearnerPayload | null> {
     const cookieStore = await cookies()
     const token = cookieStore.get(COOKIE_NAME)?.value
     if (!token) return null
-    const { payload } = await jwtVerify(token, JWT_SECRET)
+    const { payload } = await jwtVerify(token, learnerKey(), { algorithms: ['HS256'] })
     return payload as unknown as LearnerPayload
   } catch {
     return null

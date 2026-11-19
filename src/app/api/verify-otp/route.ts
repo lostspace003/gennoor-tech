@@ -1,12 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { verifyOTP } from '@/lib/otp-store'
 import { rateLimit, clientIp } from '@/lib/rate-limit'
+import { setOtpProof } from '@/lib/otp-proof'
 
 export async function POST(request: NextRequest) {
   try {
     const { email, otp } = await request.json()
 
-    if (!email || !otp) {
+    if (!email || !otp || typeof email !== 'string' || typeof otp !== 'string') {
       return NextResponse.json({ error: 'Email and OTP are required' }, { status: 400 })
     }
 
@@ -26,7 +27,11 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    return NextResponse.json({ success: true, verified: true })
+    // The store now knows the address is verified, but not WHO verified it. This browser gets a signed proof,
+    // and whatever relies on the verified address asks for it (src/lib/otp-proof.ts).
+    const response = NextResponse.json({ success: true, verified: true })
+    await setOtpProof(response, email)
+    return response
   } catch (error) {
     console.error('Verify OTP error:', error)
     return NextResponse.json(

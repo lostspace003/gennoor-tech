@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@/lib/auth'
 import { isAdminUser } from '@/lib/crm/users'
+import { clientIp } from '@/lib/rate-limit'
 import { TableClient, AzureNamedKeyCredential } from '@azure/data-tables'
 
 function getTableClient() {
@@ -45,8 +46,8 @@ export async function POST(req: NextRequest) {
     const client = getTableClient()
     await client.createTable().catch(() => {})
 
-    const forwarded = req.headers.get('x-forwarded-for')
-    const ip = forwarded?.split(',')[0]?.trim() || req.headers.get('x-real-ip') || 'unknown'
+    // The address the platform saw, not one the caller can type into a header (src/lib/rate-limit.ts)
+    const ip = clientIp(req.headers)
     const userAgent = req.headers.get('user-agent') || 'unknown'
     const now = new Date()
 

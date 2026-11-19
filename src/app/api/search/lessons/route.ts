@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { rateLimit } from '@/lib/rate-limit'
+import { rateLimit, clientIp } from '@/lib/rate-limit'
 import { verifyLearnerSession } from '@/lib/learner-auth'
 import { listLmsCourses } from '@/lib/lms'
 import { courses as interactiveCourses } from '@/config/courses'
@@ -49,7 +49,7 @@ export async function GET(req: NextRequest) {
   const q = (req.nextUrl.searchParams.get('q') || '').trim().replace(/\s+/g, ' ').slice(0, 120)
   if (q.length < 3 || !qdrantConfigured()) return empty
 
-  const ip = (req.headers.get('x-forwarded-for') || 'anon').split(',')[0].trim()
+  const ip = clientIp(req.headers)
   if (!rateLimit(`site-lessons:${ip}`, 30, 60_000)) return empty
 
   const key = q.toLowerCase()

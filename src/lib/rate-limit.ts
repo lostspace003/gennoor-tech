@@ -38,9 +38,27 @@ export function rateLimit(key: string, max: number, windowMs: number): boolean {
   return w.count <= max
 }
 
-/** Best-effort client IP from proxy headers (Azure App Service). */
+/** "203.0.113.5:51234" -> "203.0.113.5", "[2001:db8::1]:443" -> "2001:db8::1". An address with no port is left as it is. */
+function withoutPort(address: string): string {
+  const a = address.trim()
+  const v6 = a.match(/^\[([^\]]+)\](?::\d+)?$/)
+  if (v6) return v6[1]
+  return /^\d{1,3}(\.\d{1,3}){3}:\d+$/.test(a) ? a.slice(0, a.lastIndexOf(':')) : a
+}
+
+/**
+ * The caller's address, for limits and for the sign-in log.
+ *
+ * The site runs directly behind the Azure App Service front end, which ADDS the real caller to the END of
+ * X-Forwarded-For ("whatever the caller sent, <real address>:<port>"). So the LAST entry is the one the platform
+ * wrote; everything before it is whatever the caller chose to send. Until 19 November 2026 this read the FIRST
+ * entry, so a caller could send a new made-up address with every request and no per-address limit ever applied
+ * to them (docs/SECURITY.md, "Limits"). Never read the header by hand in a route: call this.
+ * If a CDN or another proxy is ever put in front of the site, this must change with it.
+ */
 export function clientIp(headers: { get(name: string): string | null }): string {
-  const fwd = headers.get('x-forwarded-for')
-  if (fwd) return fwd.split(',')[0].trim()
-  return headers.get('x-real-ip') || headers.get('x-client-ip') || 'unknown'
+  const entries = (headers.get('x-forwarded-for') || '').split(',').map(s => s.trim()).filter(Boolean)
+  const last = entries[entries.length - 1]
+  if (last) return withoutPort(last)
+  return withoutPort(headers.get('x-client-ip') || headers.get('x-real-ip') || '') || 'unknown'
 }

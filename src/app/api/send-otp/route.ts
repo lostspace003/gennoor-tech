@@ -13,7 +13,7 @@ export async function POST(request: NextRequest) {
     }
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-    if (!emailRegex.test(email)) {
+    if (email.length > 200 || !emailRegex.test(email)) {
       return NextResponse.json({ error: 'Invalid email address' }, { status: 400 })
     }
 
@@ -22,6 +22,9 @@ export async function POST(request: NextRequest) {
     const normalised = email.toLowerCase().trim()
     if (
       !rateLimit(`otp-send:${normalised}`, 3, 15 * 60 * 1000) ||
+      // A cap for the day as well: each code allows five guesses, so the number of codes one mailbox can be
+      // sent is also the number of guesses anyone gets at it
+      !rateLimit(`otp-send-day:${normalised}`, 12, 24 * 60 * 60 * 1000) ||
       !rateLimit(`otp-send-ip:${clientIp(request.headers)}`, 10, 60 * 60 * 1000)
     ) {
       return NextResponse.json(

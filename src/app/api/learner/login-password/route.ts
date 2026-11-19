@@ -20,7 +20,7 @@ export async function POST(request: NextRequest) {
     // `email` is still accepted so existing callers keep working.
     const identifier = String(body.identifier || body.email || '').trim()
     const password = body.password
-    if (!identifier || !password) {
+    if (!identifier || !password || typeof password !== 'string' || identifier.length > 200 || password.length > 200) {
       return NextResponse.json({ error: 'Email or username and password are required.' }, { status: 400 })
     }
 
@@ -31,6 +31,13 @@ export async function POST(request: NextRequest) {
       { error: 'Incorrect email/username or password. You can always sign in with an email code instead.' },
       { status: 401 },
     )
+
+    // A limit on the NAME being tried as well as on the caller, so one account cannot be guessed at from many
+    // addresses. It counts what was typed, known or not, so the answer says nothing about which accounts exist.
+    // A learner locked out this way can still sign in with an emailed code.
+    if (!rateLimit(`learner-login-pw-id:${identifier.toLowerCase()}`, 10, 15 * 60_000)) {
+      return NextResponse.json({ error: 'Too many attempts. Try again in a few minutes, or sign in with an email code.' }, { status: 429 })
+    }
 
     const email = await resolveLearnerEmail(identifier)
     if (!email) return wrong

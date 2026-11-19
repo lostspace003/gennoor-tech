@@ -1,6 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  // Do not tell every visitor (and every scanner) what the site is built with
+  poweredByHeader: false,
   async headers() {
     return [
       {
@@ -12,6 +14,12 @@ const nextConfig = {
           { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
           // No includeSubDomains/preload yet — subdomain inventory unverified (docs/FOLLOW-UPS.md)
           { key: 'Strict-Transport-Security', value: 'max-age=31536000' },
+          // The parts of a content policy that cannot break a page (docs/SECURITY.md, "Headers"): no <base>
+          // pointing links at another site, no plug-in content, no other site framing ours. A full script
+          // policy is a separate piece of work: it has to be tried on every page first.
+          { key: 'Content-Security-Policy', value: "base-uri 'self'; object-src 'none'; frame-ancestors 'self'" },
+          // The site never asks for the camera, the microphone or the visitor's location, so nothing on a page may
+          { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=()' },
         ],
       },
     ]

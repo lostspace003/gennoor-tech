@@ -4,6 +4,7 @@ import { getLearner, updateLearnerFields, claimUsername } from '@/lib/azure-stor
 import { hashPassword, passwordProblem } from '@/lib/learner-password'
 import { normalizeUsername, usernameProblem } from '@/lib/learner-username'
 import { rateLimit, clientIp } from '@/lib/rate-limit'
+import { plainField } from '@/lib/plain-text'
 
 export const dynamic = 'force-dynamic'
 
@@ -27,11 +28,10 @@ export async function POST(request: NextRequest) {
 
   try {
     const body = await request.json()
-    const trim = (v: unknown, max: number) => String(v ?? '').trim().slice(0, max)
-
-    const name = trim(body.name, 80)
-    const organization = trim(body.organization, 120)
-    const role = trim(body.role, 80)
+    // Plain words only: no angle brackets or control characters are ever saved (src/lib/plain-text.ts)
+    const name = plainField(body.name, 80)
+    const organization = plainField(body.organization, 120)
+    const role = plainField(body.role, 80)
     const username = normalizeUsername(body.username)
     const password = typeof body.password === 'string' ? body.password : ''
 

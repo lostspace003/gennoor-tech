@@ -7,6 +7,7 @@ import GennoorCareTile from '@/components/admin/GennoorCareTile'
 import CrmStatsTile from '@/components/admin/CrmStatsTile'
 import { TimeSlider, LeadLocalTime, InfoTip } from '@/components/crm/shared'
 import { ADMIN_GLOSSARY } from '@/lib/admin-glossary'
+import { safeHtml, CONTAINED } from '@/lib/safe-html'
 import { istInstant, isoToIstParts, leadTimeZone, formatInZone } from '@/lib/crm/timezones'
 import dynamic from 'next/dynamic'
 import {
@@ -1506,7 +1507,8 @@ export default function AdminDashboard() {
                   {callDraft.bodyHtml && (
                     <div>
                       <label className="block text-xs font-medium text-gray-500 mb-1">Preview</label>
-                      <div className="border border-gray-200 rounded-lg p-4 bg-gray-50 text-sm text-gray-700 leading-relaxed" dangerouslySetInnerHTML={{ __html: callDraft.bodyHtml }} />
+                      {/* The draft is written by a model that has read the stranger's own message: cleaned and kept in its box (src/lib/safe-html.ts) */}
+                      <div className="border border-gray-200 rounded-lg p-4 bg-gray-50 text-sm text-gray-700 leading-relaxed max-h-[420px]" style={CONTAINED} dangerouslySetInnerHTML={{ __html: safeHtml(callDraft.bodyHtml) }} />
                     </div>
                   )}
 

@@ -5,6 +5,7 @@ import { trackEvent, trackException, initAppInsights } from '@/lib/analytics'
 import { rateLimit, clientIp } from '@/lib/rate-limit'
 import { escapeHtml } from '@/lib/escape-html'
 import { isEmailVerified } from '@/lib/otp-store'
+import { hasOtpProof } from '@/lib/otp-proof'
 import { istInstant, formatInZone, IST } from '@/lib/crm/timezones'
 import { COUNTRIES, TECH_CALL_TYPE, heldSlotKeys, isOfferedSlot, slotKey, zoneForCountry } from '@/lib/tech-call'
 
@@ -39,7 +40,8 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Please fill in every required field.' }, { status: 400 })
     }
     if (audience === 'Team' && !teamSize) return NextResponse.json({ error: 'Please enter the team size.' }, { status: 400 })
-    if (!isEmailVerified(email)) return NextResponse.json({ error: 'Please verify your email with the code first.' }, { status: 403 })
+    // The code was right for this address AND this browser is the one that typed it (src/lib/otp-proof.ts)
+    if (!isEmailVerified(email) || !(await hasOtpProof(email))) return NextResponse.json({ error: 'Please verify your email with the code first.' }, { status: 403 })
     if (!isOfferedSlot(slotDate, slotTime)) return NextResponse.json({ error: 'That time is not available. Please pick another.' }, { status: 400 })
 
     const rows = await getEnquiries(TECH_CALL_TYPE, 60)

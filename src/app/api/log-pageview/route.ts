@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { trackPageView, initAppInsights } from '@/lib/analytics'
 import { savePageView, cleanTouch } from '@/lib/azure-storage'
 import { auth } from '@/lib/auth'
+import { clientIp } from '@/lib/rate-limit'
 
 // Common bot user-agent patterns
 const BOT_PATTERNS = [
@@ -60,10 +61,8 @@ export async function POST(request: NextRequest) {
     const isInternal = await isInternalRequest(request, page, url)
 
     // Extract IP and geo from server-side headers (Azure App Service)
-    const ip =
-      request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ||
-      request.headers.get('x-real-ip') ||
-      ''
+    const seen = clientIp(request.headers)
+    const ip = seen === 'unknown' ? '' : seen
     const country =
       request.headers.get('x-azure-clientip-country') ||
       ''

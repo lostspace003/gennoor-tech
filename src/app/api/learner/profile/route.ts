@@ -3,6 +3,7 @@ import { verifyLearnerSession, createLearnerToken, learnerCookieOptions } from '
 import { getLearner, updateLearnerFields, claimUsername } from '@/lib/azure-storage'
 import { normalizeUsername, usernameProblem, suggestUsername } from '@/lib/learner-username'
 import { rateLimit, clientIp } from '@/lib/rate-limit'
+import { plainField } from '@/lib/plain-text'
 
 export const dynamic = 'force-dynamic'
 
@@ -46,8 +47,9 @@ export async function PUT(request: NextRequest) {
 
   try {
     const body = await request.json()
+    // Plain words only: no angle brackets or control characters are ever saved (src/lib/plain-text.ts)
     const clean = (v: unknown, max: number) =>
-      typeof v === 'string' ? v.trim().slice(0, max) : undefined
+      typeof v === 'string' ? plainField(v, max) : undefined
 
     const name = clean(body.name, 80)
     const organization = clean(body.organization, 120)

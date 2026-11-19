@@ -2,6 +2,7 @@ import { randomUUID } from 'node:crypto'
 import { SignJWT, jwtVerify } from 'jose'
 import { BlobServiceClient, ContainerSASPermissions, StorageSharedKeyCredential, generateBlobSASQueryParameters } from '@azure/storage-blob'
 import { getStorage } from '@/lib/lms'
+import { learnerSecretText } from '@/lib/learner-auth'
 
 /**
  * Protected video: each lecture is stored as encrypted HLS (AES-128 segments)
@@ -17,7 +18,8 @@ export const KEYS_CONTAINER = 'lms-keys'
 export const hlsContainer = (slug: string) => `${slug}-hls`
 export const keyBlob = (slug: string, item: string) => `${slug}/${item}.key`
 
-const secret = () => new TextEncoder().encode(`${process.env.LEARNER_JWT_SECRET || process.env.AUTH_SECRET || 'gennoor-dev-secret'}:hls`)
+// The same secret as the learner sign-in, and like it with no built-in value on the live site (learner-auth.ts)
+const secret = () => new TextEncoder().encode(`${learnerSecretText()}:hls`)
 
 export type HlsUse = 'playlist' | 'key'
 export interface HlsClaims { slug: string; item: string; email: string }

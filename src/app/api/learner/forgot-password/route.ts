@@ -43,7 +43,7 @@ export async function POST(request: NextRequest) {
 
     // Per-mailbox throttle on top of the per-IP one, so this route can't be
     // used to bomb an inbox or burn ACS quota.
-    if (!rateLimit(`otp-send:${email}`, 3, 15 * 60 * 1000)) {
+    if (!rateLimit(`otp-send:${email}`, 3, 15 * 60 * 1000) || !rateLimit(`otp-send-day:${email}`, 12, 24 * 60 * 60 * 1000)) {
       return NextResponse.json(
         { error: 'Too many codes requested. Please wait a few minutes and try again.' },
         { status: 429 },
