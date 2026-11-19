@@ -34,6 +34,15 @@ export async function POST(request: Request) {
         { status: 400 }
       )
     }
+    // One real address, and short plain fields: the confirmation goes to `email` with the title in its subject,
+    // so a list of addresses and a title of the sender's own wording must never get this far
+    const short = (v: unknown, max: number) => v === undefined || v === null || (typeof v === 'string' && v.length <= max)
+    if (typeof email !== 'string' || email.length > 200 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
+      || typeof name !== 'string' || name.length > 120 || !short(company, 160) || !short(webinarId, 120)
+      || typeof webinarTitle !== 'string' || webinarTitle.length > 160 || /https?:|www\.|[\r\n]/i.test(webinarTitle)
+      || !short(webinarDate, 80) || /https?:|www\.|[\r\n]/i.test(String(webinarDate || ''))) {
+      return NextResponse.json({ success: false, message: 'Please check the form and try again.' }, { status: 400 })
+    }
 
     await saveEnquiry('WebinarRegistration', {
       name,

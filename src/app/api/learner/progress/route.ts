@@ -9,7 +9,7 @@ export async function GET(request: NextRequest) {
   }
 
   const courseId = request.nextUrl.searchParams.get('courseId')
-  if (!courseId) {
+  if (!courseId || !/^[a-z0-9][a-z0-9-]{0,80}$/i.test(courseId)) {
     return NextResponse.json({ error: 'courseId is required' }, { status: 400 })
   }
 
