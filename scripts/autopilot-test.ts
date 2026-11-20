@@ -104,6 +104,45 @@ async function main() {
   applyAction(h.store.s, day(h).slots[0].id, 'skip', h.w.now)
   ok(h.store.s.days['2026-11-02'].slots[0].status === 'skipped', 'you can skip a held post')
 
+  // "Why is autopilot holding post for a review, they can do posting automatically" (owner, 20 November 2026)
+  console.log('a remark about style does not hold a post (the last look)')
+  let looks = 0
+  h = harness(); h.w.verdicts = ['revise', 'revise', 'revise']; looks = 0
+  h.d.lastLook = async ({ notes }) => { looks++; return { ok: notes.length > 0, notes: [] } }
+  h.w.now = at('2026-11-02', '05:10'); await tick(h.d)
+  h.w.now = at('2026-11-02', '07:00'); await tick(h.d)
+  ok(day(h).slots[0].status === 'ready' && looks === 1 && !h.w.alerts.some(a => /held/.test(a)), 'the reviewer is still not satisfied after every rewrite and no rule is broken: it goes out, and you are not emailed')
+  ok(/reviewer still asked for "opening line is weak"/.test(day(h).slots[0].reason || ''), 'what the reviewer still asked for is kept on the slot, for the Autopilot page')
+  h.w.now = at('2026-11-02', '08:31'); await tick(h.d)
+  ok(h.w.published.length === 1 && h.w.published[0].t === 'organization', 'and it is published at its time')
+  h = harness(); h.w.verdicts = ['revise', 'revise', 'revise']
+  h.d.lastLook = async () => ({ ok: false, notes: ['"our free webinar": something of ours is called free'] })
+  h.w.now = at('2026-11-02', '05:10'); await tick(h.d)
+  h.w.now = at('2026-11-02', '07:00'); await tick(h.d)
+  ok(day(h).slots[0].status === 'held' && /called free/.test(day(h).slots[0].reason || '') && h.w.alerts.some(a => /held/.test(a)), 'the last look finds a rule broken: held, the rule is the reason, and you are emailed')
+  h.w.now = at('2026-11-02', '08:31'); await tick(h.d)
+  ok(h.w.published.length === 0, 'and it is not published')
+  h = harness(); h.w.verdicts = ['revise', 'revise', 'revise']
+  h.d.lastLook = async () => { throw new Error('400 the model refused') }
+  h.w.now = at('2026-11-02', '05:10'); await tick(h.d)
+  h.w.now = at('2026-11-02', '07:00'); await tick(h.d)
+  ok(day(h).slots[0].status === 'held' && /opening line is weak/.test(day(h).slots[0].reason || ''), 'the last look cannot be asked: held, as it always was')
+  h = harness(); h.w.verdicts = ['revise', 'pass']; looks = 0
+  h.d.lastLook = async () => { looks++; return { ok: true, notes: [] } }
+  h.w.now = at('2026-11-02', '05:10'); await tick(h.d)
+  h.w.now = at('2026-11-02', '07:00'); await tick(h.d)
+  ok(day(h).slots[0].status === 'ready' && looks === 0 && !day(h).slots[0].reason, 'a post the reviewer passes is never sent to the last look')
+  h = harness(); h.w.text = 'Why the election result matters for every AI team. '.repeat(10); looks = 0
+  h.d.lastLook = async () => { looks++; return { ok: true, notes: [] } }
+  h.w.now = at('2026-11-02', '05:10'); await tick(h.d)
+  h.w.now = at('2026-11-02', '07:00'); await tick(h.d)
+  ok(day(h).slots[0].status === 'held' && looks === 0, 'a banned topic is held without asking: the last look cannot let it through')
+  h = harness(); h.w.now = at('2026-11-02', '05:10'); looks = 0
+  h.d.lastLook = async () => { looks++; return { ok: true, notes: [] } }
+  h.store.s.history.push({ at: at('2026-11-01', '08:00').toISOString(), title: 'old', hook: 'A solid post about agents. A solid post about agents.' })
+  await tick(h.d)
+  ok(day(h).slots[0].status === 'held' && looks === 0, 'an opening that repeats a recent post is held without asking, too')
+
   console.log('failures and retries')
   h = harness(); h.w.now = at('2026-11-02', '05:10'); await tick(h.d); h.w.now = at('2026-11-02', '07:00'); await tick(h.d)
   h.w.pubFail = c => (c <= 2 ? new Error('503 LinkedIn unavailable') : null)

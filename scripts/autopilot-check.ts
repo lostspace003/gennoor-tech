@@ -11,7 +11,7 @@
 import { cut, hasBrokenLetter, safeJson, wellFormed } from '@/lib/safe-text'
 import { toBold as boldText } from '@/lib/linkedin-format'
 import { HOOK_RULES, PILLARS, POST_FORMATS, buildBrief, echoedHook, firstLine, formatOf, freshEnough, pillarOf, pillarsFor } from '@/lib/autopilot/variety'
-import { READER_CHECK, articleRules, postRules, selfTalk } from '@/lib/writing-rules'
+import { READER_CHECK, aboutTheWords, articleRules, lastLookInput, lastLookRules, postRules, readLastLook, selfTalk } from '@/lib/writing-rules'
 
 let failed = 0
 const ok = (name: string, pass: boolean, detail = '') => { console.log(`${pass ? 'ok  ' : 'FAIL'} ${name}${detail ? `  (${detail})` : ''}`); if (!pass) failed++ }
@@ -104,6 +104,22 @@ const CLEAN = [
   '<p>Microsoft has not said when the service was fully restored. The pages of its status site listed the affected products.</p>',
 ]
 ok('ordinary sentences are not mistaken for it', CLEAN.every((t) => selfTalk(t) === null), CLEAN.filter((t) => selfTalk(t)).map((t) => selfTalk(t)).join(' | ') || 'none flagged')
+
+// ---- 9. A remark is not a reason to hold (owner, 20 November 2026: "they can do posting automatically")
+ok('the reviewer is told that the wrapping of the writer\'s reply is not its business', /wrapped in JSON/.test(READER_CHECK) && /for YOUR reply only/.test(READER_CHECK))
+// The first of these held a real post on 20 November 2026, three rewrites running.
+const ABOUT_WRAPPING = [
+  'The reply is not in the required JSON shape: it uses the exact words "\\"text\\"" instead of the required key "\\"verdict\\"" and "\\"notes\\"".',
+  'The output should use the required keys verdict and notes.',
+  'Return a JSON object with "verdict" and "notes".',
+]
+ok('a note about the wrapping is not passed on', aboutTheWords(ABOUT_WRAPPING).length === 0, aboutTheWords(ABOUT_WRAPPING).join(' | ') || 'all dropped')
+const ABOUT_WORDS = ['"JSON" is not explained where it first appears.', 'The first line does not say who did what: "A rough plan can now become".', '"connectors" is not explained.']
+ok('a note about the words is, even one that names JSON', aboutTheWords(ABOUT_WORDS).length === ABOUT_WORDS.length)
+ok('the last look is read: publish, hold with its reasons, and an answer that is neither', readLastLook('{"verdict":"publish","notes":[]}')?.ok === true && readLastLook('```json\n{"verdict":"hold","notes":["our course is called free"]}\n```')?.notes[0] === 'our course is called free' && readLastLook('It looks fine to me.') === null && readLastLook('{"verdict":"pass"}') === null)
+const look = lastLookRules('LinkedIn post')
+ok('the last look is told not to judge style, and what does matter', /Do NOT judge style/.test(look) && /called free/.test(look) && /first person singular/.test(look) && /made up/.test(look) && look.length < 6_000, `${look.length}`)
+ok('it is given the reviewer\'s notes and the text', /REVIEWER'S NOTES/.test(lastLookInput('The words.', ['a note'])) && /- a note/.test(lastLookInput('The words.', ['a note'])) && /THE TEXT:\nThe words\./.test(lastLookInput('The words.', ['a note'])))
 
 console.log(failed ? `\n${failed} CHECK(S) FAILED` : '\nALL OK')
 process.exit(failed ? 1 : 0)

@@ -64,8 +64,17 @@ export const ARTICLE_CRAFT = `HOW TO WRITE THE ARTICLE
 10. Length: 1,100 to 1,600 words. Shorter and clear beats longer and padded.
 11. For search: the words a person would type, used naturally in the first paragraph and the headings.`
 
-/** What a reviewer checks first, before anything else. */
-export const READER_CHECK = `READ IT AS THE READER: a manager who is not technical. Answer "revise" and quote the exact words if any of these is true:
+/**
+ * What a reviewer checks first, before anything else.
+ *
+ * The first paragraph is there because of 20 November 2026: the writer's reply reaches the reviewer as JSON
+ * ({"text": "..."}), and a reviewer told to answer as {"verdict", "notes"} judged THAT: "The reply is not in the
+ * required JSON shape: it uses "text" instead of the required key "verdict"". No rewrite can fix such a note, so
+ * a good post failed three times and was held.
+ */
+export const READER_CHECK = `WHAT YOU ARE CHECKING: the words a reader will see, and nothing else. They may reach you wrapped in JSON, as the value of "text". That wrapping is the writer's own and it is correct: never comment on it, never ask for other keys, and read "\\n" as a line break. The JSON shape asked for at the end of these instructions is for YOUR reply only.
+
+READ IT AS THE READER: a manager who is not technical. Answer "revise" and quote the exact words if any of these is true:
 - a technical word or an abbreviation is not explained where it first appears;
 - a sentence has to be read twice, or runs past about 25 words;
 - the first two lines do not say what happened or what this is about;
@@ -81,6 +90,51 @@ export const postRules = () => [READER, PLAIN, POST_CRAFT, TRUTH].join('\n\n')
 export const articleRules = () => [READER, PLAIN, ARTICLE_CRAFT, TRUTH].join('\n\n')
 /** The short form, for a model with a small job (a poll's introduction, a repost line, a tidy-up). */
 export const shortRules = () => `Write for a manager who is not technical: everyday words, short sentences, every technical word explained in a few plain words the first time. Say the point first. No clever frame ("X is not a Y story, it is a Z story"), no hype, no filler. Never the first person singular. Nothing of ours is called "free"; no price, no customer's name, no promised result. Only the facts given.`
+
+// ---- A remark is not a reason to hold ------------------------------------------------------------------------------------
+//
+// The owner, 20 November 2026, on an email "Autopilot held a post for your review": "Why is autopilot holding post
+// for a review, they can do posting automatically and also same for blog post."
+//
+// So a post or an article is held only when publishing it would break a rule that matters outside the text:
+// something untrue, something of ours called free, a customer named, a banned topic. A reviewer that is still not
+// satisfied with the STYLE after every rewrite does not stop it: the text goes out, and what the reviewer still
+// asked for is kept on the Autopilot page. The reviewer cannot say which of its notes is which, so one more
+// question is asked once, at the end: the last look.
+
+/** A reviewer's note about how the writer's reply was wrapped (JSON, the names of its keys), not about the words. */
+const ABOUT_THE_WRAPPING = /\b(reply|response|output|answer)\b[^.]{0,80}\b(JSON|required (key|keys|shape|format))|\bJSON (shape|object|format|key|keys|structure)\b|\brequired keys?\b|["“\\]*verdict["”\\]*\s+(and|or)\s+["“\\]*notes\b/i
+
+/** The reviewer's notes that are about the words. A note about the wrapping is nothing a writer can fix. */
+export const aboutTheWords = (notes: unknown): string[] =>
+  (Array.isArray(notes) ? notes : []).map(n => String(n ?? '').trim()).filter(n => n && !ABOUT_THE_WRAPPING.test(n))
+
+/** What the last look is told. `kind` is "LinkedIn post" or "blog article". */
+export const lastLookRules = (kind: string) => `You are the last check before Gennoor Tech (an AI training company) publishes this ${kind}. It has already been rewritten for style several times. Do NOT judge style: not clarity, not length, not the opening, not the structure, not whether a word is explained, not the hashtags. A text that is merely not as good as it could be is PUBLISHED.
+
+Answer "hold" only when publishing would break one of these, and quote the exact words:
+1. A fact is wrong or made up: a number, a name, a date, a quote or a link that one of the REVIEWER'S NOTES below says is invented, wrong or not in the facts the writer was given.
+2. The author speaks in the first person singular ("I", "my", "me"). Words inside a quoted example of what to type or say do not count.
+3. Something of Gennoor's is called free, or a price, a fee or a discount of Gennoor's is stated. Another company's price in the news is fine.
+4. A customer of Gennoor's is named, or a result is promised (a pass, a saving, a rank).
+5. The text talks about its own writing: a draft, a revision, a reviewer, the sources it was given.
+6. It is not a finished text: it is empty, stops in the middle of a sentence, or is still wrapped in code or JSON.
+
+Reply as JSON only: {"verdict": "publish" | "hold", "notes": [string]}. For "publish", notes is empty.`
+
+/** What the last look is given: the reviewer's remaining notes, then the text. */
+export const lastLookInput = (text: string, notes: string[]) =>
+  `REVIEWER'S NOTES (most are about style; only a note about a fact matters to you):\n${notes.length ? notes.map(n => `- ${n}`).join('\n') : '(none)'}\n\nTHE TEXT:\n${text}`
+
+/** The last look's answer. null when it cannot be read: the caller then holds, as it would have before. */
+export function readLastLook(reply: string): { ok: boolean; notes: string[] } | null {
+  try {
+    const p = JSON.parse(reply.slice(reply.indexOf('{'), reply.lastIndexOf('}') + 1))
+    if (p?.verdict === 'publish') return { ok: true, notes: [] }
+    if (p?.verdict === 'hold') return { ok: false, notes: Array.isArray(p.notes) ? p.notes.map(String).filter(Boolean).slice(0, 4) : [] }
+    return null
+  } catch { return null }
+}
 
 // ---- Text that talks about its own writing ---------------------------------------------------------------------------
 

@@ -24,6 +24,13 @@ export interface Deps {
   pastPosts?(): Promise<{ at: string; title: string; hook?: string }[]>
   /** HTML buttons for an alert email that act on a slot without signing in (signed, expiring links). */
   links?(slotId: string, actions: EmailAction[]): string
+  /**
+   * The last look at a post the reviewer is still not satisfied with after every rewrite: would publishing it break
+   * a rule that matters (something untrue, something of ours called free, a customer named), or is it only not as
+   * good as it could be? `ok` means publish. See "A remark is not a reason to hold" in src/lib/writing-rules.ts.
+   * Optional: without it such a post is held, as it always was.
+   */
+  lastLook?(ctx: { text: string; notes: string[] }): Promise<{ ok: boolean; notes: string[] }>
 }
 
 export type EmailAction = 'approve' | 'release' | 'skip'
@@ -223,9 +230,24 @@ export async function tick(d: Deps, opts: { force?: boolean } = {}): Promise<str
         if (!result) continue
         slot.draftId = result.draftId
         slot.variant = result.variant
-        if (result.verdict === 'pass' && !mentionsAvoided(result.text, cfg.avoidKeywords)) {
+        // "They can do posting automatically" (owner, 20 November 2026, on a post held for a remark about style).
+        // A post the reviewer still questions after every rewrite is held only if something a rule can name is
+        // wrong with it. What code can see (a banned topic, an opening that repeats a recent post, a poll that is
+        // not a poll) holds it as before. Otherwise the last look decides: a remark about style lets it go out,
+        // and what the reviewer still asked for is kept on the slot for the Autopilot page.
+        const banned = mentionsAvoided(result.text, cfg.avoidKeywords)
+        const repeats = slot.kind === 'poll' ? null : echoedHook(result.text, recentHooks)
+        let remarks: string[] = []
+        if (result.verdict !== 'pass' && !banned && !repeats && slot.kind !== 'poll' && d.lastLook) {
+          const asked = result.notes
+          const look = await withRetry(() => d.lastLook!({ text: result!.text, notes: asked }), { tries: 2, baseMs: 3000, sleep: d.sleep, retryable: isTransient }).catch(() => null)
+          if (look?.ok) { remarks = asked.slice(0, 2); result = { ...result, verdict: 'pass' } }
+          else if (look?.notes.length) result = { ...result, notes: look.notes }
+        }
+        if (result.verdict === 'pass' && !banned) {
           await d.approve(result.draftId)
-          slot.status = 'ready'; slot.reason = undefined
+          slot.status = 'ready'
+          slot.reason = remarks.length ? `goes out as written: after ${slot.regens} rewrites the reviewer still asked for "${remarks.join(' | ').slice(0, 240)}", and no rule is broken` : undefined
           const h = s.history.find(x => x.slotId === slot.id); if (h) h.hook = firstLine(result.text)
           out.push(`${slot.id}: draft ready`)
           // In review mode nothing posts until you say so: email the draft with one-click buttons.

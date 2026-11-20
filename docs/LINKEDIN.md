@@ -102,6 +102,35 @@ The shape of the short post that carries a blog link is still `HOOK_BULLETS_RULE
 - **If the agent service does not answer, the website writes the post itself** (`writeDirect()`), with the
   same rules. A slot is no longer held because one service is down.
 
+### A remark about style does not hold a post or an article
+
+The owner's words (20 November 2026), on an email "Autopilot held a post for your review": "Why is autopilot
+holding post for a review, they can do posting automatically and also same for blog post."
+
+What had happened. The writer's reply reaches the reviewer as JSON (`{"text": "..."}`). The reviewer, told to
+answer as `{"verdict", "notes"}`, judged the wrapping: "The reply is not in the required JSON shape: it uses
+"text" instead of the required key "verdict"". No rewrite can fix such a note, so the post failed three times
+and was held, with nothing wrong in its words.
+
+What holds now, for posts and for articles alike:
+
+- **The reviewer is told what it is checking** (the first paragraph of `READER_CHECK`), and **a note about the
+  wrapping is thrown away** (`aboutTheWords()` in `src/lib/writing-rules.ts`). A review whose every note was of
+  that kind counts as passed.
+- **A text is held only when a rule that matters is broken.** When the reviewer is still not satisfied after
+  every rewrite, one more question is asked once: the last look (`lastLookRules()`; `lastLook()` in
+  `src/lib/autopilot/live.ts`). It is told not to judge style. It answers "hold" only for: a fact the reviewer
+  called wrong or made up, the first person singular, something of ours called free or priced, a customer of
+  ours named, a promised result, a text that talks about its own writing, a text that is not finished.
+  Otherwise the text goes out, and what the reviewer still asked for is kept: on the slot (the Autopilot page
+  shows it) or in the log (the Blog page).
+- **What code can see still holds, without asking:** a topic on the never-post list, an opening that repeats a
+  recent post, a poll that is not a poll, an article that talks about itself.
+- **If the last look cannot be asked or read, the text is held**, as it always was. Never the other way round.
+
+Do not make the reviewer gentler to get fewer holds: its notes are what the rewrites are made from. And do not
+add a rule to the last look that is about how a text reads.
+
 ### An article must never talk about itself
 
 On 13 November 2026 six published articles were found to describe their own revision ("What changed in
