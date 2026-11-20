@@ -9,7 +9,8 @@ import { createAgentDraft, createDraft, foundry, getDraft, listDrafts, mutateDra
 import { isTransient, withRetry, type Deps } from './engine'
 import { emptyState, DEFAULT_CONFIG, type Slot, type State, type TargetKey, type TopicIdea } from './types'
 import { BLOG_FORMATS, POST_FORMATS, RESEARCH_SOURCES, buildBrief, firstLine, formatOf, freshEnough, pillarOf } from './variety'
-import { READER_CHECK, postRules } from '@/lib/writing-rules'
+import { READER_CHECK, aboutTheWords, lastLookInput, lastLookRules, postRules, readLastLook } from '@/lib/writing-rules'
+import { cut } from '@/lib/safe-text'
 import { linksHtml } from './email-actions'
 
 const FILE = 'autopilot/state.json'
@@ -204,6 +205,23 @@ export async function writeDirect(topic: string, brief: string, refs: string): P
   }
 }
 
+/** A post shorter than this is not a post yet. */
+const MIN_POST = 200
+
+/**
+ * The last look, for a post or an article the reviewer is still not satisfied with after every rewrite: one direct
+ * question to a model, "would publishing this break a rule that matters?" (the rules: `lastLookRules`). A remark
+ * about style is not a reason to hold (owner, 20 November 2026). An answer that cannot be read counts as "hold".
+ */
+export async function lastLook(kind: string, text: string, notes: string[], minLength: number): Promise<{ ok: boolean; notes: string[] }> {
+  // What code can see needs no model: a text that is not there, or still wrapped as the writer sent it
+  const plain = text.trim()
+  if (plain.length <= minLength) return { ok: false, notes: [`The ${kind} is too short to publish (${plain.length} characters).`] }
+  if (/^\s*(```|\{\s*"(text|body)"\s*:)/.test(plain)) return { ok: false, notes: [`The ${kind} is still wrapped in code, not plain words.`] }
+  const j = await foundry('/openai/v1/responses', { model: TEXT_MODEL, instructions: lastLookRules(kind), input: lastLookInput(cut(plain, 60_000), notes.slice(0, 8)) })
+  return readLastLook(textOf(j)) || { ok: false, notes: ['The last look could not be read, so this was not published by itself.'] }
+}
+
 async function generate(ctx: Parameters<Deps['generate']>[0], sleep: Deps['sleep']): ReturnType<Deps['generate']> {
   const { slot } = ctx
   const topic = slot.topic!
@@ -231,9 +249,16 @@ async function generate(ctx: Parameters<Deps['generate']>[0], sleep: Deps['sleep
   for (const t of trace) if (t.usd) await recordSpend(draft.id, `Autopilot ${t.label}`, t.usd)
   // Autopilot posts are text-only: no image is generated for them.
   const text = (await getDraft(draft.id))?.text || draft.text
-  const verdict = result.review?.verdict === 'pass' && text.trim().length > 200 ? 'pass' : 'revise'
+  // Only what the reviewer said about the WORDS counts. On 20 November 2026 a reviewer judged the wrapping of the
+  // writer's reply instead ("not in the required JSON shape: it uses "text" instead of the required key "verdict"").
+  // No rewrite can fix that, so a good post failed three times and was held. A review whose every note was of that
+  // kind had nothing to say about the post.
+  const said = Array.isArray(result.review?.notes) ? result.review!.notes.map(String) : []
+  const notes = aboutTheWords(said)
+  const reviewerPassed = result.review?.verdict === 'pass' || (said.length > 0 && notes.length === 0)
+  const verdict = reviewerPassed && text.trim().length > MIN_POST ? 'pass' : 'revise'
   // The engine screens for banned words, so it gets plain letters, not the Unicode-bold ones.
-  return { draftId: draft.id, text: toPlain(text), verdict, notes: result.review?.notes || [], variant: verdict === 'pass' ? await variantOf(text, sleep) : undefined }
+  return { draftId: draft.id, text: toPlain(text), verdict, notes, variant: verdict === 'pass' ? await variantOf(text, sleep) : undefined }
 }
 
 export function liveDeps(): Deps {
@@ -260,6 +285,7 @@ export function liveDeps(): Deps {
       .map(d => ({ at: d.published[0].at, title: d.topic, hook: firstLine(d.publishedText || d.text) })),
     links: linksHtml,
     generate: ctx => generate(ctx, sleep),
+    lastLook: ({ text, notes }) => lastLook('LinkedIn post', text, notes, MIN_POST),
     draft: async id => {
       const d = await getDraft(id)
       return d ? { text: d.text, publishedAs: d.published.map(p => p.as) as TargetKey[] } : null

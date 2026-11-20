@@ -1,6 +1,6 @@
 import { blogPostsMeta } from '@/data/blog-posts'
 import { briefWithIconRule } from '@/lib/blog-icon'
-import { researchIdeas, loadState as loadLinkedInAutopilot } from '@/lib/autopilot/live'
+import { researchIdeas, lastLook, loadState as loadLinkedInAutopilot } from '@/lib/autopilot/live'
 import { DEFAULT_CONFIG, type TopicIdea } from '@/lib/autopilot/types'
 import { BLOG_FORMATS, formatOf } from '@/lib/autopilot/variety'
 import { embedTexts } from '@/lib/crm/embeddings'
@@ -10,10 +10,12 @@ import { sendAdminAlert, submitBlogPost } from '@/lib/blog-publish'
 import { agentFetch } from '@/lib/social/agent-service'
 import { webGroundedCompletion } from '@/lib/crm/foundry'
 import { isTransient, withRetry } from '@/lib/autopilot/engine'
-import { READER_CHECK, articleRules } from '@/lib/writing-rules'
+import { READER_CHECK, aboutTheWords, articleRules } from '@/lib/writing-rules'
 import { foundry, readBlob, recordSpend, textUsd, tokensOf, writeBlob } from '@/lib/social/studio'
 
 const FILE = 'blog/automation.json'
+/** An article with fewer characters than this is not an article yet (1,100 words is about 6,500). */
+const MIN_ARTICLE = 2500
 const TEXT_MODEL = process.env.FOUNDRY_POST_MODEL || process.env.FOUNDRY_WEB_MODEL || 'gpt-5.4'
 
 export async function loadAutoState(): Promise<AutoState> {
@@ -87,6 +89,17 @@ ${formatOf(BLOG_FORMATS, topic.format) ? `Article format: ${formatOf(BLOG_FORMAT
   }
 }
 
+/**
+ * A review as the engine reads it: only the notes about the WORDS count. A reviewer that complained of nothing but
+ * the wrapping of the writer's reply (JSON, the names of its keys) had nothing to say about the article, and no
+ * revision could ever satisfy it (20 November 2026, a post held for exactly that).
+ */
+function wordsOnly(verdict: unknown, notes: unknown): { verdict: string; notes: string[] } {
+  const said = Array.isArray(notes) ? notes.map(String) : []
+  const kept = aboutTheWords(said)
+  return { verdict: verdict === 'pass' || (said.length > 0 && kept.length === 0) ? 'pass' : 'revise', notes: kept }
+}
+
 /** Runs the Python agent team to completion and saves the result as a normal blog draft. */
 async function writeDraft(topic: TopicIdea): Promise<{ draftId: string; review: { verdict: string; notes: string[] } }> {
   const res = await agentFetch('/blog', await blogRequest(topic))
@@ -114,7 +127,7 @@ async function writeDraft(topic: TopicIdea): Promise<{ draftId: string; review: 
   const draft = await createBlogDraft(topic.title, result, trace)
   await mutateBlogDraft(draft.id, x => { x.auto = true })
   for (const s of spend) await recordSpend(`blog-${draft.id}`, `Auto: ${s.label}`, s.usd, s.tokens)
-  return { draftId: draft.id, review: { verdict: result.review?.verdict || 'revise', notes: result.review?.notes || [] } }
+  return { draftId: draft.id, review: wordsOnly(result.review?.verdict, result.review?.notes) }
 }
 
 /** A fresh editorial review of the current draft (used after each revision). */
@@ -134,7 +147,7 @@ Then check the article and its metadata: facts and numbers are plausible and not
   const out: string = j.output_text || (j.output || []).flatMap((o: any) => o.content || []).map((c: any) => c.text || '').join('')
   try {
     const p = JSON.parse(out.slice(out.indexOf('{'), out.lastIndexOf('}') + 1))
-    return { verdict: p.verdict === 'pass' ? 'pass' : 'revise', notes: Array.isArray(p.notes) ? p.notes.map(String) : [] }
+    return wordsOnly(p.verdict, p.notes)
   } catch { return { verdict: 'revise', notes: ['The review could not be read; please check the article.'] } }
 }
 
@@ -158,5 +171,12 @@ export function liveAutoDeps(): AutoDeps {
       await submitBlogPost(id, opts)
     },
     alert: sendAdminAlert,
+    // The last look: its title, summary and words as a reader meets them (no tags)
+    lastLook: async (id, notes) => {
+      const d = await getBlogDraft(id)
+      if (!d) return { ok: false, notes: ['The draft is no longer there.'] }
+      const words = d.body.replace(/<[^>]+>/g, ' ').replace(/&nbsp;/g, ' ').replace(/\s+/g, ' ').trim()
+      return lastLook('blog article', `${d.meta.title}\n${d.meta.excerpt}\n${d.meta.tldr}\n\n${words}`, notes, MIN_ARTICLE)
+    },
   }
 }
