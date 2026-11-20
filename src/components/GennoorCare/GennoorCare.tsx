@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react'
 import { isChromelessRoute, isLearnRoute } from '@/lib/chrome'
+import { botLink } from '@/lib/bot/links'
 import { usePathname } from 'next/navigation'
 
 interface CardField {
@@ -192,15 +193,31 @@ export default function GennoorCare() {
       const key = `${keyBase}-${i}`
       const md = p.match(/^\[([^\]]+)\]\(([^)]+)\)$/)
       if (md) {
-        const href = md[2].startsWith('http') || md[2].startsWith('/') || md[2].startsWith('mailto:') ? md[2] : `https://${md[2]}`
-        const internal = href.startsWith('/') || /^https?:\/\/(www\.)?gennoor\.com/i.test(href)
-        return <a key={key} href={href} className="text-primary-600 underline hover:text-primary-800 font-medium" {...(internal ? {} : { target: '_blank', rel: 'noopener noreferrer' })}>{md[1]}</a>
+        // Only an address that is OURS becomes a link: the same test the server runs (src/lib/bot/links.ts).
+        // Anything else is shown as its words, with nothing to click. This once drew
+        // "https://gennoor.com.another-site/login" and "//another-site/pay" as pages of our own.
+        const link = botLink(md[2])
+        if (!link) return <span key={key}>{md[1]}</span>
+        return <a key={key} href={link.href} className="text-primary-600 underline hover:text-primary-800 font-medium" {...(link.internal ? {} : { target: '_blank', rel: 'noopener noreferrer' })}>{md[1]}</a>
       }
       if (/^\*\*[^*]+\*\*$/.test(p)) return <strong key={key}>{p.slice(2, -2)}</strong>
-      if (/^https?:\/\//.test(p)) return <a key={key} href={p} className="text-primary-600 underline hover:text-primary-800 break-all" target="_blank" rel="noopener noreferrer">{p.replace(/^https?:\/\/(www\.)?/, '')}</a>
-      if (/^(www\.)?gennoor\.com/.test(p)) return <a key={key} href={`https://${p.replace(/^www\./, 'www.') === p ? p : p}`} className="text-primary-600 underline hover:text-primary-800" target="_blank" rel="noopener noreferrer">{p}</a>
+      if (/^https?:\/\//.test(p)) {
+        const link = botLink(p)
+        if (!link) return <span key={key}>{p}</span>
+        return <a key={key} href={link.href} className="text-primary-600 underline hover:text-primary-800 break-all" target="_blank" rel="noopener noreferrer">{p.replace(/^https?:\/\/(www\.)?/, '')}</a>
+      }
+      if (/^(www\.)?gennoor\.com/.test(p)) {
+        // "gennoor.com.another-site/login" starts with our name and is not ours
+        const link = botLink(`https://${p}`)
+        if (!link) return <span key={key}>{p}</span>
+        return <a key={key} href={link.href} className="text-primary-600 underline hover:text-primary-800" target="_blank" rel="noopener noreferrer">{p}</a>
+      }
       if (p === 'admin@gennoor.com') return <a key={key} href="mailto:admin@gennoor.com" className="text-primary-600 underline hover:text-primary-800">{p}</a>
-      if (/^mailto:/.test(p)) return <a key={key} href={p} className="text-primary-600 underline hover:text-primary-800">{p.slice(7)}</a>
+      if (/^mailto:/.test(p)) {
+        const link = botLink(p)
+        if (!link) return <span key={key}>{p.slice(7)}</span>
+        return <a key={key} href={link.href} className="text-primary-600 underline hover:text-primary-800">{p.slice(7)}</a>
+      }
       return <span key={key}>{p}</span>
     })
   }
@@ -281,10 +298,10 @@ export default function GennoorCare() {
               <div key={i} className={`max-w-[88%] rounded-2xl px-3 py-2 text-[13px] leading-relaxed break-words ${m.role === 'user' ? 'ml-auto bg-primary-600 text-white rounded-br-md whitespace-pre-line' : 'bg-raised border border-gray-200 text-gray-800 rounded-bl-md'}`}>
                 {m.role === 'assistant' ? renderText(m.content) : m.content}
                 {/* Only add chips for links the reply text doesn't already contain — no duplicates */}
-                {m.links && m.links.filter((l) => !linkInContent(m.content, l.url)).length > 0 && (
+                {m.links && m.links.filter((l) => botLink(l.url) && !linkInContent(m.content, l.url)).length > 0 && (
                   <div className="mt-2 space-y-1.5">
-                    {m.links.filter((l) => !linkInContent(m.content, l.url)).map((l) => (
-                      <a key={l.url} href={l.url} className="block px-3 py-2 rounded-lg bg-primary-50 border border-primary-100 hover:border-primary-300 text-primary-700 text-xs font-medium truncate">
+                    {m.links.filter((l) => botLink(l.url) && !linkInContent(m.content, l.url)).map((l) => (
+                      <a key={l.url} href={botLink(l.url)!.href} className="block px-3 py-2 rounded-lg bg-primary-50 border border-primary-100 hover:border-primary-300 text-primary-700 text-xs font-medium truncate">
                         {decodeEntities(l.title)} →
                       </a>
                     ))}

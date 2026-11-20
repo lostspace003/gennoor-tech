@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { verifyAdmin, unauthorizedResponse } from '@/lib/admin-auth'
-import { deleteBlogDraft, mutateBlogDraft, readTimeOf, slugify, type BlogMeta } from '@/lib/blog-studio'
+import { deleteBlogDraft, mutateBlogDraft, readTimeOf, slugify, tidyReferences, type BlogMeta } from '@/lib/blog-studio'
+import { cleanArticleHtml } from '@/lib/article-html'
 
 export const dynamic = 'force-dynamic'
 
@@ -15,7 +16,9 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
   const b = await req.json().catch(() => ({}))
   const d = await mutateBlogDraft(id, x => {
     if (x.status === 'submitted') return
-    if (typeof b.body === 'string') { x.body = b.body.slice(0, 200_000); x.meta.readTime = readTimeOf(x.body) }
+    // One rule for every body, whoever wrote it: only the tags an article is made of (src/lib/article-html.ts).
+    // The editor's HTML is often the model's HTML with a few words changed.
+    if (typeof b.body === 'string') { x.body = cleanArticleHtml(b.body.slice(0, 200_000)); x.meta.readTime = readTimeOf(x.body) }
     const m: Partial<BlogMeta> = b.meta || {}
     if (typeof m.title === 'string') x.meta.title = str(m.title, 160)
     if (typeof m.slug === 'string' && slugify(m.slug)) x.meta.slug = slugify(m.slug)
@@ -29,7 +32,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
     if (Array.isArray(m.hashtags)) x.meta.hashtags = strs(m.hashtags, 10, 40).map(h => (h.startsWith('#') ? h : `#${h}`))
     if (Array.isArray(m.keyTakeaways)) x.meta.keyTakeaways = strs(m.keyTakeaways, 8, 500)
     if (Array.isArray(m.faqs)) x.meta.faqs = m.faqs.map(f => ({ question: str(f?.question, 300).trim(), answer: str(f?.answer, 1200).trim() })).filter(f => f.question && f.answer).slice(0, 8)
-    if (Array.isArray(m.references)) x.meta.references = m.references.map(r => ({ title: str(r?.title, 250).trim(), url: str(r?.url, 500).trim(), source: str(r?.source, 150).trim() })).filter(r => /^https?:\/\//.test(r.url) && r.title).slice(0, 14)
+    if (Array.isArray(m.references)) x.meta.references = tidyReferences(m.references)
     if (b.status === 'draft' || b.status === 'approved') { x.status = b.status; if (b.status === 'draft') x.scheduled = undefined }
   })
   if (!d) return NextResponse.json({ error: 'Not found.' }, { status: 404 })

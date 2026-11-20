@@ -22,7 +22,13 @@ const nextConfig = {
     // URLs rewrite to each app's index.html (afterFiles: real files still win).
     return {
       afterFiles: [],
-      beforeFiles: [],
+      // Nothing is served from /downloads, whatever is on the server's disk.
+      // A spreadsheet of leads once sat in public/downloads. Deleting it from the project did NOT take it off
+      // the live site: a deploy copies the new files over the old ones and removes none, so every file that was
+      // ever in public/ is still served (20 November 2026: 166 of the 167 files deleted over the years answered).
+      // A rule here is looked at BEFORE any file is looked for, so this address now ends at "not found".
+      // Do not put a folder called downloads in public/ again (docs/SECURITY.md, "Files").
+      beforeFiles: [{ source: '/downloads/:path*', destination: '/not-found-nothing-is-kept-here' }],
       fallback: [],
     }
   },

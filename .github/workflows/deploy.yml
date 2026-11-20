@@ -58,8 +58,17 @@ jobs:
         run: |
           mkdir -p deploy
           cp -r .next/standalone/. deploy/
-          cp -r .next/static deploy/.next/static
-          cp -r public deploy/public
+          # The CONTENTS of each folder go INTO its place ("folder/." into "place/"). "cp -r public deploy/public"
+          # only does that while deploy/public does not exist yet. The build puts a few public files there itself
+          # (the ones server code reads), and then the same command makes deploy/public/public. On 20 November 2026
+          # the whole public folder was shipped to /public/... that way; the site's pictures kept working only
+          # because the deploy before had left its copies on the server (a deploy removes nothing).
+          mkdir -p deploy/.next/static deploy/public
+          cp -r .next/static/. deploy/.next/static/
+          cp -r public/. deploy/public/
+          # Stop here rather than ship a site without its pictures
+          test -f deploy/public/favicon.ico || { echo "::error::public/ did not land in deploy/public"; exit 1; }
+          test ! -e deploy/public/public || { echo "::error::deploy/public/public exists: public/ was copied one level too deep"; exit 1; }
           echo "Deploy package contents:"
           ls -la deploy/.next/ || echo "No .next dir!"
 
