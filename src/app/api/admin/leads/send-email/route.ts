@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 import { requireCrmUser, canWorkLead } from '@/lib/crm/access'
 import { mutateLeads, getLeads, touch } from '@/lib/crm/store'
-import { downloadDocument } from '@/lib/crm/documents'
+import { downloadDocument, isDocumentName } from '@/lib/crm/documents'
 import { sendEmail } from '@/lib/email-service'
 import { emailShell, textToHtml, markdownToEmailHtml } from '@/lib/crm/email-theme'
 import { teamMember } from '@/lib/crm/team'
@@ -50,6 +50,11 @@ export async function POST(request: Request) {
     // Load attachments from the CRM document library
     const attachments: Array<{ filename: string; content: Buffer; contentType: string }> = []
     if (Array.isArray(attachBlobs)) {
+      // Only files of the library may be attached, and a handful at most: a name such as
+      // "email-attachments/../../crm-data/leads.json" once attached the whole leads store to an email
+      if (attachBlobs.length > 10 || !attachBlobs.every(isDocumentName)) {
+        return NextResponse.json({ error: 'One of the attachments is not a document in the library' }, { status: 400 })
+      }
       for (const name of attachBlobs) {
         const doc = await downloadDocument(name)
         if (doc) {

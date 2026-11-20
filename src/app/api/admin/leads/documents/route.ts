@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { requireCrmUser } from '@/lib/crm/access'
-import { listDocuments, uploadDocument, deleteDocument } from '@/lib/crm/documents'
+import { listDocuments, uploadDocument, deleteDocument, isDocumentName } from '@/lib/crm/documents'
 
 // Document library: 2-page manuals (manuals/...), webinar posters (posters/...),
 // and any other attachments used in outreach.
@@ -35,8 +35,10 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'folder must be manuals, posters, general or email-attachments' }, { status: 400 })
     }
 
-    const safeName = file.name.replace(/[^a-zA-Z0-9._ -]/g, '_')
+    const safeName = file.name.replace(/[^a-zA-Z0-9._ -]/g, '_').trim()
     const blobName = `${folder}/${safeName}`
+    // A file called ".." or "   " is not a name (see isDocumentName)
+    if (!isDocumentName(blobName)) return NextResponse.json({ error: 'Please give the file a name and try again' }, { status: 400 })
     const buffer = Buffer.from(await file.arrayBuffer())
     // Every upload records who put it there and when, so the library can show
     // "added by Yusuf" rather than an anonymous file, and separate team
@@ -70,7 +72,9 @@ export async function DELETE(req: NextRequest) {
 
   try {
     const name = req.nextUrl.searchParams.get('name')
-    if (!name) return NextResponse.json({ error: 'name required' }, { status: 400 })
+    // Only a file of the library: a name that climbs out of it ("../") once reached every file in the storage
+    // account, and passed the managers-only rule below by starting with "email-attachments/"
+    if (!isDocumentName(name)) return NextResponse.json({ error: 'name required' }, { status: 400 })
     // One-off composer uploads can be cleaned up by anyone on the team
     // (that's how the composer removes them after a send); everything else
     // stays manager-only.

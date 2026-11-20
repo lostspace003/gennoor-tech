@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { requireCrmUser } from '@/lib/crm/access'
-import { downloadDocument, getDocumentSasUrl } from '@/lib/crm/documents'
+import { downloadDocument, getDocumentSasUrl, isDocumentName } from '@/lib/crm/documents'
 
 // Streams a document from the CRM library for inline preview or download.
 export async function GET(req: NextRequest) {
@@ -8,7 +8,7 @@ export async function GET(req: NextRequest) {
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   const name = req.nextUrl.searchParams.get('name')
-  if (!name || name.includes('..')) return NextResponse.json({ error: 'name required' }, { status: 400 })
+  if (!isDocumentName(name)) return NextResponse.json({ error: 'name required' }, { status: 400 })
 
   try {
     // ?sas=1 → short-lived public URL for the Office web viewer (docx/xlsx/pptx)

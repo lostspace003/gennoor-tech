@@ -10,6 +10,37 @@ function getContainer() {
   return BlobServiceClient.fromConnectionString(conn).getContainerClient(CONTAINER)
 }
 
+// The name of a file comes from the BROWSER (which file to open, attach or delete), and the storage library reads
+// "../" in a name the way a file system does. Until 20 November 2026 the name
+//   email-attachments/../../crm-data/leads.json
+// did not mean a file in this library: it meant the leads store itself, in another part of the storage account,
+// and anyone signed in to the CRM could download it, attach it to an email or delete it (docs/SECURITY.md,
+// "Files"). So every name is checked twice before it is used: its shape here, and then where the storage library
+// says it really points (`libraryBlob`). Every function below goes through `libraryBlob`; none builds a file
+// address of its own.
+
+/** Thrown for a name that is not a file of this library. A route answers it with 400, not 500. */
+export class BadDocumentName extends Error {
+  constructor() { super('Not the name of a document in the library') }
+}
+
+/** Is this the name of a file in the library: folders and a file name, nothing that climbs out of them? */
+export function isDocumentName(name: unknown): name is string {
+  if (typeof name !== 'string' || !name.trim() || name.length > 400) return false
+  if (/[\u0000-\u001f\u007f\\]/.test(name)) return false             // no control characters, no backslash
+  // every part between slashes is a real name: not empty, and not "." or ".." or any run of dots
+  return name.split('/').every((part) => part.trim() !== '' && !/^\.+$/.test(part.trim()))
+}
+
+/** The file of THIS library with that name. Throws `BadDocumentName` for anything else. */
+function libraryBlob(name: unknown) {
+  if (!isDocumentName(name)) throw new BadDocumentName()
+  const blob = getContainer().getBlockBlobClient(name)
+  // The storage library's own reading of the address it built: it must be this store and this very name
+  if (blob.containerName !== CONTAINER || blob.name !== name) throw new BadDocumentName()
+  return blob
+}
+
 export interface CrmDocument {
   name: string
   size: number
@@ -60,9 +91,8 @@ export async function uploadDocument(
   contentType: string,
   metadata?: Record<string, string>
 ): Promise<void> {
-  const container = getContainer()
-  await container.createIfNotExists()
-  const blob = container.getBlockBlobClient(name)
+  const blob = libraryBlob(name)
+  await getContainer().createIfNotExists()
   await blob.upload(content, content.length, {
     blobHTTPHeaders: { blobContentType: contentType },
     metadata: safeMetadata(metadata),
@@ -70,8 +100,7 @@ export async function uploadDocument(
 }
 
 export async function downloadDocument(name: string): Promise<{ content: Buffer; contentType: string } | null> {
-  const container = getContainer()
-  const blob = container.getBlockBlobClient(name)
+  const blob = libraryBlob(name)
   try {
     const download = await blob.download()
     const chunks: Buffer[] = []
@@ -89,15 +118,14 @@ export async function downloadDocument(name: string): Promise<{ content: Buffer;
 }
 
 export async function deleteDocument(name: string): Promise<void> {
-  const container = getContainer()
-  await container.getBlockBlobClient(name).deleteIfExists()
+  await libraryBlob(name).deleteIfExists()
 }
 
 // Short-lived read-only SAS URL — used so the Office web viewer can render
 // docx/xlsx/pptx previews (it must fetch the file itself, so it gets a
 // time-boxed link rather than access to our authenticated endpoint).
 export async function getDocumentSasUrl(name: string, minutes = 10): Promise<string> {
-  const blob = getContainer().getBlockBlobClient(name)
+  const blob = libraryBlob(name)
   return blob.generateSasUrl({
     permissions: BlobSASPermissions.parse('r'),
     startsOn: new Date(Date.now() - 60_000),

@@ -28,6 +28,14 @@ export async function POST(request: Request) {
       timestamp
     } = body
 
+    // Every field is a short piece of text, whatever the browser sent
+    for (const [key, max] of [['name', 120], ['email', 200], ['phone', 40], ['company', 160], ['designation', 120], ['trainingFor', 40], ['teamSize', 40], ['timeline', 40], ['message', 3000], ['programTitle', 200], ['programType', 40], ['requestedFile', 400], ['timestamp', 40]] as const) {
+      const value = body[key]
+      if (value !== undefined && value !== null && (typeof value !== 'string' || value.length > max)) {
+        return NextResponse.json({ success: false, message: 'Please check the form and try again.' }, { status: 400 })
+      }
+    }
+
     if (!name || !email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(email))) {
       return NextResponse.json(
         { success: false, message: 'Please provide your name and a valid email address.' },

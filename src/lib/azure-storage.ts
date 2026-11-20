@@ -1,4 +1,5 @@
 import { TableClient, TableServiceClient, AzureNamedKeyCredential } from '@azure/data-tables'
+import { createHash } from 'crypto'
 
 function getConnectionConfig() {
   const connStr = process.env.AZURE_STORAGE_CONNECTION_STRING
@@ -9,6 +10,14 @@ function getConnectionConfig() {
 function getTableClient(tableName: string): TableClient {
   return TableClient.fromConnectionString(getConnectionConfig(), tableName)
 }
+
+/**
+ * A value on its way into the text of a table filter: every single quote in it is doubled, so it stays text.
+ * Without this a visitor who typed  x' or PartitionKey ne '  as a blog post's name was read every comment in the
+ * table, hidden ones too (20 November 2026). EVERY value put into a filter goes through this, whoever it is from
+ * (docs/SECURITY.md, "Questions to the database").
+ */
+export const odq = (value: unknown): string => String(value ?? '').replace(/'/g, "''")
 
 // Ensure table exists (creates if not)
 async function ensureTable(tableName: string) {
@@ -226,7 +235,7 @@ export async function getCommentsBySlug(slug: string) {
 
   const comments: Array<Record<string, any>> = []
   const query = client.listEntities({
-    queryOptions: { filter: `PartitionKey eq '${slug}' and status ne 'hidden'` },
+    queryOptions: { filter: `PartitionKey eq '${odq(slug)}' and status ne 'hidden'` },
   })
 
   for await (const entity of query) {
@@ -403,7 +412,7 @@ export async function getEnquiries(type?: string, days: number = 30) {
   const client = getTableClient(tableName)
 
   const enquiries: Array<Record<string, any>> = []
-  const filter = type ? `PartitionKey eq '${type}'` : undefined
+  const filter = type ? `PartitionKey eq '${odq(type)}'` : undefined
   const query = client.listEntities({
     queryOptions: filter ? { filter } : undefined,
   })
@@ -577,9 +586,71 @@ export async function getEmailLogs(days: number = 30) {
 
 // ─── Learners ───────────────────────────────────────────────
 
-/** The row key a learner's record lives under. */
-const learnerKey = (email: string) =>
-  email.toLowerCase().trim().replace(/[^a-z0-9@._-]/g, '')
+// One record a learner, and it must be THAT learner's.
+//
+// Until 20 November 2026 a record was kept under the address with every character the key did not know taken
+// out. "a.b+2@x.com" and "a.b2@x.com" therefore shared one record: a stranger who owned the first mailbox could
+// ask for a password reset in that name, and the new password was written into the second person's record. They
+// then signed in as that person (docs/SECURITY.md, "One record, one person").
+//
+// Now: the old key is still READ, because that is where today's records are, but a record found under it belongs
+// to an address only when the address saved inside the record is that very address. Any other address gets a
+// record of its own, under a key no two addresses can share. Nothing is moved and nothing is deleted.
+
+/** An address as it is compared and saved: lower case, no spaces around it. */
+export const learnerAddress = (email: unknown): string => String(email ?? '').toLowerCase().trim()
+
+/** The old key. It LOSES characters ("+", "'" and others), so it is never proof of whose record it is. */
+export const legacyLearnerKey = (email: string): string => learnerAddress(email).replace(/[^a-z0-9@._-]/g, '')
+
+/** The key no two addresses share: a mark the old key can never hold, then the SHA-256 of the whole address. */
+export const exactLearnerKey = (email: string): string =>
+  '~' + createHash('sha256').update(learnerAddress(email)).digest('hex')
+
+/** Is the record found under the old key the record of this address? */
+export function ownsLegacyLearnerRow(email: string, row: { email?: unknown } | null | undefined): boolean {
+  if (!row) return false
+  const address = learnerAddress(email)
+  const saved = learnerAddress(row.email)
+  // A record with no address saved in it belongs to the address that IS its key, letter for letter
+  return saved ? saved === address : legacyLearnerKey(address) === address
+}
+
+/**
+ * Where this address's record is, and the record if there is one. `read` fetches one row by its key (null when
+ * there is none), so `scripts/security-check.ts` can try this with made-up rows and no network.
+ */
+export async function findLearnerRow<Row extends { email?: unknown }>(
+  email: string,
+  read: (rowKey: string) => Promise<Row | null>,
+): Promise<{ key: string; record: Row | null }> {
+  const address = learnerAddress(email)
+  if (!address) throw new Error('A learner record needs an email address')
+  const legacy = legacyLearnerKey(address)
+  const old = legacy ? await read(legacy) : null
+  if (old && ownsLegacyLearnerRow(address, old)) return { key: legacy, record: old }
+
+  const exact = exactLearnerKey(address)
+  const own = await read(exact)
+  if (own) return { key: exact, record: own }
+
+  // No record yet. The old key is used only when it is free AND loses nothing of this address;
+  // an address it would lose a character of never goes there again.
+  return { key: !old && legacy === address ? legacy : exact, record: null }
+}
+
+async function learnerRow(client: TableClient, email: string) {
+  return findLearnerRow<Record<string, any>>(email, async (rowKey) => {
+    try {
+      return await client.getEntity('learner', rowKey)
+    } catch (err: any) {
+      // "No such record" is an answer. Anything else (the store did not reply) must not be read as "nobody":
+      // the caller would then make a second record for someone who has one.
+      if (err?.statusCode === 404) return null
+      throw err
+    }
+  })
+}
 
 export async function saveLearner(data: {
   email: string
@@ -588,22 +659,20 @@ export async function saveLearner(data: {
 }) {
   await ensureTable('Learners')
   const client = getTableClient('Learners')
-  const sanitizedEmail = learnerKey(data.email)
+  const { key, record } = await learnerRow(client, data.email)
 
   // createdAt is written ONLY on first sight. A 'Merge' upsert overwrites every
   // property it carries, so including it unconditionally used to reset the
   // signup date on every single login — which is what made the profile card
   // say "Learner since" the current month for everyone.
-  const existing = await getLearner(data.email)
-
   await client.upsertEntity({
     partitionKey: 'learner',
-    rowKey: sanitizedEmail,
-    email: data.email.toLowerCase().trim(),
+    rowKey: key,
+    email: learnerAddress(data.email),
     name: data.name,
     provider: data.provider,
     lastLogin: new Date().toISOString(),
-    ...(existing?.createdAt ? {} : { createdAt: new Date().toISOString() }),
+    ...(record?.createdAt ? {} : { createdAt: new Date().toISOString() }),
   }, 'Merge')
 }
 
@@ -612,19 +681,22 @@ export async function saveLearner(data: {
 export async function updateLearnerFields(email: string, fields: Record<string, unknown>) {
   await ensureTable('Learners')
   const client = getTableClient('Learners')
+  const { key } = await learnerRow(client, email)
   await client.upsertEntity({
     partitionKey: 'learner',
-    rowKey: learnerKey(email),
-    email: email.toLowerCase().trim(),
+    rowKey: key,
     ...fields,
+    // After the fields, so no caller can save a record under one address and name another inside it
+    email: learnerAddress(email),
   }, 'Merge')
 }
 
+/** This address's own record, or null. Never another address's record that the old key happened to share. */
 export async function getLearner(email: string) {
   await ensureTable('Learners')
   const client = getTableClient('Learners')
   try {
-    return await client.getEntity('learner', learnerKey(email))
+    return (await learnerRow(client, email)).record
   } catch {
     return null
   }
@@ -735,7 +807,7 @@ export async function getCourseProgress(email: string, courseId: string): Promis
   const pk = email.toLowerCase().trim()
   const query = client.listEntities({
     queryOptions: {
-      filter: `PartitionKey eq '${pk}' and RowKey ge '${courseId}:' and RowKey lt '${courseId};'`,
+      filter: `PartitionKey eq '${odq(pk)}' and RowKey ge '${odq(courseId)}:' and RowKey lt '${odq(courseId)};'`,
     },
   })
 
@@ -765,7 +837,7 @@ export async function getAllCourseProgress(email: string): Promise<Array<Record<
   const results: Array<Record<string, any>> = []
   const pk = email.toLowerCase().trim()
   const query = client.listEntities({
-    queryOptions: { filter: `PartitionKey eq '${pk}'` },
+    queryOptions: { filter: `PartitionKey eq '${odq(pk)}'` },
   })
 
   for await (const entity of query) {

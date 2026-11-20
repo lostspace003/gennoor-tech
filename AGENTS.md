@@ -15,6 +15,7 @@ guide before doing that kind of work.
 | A LinkedIn post, a blog article, the autopilot, the film campaign, what any writer or reviewer is told | `docs/LINKEDIN.md` and `src/lib/writing-rules.ts` | |
 | The CRM: leads, replies, the email series, the Today page | `docs/CRM.md` | |
 | "Get new posts by email": a subscribe box, the email that confirms an address, the weekly email of new posts | `docs/NEWSLETTER.md` | |
+| Anything that takes a file name, an address, an email address, a search value or HTML from a visitor, from the browser or from a model: a form, an address under `src/app/api`, the chatbot, the blog studio, the CRM's documents | `docs/SECURITY.md` | `gennoor-security` |
 | An email the site sends: its top, its foot, its logo | `docs/DESIGN.md`, "Emails" | `gennoor-site-design` |
 | Finishing: branch, pull request, merge, deploy | `.claude/skills/gennoor-ship/SKILL.md` | `gennoor-ship` |
 
@@ -50,6 +51,14 @@ The skills are in `.claude/skills/`. They are plain Markdown: any tool can read 
 6. **Only the look changes when the look changes.** Page addresses, form field names and API paths stay.
 7. **Not without being asked:** sending a real email, typing a password or a secret, closing the owner's
    PowerPoint or Excel, deleting data.
+8. **Nothing that arrives is trusted** (owner, 19 and 20 November 2026: "keep this in mind for anything that is
+   updated, created, deleted"). What a visitor types, what the browser sends back and what a model writes are a
+   stranger's words until one of our own gates has checked them. A file is picked from a list of ours, never
+   found by a name that came in. A link is read with `new URL()` and judged by its host. HTML is rebuilt from an
+   allowed list. A question to the database never carries typed text unquoted. A new address under `src/app/api`
+   says who may call it and checks that itself. Nothing private goes in `public/`, and a file deleted from it
+   stays on the live site until it is deleted on the server too. The rules, each with what happened, are in
+   `docs/SECURITY.md`; `npx tsx scripts/attack-check.ts` must end with ALL OK.
 
 ## Commands
 
@@ -69,6 +78,7 @@ npx tsx scripts/crm-check.ts                           # the CRM: what a reply d
 npx tsx scripts/daily-report-check.ts <folder>         # the evening report from made-up people: the numbers, the email and the Excel file to look at
 npx tsx scripts/customers-check.ts                     # paid customers: one row a person, their lead marked, the series stopped once (made-up people)
 npx tsx scripts/newsletter-check.ts                    # new posts by email: which Thursday, which posts, who, never twice, the confirm link (made-up posts and people)
+npx tsx scripts/attack-check.ts                        # the attacks that once worked, on made-up data: a learner's record, document names, the chatbot's links, an article's HTML (no network)
 node scripts/email-art/logo.mjs --look <folder>        # draws the logo at the top of every email, in the brand's own lettering
 npx tsx --env-file=.env.local scripts/autopilot-live-check.ts --fresh   # research now and one post written for real; nothing saved
 npx tsx --env-file=.env.local scripts/blog-live-check.ts       # one whole article written for real; nothing saved

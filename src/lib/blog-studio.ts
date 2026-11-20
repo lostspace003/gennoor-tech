@@ -1,6 +1,7 @@
 import { randomBytes } from 'crypto'
 import { knownEmoji } from '@/lib/blog-icon'
 import { blogPostsMeta } from '@/data/blog-posts'
+import { cleanArticleHtml, oneLine, referenceUrl } from '@/lib/article-html'
 import { readBlob, writeBlob, foundry, recordSpend, textUsd, tokensOf } from '@/lib/social/studio'
 
 // Blog studio: the agent drafts a post in the blog's exact file format, an editor reviews and edits it here,
@@ -51,6 +52,9 @@ export const readTimeOf = (html: string) => `${Math.max(3, Math.round(wordCount(
 export async function listBlogDrafts(): Promise<BlogDraft[]> {
   const raw = await readBlob(DRAFTS)
   const all: BlogDraft[] = raw ? JSON.parse(raw.toString('utf-8')) : []
+  // A body is cleaned where it is READ as well as where it is saved: drafts made before 20 November 2026 were
+  // saved exactly as the model wrote them, and the admin page shows a draft's body as HTML.
+  for (const d of all) d.body = cleanArticleHtml(d.body)
   return all.sort((a, b) => b.createdAt.localeCompare(a.createdAt))
 }
 async function save(all: BlogDraft[]) { await writeBlob(DRAFTS, JSON.stringify(all), 'application/json') }
@@ -82,10 +86,19 @@ export function dateLabel(iso: string) {
   return new Date(`${iso}T00:00:00Z`).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric', timeZone: 'UTC' })
 }
 
+/** The sources of an article as they may be listed under it: a real web address each, a handful at most. */
+export function tidyReferences(list: unknown): BlogMeta['references'] {
+  return (Array.isArray(list) ? list : [])
+    .map((r: any) => ({ title: oneLine(r?.title, 250), url: referenceUrl(r?.url) || '', source: oneLine(r?.source, 150) }))
+    .filter(r => r.url && r.title)
+    .slice(0, 14)
+}
+
 /** Turns the agent's output into a clean draft: unique slug, sane lengths, read time from the real word count. */
 export async function createBlogDraft(topic: string, agent: { body?: string; meta?: Partial<BlogMeta>; review?: BlogDraft['review'] }, trace: BlogDraft['trace']): Promise<BlogDraft> {
   const m = agent.meta || {}
-  const body = (agent.body || '').trim()
+  // The model's HTML never reaches a draft as written: only the tags an article is made of (src/lib/article-html.ts)
+  const body = cleanArticleHtml((agent.body || '').trim())
   const taken = new Set([...blogPostsMeta.map(p => p.slug), ...(await listBlogDrafts()).map(d => d.meta.slug)])
   let slug = slugify(m.slug || m.title || topic) || 'new-post', n = 2
   while (taken.has(slug)) slug = `${slugify(m.slug || m.title || topic).slice(0, 64)}-${n++}`
@@ -95,7 +108,7 @@ export async function createBlogDraft(topic: string, agent: { body?: string; met
     meta: {
       title: String(m.title || topic).slice(0, 140), slug, excerpt: String(m.excerpt || ''), tldr: String(m.tldr || ''),
       keyTakeaways: (m.keyTakeaways || []).map(String), faqs: (m.faqs || []).map(f => ({ question: String(f.question), answer: String(f.answer) })),
-      references: (m.references || []).filter(r => /^https?:\/\//.test(r.url)).map(r => ({ title: String(r.title), url: String(r.url), source: String(r.source || '') })),
+      references: tidyReferences(m.references),
       category: String(m.category || 'AI Strategy'), tags: [...new Set((m.tags || []).map(t => String(t).trim()).filter(Boolean))].slice(0, 8), hashtags: (m.hashtags || []).map(h => (String(h).startsWith('#') ? String(h) : `#${h}`)),
       readTime: readTimeOf(body), coverColor: /^#[0-9a-f]{6}$/i.test(m.coverColor || '') ? m.coverColor! : '#1D4ED8', icon: knownEmoji(m.icon), date: now.slice(0, 10),
     },
@@ -129,19 +142,28 @@ Return JSON only: {${wantBody ? '"body": string (the full revised HTML body),' :
   try { p = JSON.parse(out.slice(out.indexOf('{'), out.lastIndexOf('}') + 1)) } catch { throw new Error('The editor returned something unreadable. Try rephrasing the instruction.') }
   await recordSpend(`blog-${id}`, 'Blog revised', textUsd(json), tokensOf(json))
   return mutateBlogDraft(id, x => {
-    if (wantBody && p.body?.trim()) { x.body = p.body.trim(); x.meta.readTime = readTimeOf(x.body) }
-    if (wantMeta && p.meta) { const { slug: _s, date: _d, readTime: _r, ...rest } = p.meta; Object.assign(x.meta, rest) }
+    if (wantBody && p.body?.trim()) { x.body = cleanArticleHtml(p.body.trim()); x.meta.readTime = readTimeOf(x.body) }
+    if (wantMeta && p.meta) {
+      const { slug: _s, date: _d, readTime: _r, ...rest } = p.meta
+      Object.assign(x.meta, rest)
+      // The model wrote these too: its sources are checked like the first time, and a colour is a colour
+      x.meta.references = tidyReferences(x.meta.references)
+      if (!/^#[0-9a-f]{6}$/i.test(String(x.meta.coverColor || ''))) x.meta.coverColor = '#1D4ED8'
+    }
     if (x.status !== 'draft') x.status = 'draft'
   })
 }
 
 // ---- Code generation: the same files the team commits by hand today ----------------------------------------------
-const q = (s: string) => `'${String(s).replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/\r?\n/g, ' ')}'`
+// A value written into the post's file as one quoted line. Every kind of line break becomes a space: a lone
+// carriage return in a title once would have made the file a syntax error, and every later deploy with it.
+const q = (s: string) => `'${oneLine(s, 20_000).replace(/\\/g, '\\\\').replace(/'/g, "\\'")}'`
 const list = (a: string[], pad: string) => `[\n${a.map(x => `${pad}  ${q(x)},`).join('\n')}\n${pad}]`
 
 export function contentFile(d: BlogDraft): string {
   const m = d.meta
-  const body = d.body.replace(/\\/g, '\\\\').replace(/`/g, '\\`').replace(/\$\{/g, '\\${')
+  // Cleaned again here, whatever is in the draft: this is the last step before the words become a page of the site
+  const body = cleanArticleHtml(d.body).replace(/\\/g, '\\\\').replace(/`/g, '\\`').replace(/\$\{/g, '\\${')
   return `import type { BlogPost } from '../index'
 
 export const post: BlogPost = {

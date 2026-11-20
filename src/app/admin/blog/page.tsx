@@ -4,6 +4,7 @@ import { ResizeGrid } from '@/components/admin/SplitPane'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { Loader2, Sparkles, Check, Save, Trash2, Download, GitPullRequest, Plus, X, Bot, ChevronDown, ExternalLink, Paperclip, Clock } from 'lucide-react'
 import InfoTip from '@/components/admin/InfoTip'
+import { cleanArticleHtml } from '@/lib/article-html'
 import DraftList, { Fold, type DraftRow } from '@/components/admin/DraftList'
 import RefBox, { type Ref } from '@/components/admin/RefBox'
 import AgentTimeline, { type RunState } from '@/components/admin/AgentTimeline'
@@ -298,7 +299,8 @@ export default function BlogStudioPage() {
                   {tab === 'preview' && (
                     <article className="max-w-2xl text-[15px] leading-7 text-gray-800 [&_h2]:text-xl [&_h2]:font-bold [&_h2]:mt-7 [&_h2]:mb-2 [&_h3]:font-semibold [&_h3]:mt-5 [&_p]:my-3 [&_ul]:list-disc [&_ul]:pl-6 [&_ol]:list-decimal [&_ol]:pl-6 [&_li]:my-1 [&_a]:text-blue-700 [&_a]:underline [&_strong]:text-gray-900">
                       <p className="!mt-0 text-gray-600 border-l-4 border-gray-300 pl-3 italic">{cur.meta.tldr}</p>
-                      <div dangerouslySetInnerHTML={{ __html: cur.body }} />
+                      {/* The preview shows what will be published: the body as the cleaner leaves it (src/lib/article-html.ts) */}
+                      <div dangerouslySetInnerHTML={{ __html: cleanArticleHtml(cur.body) }} />
                     </article>
                   )}
                   {tab === 'html' && <textarea disabled={locked} value={cur.body} onChange={e => patchLocal(cur.id, d => ({ ...d, body: e.target.value }))} rows={28} spellCheck={false} className={`${field} font-mono text-[13px] leading-5`} />}

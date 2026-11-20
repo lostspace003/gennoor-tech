@@ -21,6 +21,8 @@ function isRateLimited(email: string): boolean {
 export async function GET(req: NextRequest) {
   const slug = req.nextUrl.searchParams.get('slug')
   if (!slug) return NextResponse.json({ error: 'Missing slug' }, { status: 400 })
+  // Only the name of a real post is ever asked of the database
+  if (!blogPostsMeta.find(p => p.slug === slug)) return NextResponse.json([])
 
   try {
     const comments = await getCommentsBySlug(slug)
