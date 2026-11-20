@@ -4,6 +4,7 @@ import { readFile } from 'fs/promises'
 import path from 'path'
 import { createHash, createHmac } from 'crypto'
 import { downloadPdfFromBlob, saveEmailLog } from '@/lib/azure-storage'
+import { allPrograms } from '@/data/training-programs'
 import { escapeHtml } from '@/lib/escape-html'
 import { ConfidentialClientApplication } from '@azure/msal-node'
 import { Client } from '@microsoft/microsoft-graph-client'
@@ -87,10 +88,23 @@ export function htmlToPlainText(html: string): string {
     .trim()
 }
 
+// One email goes to a few people at most. A form once passed whatever the browser sent as "to": a list of two
+// hundred strangers' addresses went out under our name with the visitor's own words in the subject.
+const MAX_RECIPIENTS = 25
+const ADDRESS = /^[^\s@<>,;:"()\[\]\\]+@[^\s@<>,;:"()\[\]\\]+\.[^\s@<>,;:"()\[\]\\]+$/
+
 function toAddressList(emails: string | string[]): Array<{ address: string; displayName?: string }> {
   const list = Array.isArray(emails) ? emails : [emails]
-  return list.map((email) => ({ address: email.trim() }))
+  if (list.length > MAX_RECIPIENTS) throw new Error(`An email may go to at most ${MAX_RECIPIENTS} addresses`)
+  return list.map((email) => {
+    const address = typeof email === 'string' ? email.trim() : ''
+    if (address.length > 254 || !ADDRESS.test(address)) throw new Error('Not a valid email address')
+    return { address }
+  })
 }
+
+/** A subject is one short line: no line breaks (they can add headers of their own), no runaway length. */
+const cleanSubject = (subject: unknown) => String(subject ?? '').replace(/[\r\n\t\u2028\u2029]+/g, ' ').replace(/\s{2,}/g, ' ').trim().slice(0, 250)
 
 async function saveToOutlookSentItems(config: EmailConfig) {
   const tenantId = process.env.MS_GRAPH_TENANT_ID
@@ -250,7 +264,7 @@ export async function sendEmail(config: EmailConfig) {
     const message: any = {
       senderAddress: config.from,
       content: {
-        subject: config.subject,
+        subject: cleanSubject(config.subject),
         html: config.html,
         // Always ship multipart — HTML-only mail is a spam signal and is
         // unreadable in text-only clients and screen readers.
@@ -344,27 +358,41 @@ export async function sendEmail(config: EmailConfig) {
   }
 }
 
-export async function attachPDF(filename: string, filepath: string) {
-  try {
-    if (process.env.AZURE_STORAGE_CONNECTION_STRING) {
-      let blobPath = filepath
-      if (filepath.includes('Gennoor-Bootcamp-Brochures')) {
-        blobPath = `bootcamp-brochures/${path.basename(filepath)}`
-      } else if (filepath.includes('Gennoor-Tech-Course-TOCs')) {
-        blobPath = `course-tocs/${path.basename(filepath)}`
-      } else if (filepath.includes('certificates')) {
-        blobPath = `certificates/${path.basename(filepath)}`
-      }
-
-      const content = await downloadPdfFromBlob(blobPath)
-      if (content) {
-        return { filename, content, contentType: 'application/pdf' }
-      }
+// Every brochure and course outline the site offers, by file name, and the folder of the store it is kept in.
+// Built from the site's own list (src/data/training-programs.ts): nothing else can ever be attached.
+const BROCHURE_FOLDERS: Array<[string, string]> = [['Gennoor-Bootcamp-Brochures', 'bootcamp-brochures'], ['Gennoor-Tech-Course-TOCs', 'course-tocs']]
+let offered: Map<string, string> | null = null
+function offeredFiles(): Map<string, string> {
+  if (offered) return offered
+  offered = new Map()
+  for (const program of allPrograms) {
+    for (const file of [program.pdfFile, program.docFile]) {
+      const folder = file && BROCHURE_FOLDERS.find(([name]) => file.includes(`/${name}/`))
+      if (file && folder) offered.set(path.posix.basename(file), folder[1])
     }
+  }
+  return offered
+}
 
-    const fullPath = path.join(process.cwd(), filepath)
-    const content = await readFile(fullPath)
-    return { filename, content, contentType: 'application/pdf' }
+/**
+ * The brochure or course outline to attach to a training enquiry's email.
+ *
+ * `requested` comes from the BROWSER, so it is not trusted for anything except to pick one of the files the
+ * site itself offers: only its file name is looked at, and it must be on the list above. The file is read from
+ * the `pdfs` store and from nowhere else.
+ *
+ * Until 20 November 2026 a name that was not found in the store was read from the server's own disk, by the path
+ * given, and emailed to the address typed in the form. A request for "../../../proc/self/environ" would have
+ * emailed every secret of the site to a stranger (docs/SECURITY.md, "Files"). Never read a path that came from
+ * a request.
+ */
+export async function attachPDF(filename: string, requested: string) {
+  try {
+    const name = String(requested || '').split(/[\\/]/).pop() || ''
+    const folder = offeredFiles().get(name)
+    if (!folder || !process.env.AZURE_STORAGE_CONNECTION_STRING) return null
+    const content = await downloadPdfFromBlob(`${folder}/${name}`)
+    return content ? { filename, content, contentType: 'application/pdf' } : null
   } catch (error) {
     console.error(`Failed to attach PDF ${filename}:`, error)
     return null
@@ -435,6 +463,7 @@ function optionalRow(label: string, value: string): string {
   if (!value) return ''
   return `<tr><td style="padding:5px 0;"><strong>${label}:</strong></td><td>${value}</td></tr>`
 }
+// NOTE: optionalRow does not escape. Every value given to it is escaped by the caller (the `safe` fields, escapeHtml).
 
 export async function sendTrainingEnquiryEmail(data: {
   name: string
@@ -462,7 +491,7 @@ export async function sendTrainingEnquiryEmail(data: {
   const timelineLabel = humanLabel(TIMELINE_LABELS, data.timeline)
   const trainingForLabel =
     String(data.trainingFor || '').toLowerCase() === 'team' && data.teamSize
-      ? `My team (${escapeHtml(data.teamSize)} people)`
+      ? `My team (${String(data.teamSize).slice(0, 40)} people)`
       : humanLabel(TRAINING_FOR_LABELS, data.trainingFor)
 
   const attachmentFilename = `${data.programTitle.replace(/[^a-z0-9]/gi, '_')}_Details.pdf`
@@ -526,7 +555,7 @@ export async function sendTrainingEnquiryEmail(data: {
       ${optionalRow('Phone', safe.phone)}
       ${optionalRow('Company', safe.company)}
       ${optionalRow('Designation', safe.designation)}
-      ${optionalRow('Training for', trainingForLabel)}
+      ${optionalRow('Training for', escapeHtml(trainingForLabel))}
       ${optionalRow('Timeline', escapeHtml(timelineLabel))}
       <tr><td><strong>Message:</strong></td><td>${safe.message || 'None'}</td></tr>
     </table>

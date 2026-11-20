@@ -10,6 +10,14 @@ function getTableClient(tableName: string): TableClient {
   return TableClient.fromConnectionString(getConnectionConfig(), tableName)
 }
 
+/**
+ * A value on its way into the text of a table filter: every single quote in it is doubled, so it stays text.
+ * Without this a visitor who typed  x' or PartitionKey ne '  as a blog post's name was read every comment in the
+ * table, hidden ones too (20 November 2026). EVERY value put into a filter goes through this, whoever it is from
+ * (docs/SECURITY.md, "Questions to the database").
+ */
+export const odq = (value: unknown): string => String(value ?? '').replace(/'/g, "''")
+
 // Ensure table exists (creates if not)
 async function ensureTable(tableName: string) {
   try {
@@ -226,7 +234,7 @@ export async function getCommentsBySlug(slug: string) {
 
   const comments: Array<Record<string, any>> = []
   const query = client.listEntities({
-    queryOptions: { filter: `PartitionKey eq '${slug}' and status ne 'hidden'` },
+    queryOptions: { filter: `PartitionKey eq '${odq(slug)}' and status ne 'hidden'` },
   })
 
   for await (const entity of query) {
@@ -403,7 +411,7 @@ export async function getEnquiries(type?: string, days: number = 30) {
   const client = getTableClient(tableName)
 
   const enquiries: Array<Record<string, any>> = []
-  const filter = type ? `PartitionKey eq '${type}'` : undefined
+  const filter = type ? `PartitionKey eq '${odq(type)}'` : undefined
   const query = client.listEntities({
     queryOptions: filter ? { filter } : undefined,
   })
@@ -735,7 +743,7 @@ export async function getCourseProgress(email: string, courseId: string): Promis
   const pk = email.toLowerCase().trim()
   const query = client.listEntities({
     queryOptions: {
-      filter: `PartitionKey eq '${pk}' and RowKey ge '${courseId}:' and RowKey lt '${courseId};'`,
+      filter: `PartitionKey eq '${odq(pk)}' and RowKey ge '${odq(courseId)}:' and RowKey lt '${odq(courseId)};'`,
     },
   })
 
@@ -765,7 +773,7 @@ export async function getAllCourseProgress(email: string): Promise<Array<Record<
   const results: Array<Record<string, any>> = []
   const pk = email.toLowerCase().trim()
   const query = client.listEntities({
-    queryOptions: { filter: `PartitionKey eq '${pk}'` },
+    queryOptions: { filter: `PartitionKey eq '${odq(pk)}'` },
   })
 
   for await (const entity of query) {

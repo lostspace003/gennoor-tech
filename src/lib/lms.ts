@@ -302,7 +302,8 @@ export interface LmsProgressEntry { done: boolean; positionSec: number; updatedA
 export async function getLmsProgress(email: string, slug: string): Promise<Record<string, LmsProgressEntry>> {
   await ensure('LmsProgress')
   const out: Record<string, LmsProgressEntry> = {}
-  const filter = `PartitionKey eq '${pk(email).replace(/'/g, "''")}' and RowKey ge '${slug}:' and RowKey lt '${slug};'`
+  const q = (v: string) => v.replace(/'/g, "''")
+  const filter = `PartitionKey eq '${q(pk(email))}' and RowKey ge '${q(slug)}:' and RowKey lt '${q(slug)};'`
   for await (const e of table('LmsProgress').listEntities({ queryOptions: { filter } })) {
     out[(e.rowKey as string).slice(slug.length + 1)] = {
       done: !!e.done,
