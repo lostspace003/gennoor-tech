@@ -89,7 +89,9 @@ BLOG_CRAFT = """HOW TO WRITE THE ARTICLE
 11. For search: the words a person would type, used naturally in the first paragraph and the headings."""
 
 # What a reviewer checks first.
-READER_CHECK = """READ IT AS THE READER: a manager who is not technical. Answer "revise" and quote the exact words if any of these is true:
+READER_CHECK = """WHAT YOU ARE CHECKING: the words a reader will see, and nothing else. They may reach you wrapped in JSON, as the value of "text". That wrapping is the writer's own and it is correct: never comment on it, never ask for other keys, and read "\\n" as a line break. The JSON shape asked for at the end of these instructions is for YOUR reply only.
+
+READ IT AS THE READER: a manager who is not technical. Answer "revise" and quote the exact words if any of these is true:
 - a technical word or an abbreviation is not explained where it first appears;
 - a sentence has to be read twice, or runs past about 25 words;
 - the first two lines do not say what happened or what this is about;

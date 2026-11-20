@@ -123,6 +123,26 @@ async function main() {
   await blogAutoTick(a.deps)
   ok(a.w.revisions === 2 && a.w.submits.length === 0 && a.store.s.days['2026-11-02'].runs[0].status === 'held' && a.w.alerts.some(x => /held/.test(x)), 'still failing after two revisions: held for you, not published, you are emailed')
 
+  // "They can do posting automatically and also same for blog post" (owner, 20 November 2026): the last look
+  let asked = 0
+  a = auto(); a.w.genVerdict = 'revise'; a.w.reviews = ['revise', 'revise']
+  a.deps.lastLook = async (_id, notes) => { asked++; return { ok: notes.includes('still weak'), notes: [] } }
+  await blogAutoTick(a.deps)
+  ok(asked === 1 && a.w.submits.length === 1 && a.store.s.days['2026-11-02'].runs[0].status === 'submitted' && !a.w.alerts.some(x => /held/.test(x)), 'still questioned after two revisions and no rule is broken: published, and you are not emailed')
+  ok(a.store.s.log.some(l => /published as written/.test(l.msg) && /still weak/.test(l.msg)), 'what the reviewer still asked for is kept in the log')
+  a = auto(); a.w.genVerdict = 'revise'; a.w.reviews = ['revise', 'revise']
+  a.deps.lastLook = async () => ({ ok: false, notes: ['"our client Acme": a customer of ours is named'] })
+  await blogAutoTick(a.deps)
+  ok(a.w.submits.length === 0 && a.store.s.days['2026-11-02'].runs[0].status === 'held' && /customer of ours/.test(a.store.s.days['2026-11-02'].runs[0].reason || '') && a.w.alerts.some(x => /held/.test(x)), 'the last look finds a rule broken: held, the rule is the reason, and you are emailed')
+  a = auto(); a.w.genVerdict = 'revise'; a.w.reviews = ['revise', 'revise']
+  a.deps.lastLook = async () => { throw new Error('400 the model refused') }
+  await blogAutoTick(a.deps)
+  ok(a.w.submits.length === 0 && a.store.s.days['2026-11-02'].runs[0].status === 'held', 'the last look cannot be asked: held, as it always was')
+  a = auto(); a.w.genVerdict = 'revise'; a.w.reviews = ['revise', 'revise']; a.w.text = 'The election outcome will reshape every AI roadmap. '.repeat(30)
+  a.deps.lastLook = async () => ({ ok: true, notes: [] })
+  await blogAutoTick(a.deps)
+  ok(a.w.submits.length === 0 && a.store.s.days['2026-11-02'].runs[0].status === 'held', 'a banned-topic word still holds an article the last look let through')
+
   a = auto(); a.w.text = 'The election outcome will reshape every AI roadmap. '.repeat(30)
   await blogAutoTick(a.deps)
   ok(a.w.submits.length === 0 && a.store.s.days['2026-11-02'].runs[0].status === 'held', 'a banned-topic word holds the article even after a passing review')

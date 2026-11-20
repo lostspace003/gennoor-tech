@@ -7,7 +7,9 @@ import { selfTalk } from '@/lib/writing-rules'
 
 // Daily blog autopilot: research a topic, write the post, review it (revising up to twice when the reviewer asks),
 // approve it, and send it down the publishing flow (pull request -> merge -> live -> LinkedIn) with nobody in the loop.
-// If the post still does not pass after its revisions, it is held for you instead of being published.
+// If the reviewer is still not satisfied after its revisions, the last look decides: an article is held for you only
+// when publishing it would break a rule that matters; a remark about style lets it go out (docs/LINKEDIN.md,
+// "A remark about style does not hold a post or an article").
 export interface BlogAutoConfig {
   enabled: boolean
   /** Local time of day the day's article is started. */
@@ -59,6 +61,12 @@ export interface AutoDeps {
   text(draftId: string): Promise<string>
   submit(draftId: string, opts: { autoMerge: boolean; shareToLinkedIn: boolean }): Promise<void>
   alert(subject: string, html: string, key: string): Promise<void>
+  /**
+   * The last look at an article the reviewer is still not satisfied with after every revision: would publishing it
+   * break a rule that matters, or is it only not as good as it could be? `ok` means publish. See "A remark is not a
+   * reason to hold" in src/lib/writing-rules.ts. Optional: without it such an article is held, as it always was.
+   */
+  lastLook?(draftId: string, notes: string[]): Promise<{ ok: boolean; notes: string[] }>
 }
 
 const MAX_ATTEMPTS = 3
@@ -159,7 +167,20 @@ export async function blogAutoTick(d: AutoDeps, opts: { force?: boolean } = {}):
           run.notes = r.notes
           await d.save(s)
         }
-        if (!passed) { await hold(`it did not pass review after ${run.revisions} revision${run.revisions === 1 ? '' : 's'}: ${run.notes.slice(0, 2).join(' | ').slice(0, 250)}`); return out }
+        if (!passed) {
+          // "They can do posting automatically and also same for blog post" (owner, 20 November 2026). An article the
+          // reviewer still questions is held only when publishing it would break a rule that matters. A remark about
+          // style lets it go out; what the reviewer still asked for stays in the log on the Blog page.
+          const asked = run.notes
+          const look = d.lastLook ? await withRetry(() => d.lastLook!(run.draftId!, asked), { tries: 2, baseMs: 4000, sleep: d.sleep, retryable: isTransient }).catch(() => null) : null
+          if (!look?.ok) {
+            const why = look?.notes.length ? look.notes : asked
+            await hold(`it did not pass review after ${run.revisions} revision${run.revisions === 1 ? '' : 's'}: ${why.slice(0, 2).join(' | ').slice(0, 250)}`)
+            return out
+          }
+          out.push(`run ${run.n}: the reviewer still asked for changes of style; no rule is broken, so it is published`)
+          s.log.push({ at: iso(now), msg: `"${run.topic?.title}" is published as written: after ${run.revisions} revisions the reviewer still asked for "${asked.slice(0, 2).join(' | ').slice(0, 200)}", and no rule is broken` }); s.log = s.log.slice(-100)
+        }
         run.step = 'submit'
         await d.save(s)
       }
