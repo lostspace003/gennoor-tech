@@ -186,8 +186,11 @@ function normalizeQuestion(q: string): string {
     .trim()
 }
 
+// "v2": an answer saved before 20 November 2026 was saved under looser rules (a visitor could shape what the
+// next visitor was told: see isPlainQuestion in ./links.ts). The mark gives every question a new key, so none of
+// those is read again. Change the mark whenever the rules for what may be saved are tightened.
 export function questionKey(q: string): string {
-  return crypto.createHash('sha1').update(normalizeQuestion(q)).digest('hex')
+  return crypto.createHash('sha1').update('v2\n' + normalizeQuestion(q)).digest('hex')
 }
 
 /**

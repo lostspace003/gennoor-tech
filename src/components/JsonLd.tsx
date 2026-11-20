@@ -1,5 +1,12 @@
 import { credentials } from '@/data/credentials'
 
+/**
+ * Structured data as the text of a script tag. "<" is written as \u003c (the same character to anything that
+ * reads JSON), so words inside the data can never close the tag and start one of their own. A blog post's title,
+ * summary and questions are written by a model: "</script><script>…" in one of them would otherwise have run.
+ */
+const ldJson = (data: unknown): string => JSON.stringify(data).replace(/</g, '\\u003c')
+
 export function OrganizationJsonLd() {
   const data = {
     '@context': 'https://schema.org',
@@ -43,7 +50,7 @@ export function OrganizationJsonLd() {
   return (
     <script
       type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }}
+      dangerouslySetInnerHTML={{ __html: ldJson(data) }}
     />
   )
 }
@@ -87,7 +94,7 @@ export function PersonJsonLd() {
   return (
     <script
       type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }}
+      dangerouslySetInnerHTML={{ __html: ldJson(data) }}
     />
   )
 }
@@ -108,7 +115,7 @@ export function WebSiteJsonLd() {
   return (
     <script
       type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }}
+      dangerouslySetInnerHTML={{ __html: ldJson(data) }}
     />
   )
 }
@@ -131,7 +138,7 @@ export function ServiceJsonLd({ name, description, url }: { name: string; descri
   return (
     <script
       type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }}
+      dangerouslySetInnerHTML={{ __html: ldJson(data) }}
     />
   )
 }
@@ -151,7 +158,7 @@ export function BreadcrumbJsonLd({ items }: { items: { name: string; url: string
   return (
     <script
       type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }}
+      dangerouslySetInnerHTML={{ __html: ldJson(data) }}
     />
   )
 }
@@ -173,7 +180,7 @@ export function FAQJsonLd({ faqs }: { faqs: { question: string; answer: string }
   return (
     <script
       type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }}
+      dangerouslySetInnerHTML={{ __html: ldJson(data) }}
     />
   )
 }
@@ -242,7 +249,7 @@ export function CourseJsonLd({
   return (
     <script
       type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }}
+      dangerouslySetInnerHTML={{ __html: ldJson(data) }}
     />
   )
 }
@@ -308,7 +315,7 @@ export function ArticleJsonLd({
   return (
     <script
       type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }}
+      dangerouslySetInnerHTML={{ __html: ldJson(data) }}
     />
   )
 }
@@ -375,7 +382,7 @@ export function LmsCourseJsonLd({ c }: { c: CourseSeo }) {
   return (
     <>
       {graph.map((g, i) => (
-        <script key={i} type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(g) }} />
+        <script key={i} type="application/ld+json" dangerouslySetInnerHTML={{ __html: ldJson(g) }} />
       ))}
     </>
   )

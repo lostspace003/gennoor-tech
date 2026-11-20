@@ -36,6 +36,7 @@ Run the one that fits before the pull request, and say in it that you did. Each 
 |---|---|
 | The autopilot, the writing rules, `src/lib/safe-text.ts` | `npx tsx scripts/autopilot-check.ts` |
 | The CRM (`src/lib/crm`, its screens, its addresses) | `npx tsx scripts/crm-check.ts` |
+| A learner's record, the CRM's documents, the chatbot's links or saved answers, what an article's HTML may hold (`docs/SECURITY.md`) | `npx tsx scripts/attack-check.ts` |
 | Who may sign in (`users.ts`, `middleware.ts`, `admin-auth.ts`, `auth.ts`) | `scripts/access-check.ts` against the BUILT site (the file says how) |
 | The LinkedIn film campaign | `npx tsx scripts/campaign-check.ts` |
 | A page a visitor sees | the screenshots and `node scripts/contrast-check.mjs` (skill `gennoor-site-design`) |
@@ -86,6 +87,13 @@ session gives.
   file with the Write tool and run it. A script that stops on an `assert` has changed nothing: read its output.
 - Files may have Windows line endings; an edit script must match them.
 - The preview site is `npx next dev -p 3111`. Stop it when the work is done.
+- A second working folder (`git worktree add ../gt-<name>`, used to build one branch while another is being
+  worked on) is removed as soon as its branch is merged: the owner wants nothing left over beside the project,
+  and the local folder the same as GitHub (20 November 2026). Its `node_modules` may be a LINK to the project's
+  own. Remove the link first, by itself (`cmd /c rmdir <folder>\node_modules`), never with a delete that goes
+  into folders; check the project's `node_modules` is still there; then `git worktree remove <folder>` and
+  delete the merged local branch.
+- A branch that is not ready to merge is still pushed, so that nothing exists on this machine only.
 
 ## Do not, without being asked
 
