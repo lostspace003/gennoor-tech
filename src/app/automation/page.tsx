@@ -9,6 +9,11 @@ import ProcessFlow from '@/components/stage/ProcessFlow'
 import PocRequestForm from '@/components/automation/PocRequestForm'
 import films from '@/data/films.json'
 
+// Drawn on each visit. After #229 the live server kept answering /automation from an old stored copy
+// (same bytes across two deploys and a restart, while the new page file was on its disk); a page that is
+// drawn each time cannot be served stale. The page is small, so this costs little.
+export const dynamic = 'force-dynamic'
+
 export const metadata: Metadata = pageMeta({
   title: 'AI automation, one process at a time',
   description: 'We automate one process at a time with AI, and write down what we will and will not do before we start.',
