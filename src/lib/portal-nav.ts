@@ -123,6 +123,7 @@ const BREADCRUMB_LABELS: Record<string, string> = {
   '/training': 'Training',
   '/ai-weekend': 'AI Weekend',
   '/automation': 'Automation',
+  '/automation/hr-intelligence': 'HR Intelligence',
   '/services/training': 'Training programs',
   '/services/training/curriculum': 'Curriculum',
   '/services/certifications': 'Exam Prep',

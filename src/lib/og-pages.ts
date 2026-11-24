@@ -45,6 +45,14 @@ export const OG_PAGES: Record<string, OgCard> = {
     icon: Workflow, tone: 'cyan',
     beside: [{ icon: Bot, tone: 'green' }, { icon: ClipboardCheck, tone: 'blue' }],
   },
+  'hr-intelligence': {
+    kicker: 'A proof of concept we built',
+    title: 'Ask HR anything. Get an answer you can check.',
+    line: 'A team of AI specialists for people operations, working from your own records.',
+    foot: 'gennoor.com/automation',
+    icon: Users, tone: 'green',
+    beside: [{ icon: ClipboardCheck, tone: 'rose' }, { icon: Workflow, tone: 'cyan' }],
+  },
   claude: {
     kicker: 'Claude',
     title: 'Claude training and automation for teams',
