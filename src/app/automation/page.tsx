@@ -69,8 +69,44 @@ export default function AutomationPage() {
         </div>
       </Ground>
 
+      {/* ===== Proofs of concept we built: a small tile each (snapshot + title), each opens its own page ===== */}
+      <section className="px-4 sm:px-6 py-10 lg:py-12" aria-labelledby="built">
+        <div className="max-w-[1120px] mx-auto">
+          <h2 id="built" className="display-section">See one working.</h2>
+          <p className="lede mt-3.5 max-w-[640px]">Proofs of concept we built. Your team can learn to build one, or we build it on your process.</p>
+          <ul className="grid md:grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)] gap-4 mt-7">
+            {BUILT.map(b => (
+              <li key={b.href}>
+                <Link href={b.href} className="st-card group flex items-center gap-4 sm:gap-5 p-3.5 sm:p-4 h-full hover:border-primary-600 transition-colors">
+                  <div className="relative w-[116px] sm:w-[208px] aspect-video shrink-0 overflow-hidden rounded-xl bg-gray-100 st-keep">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={b.poster} alt="" loading="lazy" className="absolute inset-0 w-full h-full object-cover" />
+                  </div>
+                  <div className="min-w-0">
+                    <p className="st-kicker text-[11px]">Proof of concept</p>
+                    <h3 className="text-[18px] sm:text-[20px] font-bold tracking-[-0.01em] text-gray-900 mt-1">{b.name}</h3>
+                    <p className="text-[14.5px] sm:text-[15.5px] leading-snug text-gray-600 mt-1">{b.line}</p>
+                    <span className="st-link text-[14.5px] inline-block mt-2">See it work ›</span>
+                  </div>
+                </Link>
+              </li>
+            ))}
+            <li>
+              <a href="#poc" className="st-card flex items-center gap-4 p-4 h-full border-dashed hover:border-primary-600 transition-colors">
+                <Ico icon={Hammer} tone="violet" size={40} />
+                <div className="min-w-0">
+                  <h3 className="text-[17px] font-bold text-gray-900">Yours could be next.</h3>
+                  <p className="text-[14.5px] leading-snug text-gray-600 mt-1">Tell us a process, and we build a proof of concept on it.</p>
+                  <span className="st-link text-[14.5px] inline-block mt-2">Ask for one ›</span>
+                </div>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </section>
+
       {/* ===== What we automate ===== */}
-      <section className="px-4 sm:px-6 py-10 lg:py-14" aria-labelledby="what-we-automate">
+      <section className="bg-gray-50 px-4 sm:px-6 py-10 lg:py-14" aria-labelledby="what-we-automate">
         <div className="max-w-[1120px] mx-auto grid lg:grid-cols-[minmax(0,0.7fr)_minmax(0,1.3fr)] gap-8 lg:gap-12 items-start">
           <div>
             <h2 id="what-we-automate" className="display-section">What we automate.</h2>
@@ -87,41 +123,6 @@ export default function AutomationPage() {
         </div>
       </section>
 
-      {/* ===== Proofs of concept we built: one tile each, each opens its own page ===== */}
-      <section className="bg-gray-50 px-4 sm:px-6 py-10 lg:py-14" aria-labelledby="built">
-        <div className="max-w-[1120px] mx-auto">
-          <h2 id="built" className="display-section">See one working.</h2>
-          <p className="lede mt-3.5 max-w-[640px]">Proofs of concept we built and show. Each can be taught to your team, or built again on your own process.</p>
-          <ul className="grid md:grid-cols-2 gap-4 mt-8">
-            {BUILT.map(b => (
-              <li key={b.href}>
-                <Link href={b.href} className="st-card group block overflow-hidden h-full hover:border-primary-600 transition-colors">
-                  <div className="relative aspect-video bg-gray-100 st-keep">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={b.poster} alt="" loading="lazy" className="absolute inset-0 w-full h-full object-cover" />
-                  </div>
-                  <div className="p-6">
-                    <p className="st-kicker">Proof of concept</p>
-                    <h3 className="text-[21px] font-bold tracking-[-0.01em] text-gray-900 mt-1.5">{b.name}</h3>
-                    <p className="text-[16px] font-semibold text-gray-900 mt-1">{b.line}</p>
-                    <p className="text-[15px] leading-[1.55] text-gray-600 mt-2">{b.body}</p>
-                    <ul className="flex flex-wrap gap-2 mt-4">
-                      {b.tags.map(t => <li key={t} className="st-chip text-[13px]"><i />{t}</li>)}
-                    </ul>
-                    <span className="st-link text-[15.5px] inline-block mt-5">See it work ›</span>
-                  </div>
-                </Link>
-              </li>
-            ))}
-            <li className="st-card p-6 flex flex-col justify-center border-dashed">
-              <Ico icon={Hammer} tone="violet" size={44} />
-              <h3 className="text-[19px] font-bold tracking-[-0.01em] text-gray-900 mt-5">Yours could be next.</h3>
-              <p className="text-[15px] leading-[1.55] text-gray-600 mt-2">Tell us a process, and we build a proof of concept on it, so you see it work before you decide.</p>
-              <a href="#poc" className="st-link text-[15.5px] mt-5">Ask for a proof of concept ›</a>
-            </li>
-          </ul>
-        </div>
-      </section>
       {/* ===== For any size of team ===== */}
       <section className="px-4 sm:px-6 py-10 lg:py-14" aria-labelledby="any-size">
         <div className="max-w-[1120px] mx-auto">
