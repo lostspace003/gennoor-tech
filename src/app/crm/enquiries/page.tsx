@@ -20,7 +20,7 @@ function Journey({ type, rowKey }: { type: string; rowKey: string }) {
 }
 
 const TYPE_LABEL: Record<string, string> = {
-  ContactEnquiry: 'Contact form', CustomTraining: 'Custom training', ExpertCallBooking: 'Call booking',
+  ContactEnquiry: 'Contact form', CustomTraining: 'Custom training', PocRequest: 'Proof of concept', ExpertCallBooking: 'Call booking',
   TrainingEnquiry: 'Training enquiry', CertificationEnquiry: 'Certification enquiry', WebinarRegistration: 'Webinar',
   ClaudeCoworkRegistration: 'Claude workshop', JoinApplication: 'Work with us', NewsletterSubscription: 'Newsletter',
 }

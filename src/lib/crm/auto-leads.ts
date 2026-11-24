@@ -42,7 +42,7 @@ interface Signal {
 const SEEN_BLOB = 'auto-leads-seen.json'
 const BY = 'website'
 const FORM_LABEL: Record<string, string> = {
-  ContactEnquiry: 'Contact form', CustomTraining: 'Custom training request', ExpertCallBooking: 'Call booking',
+  ContactEnquiry: 'Contact form', CustomTraining: 'Custom training request', PocRequest: 'Proof of concept request', ExpertCallBooking: 'Call booking',
   TrainingEnquiry: 'Training enquiry', CertificationEnquiry: 'Certification enquiry', WebinarRegistration: 'Webinar sign-up',
   ClaudeCoworkRegistration: 'Claude workshop sign-up',
 }

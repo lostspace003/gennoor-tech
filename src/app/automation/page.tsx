@@ -1,11 +1,13 @@
 import type { Metadata } from 'next'
 import { pageMeta } from '@/lib/seo'
 import Link from 'next/link'
-import { ArrowLeftRight, BotMessageSquare, Building2, FileBarChart, FileText, FlaskConical, GraduationCap, Inbox, MessagesSquare, Scale, ShieldCheck, Users } from 'lucide-react'
+import { ArrowLeftRight, BotMessageSquare, Building2, Hammer, FileBarChart, FileText, FlaskConical, GraduationCap, Inbox, MessagesSquare, Scale, ShieldCheck, Users } from 'lucide-react'
 import Ground from '@/components/stage/Ground'
 import Reveal from '@/components/stage/Reveal'
 import { Ico } from '@/components/stage/Ico'
 import ProcessFlow from '@/components/stage/ProcessFlow'
+import PocRequestForm from '@/components/automation/PocRequestForm'
+import films from '@/data/films.json'
 
 export const metadata: Metadata = pageMeta({
   title: 'AI automation, one process at a time',
@@ -33,6 +35,18 @@ const PRINCIPLES = [
   { icon: Scale, tone: 'rose', title: 'Honest about value', body: 'Some processes should not be automated. If so, we say it.' },
   { icon: ShieldCheck, tone: 'green', title: 'People stay in charge', body: 'AI makes mistakes. We design for checking.' },
 ] as const
+/** Proofs of concept we built and show. Each has its own page under /automation. */
+const BUILT = [
+  {
+    href: '/automation/hr-intelligence',
+    name: 'HR Intelligence',
+    line: 'Ask HR anything. Get an answer you can check.',
+    body: "A team of AI specialists answers HR questions from the company's own records, a compliance review checks every reply, and scanned forms are read and filed.",
+    tags: ['Policy answers', 'Live HR numbers', 'Fair shortlisting', 'Documents filed'],
+    poster: films.hrIntelligence.poster,
+  },
+] as const
+
 const turn = (i: number) => ({ '--i': i }) as React.CSSProperties
 
 export default function AutomationPage() {
@@ -73,8 +87,43 @@ export default function AutomationPage() {
         </div>
       </section>
 
+      {/* ===== Proofs of concept we built: one tile each, each opens its own page ===== */}
+      <section className="bg-gray-50 px-4 sm:px-6 py-10 lg:py-14" aria-labelledby="built">
+        <div className="max-w-[1120px] mx-auto">
+          <h2 id="built" className="display-section">See one working.</h2>
+          <p className="lede mt-3.5 max-w-[640px]">Proofs of concept we built and show. Each can be taught to your team, or built again on your own process.</p>
+          <ul className="grid md:grid-cols-2 gap-4 mt-8">
+            {BUILT.map(b => (
+              <li key={b.href}>
+                <Link href={b.href} className="st-card group block overflow-hidden h-full hover:border-primary-600 transition-colors">
+                  <div className="relative aspect-video bg-gray-100 st-keep">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={b.poster} alt="" loading="lazy" className="absolute inset-0 w-full h-full object-cover" />
+                  </div>
+                  <div className="p-6">
+                    <p className="st-kicker">Proof of concept</p>
+                    <h3 className="text-[21px] font-bold tracking-[-0.01em] text-gray-900 mt-1.5">{b.name}</h3>
+                    <p className="text-[16px] font-semibold text-gray-900 mt-1">{b.line}</p>
+                    <p className="text-[15px] leading-[1.55] text-gray-600 mt-2">{b.body}</p>
+                    <ul className="flex flex-wrap gap-2 mt-4">
+                      {b.tags.map(t => <li key={t} className="st-chip text-[13px]"><i />{t}</li>)}
+                    </ul>
+                    <span className="st-link text-[15.5px] inline-block mt-5">See it work ›</span>
+                  </div>
+                </Link>
+              </li>
+            ))}
+            <li className="st-card p-6 flex flex-col justify-center border-dashed">
+              <Ico icon={Hammer} tone="violet" size={44} />
+              <h3 className="text-[19px] font-bold tracking-[-0.01em] text-gray-900 mt-5">Yours could be next.</h3>
+              <p className="text-[15px] leading-[1.55] text-gray-600 mt-2">Tell us a process, and we build a proof of concept on it, so you see it work before you decide.</p>
+              <a href="#poc" className="st-link text-[15.5px] mt-5">Ask for a proof of concept ›</a>
+            </li>
+          </ul>
+        </div>
+      </section>
       {/* ===== For any size of team ===== */}
-      <section className="bg-gray-50 px-4 sm:px-6 py-10 lg:py-14" aria-labelledby="any-size">
+      <section className="px-4 sm:px-6 py-10 lg:py-14" aria-labelledby="any-size">
         <div className="max-w-[1120px] mx-auto">
           <h2 id="any-size" className="display-section">For any size of team.</h2>
           <div className="grid md:grid-cols-2 gap-4 mt-8">
@@ -92,7 +141,7 @@ export default function AutomationPage() {
       </section>
 
       {/* ===== How we keep it honest ===== */}
-      <section className="px-4 sm:px-6 py-10 lg:py-14" aria-labelledby="honest">
+      <section className="bg-gray-50 px-4 sm:px-6 py-10 lg:py-14" aria-labelledby="honest">
         <div className="max-w-[1120px] mx-auto">
           <h2 id="honest" className="display-section">How we keep it honest.</h2>
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-8">
@@ -108,7 +157,7 @@ export default function AutomationPage() {
       </section>
 
       {/* ===== Or we teach your team to do it ===== */}
-      <section className="bg-gray-50 px-4 sm:px-6 py-10 lg:py-12" aria-labelledby="teach-it">
+      <section className="px-4 sm:px-6 py-10 lg:py-12" aria-labelledby="teach-it">
         <div className="st-card max-w-[1120px] mx-auto flex flex-col md:flex-row md:items-center gap-5 md:gap-7 p-6 sm:p-8">
           <Ico icon={GraduationCap} tone="gold" size={48} />
           <div className="flex-1 min-w-0">
@@ -121,6 +170,18 @@ export default function AutomationPage() {
         </div>
       </section>
 
+      {/* ===== A proof of concept: the one form for it (the same form is on each proof-of-concept page) ===== */}
+      <section id="poc" className="bg-gray-50 px-4 sm:px-6 py-10 lg:py-14 scroll-mt-20" aria-labelledby="poc-title">
+        <div className="max-w-[1120px] mx-auto grid lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] gap-8 lg:gap-12 items-start">
+          <div>
+            <h2 id="poc-title" className="display-section">Want to see it work first?</h2>
+            <p className="lede mt-3.5">We build a proof of concept on one process of yours: small, agreed in writing, and tested on real cases. Then you decide what comes next.</p>
+          </div>
+          <div className="st-card p-6 sm:p-8">
+            <PocRequestForm />
+          </div>
+        </div>
+      </section>
       <section className="px-4 sm:px-6 py-12 lg:py-16 text-center">
         <h2 className="display-section max-w-[680px] mx-auto">Tell us about the process.</h2>
         <p className="lede mt-3.5 max-w-[480px] mx-auto">A few lines are enough. We reply with questions, or tell you honestly if it is not a fit.</p>

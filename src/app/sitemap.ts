@@ -33,6 +33,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     page('/claude/certifications/architect-professional', 0.8),
     page('/training', 0.9),
     page('/automation', 0.9),
+    page('/automation/hr-intelligence', 0.7),
     page('/studio', 0.9, 'weekly'),
     page('/community', 0.6, 'weekly'),
     page('/ai-academy', 0.8, 'weekly'),

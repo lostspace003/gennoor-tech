@@ -11,9 +11,10 @@ const LABEL = 'block text-[12.5px] font-semibold text-gray-900 mb-1.5'
 const FIELD =
   'w-full box-border font-[inherit] text-[14px] px-3.5 py-[11px] border border-gray-300 rounded-xl bg-raised text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-primary-600'
 
-export function OpenCustomTraining({ children, className }: { children: React.ReactNode; className?: string }) {
+/** `topic` fills in "What should the team learn?" (the visitor can still change it). */
+export function OpenCustomTraining({ children, className, topic }: { children: React.ReactNode; className?: string; topic?: string }) {
   return (
-    <button type="button" className={className} onClick={() => window.dispatchEvent(new Event(OPEN_EVENT))}>
+    <button type="button" className={className} onClick={() => window.dispatchEvent(new CustomEvent(OPEN_EVENT, { detail: { topic } }))}>
       {children}
     </button>
   )
@@ -25,12 +26,17 @@ export default function CustomTraining() {
   const [open, setOpen] = useState(false)
   const [status, setStatus] = useState<'idle' | 'submitting' | 'success'>('idle')
   const [error, setError] = useState('')
+  const [topic, setTopic] = useState('')
   const closeRef = useRef<HTMLButtonElement>(null)
 
   const close = useCallback(() => setOpen(false), [])
 
   useEffect(() => {
-    const onOpen = () => { setStatus(s => (s === 'success' ? 'idle' : s)); setOpen(true) }
+    const onOpen = (e: Event) => {
+      setTopic(String((e as CustomEvent<{ topic?: string }>).detail?.topic || ''))
+      setStatus(s => (s === 'success' ? 'idle' : s))
+      setOpen(true)
+    }
     window.addEventListener(OPEN_EVENT, onOpen)
     return () => window.removeEventListener(OPEN_EVENT, onOpen)
   }, [])
@@ -74,7 +80,7 @@ export default function CustomTraining() {
       {!hideTrigger && (
         <button
           type="button"
-          onClick={() => setOpen(true)}
+          onClick={() => { setTopic(''); setOpen(true) }}
           className="fixed z-40 top-[calc(var(--portal-topbar-h)+8px)] lg:top-4 right-3 lg:right-5 inline-flex items-center gap-1.5 h-9 pl-3 pr-3.5 rounded-full text-[13px] font-medium text-gray-900 bg-surface/90 backdrop-blur border border-gray-300 shadow-sm hover:border-primary-600 hover:text-primary-700 transition-colors"
           aria-label="Ask for custom training"
         >
@@ -111,7 +117,7 @@ export default function CustomTraining() {
                   <div><label htmlFor="ct-name" className={LABEL}>Name</label><input id="ct-name" name="name" required className={FIELD} autoComplete="name" /></div>
                   <div><label htmlFor="ct-email" className={LABEL}>Work email</label><input id="ct-email" name="email" type="email" required className={FIELD} autoComplete="email" placeholder="you@company.com" /></div>
                   <div><label htmlFor="ct-org" className={LABEL}>Organization</label><input id="ct-org" name="organization" required className={FIELD} autoComplete="organization" /></div>
-                  <div><label htmlFor="ct-topic" className={LABEL}>What should the team learn?</label><input id="ct-topic" name="topic" required className={FIELD} placeholder="For example: Claude for the support team" /></div>
+                  <div><label htmlFor="ct-topic" className={LABEL}>What should the team learn?</label><input id="ct-topic" key={topic} name="topic" required defaultValue={topic} className={FIELD} placeholder="For example: Claude for the support team" /></div>
                   <div>
                     <label htmlFor="ct-detail" className={LABEL}>The project or work it is for</label>
                     <textarea id="ct-detail" name="detail" required rows={4} maxLength={2000} className={FIELD} placeholder="What should they be able to do afterwards? Which tools or data do they use?" />
