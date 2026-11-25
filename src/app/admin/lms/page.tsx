@@ -85,7 +85,7 @@ function Checks({ label, options, value, onChange }: { label: string; options: r
               type="button"
               aria-pressed={on}
               onClick={() => onChange(on ? value.filter(x => x !== o) : [...value, o])}
-              className={`px-2.5 py-1 rounded-full text-xs font-medium border transition-colors ${on ? 'bg-primary/10 text-primary border-primary' : 'bg-raised text-gray-700 border-gray-300 hover:border-primary'}`}
+              className={`px-2.5 py-1 rounded-full text-xs font-medium border transition-colors ${on ? 'chip-on' :'bg-raised text-gray-700 border-gray-300 hover:border-primary'}`}
             >
               {o}
             </button>
