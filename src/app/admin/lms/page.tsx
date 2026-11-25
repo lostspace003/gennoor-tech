@@ -246,7 +246,7 @@ export default function AdminLmsPage() {
             return (
               <div key={r.slug} className="px-4 py-3 flex flex-wrap items-center justify-between gap-4">
                 <div className="min-w-0">
-                  <div className="text-sm font-semibold text-gray-900 break-words">{r.code} · {r.title}{r.protected ? '' : ' (video not encrypted)'}</div>
+                  <div className="text-sm font-semibold text-gray-900 break-words">{r.title.toUpperCase().startsWith(r.code.toUpperCase()) ? r.title : `${r.code} · ${r.title}`}{r.protected ? '' : ' (video not encrypted)'}</div>
                   <div className="text-xs text-gray-500 mt-0.5 break-words">
                     {r.stats.lectures} lectures · {r.stats.quizzes} quizzes ·{' '}
                     {r.copy
