@@ -194,6 +194,11 @@ a[data-pending='1'] {
     @apply mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl;
   }
 
+  /* A selected choice chip (admin pickers such as Topics / Domains): solid blue in the light look,
+     solid green in the dark look, so a pick is plain to see in both. */
+  .chip-on { background-color: #2563eb; border-color: #2563eb; color: #ffffff; }
+  .stage .chip-on { background-color: #16a34a; border-color: #16a34a; color: #ffffff; }
+
   /* ── Surfaces ──────────────────────────────────────────────────── */
 
   .card {
