@@ -149,6 +149,12 @@ rules are in `docs/DESIGN.md`, section 9. Every colour is written by name there 
   all, which makes this easy but proves nothing about access: for access, run `scripts/access-check.ts`
   against the built site.
 
+## Every course page, now and for new courses
+
+- The complimentary-access tile above "About this course", and the pop-up once a browser session when a preview closes
+  (`ComplimentaryInvite.tsx`). The owner made this a rule on 27 November 2026. A new course gets both from the one template:
+  check they are there when a course is added, and never take them out.
+
 ## What must not change when only the look changes
 
 - Addresses of pages (`href`), names of form fields, API paths. The six forms (`EnquiryFormModal`,

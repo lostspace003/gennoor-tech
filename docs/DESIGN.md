@@ -231,6 +231,7 @@ page that lists what a course holds:
   before this has its points in `src/data/lms/build-points.ts`.
 - **Reading text is justified** (`st-justify`), in a column no wider than the page allows comfortably.
 - The top of the page is `st-deep`, the call to buy is `st-card st-solid`: they follow the theme.
+- **Complimentary access on every course page** (owner, 27 November 2026: "this will be for any new courses also ... this is rule"). The tile "Want complimentary access to the Learning Studio?" with "Click here" to `/complimentary-access` sits above "About this course", and closing a preview offers the same message as a pop-up once per browser session (`src/components/academy/ComplimentaryInvite.tsx`). Both live in the one course template, so a new course has them by itself; never remove them from a course.
 - The Claude Partner line is used word for word (`TIER_LINE` in `src/components/ClaudePartner.tsx`), with the
   badge on its cream card. Never recolour the badge, never add a tier claim.
 - Courses are never called "free". What is open to watch is the preview lessons: call them "preview lessons".

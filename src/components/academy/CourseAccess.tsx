@@ -4,6 +4,7 @@ import { createContext, useCallback, useContext, useEffect, useRef, useState } f
 import { useRouter } from 'next/navigation'
 import { Check, Loader2, Maximize, Pause, Play, X } from 'lucide-react'
 import { useLearnerAuth } from '@/hooks/useLearnerAuth'
+import { useComplimentaryPopup } from './ComplimentaryInvite'
 import { useIndia } from '@/hooks/useIndia'
 import type { LmsKind } from '@/lib/lms-kind'
 import { useBoostedVolume } from '@/hooks/useBoostedVolume'
@@ -231,10 +232,12 @@ const PreviewContext = createContext<{ open: (id: string, title: string) => void
 /** Wraps the course's lessons. A preview lesson opens in a player on the page; nobody is asked to sign in. */
 export function PreviewProvider({ slug, previews, children }: { slug: string; previews: PreviewItem[]; children: React.ReactNode }) {
   const [open, setOpen] = useState<{ id: string; title: string } | null>(null)
+  const invite = useComplimentaryPopup()
   return (
     <PreviewContext.Provider value={{ open: (id, title) => setOpen({ id, title }), all: previews }}>
       {children}
-      {open && <PreviewPlayer key={open.id} slug={slug} id={open.id} title={open.title} all={previews} onPick={(p) => setOpen({ id: p.id, title: p.title })} onClose={() => setOpen(null)} />}
+      {open && <PreviewPlayer key={open.id} slug={slug} id={open.id} title={open.title} all={previews} onPick={(p) => setOpen({ id: p.id, title: p.title })} onClose={() => { setOpen(null); invite.offer() }} />}
+      {invite.popup}
     </PreviewContext.Provider>
   )
 }
