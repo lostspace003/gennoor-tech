@@ -23,9 +23,8 @@ The skills are in `.claude/skills/`. They are plain Markdown: any tool can read 
 
 ## Rules that hold everywhere
 
-1. **The look is decided.** Dark "stage" and light "day" for the public site, and which of the two shows
-   follows the visitor's own clock: light by day (07:00 to 18:00 where they are), dark in the evening and
-   at night. The admin centre and the CRM follow the same clock: light "paper" by day, their dark look at
+1. **The look is decided.** Dark "stage" and light "day" for the public site. **The public site opens light at every hour** (owner,
+   27 November 2026); a visitor may switch to dark. The admin centre and the CRM follow the same clock: light "paper" by day, their dark look at
    night, and the person working there can switch. Colours by name, the icon-tile kit, one-level menus. Do not restyle
    from taste; follow `docs/DESIGN.md`.
 2. **Look at what you made.** A change to a page is checked in both themes, on a desktop and on a phone

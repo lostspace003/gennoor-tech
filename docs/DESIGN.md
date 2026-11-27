@@ -18,7 +18,8 @@ the films and the presentation (`scripts/show/`).
 | **Paper** | none | The admin centre, the CRM, the lesson players. Light and compact. |
 | **Paper, dark** | `stage` | The admin centre and the CRM, when the person working there switches it on. The same pages with the stage's colour values. Light stays the default. |
 
-- **The public site follows the visitor's clock** (owner, 13 November 2026: "If it is the daylight, it
+- **Since 27 November 2026 the public site opens light at every hour** (owner: "default view on website should always be light theme"); `lookAt` in `src/lib/theme.ts` gives light, and the switch still gives dark until the next 07:00 or 18:00. What follows is how it worked before.
+- **The public site followed the visitor's clock** (owner, 13 November 2026: "If it is the daylight, it
   will be light. If it is the dawn or the night time, it will be dark", "as per the zone in which the
   website is being opened"). The clock of the visitor's device is already in their own zone, so nothing
   is asked of them and nothing is sent anywhere. The two hours are `DAY_FROM` and `DAY_UNTIL` in
