@@ -35,7 +35,7 @@ udst.evaluation = { courses: ['ai-103', 'ai-500'], reps: [{ name: 'Wagdi AlRawag
 // A call booked for next week
 const ahlia = by('GEN-004'); ahlia.stage = 'call'; ahlia.callOn = new Date(Date.now() + 6 * 86_400_000).toISOString().slice(0, 10)
 ahlia.replies.unshift({ id: 'm-3', at: ago(7), from: 'adarwish@ahlia.edu.bh', fromName: 'Prof. Ashraf Darwish', subject: 'Re: Agentic AI Capstones', preview: 'Happy to talk next week.', handled: true })
-ahlia.evaluation = { courses: ['ai-500', 'agents-business'], reps: [], requestedAt: ago(8).slice(0, 10), grantedAt: ago(8).slice(0, 10) }
+ahlia.evaluation = { courses: ['ai-500', 'agent-ops'], reps: [], requestedAt: ago(8).slice(0, 10), grantedAt: ago(8).slice(0, 10) }
 // A partner
 const bennett = by('GEN-006'); bennett.stage = 'partner'
 bennett.replies.unshift({ id: 'm-4', at: ago(8), from: 'abhay.bansal@bennett.edu.in', fromName: 'Abhay Bansal', subject: 'Re: Production Agentic AI', preview: 'Yes, let us pilot.', handled: true })
@@ -48,7 +48,7 @@ const mec = by('GEN-005'); mec.stage = 'closed'; mec.closedReason = 'They have t
 ;['GEN-001', 'GEN-002', 'GEN-003', 'GEN-004'].forEach((id) => { by(id).owner = 'admin@gennoor.com' })
 ;['GEN-006', 'GEN-007'].forEach((id) => { by(id).owner = 'yusufchaudhary@gennoor.com' })
 // A form answer through Prince Sultan University's own link, and one through the general link (made-up people)
-const answer = (uni: string, institution: string): UniFormAnswer => ({ id: uni ? 'a1b2c3d4e5f60718' : 'f0e1d2c3b4a59687', at: ago(1), uni, institution, place: 'Riyadh, Saudi Arabia', department: 'College of Computer and Information Sciences', reps: [{ name: 'Dr. Ada Example', title: 'Associate Professor', email: 'ada.example@psu.example' }], courses: ['ai-103', 'agents-business'], areas: ['capstones', 'lms'], walkthrough: 'call', notes: 'A cohort of about 40 students in the spring term.' })
+const answer = (uni: string, institution: string): UniFormAnswer => ({ id: uni ? 'a1b2c3d4e5f60718' : 'f0e1d2c3b4a59687', at: ago(1), uni, institution, place: 'Riyadh, Saudi Arabia', department: 'College of Computer and Information Sciences', reps: [{ name: 'Dr. Ada Example', title: 'Associate Professor', email: 'ada.example@psu.example' }], courses: ['ai-103', 'agent-ops'], areas: ['capstones', 'lms'], walkthrough: 'call', notes: 'A cohort of about 40 students in the spring term.' })
 applyFormAnswer(by('GEN-001'), answer('GEN-001', 'Prince Sultan University'))
 const unmatched = [{ ...answer('', 'Example Institute of Technology'), reps: [{ name: 'Sam Example', title: 'Head of Digital Learning', email: 'sam@eit.example' }] }]
 

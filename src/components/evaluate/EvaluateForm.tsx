@@ -2,8 +2,9 @@
 
 import { useState } from 'react'
 import { BookOpen, Check, Clock, GraduationCap, Loader2, Send, Users } from 'lucide-react'
-import { ClaudePartnerInline } from '@/components/ClaudePartner'
-import { UNI_AREAS, UNI_COURSES, UNI_WALKTHROUGH } from '@/lib/crm/universities-types'
+import { TIER_LINE } from '@/components/ClaudePartner'
+import { UNI_AREAS, UNI_WALKTHROUGH } from '@/lib/crm/universities-types'
+import CoursePicker, { type PickerCourse } from '@/components/CoursePicker'
 
 export interface EvaluatePrefill { key: string; institution: string; place: string; department: string }
 
@@ -21,12 +22,12 @@ const field ='w-full rounded-lg border border-gray-300 bg-raised px-3 py-2.5 tex
 const label = 'block text-sm font-medium text-gray-900 mb-1.5'
 
 /** The university evaluation form: the page a university's own link opens. Its answer goes to /api/universities/evaluate. */
-export default function EvaluateForm({ prefill }: { prefill: EvaluatePrefill | null }) {
+export default function EvaluateForm({ prefill, courses }: { prefill: EvaluatePrefill | null; courses: PickerCourse[] }) {
   const [institution, setInstitution] = useState(prefill?.institution || '')
   const [place, setPlace] = useState(prefill?.place || '')
   const [department, setDepartment] = useState(prefill?.department || '')
   const [reps, setReps] = useState<Rep[]>([{ ...emptyRep }, { ...emptyRep }])
-  const [courses, setCourses] = useState<string[]>([])
+  const [courses_, setCourses] = useState<string[]>([])
   const [areas, setAreas] = useState<string[]>([])
   const [walkthrough, setWalkthrough] = useState('')
   const [notes, setNotes] = useState('')
@@ -41,17 +42,17 @@ export default function EvaluateForm({ prefill }: { prefill: EvaluatePrefill | n
   const submit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError('')
-    if (!courses.length) { setError('Please choose at least one course.'); return }
+    if (!courses_.length) { setError('Please choose at least one course.'); return }
     setBusy(true)
     try {
       const res = await fetch('/api/universities/evaluate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ key: prefill?.key || '', institution, place, department, reps, courses, areas, walkthrough, notes, website }),
+        body: JSON.stringify({ key: prefill?.key || '', institution, place, department, reps, courses: courses_, areas, walkthrough, notes, website }),
       })
       const data = await res.json().catch(() => ({}))
       if (!res.ok) { setError(data.error || 'Your answer could not be sent. Please try again.'); return }
-      setDone(courses)
+      setDone(courses_)
       window.scrollTo({ top: 0, behavior: 'smooth' })
     } catch {
       setError('Your answer could not be sent. Please check your connection and try again.')
@@ -86,7 +87,7 @@ export default function EvaluateForm({ prefill }: { prefill: EvaluatePrefill | n
                 </li>
               ))}
             </ul>
-            <div className="mt-6"><ClaudePartnerInline /></div>
+            <div className="mt-6 inline-flex flex-wrap items-center gap-3"><span className="shrink-0 rounded-[12px] bg-[#f0eee6] leading-[0]">{/* eslint-disable-next-line @next/next/no-img-element */}<img src="/cpn/cpn-certified-horizontal.svg" width={132} alt="Claude Partner Network - Certified" className="h-auto" /></span><span className="max-w-[210px] text-[13.5px] font-medium leading-[1.4] text-gray-600">{TIER_LINE}</span></div>
           </aside>
 
           <main className="rounded-2xl border border-gray-200 bg-raised p-5 sm:p-7">
@@ -94,9 +95,9 @@ export default function EvaluateForm({ prefill }: { prefill: EvaluatePrefill | n
               <div className="py-6 text-center">
                 <span className="mx-auto flex h-12 w-12 items-center justify-center rounded-xl border border-green-200 bg-green-50 text-green-700"><Check className="h-6 w-6" /></span>
                 <h2 className="mt-4 text-xl font-bold text-gray-900">Thank you. We have your request.</h2>
-                <p className="mt-2 text-[15px] text-gray-600 max-w-md mx-auto">We will set up full access to {done.length === 1 ? 'this course' : 'these courses'} and email the sign-in details within 24 hours.</p>
+                <p className="mt-2 text-[15px] text-gray-600 max-w-md mx-auto">Your access codes are on their way to your email, one for each course, with how to use them.</p>
                 <ul className="mt-5 inline-block text-left space-y-2">
-                  {done.map((id) => <li key={id} className="flex gap-2 text-sm text-gray-900"><Check className="h-4 w-4 mt-0.5 shrink-0 text-green-700" />{UNI_COURSES.find((c) => c.id === id)?.title}</li>)}
+                  {done.map((id) => <li key={id} className="flex gap-2 text-sm text-gray-900"><Check className="h-4 w-4 mt-0.5 shrink-0 text-green-700" />{courses.find((c) => c.slug === id)?.title || id}</li>)}
                 </ul>
                 <p className="mt-6 text-sm text-gray-600">In the meantime, the course previews are at <a href="https://gennoor.com/studio" className="font-medium text-primary-600 hover:underline">gennoor.com/studio</a>. Questions: <a href="mailto:admin@gennoor.com" className="font-medium text-primary-600 hover:underline">admin@gennoor.com</a></p>
               </div>
@@ -123,26 +124,8 @@ export default function EvaluateForm({ prefill }: { prefill: EvaluatePrefill | n
                   ))}
                 </Section>
 
-                <Section n={3} title="Choose the courses" hint="Choose one or more. Each gives full access, not a preview.">
-                  <div className="grid gap-3 sm:grid-cols-2">
-                    {UNI_COURSES.map((c) => {
-                      const on = courses.includes(c.id)
-                      return (
-                        <label key={c.id} className={`relative flex cursor-pointer gap-3 rounded-xl border p-3.5 transition-colors ${on ? 'border-primary-500 bg-primary-50' : 'border-gray-200 hover:border-gray-300'}`}>
-                          <input type="checkbox" checked={on} onChange={() => toggle(courses, setCourses, c.id)} className="mt-1 h-4 w-4 shrink-0 accent-primary-600" />
-                          <span className="min-w-0">
-                            <span className="flex items-center gap-2">
-                              <span className={`rounded-md border px-1.5 py-0.5 text-[10.5px] font-bold tracking-wide ${TILE[c.track]}`}>{c.code}</span>
-                              <span className="text-xs font-medium text-gray-600">{c.level}</span>
-                            </span>
-                            <span className="mt-1.5 block text-sm font-semibold leading-snug text-gray-900">{c.title.replace(/^AI-\d+:\s*/, '')}</span>
-                            <span className="mt-1 block text-xs leading-relaxed text-gray-600">{c.why}</span>
-                            <span className="mt-1 block text-xs text-gray-500">{c.scope.replace(/\s*\((.+)\)/, ' · $1')}</span>
-                          </span>
-                        </label>
-                      )
-                    })}
-                  </div>
+                <Section n={3} title="Choose up to two courses" hint="Each gives full access, not a preview. Open a course to look at it first.">
+                  <CoursePicker courses={courses} value={courses_} onChange={setCourses} fieldClass={field} />
                 </Section>
 
                 <Section n={4} title="What else interests your university" hint="Optional. It helps us prepare the conversation.">

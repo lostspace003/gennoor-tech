@@ -172,3 +172,12 @@ export async function redeemCoupon(code: string, email: string, slug: string, st
   if (strict) await undo()
   return !strict
 }
+
+/** Who has used a code, and for which course: one row per person and course. The code is checked before it is asked about. */
+export async function listCouponUses(code: string): Promise<Array<{ email: string; slug: string; at: string }>> {
+  if (!validCode(code)) return []
+  const out: Array<{ email: string; slug: string; at: string }> = []
+  const filter = `PartitionKey eq '${code.replace(/'/g, "''")}'`
+  for await (const e of (await table(USES)).listEntities<Record<string, unknown>>({ queryOptions: { filter } })) out.push({ email: String(e.email || ''), slug: String(e.slug || ''), at: String(e.at || '') })
+  return out
+}

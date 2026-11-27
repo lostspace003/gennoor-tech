@@ -30,6 +30,14 @@ export const EMAIL_ICONS = {
   'step-choose': () => lineIcon('MousePointerClick', { wash: 'blue' }),
   'step-access': () => lineIcon('KeyRound', { wash: 'sand' }),
   'step-debrief': () => lineIcon('MessagesSquare', { wash: 'mint' }),
+  'offer-studio': () => lineIcon('MonitorPlay', { wash: 'blue' }),
+  'offer-essentials': () => lineIcon('Sparkles', { wash: 'sky' }),
+  'offer-claude-certs': () => lineIcon('BadgeCheck', { wash: 'claude' }),
+  'offer-weekend': () => lineIcon('CalendarDays', { wash: 'sand' }),
+  'offer-training': () => lineIcon('Users', { wash: 'lilac' }),
+  'offer-automation': () => lineIcon('Workflow', { wash: 'mint' }),
+  'offer-platform': () => lineIcon('LayoutDashboard', { wash: 'blue' }),
+  'offer-prototype': () => lineIcon('FlaskConical', { wash: 'rose' }),
 }
 
 const browser = await puppeteer.launch({ executablePath: CHROME, headless: true })

@@ -16,7 +16,7 @@ export function partnerCardHtml(): string {
   return `<table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin:2px 0 18px"><tr>
     <td bgcolor="#f0eee6" style="background:#f0eee6;border-radius:12px;padding:0">
       <table role="presentation" cellpadding="0" cellspacing="0" border="0"><tr>
-        <td valign="middle" style="padding:0"><a href="https://claude.com/partners"><img src="${CPN_BADGE_URL}" width="150" alt="Claude Partner Network - Certified" style="display:block;border:0"/></a></td>
+        <td valign="middle" style="padding:0"><img src="${CPN_BADGE_URL}" width="150" alt="Claude Partner Network - Certified" style="display:block;border:0"/></td>
         <td valign="middle" style="padding:0 18px 0 6px;font-family:'Segoe UI',Arial,sans-serif;font-size:14px;line-height:1.45;font-weight:600;color:#141413">${CPN_LINE}</td>
       </tr></table>
     </td></tr></table>`
@@ -52,8 +52,8 @@ const label = (t: string) => `<p style="margin:26px 0 12px;font-family:${FONT};f
 const ICON = (name: string) => `${SITE}/email/line/${name}.png`
 const iconCell = (name: string, size = 44) => `<img src="${ICON(name)}" width="${size}" height="${size}" alt="" style="display:block;border:0"/>`
 const COURSE_ICON: Record<string, string> = {
-  'ai-103': 'course-ai-103', 'ai-500': 'course-ai-500', 'agents-business': 'course-agents', 'fabric-realtime': 'course-fabric',
-  'ai-foundations': 'course-foundations', 'ai-governance': 'course-governance', 'ai-strategy': 'course-strategy',
+  'ai-103': 'course-ai-103', 'ai-500': 'course-ai-500', 'agent-ops': 'course-agents', 'build-real-time-ai-on-microsoft-fabric': 'course-fabric',
+  'ai-foundations': 'course-foundations', 'ai-governance-risk-and-boards': 'course-governance', 'ai-strategy-for-the-c-suite': 'course-strategy',
 }
 const TRACK_NAME: Record<string, string> = { 'Certification Prep': 'Certification prep', Project: 'Hands-on projects', 'Use Case': 'AI for every role' }
 const INK = '#1b2540'

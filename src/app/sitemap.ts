@@ -35,6 +35,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     page('/automation', 0.9),
     page('/automation/hr-intelligence', 0.7),
     page('/studio', 0.9, 'weekly'),
+    page('/complimentary-access', 0.7, 'monthly'),
     page('/community', 0.6, 'weekly'),
     page('/ai-academy', 0.8, 'weekly'),
     page('/about', 0.8),

@@ -7,6 +7,7 @@ import { emailShell, textToHtml, markdownToEmailHtml } from '@/lib/crm/email-the
 import { teamMember } from '@/lib/crm/team'
 import { sendRoom, HOURLY_SEND_LIMIT } from '@/lib/crm/replies'
 import { catalogueBlockHtml, cataloguePdf } from '@/lib/crm/catalogue-email'
+import { introEmailHtml } from '@/lib/crm/intro-email'
 
 // Outreach ALWAYS goes out as sales@gennoor.com (user rule, 2026-07-28)
 const FROM = process.env.EMAIL_FROM_SALES || 'sales@gennoor.com'
@@ -30,7 +31,9 @@ export async function POST(request: Request) {
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   try {
-    const { leadIds, subject, body, attachBlobs, extraTo, extraCc, bcc, catalogue } = await request.json()
+    const { leadIds, subject, body, attachBlobs, extraTo, extraCc, bcc, catalogue, design } = await request.json()
+    // Only the literal 'intro' draws the designed "Introduce Gennoor" email around the words (lib/crm/intro-email.ts)
+    const intro = design === 'intro'
     // Only the literal true adds the catalogue: our own picture in the email and our own PDF attached (lib/crm/catalogue-email.ts)
     const withCatalogue = catalogue === true
     if (!Array.isArray(leadIds) || leadIds.length === 0 || !subject || !body) {
@@ -69,7 +72,8 @@ export async function POST(request: Request) {
     if (withCatalogue) {
       try { attachments.push(await cataloguePdf()) } catch (e: any) { return NextResponse.json({ error: e.message }, { status: 502 }) }
     }
-    const html = wrapHtml(body, user.email, withCatalogue)
+    const signer = teamMember(user.email)
+    const html = intro ? introEmailHtml(String(body), { name: signer.name, email: signer.email, phones: signer.phones }) : wrapHtml(body, user.email, withCatalogue)
     // `done` is false when the email service has taken the email and not finished sending it yet (see lib/crm/delivery.ts)
     const results: Array<{ leadId: string; to: string; success: boolean; error?: string; op?: string; done?: boolean }> = []
 

@@ -88,6 +88,7 @@ export const portalNav: PortalNavSection[] = [
     icon: BookOpen,
     children: [
       { name: 'Community', href: '/community' },
+      { name: 'Complimentary access', href: '/complimentary-access' },
     ],
   },
   { name: 'Exam Prep', href: '/services/certifications', icon: BadgeCheck },

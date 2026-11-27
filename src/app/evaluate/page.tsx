@@ -1,4 +1,5 @@
 import { pageMeta } from '@/lib/seo'
+import { courseChoices } from '@/lib/complimentary'
 import EvaluateForm from '@/components/evaluate/EvaluateForm'
 
 export const metadata = pageMeta({
@@ -8,6 +9,8 @@ export const metadata = pageMeta({
   noindex: true,
 })
 
-export default function EvaluatePage() {
-  return <EvaluateForm prefill={null} />
+export const dynamic = 'force-dynamic'
+
+export default async function EvaluatePage() {
+  return <EvaluateForm prefill={null} courses={await courseChoices().catch(() => [])} />
 }

@@ -128,7 +128,7 @@ function content(stepId: string, firstName: string, company: string): Content {
             { icon: 'automation', title: 'Automation', line: 'Scoped in writing, tested on your examples', href: `${SITE}/automation` },
           ]) +
           `<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="margin:14px 0 0"><tr>
-            <td width="150" valign="middle" bgcolor="#ffffff" style="background:#ffffff;border-radius:10px;padding:8px 10px"><a href="https://claude.com/partners"><img src="${CPN_BADGE}" width="130" alt="Claude Partner Network - Certified" style="display:block;border:0"/></a></td>
+            <td width="150" valign="middle" bgcolor="#ffffff" style="background:#ffffff;border-radius:10px;padding:8px 10px"><img src="${CPN_BADGE}" width="130" alt="Claude Partner Network - Certified" style="display:block;border:0"/></td>
             <td valign="middle" style="padding-left:14px;font-size:14px;line-height:1.5;color:${BRIEF.body}">${CPN_LINE}</td>
           </tr></table>` +
           briefButton('Talk about Claude training', CALL),

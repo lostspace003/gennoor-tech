@@ -24,15 +24,18 @@ export const UNI_STAGE_HINTS: Record<UniStage, string> = {
 /** The seven courses of the Learning Studio's Certifications & Projects section that a university may evaluate. */
 // `code` is the short label on the course's tile; `why` is the one line that says what it gives a student.
 export const UNI_COURSES = [
-  { id: 'ai-103', code: 'AI-103', title: 'AI-103: Build and Ship AI Agents on Microsoft Azure', track: 'Certification Prep', level: 'Intermediate', scope: '164 lessons (8.9 hrs)', why: 'Prepares students for Microsoft\'s AI-103 exam by building working AI agents on Azure.' },
-  { id: 'ai-500', code: 'AI-500', title: 'AI-500: Designing and Implementing Multi-Agent AI Solutions', track: 'Certification Prep', level: 'Expert', scope: '441 lessons (19.9 hrs)', why: 'For advanced students: systems where several AI agents work together, from design to production.' },
-  { id: 'agents-business', code: 'AGENTS', title: 'AI Agents That Run a Business: Microsoft Foundry + Claude', track: 'Project', level: 'Intermediate', scope: '45 lessons (5.6 hrs)', why: 'A capstone-style project: agents that run real business processes, built with Foundry and Claude.' },
-  { id: 'fabric-realtime', code: 'FABRIC', title: 'Build Real-Time AI on Microsoft Fabric', track: 'Project', level: 'Intermediate', scope: '27 lessons (3.1 hrs)', why: 'Live data and AI on Microsoft Fabric, built step by step into a working solution.' },
-  { id: 'ai-foundations', code: 'BASICS', title: 'AI Foundations', track: 'Use Case', level: 'Beginner', scope: '9 lessons (0.8 hrs)', why: 'A clear first step into AI for students and staff of any discipline.' },
-  { id: 'ai-governance', code: 'GOVERN', title: 'AI Governance, Risk and Boards', track: 'Use Case', level: 'Intermediate', scope: '9 lessons (0.6 hrs)', why: 'How an institution adopts AI safely: risk, policy and oversight.' },
-  { id: 'ai-strategy', code: 'LEAD', title: 'AI Strategy for the C-Suite', track: 'Use Case', level: 'Intermediate', scope: '9 lessons (0.6 hrs)', why: 'For leaders deciding where AI fits and how to measure what it delivers.' },
+  { id: 'ai-103', slug: 'ai-103', code: 'AI-103', title: 'AI-103: Build and Ship AI Agents on Microsoft Azure', track: 'Certification Prep', level: 'Intermediate', scope: '164 lessons (8.9 hrs)', why: 'Prepares students for Microsoft\'s AI-103 exam by building working AI agents on Azure.' },
+  { id: 'ai-500', slug: 'ai-500', code: 'AI-500', title: 'AI-500: Designing and Implementing Multi-Agent AI Solutions', track: 'Certification Prep', level: 'Expert', scope: '441 lessons (19.9 hrs)', why: 'For advanced students: systems where several AI agents work together, from design to production.' },
+  { id: 'agent-ops', slug: 'agent-ops', code: 'AGENTS', title: 'AI Agents That Run a Business: Microsoft Foundry + Claude', track: 'Project', level: 'Intermediate', scope: '45 lessons (5.6 hrs)', why: 'A capstone-style project: agents that run real business processes, built with Foundry and Claude.' },
+  { id: 'build-real-time-ai-on-microsoft-fabric', slug: 'build-real-time-ai-on-microsoft-fabric', code: 'FABRIC', title: 'Build Real-Time AI on Microsoft Fabric', track: 'Project', level: 'Intermediate', scope: '27 lessons (3.1 hrs)', why: 'Live data and AI on Microsoft Fabric, built step by step into a working solution.' },
+  { id: 'ai-foundations', slug: 'ai-foundations', code: 'BASICS', title: 'AI Foundations', track: 'Use Case', level: 'Beginner', scope: '9 lessons (0.8 hrs)', why: 'A clear first step into AI for students and staff of any discipline.' },
+  { id: 'ai-governance-risk-and-boards', slug: 'ai-governance-risk-and-boards', code: 'GOVERN', title: 'AI Governance, Risk and Boards', track: 'Use Case', level: 'Intermediate', scope: '9 lessons (0.6 hrs)', why: 'How an institution adopts AI safely: risk, policy and oversight.' },
+  { id: 'ai-strategy-for-the-c-suite', slug: 'ai-strategy-for-the-c-suite', code: 'LEAD', title: 'AI Strategy for the C-Suite', track: 'Use Case', level: 'Intermediate', scope: '9 lessons (0.6 hrs)', why: 'For leaders deciding where AI fits and how to measure what it delivers.' },
 ] as const
 export const UNI_COURSE_IDS: string[] = UNI_COURSES.map((c) => c.id)
+
+/** The start of the note on every code made by the evaluation form, so they can be found again (lib/lms-coupons.ts). */
+export const EVALUATION_NOTE = 'University evaluation'
 
 /** What a university may tell us it cares about, in the evaluation form. */
 export const UNI_AREAS = [
@@ -108,6 +111,8 @@ export interface UniFormAnswer {
   areas: string[]
   walkthrough: UniWalkthrough
   notes: string
+  /** One evaluation code for each course chosen, course -> code (lib/complimentary.ts), when they were made. */
+  coupons?: Record<string, string>
 }
 
 export interface University extends Omit<SeedUniversity, 'draft'> {
@@ -172,7 +177,7 @@ export function cleanEmails(v: unknown, max = MAX_TO): string[] | null {
  * named here and cut to its length; a course, an area or a choice that is not one of ours is dropped; an address is
  * an address or the answer is refused. `honeypot` is a field people cannot see: when it is filled, a machine filled it.
  */
-export function cleanFormAnswer(input: unknown): { ok: true; answer: Omit<UniFormAnswer, 'id' | 'at' | 'uni'>; machine: boolean } | { ok: false; error: string } {
+export function cleanFormAnswer(input: unknown, allowedCourses: string[] = UNI_COURSE_IDS): { ok: true; answer: Omit<UniFormAnswer, 'id' | 'at' | 'uni'>; machine: boolean } | { ok: false; error: string } {
   if (!input || typeof input !== 'object' || Array.isArray(input)) return { ok: false, error: 'The form is empty.' }
   const p = input as Record<string, unknown>
   const machine = oneLineText(p.website, 200) !== ''
@@ -193,7 +198,8 @@ export function cleanFormAnswer(input: unknown): { ok: true; answer: Omit<UniFor
     reps.push({ name, title, email })
   }
   const pick = (v: unknown, allowed: string[]) => [...new Set((Array.isArray(v) ? v : []).filter((x): x is string => typeof x === 'string' && allowed.includes(x)))]
-  const courses = pick(p.courses, UNI_COURSE_IDS)
+  // Up to two, from the live Learning Studio list the route passes in (owner, 27 November 2026)
+  const courses = pick(p.courses, allowedCourses).slice(0, 2)
   if (!courses.length) return { ok: false, error: 'Please choose at least one course.' }
   const areas = pick(p.areas, UNI_AREA_IDS)
   const walkthrough = (UNI_WALKTHROUGH.map((w) => w.id) as string[]).includes(p.walkthrough as string) ? (p.walkthrough as UniWalkthrough) : ''
