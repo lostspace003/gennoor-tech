@@ -44,6 +44,20 @@ export interface BlogPost extends BlogPostMeta {
 
 export const blogPostsMeta: BlogPostMeta[] = [
   {
+    slug: 'chatgpt-for-sales-pilot-one-team',
+    title: 'ChatGPT for Sales Pilot: How to Test It Safely on One Team',
+    excerpt: 'Learn how to pilot ChatGPT for Sales on one team with clear workflows, limited app connections, admin controls, and simple checks for quality, time saved, and access risk.',
+    tldr: 'This guide explains how to test ChatGPT for Sales safely on one team. It starts with a Sales plugin, meaning a connector setup for sales work inside ChatGPT, plus selected partner plugins, which are connectors to other apps. For a non-technical manager, the safest next step is a narrow pilot with limited app connections, defined workflows, human review, and simple checks for quality, effort, time saved, and access risk.',
+    author: 'Gennoor Tech',
+    date: '2026-11-27',
+    readTime: '12 min read',
+    category: 'AI Tools',
+    tags: ['ChatGPT Enterprise', 'Enterprise AI', 'AI Strategy', 'Workflow Automation', 'Admin Controls', 'Sales Operations', 'CRM'],
+    hashtags: ['#ChatGPTForSales', '#SalesOperations', '#EnterpriseAI', '#WorkflowAutomation', '#CRM'],
+    coverColor: '#2B1F24',
+    icon: '💼',
+  },
+  {
     slug: 'mcp-security-checklist-enterprises-live-tool-access',
     title: 'The MCP Security Checklist Enterprises Need Before Agents Get Live Tool Access',
     excerpt: 'As MCP moves from experimentation into enterprise deployment, the main risk is no longer protocol adoption. It is preserving identity, separating discovery from authorization, and maintaining data boundaries when agents call live tools. This field guide turns recent AWS guidance into a practical checklist IT and AI leaders can apply before exposing internal systems.',
@@ -1137,6 +1151,7 @@ export function getRelatedPostsMeta(currentSlug: string, limit: number = 3): Blo
 
 // Load full blog post content on demand (only for individual post pages)
 const contentImports: Record<string, () => Promise<{ post: BlogPost }>> = {
+  'chatgpt-for-sales-pilot-one-team': () => import('./content/chatgpt-for-sales-pilot-one-team'),
   'mcp-security-checklist-enterprises-live-tool-access': () => import('./content/mcp-security-checklist-enterprises-live-tool-access'),
   'mcp-agents-tool-layer-hallucinations-failure-wall': () => import('./content/mcp-agents-tool-layer-hallucinations-failure-wall'),
   'openai-aws-marketplace-enterprise-ai-procurement': () => import('./content/openai-aws-marketplace-enterprise-ai-procurement'),
