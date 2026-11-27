@@ -335,7 +335,7 @@ sub-tabs": the University Partnership Toolkit and the new ones, side by side.
 - **Where:** CRM, **Partnerships** (`/crm/partnerships`), one sub-tab for each campaign (`/crm/partnerships/<key>`), one
   page for each entry (`/crm/partnerships/<key>/<id>`). The old `/crm/universities` addresses redirect.
 - **The campaigns** are listed once, in `src/data/partnership-campaigns.ts`: Global universities (`GEN-`), India
-  universities (`IND-`), Mumbai colleges (`MUM-`), Pune colleges (`PUN-`), Enterprise (`ENT-`), Mid-size corporates
+  universities (`IND-`), Mumbai colleges (`MUM-`), Pune colleges (`PUN-`), Mid-size corporates
   (`MID-`) and Government skilling (`GOV-`). Every one is the same engine as above; the three letters of an id say which
   campaign it belongs to, so an id alone finds its campaign. A key that arrives from outside is only ever read through
   `campaignByKey`, an id through `campaignOfId` (docs/SECURITY.md).
@@ -349,8 +349,10 @@ sub-tabs": the University Partnership Toolkit and the new ones, side by side.
   evaluation form follow it. The form's link finds its campaign from the key (`universityByFormKey` looks through all of them).
 - **The hour's limit** is shared by the leads and every campaign (`sentThisHour`).
 - A first email whose opening sentence the toolkit only described ("Highlight GENNOOR's ...") keeps a square-bracket
-  sentence to write, and will not go until it is written; most of the Enterprise entries have only a supplier portal or
-  LinkedIn, no address, and wait for one under To.
+  sentence to write, and will not go until it is written.
+- **Leads with neither an email nor a phone number anywhere are left out** (owner, 28 November 2026). The seed script drops
+  them: all seven Enterprise leads (so there is no Enterprise sub-tab), one from India universities, one from Pune colleges
+  and three from Mid-size corporates.
 
 ### The evaluation form (our own page)
 

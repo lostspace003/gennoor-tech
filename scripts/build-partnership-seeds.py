@@ -10,7 +10,6 @@ SEGMENTS = {  # key: (folder, kind)   kind 'inst' = Institution_Database columns
   'india-universities': ('GENNOOR_India_Universities_Toolkit', 'inst'),
   'mumbai-colleges': ('GENNOOR_Mumbai_Colleges_Toolkit', 'inst'),
   'pune-colleges': ('GENNOOR_Pune_Colleges_Toolkit', 'inst'),
-  'enterprise': ('GENNOOR_Enterprise_BigPlayers_Toolkit', 'org'),
   'mid-size-corporates': ('GENNOOR_MidSize_Corporates_Toolkit', 'org'),
   'government-skilling': ('GENNOOR_Govt_Skilling_Initiatives_Toolkit', 'org'),
 }
@@ -28,6 +27,14 @@ def rows(ws):
     return [x for x in r[hi + 1:] if x and s(x[0])]
 
 def emails_of(text): return list(dict.fromkeys(EMAIL.findall(text or '')))
+
+def real_phone(v):
+    v = s(v)
+    return len(re.findall(r'\d', v)) >= 6 and not re.search(r'portal|helpdesk|not publicly|not listed|ariba', v, re.I)
+
+def reachable(official, phone, contacts):
+    # A lead with no email and no phone anywhere (owner, 28 November 2026) is not kept
+    return bool(emails_of(official)) or real_phone(phone) or any(c['email'] or real_phone(c['phone']) for c in contacts)
 
 for key, (folder, kind) in SEGMENTS.items():
     d = os.path.join(SRC, folder)
@@ -49,6 +56,7 @@ for key, (folder, kind) in SEGMENTS.items():
             found = emails_of(em)
             contacts.append(dict(id=s(c[0]), name=s(c[6]), designation=s(c[7]), email=found[0] if found else '', emailNote=em, status=s(c[9]),
                                  linkedin=s(c[10]), phone=s(c[11]), department=s(c[12]), source=s(c[13]), notes='', order=s(c[5])))
+        if not reachable(official, phone, contacts): continue
         e = by_name.get(name)
         to = emails_of(e['to']) if e else emails_of(official)
         draft = dict(subject=e['subject'], body=e['body'], to=to[:6], cc=emails_of(e.get('cc_extra', ''))[:6], toLabel=(dm + ' — ' + desig).strip(' —'), pitch=e.get('pitch', '')) if e else None

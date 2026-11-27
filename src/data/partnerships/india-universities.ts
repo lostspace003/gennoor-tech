@@ -67,65 +67,6 @@ export const SEED: SeedUniversity[] = [
   }
  },
  {
-  "id": "IND-002",
-  "name": "Lovely Professional University (LPU)",
-  "region": "North India",
-  "country": "Phagwara, Punjab",
-  "city": "Phagwara, Punjab",
-  "website": "https://www.lpu.in/",
-  "type": "Private University",
-  "department": "School of Computer Science and Engineering (SCSE)",
-  "departmentUrl": "https://www.lpu.in/schools/computer-science-engineering/",
-  "decisionMaker": "Prof. (Dr.) Rajeev Sobti",
-  "designation": "Executive Dean / Senior Dean, School of CSE",
-  "officialEmail": "Not publicly listed",
-  "emailStatus": "Needs Verification",
-  "phone": "Not publicly listed",
-  "evidence": "Runs B.Tech CSE in Generative AI in tie-up with Microsoft and B.Tech CSE AI & Data Engineering, backed by Microsoft Technical Community (MSTC LPU).",
-  "offering": "Large-Scale Azure/AI-103/Fabric Cert Prep + Campus AI Weekend + 48 Free AI Essentials",
-  "priority": "High",
-  "hook": "Highlight LPU's Microsoft-tied B.Tech CSE in Generative AI and pitch GENNOOR's 13 MCTs to boost exam pass rates and add Anthropic Claude multi-agent capstones.",
-  "sourceUrl": "https://www.lpu.in/faculty/staff-profile.php?EmpCode=11011",
-  "contacts": [
-   {
-    "id": "DM-003",
-    "name": "Prof. (Dr.) Rajeev Sobti",
-    "designation": "Executive Dean / Senior Dean, School of CSE",
-    "email": "",
-    "emailNote": "Not publicly listed",
-    "status": "Needs Verification",
-    "linkedin": "Not verified",
-    "phone": "Not publicly listed",
-    "department": "School of Computer Science and Engineering (SCSE)",
-    "source": "https://www.lpu.in/faculty/staff-profile.php?EmpCode=11011",
-    "notes": "",
-    "order": "Primary"
-   },
-   {
-    "id": "DM-004",
-    "name": "Prof. (Dr.) Lovi Raj Gupta",
-    "designation": "Pro-Vice Chancellor",
-    "email": "",
-    "emailNote": "Not publicly listed",
-    "status": "Needs Verification",
-    "linkedin": "Not verified",
-    "phone": "Not publicly listed",
-    "department": "School of Computer Science and Engineering (SCSE)",
-    "source": "https://www.lpu.in/faculty/staff-profile.php?EmpCode=1119",
-    "notes": "",
-    "order": "Secondary"
-   }
-  ],
-  "draft": {
-   "subject": "Hands-On Microsoft AI & Anthropic Claude Partnership for Lovely Professional University (LPU) — Complimentary Faculty Evaluation",
-   "body": "Dear Prof.,\n\nHighlight LPU's Microsoft-tied B.Tech CSE in Generative AI and pitch GENNOOR's 13 MCTs to boost exam pass rates and add Anthropic Claude multi-agent capstones.\n\nI am reaching out from GENNOOR TECH PRIVATE LIMITED (https://gennoor.com), a Mumbai-based AI, Cloud, and technology training partner led by 13 Microsoft Certified Trainers (MCTs) and officially Certified in the Anthropic Claude Partner Network (with prior delivery for Tech Mahindra, Microsoft ANZ, EY, King Saud University, and Taibah University).\n\nFor Lovely Professional University (LPU), we see an especially strong fit around Large-Scale Azure/AI-103/Fabric Cert Prep + Campus AI Weekend + 48 Free AI Essentials. Rather than passive slides, every GENNOOR program is built around hands-on labs, production deployments, an in-lesson AI assistant, and measurable certification outcomes.\n\nBefore any commercial discussion, we would be glad to provide complimentary full access to one or multiple certification and project courses from our Learning Studio (https://gennoor.com/studio) for up to two faculty or academic representatives. Simply select single or multiple courses using this short Google Form: {{FORM_URL}} — and we will email your complimentary full access details within 24 hours.\n\nWould you be open to evaluating a course or connecting for a brief 20-minute call next week?\n\nWarm regards,\nJalal Khan\nFounder & Principal Trainer | Microsoft Certified Trainer (27 Microsoft & 4 Claude Certifications)\nGENNOOR TECH PRIVATE LIMITED | https://gennoor.com | contact@gennoor.com",
-   "to": [],
-   "cc": [],
-   "toLabel": "Prof. (Dr.) Rajeev Sobti — Executive Dean / Senior Dean, School of CSE",
-   "pitch": "Large-Scale Azure/AI-103/Fabric Cert Prep + Campus AI Weekend + 48 Free AI Essentials"
-  }
- },
- {
   "id": "IND-003",
   "name": "UPES",
   "region": "North India",

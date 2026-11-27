@@ -2,7 +2,7 @@
 // a list of organisations and their people, the first email, the evaluation form, the call, the partnership.
 // This file holds no seed data, so the browser can import it; the seeds are loaded on the server (universities-store.ts).
 
-export type CampaignKey = 'universities' | 'india-universities' | 'mumbai-colleges' | 'pune-colleges' | 'enterprise' | 'mid-size-corporates' | 'government-skilling'
+export type CampaignKey = 'universities' | 'india-universities' | 'mumbai-colleges' | 'pune-colleges' | 'mid-size-corporates' | 'government-skilling'
 /** 'academic' speaks of faculty and students; 'business' of teams and staff. */
 export type Audience = 'academic' | 'business'
 
@@ -25,7 +25,6 @@ export const CAMPAIGNS: Campaign[] = [
   { key: 'india-universities', label: 'India universities', prefix: 'IND', audience: 'academic', one: 'university', many: 'universities', blurb: 'Universities across north, west, south and east India.' },
   { key: 'mumbai-colleges', label: 'Mumbai colleges', prefix: 'MUM', audience: 'academic', one: 'college', many: 'colleges', blurb: 'Colleges in Mumbai and the Mumbai Metropolitan Region.' },
   { key: 'pune-colleges', label: 'Pune colleges', prefix: 'PUN', audience: 'academic', one: 'college', many: 'colleges', blurb: 'Engineering and technology colleges in Pune and PCMC.' },
-  { key: 'enterprise', label: 'Enterprise', prefix: 'ENT', audience: 'business', one: 'company', many: 'companies', blurb: 'Large enterprises and the big players: IT services, consulting and finance technology.' },
   { key: 'mid-size-corporates', label: 'Mid-size corporates', prefix: 'MID', audience: 'business', one: 'company', many: 'companies', blurb: 'Fast-growing Indian Microsoft, data, AI and digital companies.' },
   { key: 'government-skilling', label: 'Government skilling', prefix: 'GOV', audience: 'business', one: 'programme', many: 'programmes', blurb: 'State IT academies, skill missions and ministry programmes.' },
 ]

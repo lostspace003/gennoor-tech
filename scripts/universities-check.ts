@@ -18,10 +18,9 @@ import { whyNotReady, FORM_TOKEN, isEmail } from '../src/lib/crm/universities-ty
 import * as indU from '../src/data/partnerships/india-universities'
 import * as mumC from '../src/data/partnerships/mumbai-colleges'
 import * as punC from '../src/data/partnerships/pune-colleges'
-import * as entE from '../src/data/partnerships/enterprise'
 import * as midC from '../src/data/partnerships/mid-size-corporates'
 import * as govS from '../src/data/partnerships/government-skilling'
-const SEEDS: Record<string, { SEED: any[]; MASTER: any }> = { 'india-universities': indU, 'mumbai-colleges': mumC, 'pune-colleges': punC, enterprise: entE, 'mid-size-corporates': midC, 'government-skilling': govS }
+const SEEDS: Record<string, { SEED: any[]; MASTER: any }> = { 'india-universities': indU, 'mumbai-colleges': mumC, 'pune-colleges': punC, 'mid-size-corporates': midC, 'government-skilling': govS }
 
 let bad = 0
 const is = (what: string, got: unknown, want: unknown) => {

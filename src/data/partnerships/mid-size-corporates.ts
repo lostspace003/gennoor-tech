@@ -171,65 +171,6 @@ export const SEED: SeedUniversity[] = [
   }
  },
  {
-  "id": "MID-004",
-  "name": "Sigmoid",
-  "region": "Data & AI Consulting",
-  "country": "Bengaluru",
-  "city": "Bengaluru",
-  "website": "https://www.sigmoid.com/",
-  "type": "Mid-Size (1,500+)",
-  "department": "CTO Office / Data Engineering & AI Practice",
-  "departmentUrl": "https://www.sigmoid.com/about-sigmoid/",
-  "decisionMaker": "Mayur Rustagi",
-  "designation": "Chief Technology Officer & Co-Founder",
-  "officialEmail": "Not publicly listed",
-  "emailStatus": "Needs Verification",
-  "phone": "Not publicly listed",
-  "evidence": "2026 Microsoft Retail & Consumer Goods Partner of the Year Finalist (Nov 2026), Microsoft Fabric Featured Partner, 950+ cloud-certified engineers hiring across Azure & Anthropic.",
-  "offering": "Anthropic Claude Certified Tracks (Claude Code, Agent SDK, CCDV-F/CCAR-P) + Azure AI & Fabric",
-  "priority": "High",
-  "hook": "Congratulate Mayur & Rahul on the Nov 2026 Microsoft Partner of the Year Finalist nod—offer GENNOOR's dual 13-MCT + Claude Certified Services Partner bench to cross-certify their 950+ cloud engineers.",
-  "sourceUrl": "https://www.sigmoid.com/about-sigmoid/",
-  "contacts": [
-   {
-    "id": "DM-006",
-    "name": "Mayur Rustagi",
-    "designation": "Chief Technology Officer & Co-Founder",
-    "email": "",
-    "emailNote": "Not publicly listed",
-    "status": "Needs Verification",
-    "linkedin": "Not verified",
-    "phone": "Not publicly listed",
-    "department": "CTO Office / Data Engineering & AI Practice",
-    "source": "https://www.sigmoid.com/about-sigmoid/",
-    "notes": "",
-    "order": "Primary"
-   },
-   {
-    "id": "DM-007",
-    "name": "Rahul Kumar Singh",
-    "designation": "Chief Analytics Officer & Co-Founder",
-    "email": "",
-    "emailNote": "Not publicly listed",
-    "status": "Needs Verification",
-    "linkedin": "Not verified",
-    "phone": "Not publicly listed",
-    "department": "CTO Office / Data Engineering & AI Practice",
-    "source": "https://www.sigmoid.com/about-sigmoid/",
-    "notes": "",
-    "order": "Secondary"
-   }
-  ],
-  "draft": {
-   "subject": "Microsoft AI & Anthropic Claude Enablement for Sigmoid — Complimentary Evaluation Access",
-   "body": "Dear Mayur Rustagi,\n\nCongratulate Mayur & Rahul on the Nov 2026 Microsoft Partner of the Year Finalist nod—offer GENNOOR's dual 13-MCT + Claude Certified Services Partner bench to cross-certify their 950+ cloud engineers.\n\nI am reaching out from GENNOOR TECH PRIVATE LIMITED (https://gennoor.com), a Mumbai-based AI, Cloud, and technology training partner led by 13 Microsoft Certified Trainers (MCTs) and officially Certified in the Anthropic Claude Partner Network (with prior delivery for Tech Mahindra, EY, Microsoft ANZ, MCIT Saudi Arabia, Government of Bahrain, and Bank of Tanzania).\n\nFor Sigmoid, we see an especially strong fit around Anthropic Claude Certified Tracks (Claude Code, Agent SDK, CCDV-F/CCAR-P) + Azure AI & Fabric. Every program is built around hands-on labs, production deployment, an in-lesson AI assistant, and ~60% less live classroom downtime.\n\nBefore any commercial discussion, we would be glad to provide complimentary full access to one or multiple certification and project courses from our Learning Studio (https://gennoor.com/studio) for up to two leaders on your team. Simply select single or multiple courses here: {{FORM_URL}} — and we will email your full access details within 24 hours.\n\nWould you be open to evaluating a course or connecting for a brief 20-minute call next week?\n\nWarm regards,\nJalal Khan\nFounder & Principal Trainer | Microsoft Certified Trainer (27 Microsoft & 4 Claude Certifications)\nGENNOOR TECH PRIVATE LIMITED | https://gennoor.com | contact@gennoor.com",
-   "to": [],
-   "cc": [],
-   "toLabel": "Mayur Rustagi — Chief Technology Officer & Co-Founder",
-   "pitch": "Anthropic Claude Certified Tracks (Claude Code, Agent SDK, CCDV-F/CCAR-P) + Azure AI & Fabric"
-  }
- },
- {
   "id": "MID-005",
   "name": "Xoriant",
   "region": "Digital Engineering",
@@ -348,65 +289,6 @@ export const SEED: SeedUniversity[] = [
   }
  },
  {
-  "id": "MID-007",
-  "name": "Icertis",
-  "region": "Enterprise AI SaaS",
-  "country": "Pune",
-  "city": "Pune",
-  "website": "https://www.icertis.com/",
-  "type": "Mid-Size (~2,000)",
-  "department": "HR & People / Solution Engineering & Architecture",
-  "departmentUrl": "https://www.icertis.com/company/leadership/",
-  "decisionMaker": "Pranali Save",
-  "designation": "Chief Human Resources Officer",
-  "officialEmail": "Not publicly listed",
-  "emailStatus": "Needs Verification",
-  "phone": "Not publicly listed",
-  "evidence": "Deep strategic Microsoft partner running Icertis Contract Intelligence & Vera AI on Azure + Microsoft Teams/M365, with Microsoft Legal Ops as flagship customer.",
-  "offering": "Azure AI-103/AI-500 & Copilot Engineering Upskilling + Executive AI Strategy & Governance",
-  "priority": "High",
-  "hook": "Highlight Icertis's deep Azure/Teams co-engineering hub in Pune and GENNOOR's nearby Mumbai HQ with 13 MCTs and regulated-enterprise AI governance experience (EY, Bank of Tanzania).",
-  "sourceUrl": "https://www.icertis.com/company/leadership/pranali-save/",
-  "contacts": [
-   {
-    "id": "DM-012",
-    "name": "Pranali Save",
-    "designation": "Chief Human Resources Officer",
-    "email": "",
-    "emailNote": "Not publicly listed",
-    "status": "Needs Verification",
-    "linkedin": "Not verified",
-    "phone": "Not publicly listed",
-    "department": "HR & People / Solution Engineering & Architecture",
-    "source": "https://www.icertis.com/company/leadership/pranali-save/",
-    "notes": "",
-    "order": "Primary"
-   },
-   {
-    "id": "DM-013",
-    "name": "Shirish Golwalkar",
-    "designation": "EVP, Solution Engineering & Chief Architect",
-    "email": "",
-    "emailNote": "Not publicly listed",
-    "status": "Needs Verification",
-    "linkedin": "Not verified",
-    "phone": "Not publicly listed",
-    "department": "HR & People / Solution Engineering & Architecture",
-    "source": "https://www.icertis.com/company/leadership/shirish-golwalkar/",
-    "notes": "",
-    "order": "Secondary"
-   }
-  ],
-  "draft": {
-   "subject": "Microsoft AI & Anthropic Claude Enablement for Icertis — Complimentary Evaluation Access",
-   "body": "Dear Pranali Save,\n\nHighlight Icertis's deep Azure/Teams co-engineering hub in Pune and GENNOOR's nearby Mumbai HQ with 13 MCTs and regulated-enterprise AI governance experience (EY, Bank of Tanzania).\n\nI am reaching out from GENNOOR TECH PRIVATE LIMITED (https://gennoor.com), a Mumbai-based AI, Cloud, and technology training partner led by 13 Microsoft Certified Trainers (MCTs) and officially Certified in the Anthropic Claude Partner Network (with prior delivery for Tech Mahindra, EY, Microsoft ANZ, MCIT Saudi Arabia, Government of Bahrain, and Bank of Tanzania).\n\nFor Icertis, we see an especially strong fit around Azure AI-103/AI-500 & Copilot Engineering Upskilling + Executive AI Strategy & Governance. Every program is built around hands-on labs, production deployment, an in-lesson AI assistant, and ~60% less live classroom downtime.\n\nBefore any commercial discussion, we would be glad to provide complimentary full access to one or multiple certification and project courses from our Learning Studio (https://gennoor.com/studio) for up to two leaders on your team. Simply select single or multiple courses here: {{FORM_URL}} — and we will email your full access details within 24 hours.\n\nWould you be open to evaluating a course or connecting for a brief 20-minute call next week?\n\nWarm regards,\nJalal Khan\nFounder & Principal Trainer | Microsoft Certified Trainer (27 Microsoft & 4 Claude Certifications)\nGENNOOR TECH PRIVATE LIMITED | https://gennoor.com | contact@gennoor.com",
-   "to": [],
-   "cc": [],
-   "toLabel": "Pranali Save — Chief Human Resources Officer",
-   "pitch": "Azure AI-103/AI-500 & Copilot Engineering Upskilling + Executive AI Strategy & Governance"
-  }
- },
- {
   "id": "MID-008",
   "name": "Incedo",
   "region": "Digital Engineering",
@@ -465,65 +347,6 @@ export const SEED: SeedUniversity[] = [
    "cc": [],
    "toLabel": "Ashish Gupta — Head of AI & Data and Life Sciences",
    "pitch": "Azure AI-103/AI-500, Microsoft Fabric & Anthropic Claude Agent SDK Cohorts (BFSI/Life Sciences)"
-  }
- },
- {
-  "id": "MID-009",
-  "name": "Impetus Technologies",
-  "region": "Data & AI Consulting",
-  "country": "Noida / Bengaluru / Pune / Hyderabad",
-  "city": "Noida / Bengaluru / Pune / Hyderabad",
-  "website": "https://www.impetus.com/",
-  "type": "Mid-Size (~3,000)",
-  "department": "AI Business & Growth / HR & People Operations",
-  "departmentUrl": "https://www.impetus.com/about/meet-our-team/",
-  "decisionMaker": "Deepak Khosla",
-  "designation": "Chief Growth Officer & Head of AI Business",
-  "officialEmail": "Not publicly listed",
-  "emailStatus": "Needs Verification",
-  "phone": "Not publicly listed",
-  "evidence": "Major Microsoft Azure partner (Microsoft AI Tour 2026), runs Azure GenAI Innovation Labs, launched Impetus Leap AI™ for agentic AI; heavy employee training focus.",
-  "offering": "Azure AI-103/AI-500, Fabric & Claude Agent SDK + White-Label Corporate Academy LMS",
-  "priority": "High",
-  "hook": "Connect Impetus's Leap AI™ agentic platform launch and Microsoft AI Tour 2026 showcase with GENNOOR's dual MCT + Claude Partner credentials to certify data engineers as agentic AI builders.",
-  "sourceUrl": "https://www.impetus.com/about/meet-our-team/",
-  "contacts": [
-   {
-    "id": "DM-016",
-    "name": "Deepak Khosla",
-    "designation": "Chief Growth Officer & Head of AI Business",
-    "email": "",
-    "emailNote": "Not publicly listed",
-    "status": "Needs Verification",
-    "linkedin": "Not verified",
-    "phone": "Not publicly listed",
-    "department": "AI Business & Growth / HR & People Operations",
-    "source": "https://www.impetus.com/about/meet-our-team/",
-    "notes": "",
-    "order": "Primary"
-   },
-   {
-    "id": "DM-017",
-    "name": "Sanjeev Agrawal",
-    "designation": "SVP - Operations & CHRO",
-    "email": "",
-    "emailNote": "Not publicly listed",
-    "status": "Needs Verification",
-    "linkedin": "Not verified",
-    "phone": "Not publicly listed",
-    "department": "AI Business & Growth / HR & People Operations",
-    "source": "https://www.impetus.com/about/meet-our-team/",
-    "notes": "",
-    "order": "Secondary"
-   }
-  ],
-  "draft": {
-   "subject": "Microsoft AI & Anthropic Claude Enablement for Impetus Technologies — Complimentary Evaluation Access",
-   "body": "Dear Deepak Khosla,\n\nConnect Impetus's Leap AI™ agentic platform launch and Microsoft AI Tour 2026 showcase with GENNOOR's dual MCT + Claude Partner credentials to certify data engineers as agentic AI builders.\n\nI am reaching out from GENNOOR TECH PRIVATE LIMITED (https://gennoor.com), a Mumbai-based AI, Cloud, and technology training partner led by 13 Microsoft Certified Trainers (MCTs) and officially Certified in the Anthropic Claude Partner Network (with prior delivery for Tech Mahindra, EY, Microsoft ANZ, MCIT Saudi Arabia, Government of Bahrain, and Bank of Tanzania).\n\nFor Impetus Technologies, we see an especially strong fit around Azure AI-103/AI-500, Fabric & Claude Agent SDK + White-Label Corporate Academy LMS. Every program is built around hands-on labs, production deployment, an in-lesson AI assistant, and ~60% less live classroom downtime.\n\nBefore any commercial discussion, we would be glad to provide complimentary full access to one or multiple certification and project courses from our Learning Studio (https://gennoor.com/studio) for up to two leaders on your team. Simply select single or multiple courses here: {{FORM_URL}} — and we will email your full access details within 24 hours.\n\nWould you be open to evaluating a course or connecting for a brief 20-minute call next week?\n\nWarm regards,\nJalal Khan\nFounder & Principal Trainer | Microsoft Certified Trainer (27 Microsoft & 4 Claude Certifications)\nGENNOOR TECH PRIVATE LIMITED | https://gennoor.com | contact@gennoor.com",
-   "to": [],
-   "cc": [],
-   "toLabel": "Deepak Khosla — Chief Growth Officer & Head of AI Business",
-   "pitch": "Azure AI-103/AI-500, Fabric & Claude Agent SDK + White-Label Corporate Academy LMS"
   }
  },
  {

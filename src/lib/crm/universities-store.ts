@@ -24,7 +24,7 @@ function clientOf(c: CampaignKey): BlockBlobClient {
 async function seedOf(campaign: Campaign) {
   if (campaign.key === 'universities') return { seed: UNIVERSITY_SEED, master: MASTER_EMAIL }
   const m = await { 'india-universities': () => import('@/data/partnerships/india-universities'), 'mumbai-colleges': () => import('@/data/partnerships/mumbai-colleges'), 'pune-colleges': () => import('@/data/partnerships/pune-colleges'),
-    enterprise: () => import('@/data/partnerships/enterprise'), 'mid-size-corporates': () => import('@/data/partnerships/mid-size-corporates'), 'government-skilling': () => import('@/data/partnerships/government-skilling') }[campaign.key]()
+    'mid-size-corporates': () => import('@/data/partnerships/mid-size-corporates'), 'government-skilling': () => import('@/data/partnerships/government-skilling') }[campaign.key]()
   return { seed: m.SEED, master: m.MASTER }
 }
 

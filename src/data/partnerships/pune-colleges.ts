@@ -752,65 +752,6 @@ export const SEED: SeedUniversity[] = [
   }
  },
  {
-  "id": "PUN-013",
-  "name": "Symbiosis Skills & Professional University (SSPU)",
-  "region": "PCMC",
-  "country": "Kiwale, PCMC",
-  "city": "Kiwale, PCMC",
-  "website": "https://sspu.ac.in/",
-  "type": "State Private Skill University",
-  "department": "School of CS, IT & Cyber Security & Corporate Partnerships",
-  "departmentUrl": "https://sspu.ac.in/school/school-of-computer-science-it-cyber-security",
-  "decisionMaker": "Dr. Rudresh Deepak Shirwaikar",
-  "designation": "Professor & In-charge Director, School of CS & IT",
-  "officialEmail": "Not publicly listed",
-  "emailStatus": "Needs Verification",
-  "phone": "Not publicly listed",
-  "evidence": "India's first residential skill university (2,732 internships in 2025); B.Tech AI&ML, CSIT Cyber (24 LPA), Data Science (32.57 LPA); hands-on pedagogy.",
-  "offering": "Project-Based Agentic AI Capstones + White-Label Branded LMS with AI Assistant",
-  "priority": "High",
-  "hook": "Situated directly on the Mumbai-Pune Expressway in Kiwale (closest Pune campus to Mumbai)—ideal for skill-first Agentic AI capstones & branded LMS.",
-  "sourceUrl": "https://sspu.ac.in/school/school-of-computer-science-it-cyber-security/faculties",
-  "contacts": [
-   {
-    "id": "DM-025",
-    "name": "Dr. Rudresh Deepak Shirwaikar",
-    "designation": "Professor & In-charge Director, School of CS & IT",
-    "email": "",
-    "emailNote": "Not publicly listed",
-    "status": "Needs Verification",
-    "linkedin": "Not verified",
-    "phone": "Not publicly listed",
-    "department": "School of CS, IT & Cyber Security & Corporate Partnerships",
-    "source": "https://sspu.ac.in/school/school-of-computer-science-it-cyber-security/faculties",
-    "notes": "",
-    "order": "Primary"
-   },
-   {
-    "id": "DM-026",
-    "name": "Dr. Deepa Karandikar",
-    "designation": "Director - Training & Placement",
-    "email": "",
-    "emailNote": "Not publicly listed",
-    "status": "Needs Verification",
-    "linkedin": "Not verified",
-    "phone": "Not publicly listed",
-    "department": "School of CS, IT & Cyber Security & Corporate Partnerships",
-    "source": "https://sspu.ac.in/corporate-partnerships-placements/placements",
-    "notes": "",
-    "order": "Secondary"
-   }
-  ],
-  "draft": {
-   "subject": "Hands-On Microsoft AI & Anthropic Claude Partnership for Symbiosis Skills & Professional University (SSPU) — Complimentary Faculty Evaluation",
-   "body": "Dear Dr. Rudresh Deepak Shirwaikar,\n\nSituated directly on the Mumbai-Pune Expressway in Kiwale (closest Pune campus to Mumbai)—ideal for skill-first Agentic AI capstones & branded LMS.\n\nI am reaching out from GENNOOR TECH PRIVATE LIMITED (https://gennoor.com), a Mumbai-based AI, Cloud, and technology training partner led by 13 Microsoft Certified Trainers (MCTs) and officially Certified in the Anthropic Claude Partner Network (with prior delivery for Tech Mahindra, Microsoft ANZ, EY, King Saud University, and Taibah University).\n\nFor Symbiosis Skills & Professional University (SSPU), we see an especially strong fit around Project-Based Agentic AI Capstones + White-Label Branded LMS with AI Assistant. Rather than passive slides, every GENNOOR program is built around hands-on labs, production deployments, an in-lesson AI assistant, and measurable certification outcomes.\n\nBefore any commercial discussion, we would be glad to provide complimentary full access to one or multiple certification and project courses from our Learning Studio (https://gennoor.com/studio) for up to two faculty or academic representatives. Simply select single or multiple courses using this short Google Form: {{FORM_URL}} — and we will email your complimentary full access details within 24 hours.\n\nWould you be open to evaluating a course or connecting for a brief 20-minute call next week?\n\nWarm regards,\nJalal Khan\nFounder & Principal Trainer | Microsoft Certified Trainer (27 Microsoft & 4 Claude Certifications)\nGENNOOR TECH PRIVATE LIMITED | https://gennoor.com | contact@gennoor.com",
-   "to": [],
-   "cc": [],
-   "toLabel": "Dr. Rudresh Deepak Shirwaikar — Professor & In-charge Director, School of CS & IT",
-   "pitch": "Project-Based Agentic AI Capstones + White-Label Branded LMS with AI Assistant"
-  }
- },
- {
   "id": "PUN-014",
   "name": "Indira College of Engineering & Management (ICEM)",
   "region": "Greater Pune",
