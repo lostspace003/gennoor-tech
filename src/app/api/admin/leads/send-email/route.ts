@@ -6,19 +6,20 @@ import { sendEmail } from '@/lib/email-service'
 import { emailShell, textToHtml, markdownToEmailHtml } from '@/lib/crm/email-theme'
 import { teamMember } from '@/lib/crm/team'
 import { sendRoom, HOURLY_SEND_LIMIT } from '@/lib/crm/replies'
+import { catalogueBlockHtml, cataloguePdf } from '@/lib/crm/catalogue-email'
 
 // Outreach ALWAYS goes out as sales@gennoor.com (user rule, 2026-07-28)
 const FROM = process.env.EMAIL_FROM_SALES || 'sales@gennoor.com'
 
 // Mail leaves as sales@, but the footer signs the person who worked the lead:
 // their name, direct number and own gennoor.com address (admin@ stays listed).
-function wrapHtml(bodyText: string, senderEmail: string): string {
+function wrapHtml(bodyText: string, senderEmail: string, withCatalogue = false): string {
   const signer = teamMember(senderEmail)
   // The pitch is written into the body as markdown now rather than attached,
   // so headings and bullets have to survive into the email. Plain drafts with
   // no markdown render identically either way, so this is safe for all mail.
   const looksMarkdown = /^\s*(##?\s|[-*]\s)/m.test(bodyText) || /\*\*[^*]+\*\*/.test(bodyText)
-  return emailShell(looksMarkdown ? markdownToEmailHtml(bodyText) : textToHtml(bodyText), {
+  return emailShell((looksMarkdown ? markdownToEmailHtml(bodyText) : textToHtml(bodyText)) + (withCatalogue ? catalogueBlockHtml() : ''), {
     preheader: bodyText.split('\n')[0]?.slice(0, 90),
     signature: { name: signer.name, email: signer.email, phones: signer.phones },
   })
@@ -29,7 +30,9 @@ export async function POST(request: Request) {
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   try {
-    const { leadIds, subject, body, attachBlobs, extraTo, extraCc, bcc } = await request.json()
+    const { leadIds, subject, body, attachBlobs, extraTo, extraCc, bcc, catalogue } = await request.json()
+    // Only the literal true adds the catalogue: our own picture in the email and our own PDF attached (lib/crm/catalogue-email.ts)
+    const withCatalogue = catalogue === true
     if (!Array.isArray(leadIds) || leadIds.length === 0 || !subject || !body) {
       return NextResponse.json({ error: 'leadIds, subject and body are required' }, { status: 400 })
     }
@@ -63,7 +66,10 @@ export async function POST(request: Request) {
       }
     }
 
-    const html = wrapHtml(body, user.email)
+    if (withCatalogue) {
+      try { attachments.push(await cataloguePdf()) } catch (e: any) { return NextResponse.json({ error: e.message }, { status: 502 }) }
+    }
+    const html = wrapHtml(body, user.email, withCatalogue)
     // `done` is false when the email service has taken the email and not finished sending it yet (see lib/crm/delivery.ts)
     const results: Array<{ leadId: string; to: string; success: boolean; error?: string; op?: string; done?: boolean }> = []
 
@@ -98,7 +104,7 @@ export async function POST(request: Request) {
           to: r.to,
           subject,
           status: r.success ? 'sent' : 'failed',
-          body: String(body).slice(0, 4000),
+          body: String(body).slice(0, 4000) + (withCatalogue ? '\n\n[With the one-page catalogue: picture and PDF]' : ''),
           cc: [...new Set(ccList)],
           ...(r.op ? { op: r.op } : {}),
           ...(r.success && r.done ? { confirmedAt: now, confirmedBy: 'service' as const } : {}),

@@ -3,8 +3,9 @@
 import { useEffect, useRef, useState } from 'react'
 import {
   ArrowLeft, Mail, Phone, Building2, Linkedin, Globe, Send, Sparkles, Calendar, Trash2,
-  User, Paperclip, X, Briefcase,
+  User, Paperclip, X, Briefcase, BookOpen,
 } from 'lucide-react'
+import { CATALOGUE_SUBJECT, catalogueBody } from '@/lib/crm/catalogue-email'
 import { Lead, LeadStatus, STEP_LABELS, STEP_HINTS, LEAD_PROFILES, PROFILE_LABELS } from '@/lib/crm/types'
 import { SEQUENCE, sequenceProgress, stepNumber, fillTokens, LINKEDIN_CONNECT_NOTE, LINKEDIN_FIRST_MESSAGE } from '@/lib/crm/sequence'
 import { lastContactAt, needsAnswer } from '@/lib/crm/replies'
@@ -447,7 +448,15 @@ function EmailComposer({ lead, replyTo, onClose, onSent, notify }: { lead: Lead;
   const [cc, setCc] = useState('')
   const [busy, setBusy] = useState('')
   const [files, setFiles] = useState<string[]>([])
+  const [catalogue, setCatalogue] = useState(false)
   const typedOnce = useRef(false)
+
+  /** Optional: our one-page catalogue, drawn into the email and attached as a PDF (lib/crm/catalogue-email.ts). */
+  const startCatalogue = () => {
+    if (!replyTo) setSubject(CATALOGUE_SUBJECT)
+    setBody((b) => b.trim() ? b : catalogueBody((lead.name || '').split(' ')[0]))
+    setCatalogue(true)
+  }
 
   // A reply opens with a first draft already on its way: the person reads, corrects and sends. Anything typed
   // while it is being written is kept (the draft then does not replace it).
@@ -496,7 +505,7 @@ function EmailComposer({ lead, replyTo, onClose, onSent, notify }: { lead: Lead;
     try {
       const res = await api<{ sent: number; message: string; errors: string[] }>('/api/admin/leads/send-email', {
         method: 'POST',
-        body: JSON.stringify({ leadIds: [lead.id], subject, body, attachBlobs: files, extraCc: cc.split(',').map((s) => s.trim()).filter(Boolean) }),
+        body: JSON.stringify({ leadIds: [lead.id], subject, body, attachBlobs: files, catalogue, extraCc: cc.split(',').map((s) => s.trim()).filter(Boolean) }),
       })
       if (res.sent > 0) {
         // One-off uploads travelled with the email; they do not belong in the shared files
@@ -529,6 +538,10 @@ function EmailComposer({ lead, replyTo, onClose, onSent, notify }: { lead: Lead;
           {replyTo && <p className="text-[11px] text-gray-500">The draft is written by the assistant from their message. Read it, correct it, then send: nothing goes out by itself.</p>}
           <input value={cc} onChange={(e) => setCc(e.target.value)} placeholder="Copy others (comma-separated emails, optional)" className={`${inputCls} text-xs`} />
           <div className="flex flex-wrap items-center gap-2">
+            <button type="button" onClick={startCatalogue} disabled={!!busy} className="px-2.5 py-1.5 border border-primary-200 text-primary-700 rounded-lg text-xs hover:bg-primary-50 flex items-center gap-1.5 disabled:opacity-50"><BookOpen className="w-3.5 h-3.5" /> Send our catalogue</button>
+            <label className="px-2.5 py-1.5 border border-gray-200 rounded-lg text-xs cursor-pointer hover:bg-gray-50 flex items-center gap-1.5">
+              <input type="checkbox" checked={catalogue} onChange={(e) => setCatalogue(e.target.checked)} /> Add our catalogue (picture + PDF)
+            </label>
             <label className="px-2.5 py-1.5 border border-gray-200 rounded-lg text-xs cursor-pointer hover:bg-gray-50 flex items-center gap-1.5">
               <Paperclip className="w-3.5 h-3.5" /> {busy === 'upload' ? 'Uploading…' : 'Attach a file'}
               <input type="file" onChange={attachFile} className="hidden" disabled={!!busy} />

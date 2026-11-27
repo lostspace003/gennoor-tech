@@ -80,6 +80,7 @@ npx tsx scripts/customers-check.ts                     # paid customers: one row
 npx tsx scripts/universities-check.ts                   # the university partnership campaign: the toolkit's data, the email, replies, next steps, the dashboard's numbers (made-up mail, nothing sent)
 npx tsx scripts/newsletter-check.ts                    # new posts by email: which Thursday, which posts, who, never twice, the confirm link (made-up posts and people)
 npx tsx scripts/attack-check.ts                        # the attacks that once worked, on made-up data: a learner's record, document names, the chatbot's links, an article's HTML (no network)
+node catalog/build.mjs                                 # the one-page catalogue: PDF (clickable), its picture, the tall picture for emails (catalog/README.md)
 node scripts/email-art/logo.mjs --look <folder>        # draws the logo at the top of every email, in the brand's own lettering
 npx tsx --env-file=.env.local scripts/autopilot-live-check.ts --fresh   # research now and one post written for real; nothing saved
 npx tsx --env-file=.env.local scripts/blog-live-check.ts       # one whole article written for real; nothing saved

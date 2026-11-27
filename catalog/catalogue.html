@@ -1,0 +1,264 @@
+<!doctype html>
+<!--
+  Gennoor Tech: the one-page catalogue. THIS IS THE SOURCE: change the words here, then run
+    node catalog/build.mjs
+  which writes the PDF (A4, every link clickable), the picture of the page, and the tall picture for emails.
+  A double-brace "icon:" mark below is a lucide icon by its name (lucide.dev/icons), drawn in when it is built; the
+  double-brace "logo" mark is the Gennoor logo.
+  Rules for the words (AGENTS.md): only what we really offer, no prices, no customer names, nothing called "free",
+  nobody named as the trainer, the Claude Partner line word for word on its cream card.
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Gennoor Tech · What we do</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Sora:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #0f172a; --ink2: #334155; --ink3: #5b6b84; --line: #e3e9f4; --ground: #f5f8fd; --card: #ffffff;
+    --blue: #2563eb; --gold: #f59e0b;
+    --t-blue: #1d4ed8;   --w-blue: #eaf1ff;
+    --t-cyan: #0e7490;   --w-cyan: #e6f7fa;
+    --t-claude: #b9532f; --w-claude: #fbefe9;
+    --t-gold: #a16207;   --w-gold: #fdf4dc;
+    --t-violet: #6d28d9; --w-violet: #f2edff;
+    --t-green: #047857;  --w-green: #e6f6ee;
+    --t-rose: #be185d;   --w-rose: #fdebf3;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body { font-family: 'Plus Jakarta Sans', 'Segoe UI', Arial, sans-serif; color: var(--ink2); background: var(--ground); -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  a { color: inherit; text-decoration: none; }
+  svg.i { width: 20px; height: 20px; stroke-width: 1.9; }
+
+  /* ---------- The page: A4 landscape ---------- */
+  .page { position: relative; width: 1123px; height: 794px; overflow: hidden; padding: 24px 30px 16px; background: var(--ground); }
+  .ornament { position: absolute; border-radius: 50%; border: 2px dotted #d4def0; pointer-events: none; }
+  .ornament.a { width: 520px; height: 520px; left: -260px; top: -230px; }
+  .ornament.b { width: 420px; height: 420px; right: -210px; bottom: -220px; }
+
+  .grid { position: relative; display: grid; grid-template-columns: 1fr 318px 1fr; gap: 26px; height: 612px; }
+  .col { display: flex; flex-direction: column; gap: 10px; }
+  .colhead { font-family: 'Sora', sans-serif; font-size: 11.5px; font-weight: 700; letter-spacing: 1.6px; text-transform: uppercase; color: var(--ink3); display: flex; align-items: center; gap: 8px; margin: 0 0 1px 2px; }
+  .colhead b { color: var(--blue); }
+
+  /* A card, joined to the hub by a dotted line */
+  .card { position: relative; flex: 1; display: grid; grid-template-columns: 44px 1fr; gap: 12px; background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 11px 14px 10px 12px; box-shadow: 0 1px 2px rgba(15,23,42,.04); }
+  .left .card::after, .right .card::before { content: ''; position: absolute; top: 50%; width: 26px; border-top: 2px dotted #c6d4ee; }
+  .left .card::after { right: -27px; }
+  .right .card::before { left: -27px; }
+  .tile { position: relative; width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; border: 1px solid rgba(0,0,0,.04); }
+  .tile .n { position: absolute; top: -7px; left: -7px; width: 20px; height: 20px; border-radius: 50%; background: var(--card); border: 1px solid var(--line); font: 700 10.5px 'Sora', sans-serif; color: var(--ink); display: flex; align-items: center; justify-content: center; }
+  .card h3 { margin: 0; font-size: 15px; line-height: 1.25; font-weight: 800; color: var(--ink); }
+  .card .fact { margin: 2px 0 0; font-size: 11.5px; font-weight: 700; color: var(--k, var(--blue)); }
+  .card p { margin: 3px 0 0; font-size: 11.4px; line-height: 1.42; color: var(--ink2); }
+  .card .go { margin-top: 5px; display: inline-flex; align-items: center; gap: 4px; font-size: 11px; font-weight: 700; color: var(--k, var(--blue)); }
+  .card .go svg { width: 13px; height: 13px; }
+  .chips { margin-top: 5px; display: flex; flex-wrap: wrap; gap: 4px; }
+  .chip { font: 700 9.5px 'Sora', sans-serif; letter-spacing: .3px; padding: 2px 6px; border-radius: 6px; background: var(--w, #eef2f8); color: var(--k, var(--ink2)); }
+  .blue   { --k: var(--t-blue);   --w: var(--w-blue); }
+  .cyan   { --k: var(--t-cyan);   --w: var(--w-cyan); }
+  .claude { --k: var(--t-claude); --w: var(--w-claude); }
+  .gold   { --k: var(--t-gold);   --w: var(--w-gold); }
+  .violet { --k: var(--t-violet); --w: var(--w-violet); }
+  .green  { --k: var(--t-green);  --w: var(--w-green); }
+  .rose   { --k: var(--t-rose);   --w: var(--w-rose); }
+  .tile { background: var(--w); color: var(--k); }
+
+  /* ---------- The hub ---------- */
+  .hub { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+  .hub .disc { position: relative; width: 318px; padding: 24px 22px 20px; border-radius: 26px; background: var(--card); border: 1px solid var(--line); box-shadow: 0 18px 40px -22px rgba(37,99,235,.35); }
+  .hub .logo { width: 250px; display: block; margin: 0 auto; }
+  .hub .promise { margin: 14px 0 0; font-size: 21px; line-height: 1.22; font-weight: 800; color: var(--ink); letter-spacing: -.2px; }
+  .hub .promise em { font-style: normal; color: var(--blue); }
+  .hub .for { margin: 8px 0 0; font-size: 12.2px; line-height: 1.5; color: var(--ink2); }
+  .creds { margin: 14px 0 0; display: grid; gap: 7px; text-align: left; }
+  .cred { display: grid; grid-template-columns: 30px 1fr; gap: 9px; align-items: center; font-size: 11.8px; color: var(--ink2); }
+  .cred .m { width: 30px; height: 30px; border-radius: 9px; display: flex; align-items: center; justify-content: center; font: 800 9px 'Sora', sans-serif; background: var(--w); color: var(--k); }
+  .cred b { color: var(--ink); font-weight: 700; display: block; font-size: 12.2px; }
+  .cpn { margin: 12px auto 0; display: inline-flex; align-items: center; gap: 6px; border-radius: 12px; background: #f0eee6; padding-right: 12px; }
+  .cpn img { width: 118px; display: block; }
+  .cpn span { font-size: 11px; font-weight: 700; color: #141413; text-align: left; line-height: 1.3; max-width: 130px; }
+  .start { margin: 12px 0 0; font-size: 11px; line-height: 1.45; color: var(--ink3); }
+  .start b { color: var(--ink); }
+  .ring-dots { position: absolute; inset: -16px; border-radius: 34px; border: 2px dotted #cfdcf3; pointer-events: none; }
+
+  /* ---------- How we work, and how to reach us ---------- */
+  .band { position: relative; margin-top: 12px; display: grid; grid-template-columns: 1fr 250px; gap: 18px; }
+  .steps { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 10px 16px; display: grid; grid-template-columns: auto repeat(4, 1fr); gap: 10px; align-items: center; }
+  .steps .label { font-family: 'Sora', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 1.4px; text-transform: uppercase; color: var(--ink3); max-width: 74px; padding-right: 6px; border-right: 1px solid var(--line); line-height: 1.35; }
+  .step { display: grid; grid-template-columns: 24px 1fr; gap: 8px; align-items: start; position: relative; }
+  .step .d { width: 24px; height: 24px; border-radius: 50%; background: var(--blue); color: #fff; font: 700 11px 'Sora', sans-serif; display: flex; align-items: center; justify-content: center; }
+  .step b { display: block; font-size: 12.2px; color: var(--ink); line-height: 1.25; }
+  .step span { display: block; font-size: 10.8px; line-height: 1.4; color: var(--ink3); margin-top: 1px; }
+  .reach { background: var(--blue); border-radius: 16px; padding: 10px 16px; color: #fff; display: flex; flex-direction: column; justify-content: center; gap: 4px; }
+  .reach .cta { font-size: 15px; font-weight: 800; display: flex; align-items: center; gap: 6px; }
+  .reach .cta svg { width: 16px; height: 16px; }
+  .reach a.line { font-size: 11.5px; display: flex; align-items: center; gap: 6px; color: #e8efff; }
+  .reach a.line svg { width: 13px; height: 13px; }
+  .foot { position: relative; margin-top: 8px; display: flex; justify-content: space-between; font-size: 10.5px; color: var(--ink3); }
+  .foot b { color: var(--ink2); }
+
+  /* ---------- The tall version for emails: one column, 600 wide ---------- */
+  body.email { background: #fff; }
+  .email .page { width: 600px; height: auto; padding: 26px 22px 22px; }
+  .email .ornament { display: none; }
+  .email .grid { grid-template-columns: 1fr; height: auto; gap: 18px; }
+  .email .hub { order: -1; }
+  .email .hub .disc { width: 100%; }
+  .email .card { flex: none; }
+  .email .left .card::after, .email .right .card::before { display: none; }
+  .email .card h3 { font-size: 16px; }
+  .email .card p, .email .card .fact { font-size: 13px; }
+  .email .card .go { font-size: 12.5px; }
+  .email .chip { font-size: 10.5px; }
+  .email .band { grid-template-columns: 1fr; }
+  .email .steps { grid-template-columns: 1fr 1fr; }
+  .email .steps .label { max-width: none; grid-column: 1 / -1; border-right: 0; border-bottom: 1px solid var(--line); padding: 0 0 6px; }
+  .email .step b { font-size: 13px; }
+  .email .step span { font-size: 12px; }
+  .email .reach .cta { font-size: 17px; }
+  .email .reach a.line { font-size: 13px; }
+  .email .cred, .email .hub .for { font-size: 13px; }
+  .email .cred b { font-size: 13.5px; }
+  .email .start { font-size: 12.5px; }
+  .email .foot { flex-direction: column; gap: 2px; text-align: center; font-size: 11.5px; }
+</style>
+</head>
+<body>
+<div class="page">
+  
+
+  <div class="grid">
+    <!-- Learn with us -->
+    <div class="col left">
+      <div class="colhead"><b>Learn with us</b> · ready to start</div>
+
+      <a class="card blue" href="https://www.gennoor.com/studio">
+        <div class="tile">{{icon:MonitorPlay}}<span class="n">1</span></div>
+        <div>
+          <h3>Learning Studio</h3>
+          <div class="fact">7 video courses · 704 lessons · 40 hours</div>
+          <p>Labs, a quiz in every module and a certificate. Preview lessons play without signing in.</p>
+          <div class="chips"><span class="chip">AI-103</span><span class="chip">AI-500</span><span class="chip">Foundry + Claude</span><span class="chip">Fabric</span></div>
+        </div>
+      </a>
+
+      <a class="card cyan" href="https://www.gennoor.com/ai-academy">
+        <div class="tile">{{icon:Sparkles}}<span class="n">2</span></div>
+        <div>
+          <h3>AI Essentials</h3>
+          <div class="fact">48 interactive courses, about an hour each</div>
+          <p>Animated lessons with narration and a quiz, for every role, coders or not.</p>
+          <span class="go">gennoor.com/ai-academy {{icon:ArrowUpRight}}</span>
+        </div>
+      </a>
+
+      <a class="card claude" href="https://www.gennoor.com/claude/certifications">
+        <div class="tile">{{icon:BadgeCheck}}<span class="n">3</span></div>
+        <div>
+          <h3>Claude certification prep</h3>
+          <div class="fact">All 4 Claude certifications</div>
+          <p>A guide and a practice exam for each, with a storyline and short videos.</p>
+          <div class="chips"><span class="chip">CCAS-F</span><span class="chip">CCDV-F</span><span class="chip">CCAR-F</span><span class="chip">CCAR-P</span></div>
+        </div>
+      </a>
+
+      <a class="card gold" href="https://www.gennoor.com/ai-weekend">
+        <div class="tile">{{icon:CalendarDays}}<span class="n">4</span></div>
+        <div>
+          <h3>Gennoor AI Weekend</h3>
+          <div class="fact">Last weekend of every month, Sat &amp; Sun</div>
+          <p>Eight hours live with an industry expert, seven working demos, and the complete kit after.</p>
+          <span class="go">gennoor.com/ai-weekend {{icon:ArrowUpRight}}</span>
+        </div>
+      </a>
+    </div>
+
+    <!-- The hub -->
+    <div class="hub">
+      <div class="disc">
+        <div class="ring-dots"></div>
+        <a href="https://www.gennoor.com">{{logo}}</a>
+        <p class="promise">AI training that ends with <em>something working.</em></p>
+        <p class="for">For teams, universities and individuals: learn it, practise it, and build it on your own work.</p>
+        <div class="creds">
+          <div class="cred blue"><span class="m">MCT</span><span><b>Microsoft Certified Trainers</b>The official Azure, AI and Fabric curriculum</span></div>
+          <div class="cred claude"><span class="m">AI</span><span><b>Claude-certified trainers</b>Agents and everyday AI work with Claude</span></div>
+          <div class="cred green"><span class="m">LMS</span><span><b>An AI assistant in every lesson</b>Answers questions while people learn</span></div>
+        </div>
+        <p class="start"><b>Start anywhere.</b> 1 to 4 are ready to learn today; 5 to 8 are built around your team's own work.</p>
+        <a class="cpn" href="https://claude.com/partners"><img src="../public/cpn/cpn-certified-horizontal.svg" alt="Claude Partner Network - Certified"><span>Gennoor is Certified in the Claude Partner Network.</span></a>
+      </div>
+    </div>
+
+    <!-- Built for your team -->
+    <div class="col right">
+      <div class="colhead"><b>Built for your team</b> · around your work</div>
+
+      <a class="card violet" href="https://www.gennoor.com/training">
+        <div class="tile">{{icon:Users}}<span class="n">5</span></div>
+        <div>
+          <h3>Training built on your work</h3>
+          <div class="fact">Live, online or at your office</div>
+          <p>We learn what your people do, and build every example and exercise from it.</p>
+          <span class="go">gennoor.com/training {{icon:ArrowUpRight}}</span>
+        </div>
+      </a>
+
+      <a class="card green" href="https://www.gennoor.com/claude">
+        <div class="tile">{{icon:Workflow}}<span class="n">6</span></div>
+        <div>
+          <h3>Claude automation courses</h3>
+          <div class="fact">16 courses, each built on one job a team does</div>
+          <p>Teams automate a weekly process with their own files; a person still checks the result.</p>
+          <div class="chips"><span class="chip">Automation with Claude</span><span class="chip">Agentic Cybersecurity</span></div>
+        </div>
+      </a>
+
+      <a class="card blue" href="https://www.gennoor.com/contact">
+        <div class="tile">{{icon:LayoutDashboard}}<span class="n">7</span></div>
+        <div>
+          <h3>Your own learning platform</h3>
+          <div class="fact">Your courses, your people, your name on it</div>
+          <p>Video lessons, labs, quizzes, certificates and an AI assistant. Cloud or on your premises.</p>
+          <span class="go">Ask for a demo {{icon:ArrowUpRight}}</span>
+        </div>
+      </a>
+
+      <a class="card rose" href="https://www.gennoor.com/automation">
+        <div class="tile">{{icon:FlaskConical}}<span class="n">8</span></div>
+        <div>
+          <h3>A prototype first</h3>
+          <div class="fact">See it work before you commit</div>
+          <p>One use case built and tested on your own examples, the scope agreed in writing.</p>
+          <span class="go">gennoor.com/automation {{icon:ArrowUpRight}}</span>
+        </div>
+      </a>
+    </div>
+  </div>
+
+  <div class="band">
+    <div class="steps">
+      <div class="label">How we work</div>
+      <div class="step"><span class="d">1</span><span><b>Understand your work</b><span>What your people do, and should do after.</span></span></div>
+      <div class="step"><span class="d">2</span><span><b>Build on it</b><span>Lessons and labs from your own tools and files.</span></span></div>
+      <div class="step"><span class="d">3</span><span><b>Learn, then practise</b><span>Video first, then a trainer. Our aim: about 60% less classroom time.</span></span></div>
+      <div class="step"><span class="d">4</span><span><b>Support after</b><span>A doubt desk where a trainer answers every question.</span></span></div>
+    </div>
+    <div class="reach">
+      <a class="cta" href="https://www.gennoor.com/contact">Book a 20-minute call {{icon:ArrowRight}}</a>
+      <a class="line" href="mailto:admin@gennoor.com">{{icon:Mail}} admin@gennoor.com</a>
+      <a class="line" href="https://wa.me/919326352241">{{icon:MessageCircle}} WhatsApp +91 93263 52241</a>
+      <a class="line" href="https://www.gennoor.com">{{icon:Globe}} www.gennoor.com</a>
+    </div>
+  </div>
+
+  <div class="foot">
+    <span><b>Coming soon to the Learning Studio:</b> 44 Microsoft courses on AI, AI for business, Copilot and data.</span>
+    <span>Gennoor Tech · Mumbai, India · Train. Innovate. Build.</span>
+  </div>
+</div>
+</body>
+</html>

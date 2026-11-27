@@ -386,3 +386,11 @@ everything for ours"), its answers in the CRM, and that people can pick a univer
   `npx tsx scripts/universities-fixture.ts <file>` writes made-up campaign data to look at the screens.
 - Never send a university an email, or answer the form on the live site, to try something. The toolkit's own folder
   (`GENNOOR_University_Partnership_Toolkit/`) is not part of the site and is not committed.
+
+## 16. The catalogue in an email
+
+The owner (27 November 2026): one email with the catalogue "which we can send to any of the client, but that should be
+optional". In a lead's email window, **Send our catalogue** fills a short message and ticks **Add our catalogue**: the
+tall picture of the one-page catalogue goes into the email, linked to the PDF, and the PDF is attached. Both are our own
+files on the site (`src/lib/crm/catalogue-email.ts`), fetched by a fixed address; the browser only says yes or no.
+Nothing is added unless someone ticks it. The catalogue itself is made in `catalog/` (`catalog/README.md`).
