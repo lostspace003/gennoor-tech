@@ -9,13 +9,13 @@
  */
 import { writeFileSync } from 'fs'
 import { UNIVERSITY_SEED, MASTER_EMAIL } from '../src/data/university-partnership'
-import { universityFromSeed, type University } from '../src/lib/crm/universities-types'
+import { applyFormAnswer, universityFromSeed, type University, type UniFormAnswer } from '../src/lib/crm/universities-types'
 
 const out = process.argv[2]
 if (!out) { console.log('Name the file to write, for example: npx tsx scripts/universities-fixture.ts C:/temp/universities.json'); process.exit(1) }
 
 const ago = (days: number, hour = 9) => new Date(Date.now() - days * 86_400_000 + (hour - 12) * 3_600_000).toISOString()
-const unis = UNIVERSITY_SEED.map((s) => universityFromSeed(s, MASTER_EMAIL, ago(0)))
+const unis = UNIVERSITY_SEED.map((s, i) => ({ ...universityFromSeed(s, MASTER_EMAIL, ago(0)), formKey: i.toString(16).padStart(24, '0') }))
 const by = (id: string) => unis.find((u) => u.id === id) as University
 const send = (u: University, days: number) => {
   const at = ago(days)
@@ -44,5 +44,13 @@ bennett.evaluation = { courses: ['ai-103'], reps: [], requestedAt: ago(8).slice(
 const lagos = by('GEN-011'); lagos.emails = [{ ...lagos.emails[0], status: 'failed', confirmedAt: undefined, error: 'The mailbox is full' }]; lagos.stage = 'new'
 const mec = by('GEN-005'); mec.stage = 'closed'; mec.closedReason = 'They have their own provider'
 
-writeFileSync(out, JSON.stringify({ '/api/admin/universities': { settings: { formUrl: 'https://docs.google.com/forms/d/e/made-up/viewform' }, universities: unis, hour: { used: 11, limit: 60 } } }))
+// Who works which: the pretend person signed in is admin@
+;['GEN-001', 'GEN-002', 'GEN-003', 'GEN-004'].forEach((id) => { by(id).owner = 'admin@gennoor.com' })
+;['GEN-006', 'GEN-007'].forEach((id) => { by(id).owner = 'yusufchaudhary@gennoor.com' })
+// A form answer through Prince Sultan University's own link, and one through the general link (made-up people)
+const answer = (uni: string, institution: string): UniFormAnswer => ({ id: uni ? 'a1b2c3d4e5f60718' : 'f0e1d2c3b4a59687', at: ago(1), uni, institution, place: 'Riyadh, Saudi Arabia', department: 'College of Computer and Information Sciences', reps: [{ name: 'Dr. Ada Example', title: 'Associate Professor', email: 'ada.example@psu.example' }], courses: ['ai-103', 'agents-business'], areas: ['capstones', 'lms'], walkthrough: 'call', notes: 'A cohort of about 40 students in the spring term.' })
+applyFormAnswer(by('GEN-001'), answer('GEN-001', 'Prince Sultan University'))
+const unmatched = [{ ...answer('', 'Example Institute of Technology'), reps: [{ name: 'Sam Example', title: 'Head of Digital Learning', email: 'sam@eit.example' }] }]
+
+writeFileSync(out, JSON.stringify({ '/api/admin/universities': { universities: unis, unmatched, hour: { used: 11, limit: 60 } } }))
 console.log(`written: ${out}`)

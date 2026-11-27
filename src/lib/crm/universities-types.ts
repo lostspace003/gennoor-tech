@@ -2,6 +2,7 @@
 // Keep this file free of server-only imports. The store is ./universities-store.ts; the rules are in docs/CRM.md, section 15.
 
 import type { EmailRecord } from './types'
+import { shortFirstEmail } from '@/data/university-email-copy'
 
 /** Where a university stands. One axis, like the leads' steps, but its own: this campaign is closed end to end here. */
 export type UniStage = 'new' | 'emailed' | 'replied' | 'evaluating' | 'call' | 'partner' | 'closed'
@@ -21,22 +22,46 @@ export const UNI_STAGE_HINTS: Record<UniStage, string> = {
 }
 
 /** The seven courses of the Learning Studio's Certifications & Projects section that a university may evaluate. */
+// `code` is the short label on the course's tile; `why` is the one line that says what it gives a student.
 export const UNI_COURSES = [
-  { id: 'ai-103', title: 'AI-103: Build and Ship AI Agents on Microsoft Azure', track: 'Certification Prep', level: 'Intermediate', scope: '164 lessons (8.9 hrs)' },
-  { id: 'ai-500', title: 'AI-500: Designing and Implementing Multi-Agent AI Solutions', track: 'Certification Prep', level: 'Expert', scope: '441 lessons (19.9 hrs)' },
-  { id: 'agents-business', title: 'AI Agents That Run a Business: Microsoft Foundry + Claude', track: 'Project', level: 'Intermediate', scope: '45 lessons (5.6 hrs)' },
-  { id: 'fabric-realtime', title: 'Build Real-Time AI on Microsoft Fabric', track: 'Project', level: 'Intermediate', scope: '27 lessons (3.1 hrs)' },
-  { id: 'ai-foundations', title: 'AI Foundations', track: 'Use Case', level: 'Beginner', scope: '9 lessons (0.8 hrs)' },
-  { id: 'ai-governance', title: 'AI Governance, Risk and Boards', track: 'Use Case', level: 'Intermediate', scope: '9 lessons (0.6 hrs)' },
-  { id: 'ai-strategy', title: 'AI Strategy for the C-Suite', track: 'Use Case', level: 'Intermediate', scope: '9 lessons (0.6 hrs)' },
+  { id: 'ai-103', code: 'AI-103', title: 'AI-103: Build and Ship AI Agents on Microsoft Azure', track: 'Certification Prep', level: 'Intermediate', scope: '164 lessons (8.9 hrs)', why: 'Prepares students for Microsoft\'s AI-103 exam by building working AI agents on Azure.' },
+  { id: 'ai-500', code: 'AI-500', title: 'AI-500: Designing and Implementing Multi-Agent AI Solutions', track: 'Certification Prep', level: 'Expert', scope: '441 lessons (19.9 hrs)', why: 'For advanced students: systems where several AI agents work together, from design to production.' },
+  { id: 'agents-business', code: 'AGENTS', title: 'AI Agents That Run a Business: Microsoft Foundry + Claude', track: 'Project', level: 'Intermediate', scope: '45 lessons (5.6 hrs)', why: 'A capstone-style project: agents that run real business processes, built with Foundry and Claude.' },
+  { id: 'fabric-realtime', code: 'FABRIC', title: 'Build Real-Time AI on Microsoft Fabric', track: 'Project', level: 'Intermediate', scope: '27 lessons (3.1 hrs)', why: 'Live data and AI on Microsoft Fabric, built step by step into a working solution.' },
+  { id: 'ai-foundations', code: 'BASICS', title: 'AI Foundations', track: 'Use Case', level: 'Beginner', scope: '9 lessons (0.8 hrs)', why: 'A clear first step into AI for students and staff of any discipline.' },
+  { id: 'ai-governance', code: 'GOVERN', title: 'AI Governance, Risk and Boards', track: 'Use Case', level: 'Intermediate', scope: '9 lessons (0.6 hrs)', why: 'How an institution adopts AI safely: risk, policy and oversight.' },
+  { id: 'ai-strategy', code: 'LEAD', title: 'AI Strategy for the C-Suite', track: 'Use Case', level: 'Intermediate', scope: '9 lessons (0.6 hrs)', why: 'For leaders deciding where AI fits and how to measure what it delivers.' },
 ] as const
 export const UNI_COURSE_IDS: string[] = UNI_COURSES.map((c) => c.id)
+
+/** What a university may tell us it cares about, in the evaluation form. */
+export const UNI_AREAS = [
+  { id: 'microsoft', label: 'Microsoft Azure, AI, Copilot, Fabric and Power Platform certification prep' },
+  { id: 'claude', label: 'Anthropic Claude training and certifications (CCAS-F, CCDV-F, CCAR-F, CCAR-P, Claude Code)' },
+  { id: 'capstones', label: 'Project-based Agentic AI capstone programs for students' },
+  { id: 'lms', label: 'A white-label university LMS (cloud or on-premises, with a built-in AI assistant)' },
+  { id: 'faculty', label: 'Faculty Development Programs or campus AI Weekend bootcamps' },
+  { id: 'literacy', label: 'Campus-wide AI literacy (48 one-hour interactive AI Essentials courses)' },
+] as const
+export const UNI_AREA_IDS: string[] = UNI_AREAS.map((a) => a.id)
+export const UNI_WALKTHROUGH = [
+  { id: 'call', label: 'Yes, please suggest times for a 20-minute call' },
+  { id: 'later', label: 'Not yet, we will evaluate the course(s) first' },
+  { id: 'lms', label: 'Please also send details of the white-label university LMS' },
+] as const
+export type UniWalkthrough = '' | (typeof UNI_WALKTHROUGH)[number]['id']
 
 /** Every email of this campaign goes out as the admin mailbox, with these two in copy (owner, 27 November 2026). */
 export const CAMPAIGN_FROM = 'admin@gennoor.com'
 export const CAMPAIGN_CC = ['jalalkhan@gennoor.com', 'yusufchaudhary@gennoor.com']
 /** What the email files say where the evaluation form's link goes. */
 export const FORM_TOKEN = '{{FORM_URL}}'
+/** The evaluation form is our own page (owner, 27 November 2026: "nothing on google ... everything for ours"). */
+export const FORM_SITE = 'https://www.gennoor.com'
+/** A university's own key to the form: 24 hex characters, made on the server, never typed by anyone. */
+export const FORM_KEY = /^[a-f0-9]{24}$/
+/** The university's own link to the form, so its answer arrives on its page. '' before its key exists. */
+export const formLinkOf = (u: { formKey?: string }): string => (u.formKey && FORM_KEY.test(u.formKey) ? `${FORM_SITE}/evaluate/${u.formKey}` : '')
 /** The most addresses on one line (To, or Cc). */
 export const MAX_TO = 6
 
@@ -69,7 +94,31 @@ export interface UniEvaluation {
   /** YYYY-MM-DD */ grantedAt: string
 }
 
+/** One answer to the evaluation form, as checked by `cleanFormAnswer`. */
+export interface UniFormAnswer {
+  id: string
+  at: string
+  /** The university whose link was used, or '' for the general link. Never taken from what was typed. */
+  uni: string
+  institution: string
+  place: string
+  department: string
+  reps: Array<{ name: string; title: string; email: string }>
+  courses: string[]
+  areas: string[]
+  walkthrough: UniWalkthrough
+  notes: string
+}
+
 export interface University extends Omit<SeedUniversity, 'draft'> {
+  /** The key in the university's own form link (`formLinkOf`). Made by the store. */
+  formKey?: string
+  /** Answers to the form that came through its link, newest first. */
+  formAnswers?: UniFormAnswer[]
+  /** The Teams meeting of the call, when it was booked from the CRM. */
+  callLink?: string
+  /** Who is working this university, in lower case; '' or missing when nobody has picked it up yet. */
+  owner?: string
   stage: UniStage
   /** 1 for the High priority first wave, 2 for the rest. */
   wave: 1 | 2
@@ -85,8 +134,13 @@ export interface University extends Omit<SeedUniversity, 'draft'> {
   sendingSince?: string
   updatedAt: string
 }
-export interface UniSettings { formUrl: string }
-export interface UniDoc { version: 1; settings: UniSettings; universities: University[] }
+export interface UniDoc {
+  /** 2 since the first emails were made short (27 November 2026). */
+  version: 1 | 2
+  universities: University[]
+  /** Answers that came through the general link: a person attaches each to its university. */
+  unmatched: UniFormAnswer[]
+}
 
 // ---------------------------------------------------------------------------------------------------------------
 // Words and addresses that arrive are a stranger's until checked (docs/SECURITY.md). One gate each.
@@ -113,18 +167,37 @@ export function cleanEmails(v: unknown, max = MAX_TO): string[] | null {
   return out
 }
 
-/** Where the evaluation form is. Read as a link and judged by its host, never by looking for a word in its text. */
-const FORM_HOSTS = ['docs.google.com', 'forms.gle', 'forms.office.com', 'forms.microsoft.com']
-export function safeFormUrl(v: unknown): string {
-  const text = String(v ?? '').trim()
-  if (!text || text.length > 400) return ''
-  try {
-    const url = new URL(text)
-    if (url.protocol !== 'https:' || url.username || url.password) return ''
-    const host = url.hostname.toLowerCase()
-    if (!FORM_HOSTS.includes(host) && host !== 'gennoor.com' && !host.endsWith('.gennoor.com')) return ''
-    return url.href
-  } catch { return '' }
+/**
+ * What a stranger sent through the evaluation form, rebuilt from what we allow (docs/SECURITY.md). Every field is
+ * named here and cut to its length; a course, an area or a choice that is not one of ours is dropped; an address is
+ * an address or the answer is refused. `honeypot` is a field people cannot see: when it is filled, a machine filled it.
+ */
+export function cleanFormAnswer(input: unknown): { ok: true; answer: Omit<UniFormAnswer, 'id' | 'at' | 'uni'>; machine: boolean } | { ok: false; error: string } {
+  if (!input || typeof input !== 'object' || Array.isArray(input)) return { ok: false, error: 'The form is empty.' }
+  const p = input as Record<string, unknown>
+  const machine = oneLineText(p.website, 200) !== ''
+  const institution = oneLineText(p.institution, 160)
+  const place = oneLineText(p.place, 120)
+  const department = oneLineText(p.department, 160)
+  if (!institution || !place || !department) return { ok: false, error: 'Please give the university, its country and city, and the department.' }
+  const repsIn = Array.isArray(p.reps) ? p.reps : []
+  if (repsIn.length < 1 || repsIn.length > 2) return { ok: false, error: 'Please give one or two representatives.' }
+  const reps: UniFormAnswer['reps'] = []
+  for (const [i, r] of (repsIn as Array<Record<string, unknown>>).entries()) {
+    const name = oneLineText(r?.name, 120)
+    const title = oneLineText(r?.title, 120)
+    const email = String(r?.email ?? '').trim().toLowerCase()
+    if (i > 0 && !name && !email) continue
+    if (!name || !isEmail(email)) return { ok: false, error: i === 0 ? 'Please give the representative\'s name and official email.' : 'The second representative needs a name and a valid email, or leave both empty.' }
+    if (i === 0 && !title) return { ok: false, error: 'Please give the representative\'s designation.' }
+    reps.push({ name, title, email })
+  }
+  const pick = (v: unknown, allowed: string[]) => [...new Set((Array.isArray(v) ? v : []).filter((x): x is string => typeof x === 'string' && allowed.includes(x)))]
+  const courses = pick(p.courses, UNI_COURSE_IDS)
+  if (!courses.length) return { ok: false, error: 'Please choose at least one course.' }
+  const areas = pick(p.areas, UNI_AREA_IDS)
+  const walkthrough = (UNI_WALKTHROUGH.map((w) => w.id) as string[]).includes(p.walkthrough as string) ? (p.walkthrough as UniWalkthrough) : ''
+  return { ok: true, machine, answer: { institution, place, department, reps, courses, areas, walkthrough, notes: manyLinesText(p.notes, 2000).trim() } }
 }
 
 const day = /^\d{4}-\d{2}-\d{2}$/
@@ -201,13 +274,14 @@ export function withForm(text: string, formUrl: string): string {
 }
 
 /** What stops this email from going, in plain words, or '' when nothing does. */
-export function whyNotReady(uni: Pick<University, 'draft'>, formUrl: string): string {
+export function whyNotReady(uni: Pick<University, 'draft' | 'formKey'>): string {
   const d = uni.draft
+  const formUrl = formLinkOf(uni)
   if (!d.to.length) return 'There is no address to send to yet. Add one under To.'
   if (!d.subject.trim()) return 'The email has no subject.'
   if (!d.body.trim()) return 'The email has no words.'
   const hasToken = d.body.includes(FORM_TOKEN) || d.subject.includes(FORM_TOKEN)
-  if (hasToken && !formUrl) return 'The evaluation form\'s link is not set. Paste it under Setup first.'
+  if (hasToken && !formUrl) return 'This university has no form link yet. Press Refresh, and it is made.'
   const left = unfilled(`${d.subject}\n${withForm(d.body, formUrl)}`)
   if (left.length) return `Still to write: ${left.slice(0, 3).join(' · ')}`
   return ''
@@ -251,6 +325,12 @@ export function draftFromMaster(u: Pick<SeedUniversity, 'name' | 'department' | 
   return { subject: swap(master.subject), body: swap(master.body), to: [...new Set(to)].slice(0, MAX_TO), cc: [...new Set(cc)].slice(0, MAX_TO), toLabel: primary ? `${primary.name} · ${primary.designation}` : u.decisionMaker }
 }
 
+/** The first email of a university in its short form (src/data/university-email-copy.ts), its copy list without Jalal and Yusuf. */
+export function shortDraft(s: SeedUniversity, master: MasterEmail): UniDraft {
+  const d = s.draft ? { ...s.draft, cc: s.draft.cc.filter((e) => !CAMPAIGN_CC.includes(e)) } : draftFromMaster(s, master)
+  return { ...d, body: shortFirstEmail(d.body, s.id) }
+}
+
 /** Turns the seed into a stored university. */
 export function universityFromSeed(s: SeedUniversity, master: MasterEmail, now = new Date().toISOString()): University {
   const { draft, ...rest } = s
@@ -258,8 +338,8 @@ export function universityFromSeed(s: SeedUniversity, master: MasterEmail, now =
     ...rest,
     wave: s.priority === 'High' ? 1 : 2,
     stage: 'new',
-    draft: draft ? { ...draft, cc: draft.cc.filter((e) => !CAMPAIGN_CC.includes(e)) } : draftFromMaster(s, master),
-    emails: [], replies: [], evaluation: null, callOn: '', notes: '', closedReason: '', activities: [], updatedAt: now,
+    draft: shortDraft(s, master),
+    emails: [], replies: [], formAnswers: [], evaluation: null, callOn: '', notes: '', closedReason: '', activities: [], updatedAt: now,
   }
 }
 
@@ -292,6 +372,25 @@ export function replyOwner(msg: { from: string; subject: string; receivedAt: str
     if (!WEBMAIL.has(domain) && addresses.some((a) => domainOf(a) === domain)) return u
   }
   return null
+}
+
+/**
+ * What an answer to the form does to its university: the courses and the people are put on the evaluation (unless
+ * access has already been given), and a university that had not answered yet moves to Replied. A machine never
+ * moves it further: giving access is a person's step.
+ */
+export function applyFormAnswer(u: University, a: UniFormAnswer): void {
+  u.formAnswers = [a, ...(u.formAnswers || []).filter((x) => x.id !== a.id)].slice(0, 10)
+  const ev = u.evaluation
+  if (!ev?.grantedAt) {
+    u.evaluation = {
+      courses: [...new Set([...(ev?.courses || []), ...a.courses])],
+      reps: a.reps.slice(0, 2).map((r) => ({ name: r.name, email: r.email })),
+      requestedAt: ev?.requestedAt || a.at.slice(0, 10),
+      grantedAt: '',
+    }
+  }
+  if (u.stage === 'new' || u.stage === 'emailed') u.stage = 'replied'
 }
 
 /** They wrote and nobody has answered or pressed "No reply needed". */

@@ -1,7 +1,8 @@
 import { NextResponse } from 'next/server'
 import { requireCampaignUser } from '@/lib/crm/universities-access'
 import { getUniversities, mutateUniversities, note, sentThisHour } from '@/lib/crm/universities-store'
-import { cleanUniPatch, safeFormUrl, UNI_STAGE_LABELS } from '@/lib/crm/universities-types'
+import { applyFormAnswer, cleanUniPatch, UNI_STAGE_LABELS } from '@/lib/crm/universities-types'
+import { CRM_USERS } from '@/lib/crm/access'
 
 const idOk = (v: unknown): v is string => typeof v === 'string' && /^GEN-\d{3}$/.test(v)
 
@@ -10,7 +11,7 @@ export async function GET() {
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   try {
     const doc = await getUniversities()
-    return NextResponse.json({ settings: doc.settings, universities: doc.universities, hour: await sentThisHour(doc.universities) })
+    return NextResponse.json({ universities: doc.universities, unmatched: doc.unmatched, hour: await sentThisHour(doc.universities) })
   } catch (error) {
     console.error('Universities read error:', error)
     return NextResponse.json({ error: 'The universities could not be read' }, { status: 500 })
@@ -50,29 +51,56 @@ export async function PATCH(request: Request) {
   }
 }
 
-/** The evaluation form's link (PUT), and "No reply needed" for a university (POST). */
-export async function PUT(request: Request) {
-  const user = await requireCampaignUser()
-  if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-  try {
-    const { formUrl } = await request.json()
-    const text = String(formUrl ?? '').trim()
-    const clean = safeFormUrl(text)
-    if (text && !clean) return NextResponse.json({ error: 'That is not the address of a Google or Microsoft form (it must start with https://)' }, { status: 400 })
-    await mutateUniversities((doc) => { doc.settings.formUrl = clean })
-    return NextResponse.json({ formUrl: clean })
-  } catch (error) {
-    console.error('Universities settings error:', error)
-    return NextResponse.json({ error: 'That could not be saved' }, { status: 500 })
-  }
-}
-
+/**
+ * "No reply needed" for a university, an answer of the general form link put on its university, and who works it:
+ * anyone picks up a free university, its holder or a manager releases it, a manager gives it to someone (POST).
+ */
 export async function POST(request: Request) {
   const user = await requireCampaignUser()
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   try {
-    const { action, id } = await request.json()
-    if (action !== 'handled' || !idOk(id)) return NextResponse.json({ error: 'Not a known action' }, { status: 400 })
+    const { action, id, answer, assignee } = await request.json()
+    if (!idOk(id) || !['handled', 'attach', 'pick', 'release', 'assign'].includes(action)) return NextResponse.json({ error: 'Not a known action' }, { status: 400 })
+    if (action === 'pick' || action === 'release' || action === 'assign') {
+      const to = String(assignee || '').trim().toLowerCase()
+      if (action === 'assign' && (!user.isManager || !CRM_USERS.includes(to))) return NextResponse.json({ error: 'Only a manager can give a university to someone, and only to a person who works in the CRM' }, { status: 403 })
+      const result = await mutateUniversities((doc) => {
+        const u = doc.universities.find((x) => x.id === id)
+        if (!u) return { error: 'That university is not in the list', status: 404 }
+        const holder = (u.owner || '').toLowerCase()
+        if (action === 'pick') {
+          if (holder === user.email) return { university: u }
+          if (holder && !user.isManager) return { error: `It is already picked up by ${holder.split('@')[0]}. Ask them, or a manager.`, status: 409 }
+          u.owner = user.email
+          note(u, user.email, 'owner', 'Picked up')
+        } else if (action === 'release') {
+          if (!holder) return { university: u }
+          if (holder !== user.email && !user.isManager) return { error: `Only ${holder.split('@')[0]} or a manager can release it`, status: 403 }
+          u.owner = ''
+          note(u, user.email, 'owner', `Released (was ${holder.split('@')[0]})`)
+        } else {
+          u.owner = to
+          note(u, user.email, 'owner', `Given to ${to.split('@')[0]}`)
+        }
+        return { university: u }
+      })
+      if ('error' in result) return NextResponse.json({ error: result.error }, { status: result.status })
+      return NextResponse.json({ university: result.university })
+    }
+    if (action === 'attach') {
+      if (typeof answer !== 'string' || !/^[a-f0-9]{16}$/.test(answer)) return NextResponse.json({ error: 'Which answer?' }, { status: 400 })
+      const done = await mutateUniversities((doc) => {
+        const u = doc.universities.find((x) => x.id === id)
+        const a = doc.unmatched.find((x) => x.id === answer)
+        if (!u || !a) return null
+        doc.unmatched = doc.unmatched.filter((x) => x.id !== answer)
+        applyFormAnswer(u, { ...a, uni: u.id })
+        note(u, user.email, 'form', `Form answer from ${a.reps[0]?.name || a.institution} put on this university: ${a.courses.length} course${a.courses.length === 1 ? '' : 's'}`)
+        return u
+      })
+      if (!done) return NextResponse.json({ error: 'That answer or university is no longer there' }, { status: 404 })
+      return NextResponse.json({ university: done })
+    }
     const found = await mutateUniversities((doc) => {
       const u = doc.universities.find((x) => x.id === id)
       if (!u) return null

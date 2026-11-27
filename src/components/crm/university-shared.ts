@@ -19,7 +19,7 @@ export function webHref(v: string): string {
 export const splitList = (v: string) => v.split(/[,;\s]+/).map((s) => s.trim()).filter(Boolean)
 
 /** The one word for where a university's first email stands. */
-export function emailWord(u: University, formUrl: string): { word: string; tone: string } {
+export function emailWord(u: University): { word: string; tone: string } {
   const lastSent = u.emails.find((e) => e.status === 'sent')
   if (waitingForAnswer(u)) return { word: 'Replied', tone: 'bg-red-50 text-red-700' }
   if (lastSent) {
@@ -27,6 +27,6 @@ export function emailWord(u: University, formUrl: string): { word: string; tone:
     return s === 'onItsWay' ? { word: 'On its way', tone: 'bg-amber-50 text-amber-700' } : s === 'unconfirmed' ? { word: 'Not confirmed', tone: 'bg-amber-50 text-amber-700' } : { word: 'Sent', tone: 'bg-green-50 text-green-700' }
   }
   if (u.emails[0]?.status === 'failed') return { word: 'Did not go', tone: 'bg-red-50 text-red-700' }
-  return whyNotReady(u, formUrl) ? { word: 'To finish', tone: 'bg-gray-100 text-gray-600' } : { word: 'Ready', tone: 'bg-primary-50 text-primary-700' }
+  return whyNotReady(u) ? { word: 'To finish', tone: 'bg-gray-100 text-gray-600' } : { word: 'Ready', tone: 'bg-primary-50 text-primary-700' }
 }
 

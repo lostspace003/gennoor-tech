@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 import { requireCampaignUser } from '@/lib/crm/universities-access'
 import { getUniversities, mutateUniversities, note, sentThisHour } from '@/lib/crm/universities-store'
-import { CAMPAIGN_CC, CAMPAIGN_FROM, oneLineText, whyNotReady, withForm, type UniEmail } from '@/lib/crm/universities-types'
+import { CAMPAIGN_CC, CAMPAIGN_FROM, formLinkOf, oneLineText, whyNotReady, withForm, type UniEmail } from '@/lib/crm/universities-types'
 import { campaignEmailHtml } from '@/lib/crm/universities-email'
 import { sendState } from '@/lib/crm/delivery'
 import { graphConfigured, sendFromOutlook } from '@/lib/crm/graph'
@@ -26,7 +26,7 @@ export async function POST(request: Request) {
     const u = doc.universities.find((x) => x.id === id)
     if (!u) return NextResponse.json({ error: 'That university is not in the list' }, { status: 404 })
 
-    const problem = whyNotReady(u, doc.settings.formUrl)
+    const problem = whyNotReady(u)
     if (problem) return NextResponse.json({ error: problem }, { status: 400 })
 
     // An email that has gone, or is on its way, is never sent twice by accident (docs/CRM.md, section 6).
@@ -49,10 +49,11 @@ export async function POST(request: Request) {
 
     const to = u.draft.to
     const cc = [...new Set([...CAMPAIGN_CC, ...u.draft.cc])].filter((e) => !to.includes(e))
-    const subject = oneLineText(withForm(u.draft.subject, doc.settings.formUrl), 200)
-    const text = withForm(u.draft.body, doc.settings.formUrl)
+    const formUrl = formLinkOf(u)
+    const subject = oneLineText(withForm(u.draft.subject, formUrl), 200)
+    const text = withForm(u.draft.body, formUrl)
     const signer = teamMember(SIGNER)
-    const html = campaignEmailHtml(text, { name: signer.name, email: signer.email, phones: signer.phones })
+    const html = campaignEmailHtml(text, { name: signer.name, email: signer.email, phones: signer.phones }, formUrl)
 
     // Through Outlook (owner, 27 November 2026): the email sits in admin@'s Sent Items and a reply threads under it.
     let result: { success: true } | { success: false; error: string }

@@ -3,13 +3,17 @@
 import { useCallback, useEffect, useState } from 'react'
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
-import { AlertTriangle, ArrowLeft, ArrowRight, Check, ExternalLink, Mail, Send } from 'lucide-react'
+import { AlertTriangle, ArrowLeft, ArrowRight, CalendarPlus, Check, Copy, ExternalLink, Hand, Mail, Send, UserRound, Video } from 'lucide-react'
 import {
-  CAMPAIGN_CC, CAMPAIGN_FROM, UNI_COURSES, UNI_STAGES, UNI_STAGE_HINTS, UNI_STAGE_LABELS, claudeCardAfter, waitingForAnswer, whyNotReady, withForm,
+  CAMPAIGN_CC, CAMPAIGN_FROM, UNI_COURSES, UNI_STAGES, UNI_STAGE_HINTS, UNI_STAGE_LABELS, formLinkOf, isEmail, waitingForAnswer, whyNotReady, withForm,
   type University, type UniStage,
 } from '@/lib/crm/universities-types'
 import { nextStep, daysSinceFirstEmail } from '@/lib/crm/universities-stats'
-import { CPN_BADGE_URL, CPN_LINE } from '@/lib/crm/universities-email'
+import { campaignEmailHtml, campaignEmailPage } from '@/lib/crm/universities-email'
+import { teamMember } from '@/lib/crm/team'
+import { CRM_USERS } from '@/lib/crm/users'
+import { TEMPLATES, templateEmail, type TemplateId } from '@/data/university-templates'
+import AnswerBody from './UniversityAnswer'
 import { sendHint, sendState } from '@/lib/crm/delivery'
 import { useCrm } from './CrmContext'
 import { api, formatDateTime } from './shared'
@@ -25,18 +29,17 @@ type PanelTab = 'email' | 'overview' | 'contacts' | 'evaluation' | 'activity'
 const isTab = (v: string | null): v is PanelTab => v === 'email' || v === 'overview' || v === 'contacts' || v === 'evaluation' || v === 'activity'
 
 export default function UniversityWorkspace({ id }: { id: string }) {
-  const { notify, ask } = useCrm()
+  const { notify, ask, userEmail, isManager } = useCrm()
   const search = useSearchParams()
   const asked = search.get('tab')
   const [unis, setUnis] = useState<University[] | null>(null)
-  const [formUrl, setFormUrl] = useState('')
   const [error, setError] = useState('')
   const [tab, setTab] = useState<PanelTab>(isTab(asked) ? asked : 'email')
 
   const load = useCallback(async () => {
     try {
-      const d = await api<{ settings: { formUrl: string }; universities: University[] }>('/api/admin/universities', { cache: 'no-store' })
-      setUnis(d.universities); setFormUrl(d.settings.formUrl); setError('')
+      const d = await api<{ universities: University[] }>('/api/admin/universities', { cache: 'no-store' })
+      setUnis(d.universities); setError('')
     } catch (e: any) { setError(e.message) }
   }, [])
   useEffect(() => { load() }, [load])
@@ -48,7 +51,7 @@ export default function UniversityWorkspace({ id }: { id: string }) {
   const u = list[at]
   if (!u) return <div className="p-6"><p className="text-sm text-gray-700">That university is not in the list.</p><Link href="/crm/universities" className="text-primary-700 text-sm font-medium hover:underline">Back to the universities</Link></div>
   const prev = list[at - 1], next = list[at + 1]
-  const step = nextStep(u, formUrl)
+  const step = nextStep(u)
   const days = daysSinceFirstEmail(u)
 
   const replace = (n: University) => setUnis((l) => (l || []).map((x) => (x.id === n.id ? n : x)))
@@ -69,12 +72,19 @@ export default function UniversityWorkspace({ id }: { id: string }) {
     }
     await patch({ stage: s }, `Moved to ${UNI_STAGE_LABELS[s]}`)
   }
+  const hold = async (action: 'pick' | 'release' | 'assign', assignee?: string) => {
+    try {
+      const r = await api<{ university: University }>('/api/admin/universities', { method: 'POST', body: JSON.stringify({ action, id: u.id, assignee }) })
+      replace(r.university)
+      notify(action === 'pick' ? 'It is yours now' : action === 'release' ? 'Released: anyone can pick it up' : `Given to ${teamMember(assignee).name}`)
+    } catch (e: any) { notify(e.message, true) }
+  }
   const handled = async () => {
     try { const r = await api<{ university: University }>('/api/admin/universities', { method: 'POST', body: JSON.stringify({ action: 'handled', id: u.id }) }); replace(r.university) }
     catch (e: any) { notify(e.message, true) }
   }
 
-  const TABS: Array<[PanelTab, string]> = [['email', 'Email'], ['overview', 'Overview'], ['contacts', `Contacts (${u.contacts.length})`], ['evaluation', 'Evaluation'], ['activity', 'Activity']]
+  const TABS: Array<[PanelTab, string]> = [['email', 'Email'], ['overview', 'Overview'], ['contacts', `Contacts (${u.contacts.length})`], ['evaluation', u.formAnswers?.length ? `Evaluation (${u.formAnswers.length} answer${u.formAnswers.length === 1 ? '' : 's'})` : 'Evaluation'], ['activity', 'Activity']]
   return (
     <div className="p-4 sm:p-6 max-w-4xl">
       <div className="flex items-center justify-between gap-3 text-sm">
@@ -100,6 +110,20 @@ export default function UniversityWorkspace({ id }: { id: string }) {
         </div>
       </div>
       {u.stage === 'closed' && u.closedReason && <p className="mt-2 text-sm text-gray-600">Closed because: {u.closedReason}</p>}
+
+      {/* Who works this university: anyone picks up a free one; its holder or a manager releases it; a manager gives it */}
+      <div className="mt-3 flex flex-wrap items-center gap-2 text-sm">
+        <UserRound className="w-4 h-4 text-gray-500" />
+        <span className="text-gray-700">{u.owner ? <>Worked by <strong className="text-gray-900">{u.owner === userEmail ? 'you' : teamMember(u.owner).name}</strong></> : 'Nobody has picked this up yet.'}</span>
+        {u.owner !== userEmail && (!u.owner || isManager) && <button type="button" onClick={() => hold('pick')} className="inline-flex items-center gap-1 rounded-lg border border-primary-300 bg-raised px-2.5 py-1 text-xs font-semibold text-primary-700 hover:bg-primary-50"><Hand className="w-3.5 h-3.5" />Pick up</button>}
+        {u.owner && (u.owner === userEmail || isManager) && <button type="button" onClick={() => hold('release')} className="rounded-lg border border-gray-300 bg-raised px-2.5 py-1 text-xs font-semibold text-gray-900 hover:border-gray-400">Release</button>}
+        {isManager && (
+          <select value="" onChange={(e) => e.target.value && hold('assign', e.target.value)} aria-label="Give this university to" className="rounded-lg border border-gray-300 bg-raised px-2 py-1 text-xs text-gray-900">
+            <option value="">Give to…</option>
+            {CRM_USERS.filter((p) => p !== u.owner).map((p) => <option key={p} value={p}>{teamMember(p).name}</option>)}
+          </select>
+        )}
+      </div>
 
       {/* The one thing to do next */}
       {step && (
@@ -128,8 +152,8 @@ export default function UniversityWorkspace({ id }: { id: string }) {
       </div>
 
       <div className="mt-4 rounded-xl border border-gray-200 bg-surface p-4 sm:p-5">
-        {tab === 'email' && <EmailTab key={u.updatedAt} u={u} formUrl={formUrl} patch={patch} onSent={load} ask={ask} notify={notify} />}
-        {tab === 'overview' && <OverviewTab u={u} patch={patch} />}
+        {tab === 'email' && <EmailTab key={u.updatedAt} u={u} patch={patch} onSent={load} ask={ask} notify={notify} />}
+        {tab === 'overview' && <OverviewTab u={u} patch={patch} replace={replace} ask={ask} notify={notify} />}
         {tab === 'contacts' && <ContactsTab u={u} patch={patch} setTab={setTab} />}
         {tab === 'evaluation' && <EvaluationTab u={u} patch={patch} />}
         {tab === 'activity' && (
@@ -145,7 +169,7 @@ export default function UniversityWorkspace({ id }: { id: string }) {
 
 type Patcher = (p: Record<string, unknown>, done?: string) => Promise<boolean>
 
-function EmailTab({ u, formUrl, patch, onSent, ask, notify }: { u: University; formUrl: string; patch: Patcher; onSent: () => Promise<void>; ask: ReturnType<typeof useCrm>['ask']; notify: (m: string, e?: boolean) => void }) {
+function EmailTab({ u, patch, onSent, ask, notify }: { u: University; patch: Patcher; onSent: () => Promise<void>; ask: ReturnType<typeof useCrm>['ask']; notify: (m: string, e?: boolean) => void }) {
   const [subject, setSubject] = useState(u.draft.subject)
   const [body, setBody] = useState(u.draft.body)
   const [to, setTo] = useState(u.draft.to.join(', '))
@@ -154,9 +178,30 @@ function EmailTab({ u, formUrl, patch, onSent, ask, notify }: { u: University; f
   const [busy, setBusy] = useState(false)
   const dirty = subject !== u.draft.subject || body !== u.draft.body || to !== u.draft.to.join(', ') || cc !== u.draft.cc.join(', ')
   const draft = { subject, body, to: splitList(to), cc: splitList(cc) }
-  const problem = whyNotReady({ draft: { ...u.draft, ...draft } }, formUrl)
+  const formUrl = formLinkOf(u)
+  const problem = whyNotReady({ draft: { ...u.draft, ...draft }, formKey: u.formKey })
   const gone = u.emails.some((e) => e.status === 'sent')
   const shownBody = withForm(body, formUrl)
+  const signer = teamMember('jalalkhan@gennoor.com')
+  const emailHtml = () => campaignEmailHtml(shownBody, { name: signer.name, email: signer.email, phones: signer.phones }, formUrl)
+
+  /** A template is put into the editor; nothing is saved or sent until a person does it. */
+  const applyTemplate = async (id: TemplateId) => {
+    const t = templateEmail(id, u)
+    if (body.trim() && body !== u.draft.body) {
+      const ok = await ask({ title: 'Replace what is in the editor?', text: 'The words you have changed and not saved will be replaced by the template.', confirm: 'Replace' })
+      if (ok === null) return
+    }
+    setSubject(t.subject); setBody(t.body); setPreview(false)
+    notify(`"${TEMPLATES.find((x) => x.id === id)?.label}" is in the editor. Read it, then Save or Send.`)
+  }
+  /** The email as a page of its own, in a new tab: the same HTML that is sent. */
+  const openPage = () => {
+    const url = URL.createObjectURL(new Blob([campaignEmailPage(subject, emailHtml())], { type: 'text/html' }))
+    window.open(url, '_blank', 'noopener')
+    setTimeout(() => URL.revokeObjectURL(url), 60_000)
+  }
+  const copyLink = async () => { try { await navigator.clipboard.writeText(formUrl); notify('The university\'s form link is copied') } catch { notify(formUrl) } }
 
   const save = async () => { setBusy(true); const ok = await patch({ draft }, 'The email is saved'); setBusy(false); return ok }
   const send = async () => {
@@ -180,6 +225,14 @@ function EmailTab({ u, formUrl, patch, onSent, ask, notify }: { u: University; f
   return (
     <div>
       {draft.to.length === 0 && <p className="mb-3 rounded-lg bg-amber-50 text-amber-800 text-sm px-3 py-2">There is no address for this university yet ({u.officialEmail || 'none published'}). Find one under Contacts and add it to To.</p>}
+      <div className="mb-4 rounded-lg border border-gray-200 bg-raised px-3 py-2.5">
+        <p className="text-xs font-medium text-gray-500">Start from</p>
+        <div className="mt-1.5 flex flex-wrap gap-2">
+          {TEMPLATES.map((t) => (
+            <button key={t.id} type="button" onClick={() => applyTemplate(t.id)} title={t.when} className="rounded-full border border-gray-300 bg-surface px-3 py-1 text-xs font-semibold text-gray-900 hover:border-primary-400">{t.label}<span className="ml-1.5 font-normal text-gray-500">{t.when.toLowerCase()}</span></button>
+          ))}
+        </div>
+      </div>
       <div className="grid gap-3">
         <div className="text-sm"><span className="text-xs font-medium text-gray-500 block mb-1">From</span><span className="text-gray-900">Jalal Khan · {CAMPAIGN_FROM} · through Outlook</span></div>
         <label className="text-sm"><span className="text-xs font-medium text-gray-500 block mb-1">To{u.draft.toLabel ? ` · ${u.draft.toLabel}` : ''}</span>
@@ -189,14 +242,27 @@ function EmailTab({ u, formUrl, patch, onSent, ask, notify }: { u: University; f
         <label className="text-sm"><span className="text-xs font-medium text-gray-500 block mb-1">Subject</span>
           <input value={subject} onChange={(e) => setSubject(e.target.value)} className="w-full rounded-lg border border-gray-300 bg-raised px-3 py-2 text-sm text-gray-900" /></label>
         <div className="text-sm">
-          <div className="flex items-center justify-between mb-1">
+          <div className="flex flex-wrap items-center justify-between gap-2 mb-1">
             <span className="text-xs font-medium text-gray-500">Email</span>
-            <button type="button" onClick={() => setPreview((p) => !p)} className="text-xs font-medium text-primary-700 hover:underline">{preview ? 'Edit' : 'See it as they will'}</button>
+            <span className="flex flex-wrap items-center gap-3">
+              <button type="button" onClick={() => setPreview((p) => !p)} className="text-xs font-medium text-primary-700 hover:underline">{preview ? 'Edit' : 'See it as they will'}</button>
+              <button type="button" onClick={openPage} className="inline-flex items-center gap-1 text-xs font-medium text-primary-700 hover:underline"><ExternalLink className="w-3.5 h-3.5" />Open as a page</button>
+            </span>
           </div>
-          {preview ? <Preview text={shownBody} /> : (
+          {preview ? (
+            // The same HTML that is sent, drawn on its own white page; nothing in it can run
+            <iframe title="The email as it will arrive" srcDoc={campaignEmailPage(subject, emailHtml())} sandbox="" className="h-[640px] w-full rounded-lg border border-gray-200 bg-[#fff]" />
+          ) : (
             <textarea value={body} onChange={(e) => setBody(e.target.value)} rows={18} className="w-full rounded-lg border border-gray-300 bg-raised px-3 py-2 text-sm leading-relaxed text-gray-900" />
           )}
         </div>
+        {formUrl && (
+          <p className="text-xs text-gray-600 flex flex-wrap items-center gap-x-2 gap-y-1">
+            <span>This university's form link (put in where the email says <code className="text-[11px]">{'{{FORM_URL}}'}</code>):</span>
+            <a href={formUrl} target="_blank" rel="noopener noreferrer" className="text-primary-700 hover:underline break-all">{formUrl}</a>
+            <button type="button" onClick={copyLink} className="inline-flex items-center gap-1 text-primary-700 hover:underline"><Copy className="w-3 h-3" />Copy</button>
+          </p>
+        )}
       </div>
 
       {problem ? <p className="mt-3 flex items-start gap-1.5 text-sm text-amber-700"><AlertTriangle className="w-4 h-4 mt-0.5 shrink-0" />{problem}</p> : <p className="mt-3 flex items-center gap-1.5 text-sm text-green-700"><Check className="w-4 h-4" />Ready to send.</p>}
@@ -227,29 +293,46 @@ function EmailTab({ u, formUrl, patch, onSent, ask, notify }: { u: University; f
   )
 }
 
-/** The email as it will look: paragraphs in a white sheet, the Claude Partner Network card under the first that names Claude. */
-function Preview({ text }: { text: string }) {
-  const paragraphs = text.split(/\n{2,}/)
-  const at = claudeCardAfter(text)
+/** Books the debrief call: a Teams meeting on the admin calendar, the chosen people and Jalal and Yusuf invited. */
+function BookCall({ u, replace, ask, notify }: { u: University; replace: (n: University) => void; ask: ReturnType<typeof useCrm>['ask']; notify: (m: string, e?: boolean) => void }) {
+  const people = [...new Set([...(u.evaluation?.reps || []).map((r) => r.email), ...u.draft.to].map((e) => e.toLowerCase()).filter(isEmail))].slice(0, 8)
+  const [when, setWhen] = useState('')
+  const [minutes, setMinutes] = useState(20)
+  const [chosen, setChosen] = useState<string[]>(people.slice(0, 2))
+  const [busy, setBusy] = useState(false)
+  const book = async () => {
+    if (!when) { notify('Choose the day and time first', true); return }
+    if (!chosen.length) { notify('Choose at least one person to invite', true); return }
+    const start = new Date(when)
+    const ok = await ask({ title: `Book the call with ${u.name}?`, text: `A ${minutes}-minute Teams meeting on ${start.toLocaleString('en-GB', { dateStyle: 'medium', timeStyle: 'short' })} (your time). Invitations go to ${chosen.join(', ')}, and to Jalal and Yusuf.`, confirm: 'Book and invite' })
+    if (ok === null) return
+    setBusy(true)
+    try {
+      const r = await api<{ university: University; message: string }>('/api/admin/universities/meeting', { method: 'POST', body: JSON.stringify({ id: u.id, start: start.toISOString(), day: when.slice(0, 10), minutes, attendees: chosen }) })
+      replace(r.university); notify(r.message)
+    } catch (e: any) { notify(e.message, true) } finally { setBusy(false) }
+  }
   return (
-    <div className="rounded-lg border border-gray-200 bg-[#fff] px-5 py-4 text-[14px] leading-relaxed text-[#1e293b]">
-      {paragraphs.map((p, i) => (
-        <div key={i}>
-          <p className="mb-3.5 whitespace-pre-line">{p}</p>
-          {i === at && (
-            <div className="mb-4 inline-flex flex-wrap items-center rounded-xl bg-[#f0eee6] pr-4">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={CPN_BADGE_URL} width={150} alt="Claude Partner Network - Certified" className="h-auto" />
-              <span className="text-sm font-semibold text-[#141413]">{CPN_LINE}</span>
-            </div>
-          )}
-        </div>
-      ))}
-    </div>
+    <section className="rounded-lg border border-gray-200 bg-raised p-3.5">
+      <h3 className="flex items-center gap-1.5 text-sm font-semibold text-gray-900"><Video className="w-4 h-4 text-primary-600" />The call</h3>
+      {u.callOn && <p className="mt-1 text-sm text-gray-700">Booked for {u.callOn}.{u.callLink && <> <a href={u.callLink} target="_blank" rel="noopener noreferrer" className="text-primary-700 hover:underline">Join on Teams</a></>}</p>}
+      <div className="mt-2.5 flex flex-wrap items-end gap-2">
+        <label className="text-sm"><span className="text-xs font-medium text-gray-500 block mb-1">Day and time (your time)</span>
+          <input type="datetime-local" value={when} onChange={(e) => setWhen(e.target.value)} className="rounded-lg border border-gray-300 bg-surface px-3 py-2 text-sm text-gray-900" /></label>
+        <label className="text-sm"><span className="text-xs font-medium text-gray-500 block mb-1">Length</span>
+          <select value={minutes} onChange={(e) => setMinutes(Number(e.target.value))} className="rounded-lg border border-gray-300 bg-surface px-3 py-2 text-sm text-gray-900">{[20, 30, 45, 60].map((m) => <option key={m} value={m}>{m} minutes</option>)}</select></label>
+      </div>
+      {people.length ? (
+        <fieldset className="mt-2.5"><legend className="text-xs font-medium text-gray-500 mb-1">Invite</legend>
+          {people.map((p) => <label key={p} className="flex items-center gap-2 text-sm text-gray-900"><input type="checkbox" checked={chosen.includes(p)} onChange={() => setChosen((c) => (c.includes(p) ? c.filter((x) => x !== p) : [...c, p]))} />{p}</label>)}
+        </fieldset>
+      ) : <p className="mt-2 text-sm text-amber-700">There is nobody to invite yet: add an address to the email or the evaluation.</p>}
+      <button type="button" onClick={book} disabled={busy || !people.length} className="mt-3 inline-flex items-center gap-1.5 rounded-lg bg-primary-600 hover:bg-primary-500 text-white px-4 py-2 text-sm font-semibold disabled:opacity-50"><CalendarPlus className="w-4 h-4" />{u.callOn ? 'Book another call' : 'Book the Teams call'}</button>
+    </section>
   )
 }
 
-function OverviewTab({ u, patch }: { u: University; patch: Patcher }) {
+function OverviewTab({ u, patch, replace, ask, notify }: { u: University; patch: Patcher; replace: (n: University) => void; ask: ReturnType<typeof useCrm>['ask']; notify: (m: string, e?: boolean) => void }) {
   const [notes, setNotes] = useState(u.notes)
   const [callOn, setCallOn] = useState(u.callOn)
   const rows: Array<[string, string, string?]> = [
@@ -264,8 +347,9 @@ function OverviewTab({ u, patch }: { u: University; patch: Patcher }) {
             <dd className="text-gray-900">{href && webHref(href) ? <a href={webHref(href)} target="_blank" rel="noopener noreferrer" className="text-primary-700 hover:underline inline-flex items-center gap-1">{v}<ExternalLink className="w-3 h-3" /></a> : v}</dd></div>
         ))}
       </dl>
+      <div className="mt-5"><BookCall u={u} replace={replace} ask={ask} notify={notify} /></div>
       <div className="mt-5 grid gap-3">
-        <label className="text-sm"><span className="text-xs font-medium text-gray-500 block mb-1">Date of the call</span>
+        <label className="text-sm"><span className="text-xs font-medium text-gray-500 block mb-1">Or only write down the date of a call booked elsewhere</span>
           <span className="flex gap-2"><input type="date" value={callOn} onChange={(e) => setCallOn(e.target.value)} className="rounded-lg border border-gray-300 bg-raised px-3 py-2 text-sm text-gray-900" />
             <button type="button" onClick={() => patch({ callOn }, 'Saved')} disabled={callOn === u.callOn} className="rounded-lg border border-gray-300 bg-raised px-3 py-2 text-sm font-semibold disabled:opacity-50">Save</button></span></label>
         <label className="text-sm"><span className="text-xs font-medium text-gray-500 block mb-1">Notes</span>
@@ -322,7 +406,19 @@ function EvaluationTab({ u, patch }: { u: University; patch: Patcher }) {
   }
   return (
     <div>
-      <p className="text-sm text-gray-600">When the university has chosen courses in the form, give its faculty access in the Learning Studio, then write it down here. Login details go to them within 24 hours; a debrief call follows five to seven days later.</p>
+      {u.formAnswers?.length ? (
+        <div className="mb-5 space-y-3">
+          {u.formAnswers.map((a) => (
+            <section key={a.id} className="rounded-lg border border-primary-200 bg-primary-50 p-3.5">
+              <p className="text-sm font-semibold text-gray-900">{a.reps[0]?.name} answered the form · <span className="font-normal text-gray-600">{formatDateTime(a.at)}</span></p>
+              <AnswerBody a={a} />
+            </section>
+          ))}
+          <p className="text-sm text-gray-600">The courses and the people below were filled in from the answer. Give them access in the Learning Studio, put the date under "Access given on", then send "Access is ready" from the Email tab.</p>
+        </div>
+      ) : (
+        <p className="text-sm text-gray-600">When the university answers the form, its answer shows here and fills in the courses and the people. You can also write them in by hand. Give access in the Learning Studio, then send "Access is ready" within 24 hours; the debrief call follows five to seven days later.</p>
+      )}
       <fieldset className="mt-4">
         <legend className="text-xs font-medium text-gray-500 mb-1">Courses chosen</legend>
         <div className="space-y-1.5">

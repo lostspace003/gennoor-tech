@@ -24,13 +24,13 @@ export type NextTab = 'email' | 'evaluation' | 'overview' | 'contacts'
 export interface NextStep { text: string; tab: NextTab; urgent: boolean }
 
 /** The one thing to do now for this university, in plain words. `null` when nothing is waiting on us. */
-export function nextStep(u: University, formUrl: string, now = Date.now()): NextStep | null {
+export function nextStep(u: University, now = Date.now()): NextStep | null {
   if (u.stage === 'partner' || u.stage === 'closed') return null
   if (waitingForAnswer(u)) return { text: 'They wrote back. Answer them from Outlook, then press "No reply needed".', tab: 'email', urgent: true }
   if (u.emails[0]?.status === 'failed' && !u.emails.some((e) => e.status === 'sent')) return { text: 'The email did not go. Look at why and send it again.', tab: 'email', urgent: true }
   const days = daysSinceFirstEmail(u, now)
   if (u.stage === 'new' || days === null) {
-    const why = whyNotReady(u, formUrl)
+    const why = whyNotReady(u)
     return why ? { text: why, tab: 'email', urgent: false } : { text: 'Read the email and send it.', tab: 'email', urgent: false }
   }
   if (u.stage === 'emailed') {
@@ -38,7 +38,9 @@ export function nextStep(u: University, formUrl: string, now = Date.now()): Next
       ? { text: `No answer after ${days} days. Write again, or call the office.`, tab: 'email', urgent: true }
       : { text: `Waiting for an answer (day ${days}).`, tab: 'email', urgent: false }
   }
-  if (u.stage === 'replied') return { text: 'They are interested. Note the courses they chose and give their faculty access.', tab: 'evaluation', urgent: false }
+  if (u.stage === 'replied') return u.formAnswers?.length
+    ? { text: 'They chose courses in the form. Give their faculty access, then send "Access is ready".', tab: 'evaluation', urgent: true }
+    : { text: 'They are interested. Note the courses they chose and give their faculty access.', tab: 'evaluation', urgent: false }
   if (u.stage === 'evaluating') {
     const granted = u.evaluation?.grantedAt
     if (!granted) return { text: 'Give their faculty access to the courses they chose.', tab: 'evaluation', urgent: true }
@@ -76,12 +78,15 @@ export interface CampaignStats {
   attention: Array<{ id: string; name: string; text: string; tab: NextTab }>
   upcomingCalls: Array<{ id: string; name: string; on: string }>
   readyToSend: number
+  /** Answers to the evaluation form: all of them, and those that came through the general link and wait to be attached. */
+  formAnswers: number
+  unmatched: number
   coursesChosen: Array<{ id: string; title: string; count: number }>
 }
 
 const reached = (u: University) => ({
   emailed: u.emails.some((e) => e.status === 'sent') || u.stage !== 'new',
-  replied: u.replies.length > 0 || ['replied', 'evaluating', 'call', 'partner'].includes(u.stage),
+  replied: u.replies.length > 0 || Boolean(u.formAnswers?.length) || ['replied', 'evaluating', 'call', 'partner'].includes(u.stage),
   evaluating: Boolean(u.evaluation?.grantedAt) || ['evaluating', 'call', 'partner'].includes(u.stage),
   call: Boolean(u.callOn) || ['call', 'partner'].includes(u.stage),
   partner: u.stage === 'partner',
@@ -92,7 +97,7 @@ function groupOf(members: University[]): Group {
   return { total: members.length, emailed: r.filter((x) => x.emailed).length, replied: r.filter((x) => x.replied).length, evaluating: r.filter((x) => x.evaluating).length, partner: r.filter((x) => x.partner).length }
 }
 
-export function campaignStats(unis: University[], formUrl: string, now = Date.now()): CampaignStats {
+export function campaignStats(unis: University[], now = Date.now(), unmatched = 0): CampaignStats {
   const stages = Object.fromEntries(UNI_STAGES.map((s) => [s, unis.filter((u) => u.stage === s).length])) as Record<UniStage, number>
   const r = unis.map(reached)
   const count = (k: keyof ReturnType<typeof reached>) => r.filter((x) => x[k]).length
@@ -129,7 +134,7 @@ export function campaignStats(unis: University[], formUrl: string, now = Date.no
 
   const attention: CampaignStats['attention'] = []
   for (const u of unis) {
-    const step = nextStep(u, formUrl, now)
+    const step = nextStep(u, now)
     if (step?.urgent) attention.push({ id: u.id, name: u.name, text: step.text, tab: step.tab })
   }
   // Those who wrote to us come first
@@ -150,7 +155,9 @@ export function campaignStats(unis: University[], formUrl: string, now = Date.no
       .filter((u) => u.stage === 'call' && u.callOn && Date.parse(`${u.callOn}T23:59:59`) >= now)
       .map((u) => ({ id: u.id, name: u.name, on: u.callOn }))
       .sort((a, b) => a.on.localeCompare(b.on)),
-    readyToSend: unis.filter((u) => u.stage === 'new' && !u.emails.length && !whyNotReady(u, formUrl)).length,
+    readyToSend: unis.filter((u) => u.stage === 'new' && !u.emails.length && !whyNotReady(u)).length,
+    formAnswers: unis.reduce((total, u) => total + (u.formAnswers?.length || 0), 0) + unmatched,
+    unmatched,
     coursesChosen: UNI_COURSES.map((c) => ({ id: c.id, title: c.title, count: chosen.get(c.id) || 0 })).filter((c) => c.count > 0).sort((a, b) => b.count - a.count),
   }
 }

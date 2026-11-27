@@ -2,7 +2,7 @@
 
 import { useMemo } from 'react'
 import Link from 'next/link'
-import { ArrowRight, CalendarDays, Mail, MessageSquareReply, Timer, Trophy } from 'lucide-react'
+import { ArrowRight, CalendarDays, ClipboardCheck, Mail, MessageSquareReply, Timer, Trophy } from 'lucide-react'
 import { campaignStats } from '@/lib/crm/universities-stats'
 import { UNI_STAGES, UNI_STAGE_LABELS, type University } from '@/lib/crm/universities-types'
 import { STAGE_DOT } from './university-shared'
@@ -16,8 +16,8 @@ import { STAGE_DOT } from './university-shared'
 
 const dayWord = (iso: string) => new Date(`${iso}T00:00:00Z`).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', timeZone: 'UTC' })
 
-export default function UniversityDashboard({ unis, formUrl }: { unis: University[]; formUrl: string }) {
-  const s = useMemo(() => campaignStats(unis, formUrl), [unis, formUrl])
+export default function UniversityDashboard({ unis, unmatched }: { unis: University[]; unmatched: number }) {
+  const s = useMemo(() => campaignStats(unis, Date.now(), unmatched), [unis, unmatched])
   const top = Math.max(1, s.funnel[0].count)
   const maxDay = Math.max(1, ...s.perDay.map((d) => d.sent))
   const totalLast14 = s.perDay.reduce((n, d) => n + d.sent, 0)
@@ -25,6 +25,7 @@ export default function UniversityDashboard({ unis, formUrl }: { unis: Universit
   const tiles = [
     { Icon: Mail, label: 'emails sent', value: s.emailsSent, note: s.failed ? `${s.failed} did not go` : `${s.readyToSend} ready to send` },
     { Icon: MessageSquareReply, label: 'reply rate', value: `${s.replyRate}%`, note: `${s.replied} of ${s.funnel[1].count} emailed` },
+    { Icon: ClipboardCheck, label: 'form answers', value: s.formAnswers, note: s.unmatched ? `${s.unmatched} to put on a university` : 'courses chosen in the form' },
     { Icon: Timer, label: 'days to a first reply', value: s.medianReplyDays === null ? '–' : String(s.medianReplyDays), note: s.medianReplyDays === null ? 'no reply yet' : 'the middle one' },
     { Icon: CalendarDays, label: 'calls booked', value: s.funnel[4].count, note: s.upcomingCalls.length ? `${s.upcomingCalls.length} still to come` : 'none coming up' },
     { Icon: Trophy, label: 'partners', value: s.stages.partner, note: `${s.stages.closed} closed` },
@@ -32,7 +33,7 @@ export default function UniversityDashboard({ unis, formUrl }: { unis: Universit
 
   return (
     <div className="mt-4 space-y-4">
-      <div className="grid grid-cols-2 lg:grid-cols-5 gap-3">
+      <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-6 gap-3">
         {tiles.map(({ Icon, label, value, note }) => (
           <div key={label} className="rounded-xl border border-gray-200 bg-surface px-4 py-3">
             <Icon className="w-4 h-4 text-primary-600" />
