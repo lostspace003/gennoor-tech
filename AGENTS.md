@@ -60,6 +60,13 @@ The skills are in `.claude/skills/`. They are plain Markdown: any tool can read 
    stays on the live site until it is deleted on the server too. The rules, each with what happened, are in
    `docs/SECURITY.md`; `npx tsx scripts/attack-check.ts` must end with ALL OK.
 
+9. **Two scheduled runs a day, nothing more** (owner, 27 November 2026). Everything on a schedule is in
+   `.github/workflows/scheduled.yml`: 10:30 and 19:30 India time. Do not add another scheduled workflow; add a step there.
+   The site's own 15-minute heartbeat (`src/instrumentation.ts`) keeps posts on their times in between. LinkedIn: two
+   posts a day, published without asking. The daily blog publishes what it writes; nothing waits for an email.
+   **The look of what we send** is drawn line icons (`scripts/email-art/line-icons.mjs`), one ink and one blue, the
+   Microsoft and Claude marks where they belong, few words, and the gently moving logo band (`header-motion.mjs`).
+
 ## Commands
 
 ```bash
@@ -77,8 +84,10 @@ npx tsx scripts/autopilot-check.ts                     # the autopilot: what it 
 npx tsx scripts/crm-check.ts                           # the CRM: what a reply does, the Today lists, the hourly limit, has an email really gone (made-up leads)
 npx tsx scripts/daily-report-check.ts <folder>         # the evening report from made-up people: the numbers, the email and the Excel file to look at
 npx tsx scripts/customers-check.ts                     # paid customers: one row a person, their lead marked, the series stopped once (made-up people)
+npx tsx scripts/universities-check.ts                   # the university partnership campaign: the toolkit's data, the email, replies, next steps, the dashboard's numbers (made-up mail, nothing sent)
 npx tsx scripts/newsletter-check.ts                    # new posts by email: which Thursday, which posts, who, never twice, the confirm link (made-up posts and people)
 npx tsx scripts/attack-check.ts                        # the attacks that once worked, on made-up data: a learner's record, document names, the chatbot's links, an article's HTML (no network)
+node catalog/build.mjs                                 # the one-page catalogue: PDF (clickable), its picture, the tall picture for emails (catalog/README.md)
 node scripts/email-art/logo.mjs --look <folder>        # draws the logo at the top of every email, in the brand's own lettering
 npx tsx --env-file=.env.local scripts/autopilot-live-check.ts --fresh   # research now and one post written for real; nothing saved
 npx tsx --env-file=.env.local scripts/blog-live-check.ts       # one whole article written for real; nothing saved

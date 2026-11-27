@@ -229,6 +229,25 @@ export async function listOwnCopies(sinceIso: string, top = 200): Promise<OwnCop
     }))
 }
 
+/**
+ * Sends one email from a team mailbox through Outlook itself (Mail.Send), so it sits in that mailbox's Sent Items and
+ * a reply threads under it there. Microsoft answering without an error means Outlook has taken the email to send.
+ * The caller has already checked every address and the subject.
+ */
+export async function sendFromOutlook(mail: { from: string; to: string[]; cc: string[]; subject: string; html: string }): Promise<void> {
+  const client = await getGraphClient()
+  const people = (list: string[]) => list.map((address) => ({ emailAddress: { address } }))
+  await client.api(`/users/${encodeURIComponent(mail.from)}/sendMail`).post({
+    message: {
+      subject: mail.subject,
+      body: { contentType: 'HTML', content: mail.html },
+      toRecipients: people(mail.to),
+      ccRecipients: people(mail.cc),
+    },
+    saveToSentItems: true,
+  })
+}
+
 export interface MeetingRequest {
   subject: string
   attendees: Array<{ email: string; name?: string }>

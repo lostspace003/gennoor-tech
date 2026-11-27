@@ -216,6 +216,21 @@ async function main() {
   is('a link in an article is https, ours, or nothing', ['https://x.example/a', '/training', '#part-2', 'mailto:admin@gennoor.com', 'http://x.example', '//x.example', 'javascript:alert(1)', 'mailto:a@x.example'].map((u) => articleHref(u)?.href ?? null),
     ['https://x.example/a', '/training', '#part-2', 'mailto:admin@gennoor.com', null, null, null, null])
 
+  // ───────────────────────────────────────── 6. the university campaign ─────────────────────────────────────────
+  part('6. The university campaign takes nothing it was not offered')
+  const { cleanEmails, cleanUniPatch, cleanFormAnswer, formLinkOf } = await import('../src/lib/crm/universities-types')
+  const { campaignEmailPage } = await import('../src/lib/crm/universities-email')
+  is('a form link is made only from a key of ours, never from what came in', ['0123456789abcdef01234567', '../../crm-data/leads.json', 'x" onmouseover="alert(1)', '0123456789ABCDEF01234567', ''].map((k) => formLinkOf({ formKey: k })),
+    ['https://www.gennoor.com/evaluate/0123456789abcdef01234567', '', '', '', ''])
+  const stranger = { institution: '<img src=x onerror=alert(1)>', place: 'x', department: 'x', reps: [{ name: '<script>alert(1)</script>', title: 't', email: 'a@x.edu' }], courses: ['ai-103', '__proto__', 'constructor'], areas: ['toString'], walkthrough: 'hasOwnProperty', notes: 'n', uni: 'GEN-001', id: 'mine', at: '1999', stage: 'partner' }
+  const took = cleanFormAnswer(stranger) as any
+  is('the public form keeps only its own fields: no id, time, university or stage from the browser', Object.keys(took.answer).sort(), ['areas', 'courses', 'department', 'institution', 'notes', 'place', 'reps', 'walkthrough'])
+  is('the public form takes only our courses and choices', [took.answer.courses, took.answer.areas, took.answer.walkthrough], [['ai-103'], [], ''])
+  is('the public form refuses a list in place of an address', cleanFormAnswer({ ...stranger, reps: [{ name: 'n', title: 't', email: 'a@x.edu, b@y.com' }] }).ok, false)
+  is('the page of an email cannot run what was typed into its subject', campaignEmailPage('</title><script>alert(1)</script>', '').includes('<script>'), false)
+  is('a list of recipients is a list of addresses, nothing else', [cleanEmails(['A@X.EDU', 'a@x.edu']), cleanEmails(['a@x.edu\nbcc: b@y.com']), cleanEmails(['a@x.edu, b@y.com']), cleanEmails(['<a@x.edu>']), cleanEmails('a@x.edu')], [['a@x.edu'], null, null, null, null])
+  is('the browser cannot write the history of sent emails, the replies, the form key or the id', Object.keys((cleanUniPatch({ id: 'GEN-001', emails: [{}], replies: [{}], sendingSince: 'x', activities: [], wave: 1, formKey: 'abc', formAnswers: [{}], callLink: 'https://evil.example', notes: 'n' }) as any).patch), ['notes'])
+
   console.log(bad ? `\n${bad} WRONG` : '\nALL OK')
   process.exit(bad ? 1 : 0)
 }

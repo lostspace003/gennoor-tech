@@ -16,9 +16,15 @@ export function isLearnRoute(pathname: string | null | undefined): boolean {
   return /^\/studio\/[^/]+\/learn\/?$/.test(pathname || '')
 }
 
+/** /evaluate and /evaluate/<key>: the university evaluation form, a page of its own in the light paper look. */
+export function isEvaluateRoute(pathname: string | null | undefined): boolean {
+  return /^\/evaluate(\/[^/]*)?\/?$/.test(pathname || '')
+}
+
 export function isChromelessRoute(pathname: string | null | undefined): boolean {
   if (!pathname) return false
   if (pathname.startsWith('/crm') || pathname.startsWith('/admin')) return true
+  if (isEvaluateRoute(pathname)) return true
   // Lesson screen: immersive, no rail or breadcrumb
   if (isLearnRoute(pathname)) return true
   // /ai-academy/{courseId}/{chapterSlug} → exactly 3+ segments under ai-academy

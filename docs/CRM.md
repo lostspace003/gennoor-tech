@@ -245,12 +245,12 @@ sent. Never open them with real leads in a script.
 
 ## 12. The evening report
 
-One email a day, at 22:15 India time, to Yusuf and Jalal with a copy to admin: what happened today
+One email a day, at 19:30 India time (the evening run of `.github/workflows/scheduled.yml`, owner 27 November 2026: two runs a day), to Yusuf and Jalal with a copy to admin: what happened today
 (emails sent and by whom, emails that did not go, replies, new leads, where every lead stands, AI Weekend
 registrations, payments, website enquiries, learners), with an Excel file of the detail, one tab for each part.
 
 - The counting is ordinary code in `src/lib/daily-report.ts`; no model writes or counts anything.
-- `/api/admin/daily-report` is called by `.github/workflows/daily-report.yml` with the cron secret.
+- `/api/admin/daily-report` is called by the evening run of `.github/workflows/scheduled.yml` with the cron secret.
   `?dry=1` answers with the numbers and sends nothing; `?day=YYYY-MM-DD` is another day.
 - Who gets it: the settings `DAILY_REPORT_TO` and `DAILY_REPORT_CC`, or the two lines at the top of the route.
 - `npx tsx scripts/daily-report-check.ts <folder>` makes the report from made-up people and writes the
@@ -297,3 +297,100 @@ everything off lets them book with nothing to pay.
   on the Payments page, the AI Weekend list and the evening report. Someone who took a seat with a full code is
   listed with the paid customers, with the amount 0: they are attending, so they get no promotional email.
 - `npx tsx scripts/crm-flow-test.ts` checks what a code is good for and what it takes off.
+
+## 15. University partnerships
+
+The owner (27 November 2026) gave the "Global University Partnership Toolkit" (27 universities in 21 countries, 55
+contacts, a first email for each, an evaluation form) and asked for all of it inside the CRM "as a separate tab ...
+end to end we will close", each university managed on its own, "a full dashboard for all of them to see how it's
+moving and all analytics", the email through Outlook, the evaluation form as our own ("nothing on google ...
+everything for ours"), its answers in the CRM, and that people can pick a university up and work it.
+
+- **Where:** CRM, "Universities" (`/crm/universities`), then one page for each university (`/crm/universities/GEN-001`).
+  Everyone who works in the CRM opens it, the people who work leads only included (`requireCampaignUser`, which every
+  address of the campaign starts with).
+- **Who works it.** Like a lead: anyone picks up a university nobody has; its holder or a manager releases it; only a
+  manager gives it to someone, and only to a person on `CRM_USERS` (`POST /api/admin/universities`, `pick`, `release`,
+  `assign`). The list shows who works each and filters on "Mine" and "Not picked up yet".
+- **Apart from the leads.** The store is its own file, `crm-data/universities.json` (`src/lib/crm/universities-store.ts`),
+  filled from the toolkit the first time the page opens (`src/data/university-partnership.ts`) and never filled again.
+  Nothing here is on Today, in the email series, the Replies page or the evening report, and no lead is made.
+- **Its own stages** (`UNI_STAGES`): New, Emailed, Replied, Evaluating, Call booked, Partner, Closed. A reply or an
+  answer to the form moves New or Emailed to Replied. A machine never moves a university further or closes it; booking
+  the call from the CRM moves it to Call booked, because a person pressed it. Closing asks for a reason.
+- **The page is five tabs:** Dashboard (`UniversityDashboard`: the funnel, form answers, who needs a person now, emails by
+  day, waves and regions, calls to come, courses chosen; every number comes from `campaignStats` in
+  `universities-stats.ts`, the same that the list uses), Universities (the list), Form answers (every answer; one that
+  came through the general link is put on its university here), Emails (one row each) and Setup (the form, the Excel
+  file, the steps, the courses, the markets).
+- **One university's page** says the one thing to do next (`nextStep`: send, write again after five days, answer a reply,
+  give access, ask for the debrief call, record the outcome) and holds who works it, its email, overview (with "Book the
+  Teams call"), contacts, evaluation (the form's answers, the seven courses, two representatives, the dates) and activity.
+
+### The evaluation form (our own page)
+
+- **`/evaluate/<key>`**, one link for each university, made from a 24-character key the store gives it
+  (`formKey`, `newFormKey`, `formLinkOf`). The key is never typed by anyone and cannot be guessed from another. The page
+  opens with the university's name, place and department filled in; its answer lands on that university. **`/evaluate`**
+  is the general link, for anyone the email was forwarded to; its answers wait under Form answers ("Put it there").
+  An unknown key shows the general form and says nothing about which keys exist.
+- **The look:** a page of its own, no site menu (`isEvaluateRoute` in `src/lib/chrome.ts`, and the same in
+  `THEME_SCRIPT`), always the light paper look: the logo band of our emails at the top, what the university gets and
+  the Claude Partner card on the left, the form in numbered steps on the right, the seven courses as cards to tick.
+  Kept out of search results (`noindex`). The Microsoft Form made on 27 November 2026 under admin@ is not used.
+- **What it takes** (`POST /api/universities/evaluate`, anyone may call it): five answers per visitor in half an hour, at
+  most 20,000 characters, every field rebuilt by `cleanFormAnswer` (named fields only, each cut to its length; a course,
+  an area or a choice that is not ours is dropped; one or two people, each with a real address). The university comes
+  only from the key, never from the name typed. A hidden field filled in means a machine: it is told "thank you" and
+  nothing is kept.
+- **What an answer does** (`applyFormAnswer`): it is kept on the university (the last ten), its courses and people go on
+  the evaluation unless access has already been given, and the stage moves to Replied at most. Two emails go from admin@
+  through Outlook: the answer to admin@ with Jalal and Yusuf in copy, and a fixed thank-you to the first representative
+  that names only our courses. If they cannot go, the answer is kept anyway.
+
+### The emails
+
+- **Sent through Outlook** from `admin@gennoor.com` (`sendFromOutlook` in `graph.ts`), so each sits in that mailbox's Sent
+  Items and a reply threads under it; `jalalkhan@` and `yusufchaudhary@` always in copy (`CAMPAIGN_CC`), signed as Jalal.
+  What goes out is what is saved on the university, read by the server (`send/route.ts`): the browser sends only which
+  university. It is refused while a square-bracket sentence is still to be written, while an email to that university
+  has already gone (unless the person chose "Send another"), and past the hour's limit (`sentThisHour`: leads and
+  universities share the 60). Pressing twice cannot send twice: the university is held for two minutes while it goes.
+- **The HTML** (`campaignEmailHtml`): the person's words as paragraphs on the light email frame (`emailShell`), the
+  Claude Partner card under the first paragraph that names Claude, and a "Choose your courses" button under the
+  paragraph that holds the university's form link. "See it as they will" draws that same HTML in the CRM, on a white
+  page that runs nothing; "Open as a page" opens it in a tab of its own (`campaignEmailPage`).
+- **After the first one** (`src/data/university-templates.ts`, "Start from" above the editor): Follow-up (no answer after
+  five days, answers the first email and carries the form link), Access is ready (lists the courses; how to sign in is
+  left in square brackets for a person to write, so it cannot go without it), Ask for the call. A template only fills the
+  editor: a person reads it and presses Save or Send.
+- **The call** ("Book the Teams call" on Overview, `meeting/route.ts`): a Teams meeting on the admin calendar, 20 to 60
+  minutes, with the people ticked and Jalal and Yusuf; Microsoft sends the invitations. The date and the join link are
+  kept on the university.
+- **Has it gone, did they write back?** `check/route.ts`, when the page opens, every five minutes while it is open and on
+  "Check replies": an Outlook send counts as gone when Outlook takes it; it reads the team mailboxes for mail from a
+  university's addresses (`replyOwner`: the sender, or the same mail domain, never a free webmail domain, never mail from
+  before our first email, never an automatic reply).
+- **What the emails say about Gennoor (owner, 27 November 2026).** Where Claude is first named, the Claude Partner Network
+  badge and the line "Gennoor is Certified in the Claude Partner Network." sit on their cream card
+  (`partnerCardHtml`), word for word, never recoloured. The work for King Saud University, Taibah University, MCIT Saudi
+  Arabia, the Government of Bahrain, Bank of Tanzania, Microsoft ANZ and Tech Mahindra is Jalal's own ("I have personally
+  delivered ...", never "Gennoor delivered"). Through Gennoor, only EY, on Agentic AI for Power Platform, Agentic AI for
+  Copilot Studio and Claude Cowork for business professionals. No "Certified Services Partner", no "APAC", no price,
+  nothing called "free".
+
+### Checks
+
+- `npx tsx scripts/universities-check.ts` checks all of it on the toolkit's own data and made-up mail and answers;
+  `attack-check.ts` part 6 tries the form link, the public form, the recipients and the fields a browser may write.
+  `npx tsx scripts/universities-fixture.ts <file>` writes made-up campaign data to look at the screens.
+- Never send a university an email, or answer the form on the live site, to try something. The toolkit's own folder
+  (`GENNOOR_University_Partnership_Toolkit/`) is not part of the site and is not committed.
+
+## 16. The catalogue in an email
+
+The owner (27 November 2026): one email with the catalogue "which we can send to any of the client, but that should be
+optional". In a lead's email window, **Send our catalogue** fills a short message and ticks **Add our catalogue**: the
+tall picture of the one-page catalogue goes into the email, linked to the PDF, and the PDF is attached. Both are our own
+files on the site (`src/lib/crm/catalogue-email.ts`), fetched by a fixed address; the browser only says yes or no.
+Nothing is added unless someone ticks it. The catalogue itself is made in `catalog/` (`catalog/README.md`).

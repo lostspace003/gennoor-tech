@@ -1,0 +1,96 @@
+name: Twice a day
+
+# Everything the site does on a schedule, in two runs a day (owner, 27 November 2026: "one GitHub action at 10:30 a.m.
+# in the morning IST, another 7:30 p.m. IST. That's it ... everything should accumulate during that time only").
+# 10:30 IST is 05:00 UTC; 19:30 IST is 14:00 UTC. GitHub may start a scheduled run some minutes late.
+#
+#   Both runs   the heartbeat: LinkedIn autopilot, the daily blog and its publishing, scheduled posts, the film campaign,
+#               lead replies, the weekly email of new posts. The site also beats by itself every 15 minutes
+#               (src/instrumentation.ts), so posts still go at their own times between these runs.
+#   Morning     the CRM morning digest (Monday to Saturday), the sitemap to Bing and Google, and on the 1st of the
+#               month the assistant's site index.
+#   Evening     the daily report (src/app/api/admin/daily-report).
+# The deploy (deploy.yml) still runs on every merge to main: that is how a change goes live, not a schedule.
+# One part failing does not stop the others; the run is marked failed at the end if any part did.
+
+on:
+  schedule:
+    - cron: '0 5 * * *'
+    - cron: '0 14 * * *'
+  workflow_dispatch:
+    inputs:
+      run:
+        description: 'Which run'
+        type: choice
+        options: [morning, evening]
+        default: morning
+
+concurrency:
+  group: scheduled
+  cancel-in-progress: false
+
+env:
+  SITE: https://gennoor-tech.azurewebsites.net
+  NODE_VERSION: '22.x'
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Which run is this
+        id: which
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then WHICH="${{ inputs.run }}";
+          elif [ "${{ github.event.schedule }}" = "0 14 * * *" ]; then WHICH=evening; else WHICH=morning; fi
+          echo "which=$WHICH" >> "$GITHUB_OUTPUT"
+          echo "weekday=$(TZ=Asia/Kolkata date +%u)" >> "$GITHUB_OUTPUT"
+          echo "day=$(TZ=Asia/Kolkata date +%d)" >> "$GITHUB_OUTPUT"
+          echo "Run: $WHICH"
+
+      - name: Heartbeat (autopilot, blog, scheduled posts, replies, weekly email)
+        if: ${{ !cancelled() }}
+        run: |
+          STATUS=$(curl -s -o /tmp/out.json -w "%{http_code}" -m 60 -X POST -H "x-cron-secret: ${{ secrets.CRM_CRON_SECRET }}" "$SITE/api/cron/autopilot")
+          cat /tmp/out.json
+          [ "$STATUS" = "200" ] || { echo "::error::Heartbeat answered $STATUS"; exit 1; }
+
+      - name: CRM morning digest (Monday to Saturday)
+        if: ${{ !cancelled() && steps.which.outputs.which == 'morning' && steps.which.outputs.weekday != '7' }}
+        run: |
+          STATUS=$(curl -s -o /tmp/out.json -w "%{http_code}" -m 120 -X POST -H "x-cron-secret: ${{ secrets.CRM_CRON_SECRET }}" "$SITE/api/admin/crm-digest")
+          cat /tmp/out.json
+          [ "$STATUS" = "200" ] || { echo "::error::Digest answered $STATUS"; exit 1; }
+
+      - name: Assistant's site index (1st of the month)
+        if: ${{ !cancelled() && steps.which.outputs.which == 'morning' && steps.which.outputs.day == '01' }}
+        run: |
+          STATUS=$(curl -s -o /tmp/out.json -w "%{http_code}" -m 60 -X POST -H "x-cron-secret: ${{ secrets.CRM_CRON_SECRET }}" "$SITE/api/admin/site-index")
+          cat /tmp/out.json
+          [ "$STATUS" = "202" ] || [ "$STATUS" = "409" ] || { echo "::error::Site index answered $STATUS"; exit 1; }
+
+      - uses: actions/checkout@v6
+        if: ${{ !cancelled() && steps.which.outputs.which == 'morning' }}
+        with:
+          ref: main
+      - uses: actions/setup-node@v6
+        if: ${{ !cancelled() && steps.which.outputs.which == 'morning' }}
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+      - name: Sitemap to Bing and the others (IndexNow)
+        if: ${{ !cancelled() && steps.which.outputs.which == 'morning' }}
+        run: npm run indexnow
+      - name: Sitemap to Google Search Console
+        if: ${{ !cancelled() && steps.which.outputs.which == 'morning' }}
+        run: npm run gsc-resubmit
+        env:
+          GSC_OAUTH_CLIENT_ID: ${{ secrets.GSC_OAUTH_CLIENT_ID }}
+          GSC_OAUTH_CLIENT_SECRET: ${{ secrets.GSC_OAUTH_CLIENT_SECRET }}
+          GSC_OAUTH_REFRESH_TOKEN: ${{ secrets.GSC_OAUTH_REFRESH_TOKEN }}
+
+      - name: Daily report
+        if: ${{ !cancelled() && steps.which.outputs.which == 'evening' }}
+        run: |
+          STATUS=$(curl -s -o /tmp/out.json -w "%{http_code}" --max-time 280 -X POST -H "x-cron-secret: ${{ secrets.CRM_CRON_SECRET }}" "$SITE/api/admin/daily-report")
+          # Only the numbers are printed; the answer holds no names
+          cat /tmp/out.json
+          [ "$STATUS" = "200" ] || { echo "::error::The daily report answered $STATUS"; exit 1; }

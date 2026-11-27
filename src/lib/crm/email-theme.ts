@@ -11,7 +11,9 @@ import { escapeHtml } from '@/lib/escape-html'
 // logo themselves (they remove SVG and have no brand fonts), and one picture looks the same in Outlook, in
 // Gmail and on a phone.
 const SITE = 'https://www.gennoor.com'
-const HEADER = `${SITE}/email/header.png`
+// The logo band moves gently once round its ring of dots, then rests (scripts/email-art/header-motion.mjs, owner 27 November
+// 2026). Its first frame is the logo at rest, which is all that old Outlook shows.
+const HEADER = `${SITE}/email/header.gif`
 const FONT = "'Segoe UI',Arial,sans-serif"
 
 /**
