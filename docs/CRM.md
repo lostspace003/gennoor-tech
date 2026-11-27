@@ -394,3 +394,12 @@ optional". In a lead's email window, **Send our catalogue** fills a short messag
 tall picture of the one-page catalogue goes into the email, linked to the PDF, and the PDF is attached. Both are our own
 files on the site (`src/lib/crm/catalogue-email.ts`), fetched by a fixed address; the browser only says yes or no.
 Nothing is added unless someone ticks it. The catalogue itself is made in `catalog/` (`catalog/README.md`).
+
+## 17. Evaluation codes, and Introduce Gennoor (owner, 27 November 2026)
+
+- **When a university submits the form**, two codes are made (`lms-coupons.ts`: 100% off every course, counted once for each person and course, as many uses as courses chosen, 90 days; the note starts `University evaluation`). "Access is ready" goes at once to the representatives through Outlook from admin@, with Jalal and Yusuf in copy, listing the courses and the codes, and is recorded on the university; its evaluation is marked given and it moves to Evaluating. "Ask for the call" stays a person's step.
+- **The dashboard** of Universities shows the codes given and used, who enrolled with each, and how far they got (`/api/admin/universities/coupons`, progress from the Learning Studio).
+- **Introduce Gennoor** in a lead's email window: the general first email in the designed look (`lib/crm/intro-email.ts`): the person's words, then who we are, what we do (every row a link), one button. Only `design: 'intro'` draws it.
+- The Claude Partner card in our emails, the catalogue and the form links nowhere; every other link stays clickable.
+- **Courses come from the live Learning Studio** (`courseChoices` in `src/lib/complimentary.ts`): a new published course appears in both forms by itself. Up to two courses, from dropdowns, each with "Explore the course" in a new tab. **One code per course** (that course only, 100%, 90 days), and every email pairs each course with its code.
+- **Complimentary access** (`/complimentary-access`, in the menu under Learning Studio and as a band on the home page): anyone asks; admin@ gets it with Approve and Reject (signed links, seven days; the link opens a page and only its button decides). Approve makes the codes and emails them; Reject sends nothing. Its codes show in the same tracking panel.

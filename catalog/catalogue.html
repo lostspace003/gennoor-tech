@@ -25,10 +25,13 @@
   .bm { display: inline-block; vertical-align: -3px; }
 
   .page { position: relative; width: 1123px; height: 794px; overflow: hidden; padding: 26px 30px 16px; background: var(--ground); }
-  .grid { position: relative; display: grid; grid-template-columns: 1fr 312px 1fr; gap: 26px; height: 600px; }
+  .grid { position: relative; display: grid; grid-template-columns: 1fr 312px 1fr; gap: 26px; height: 590px; margin-top: 14px; }
   .col { display: flex; flex-direction: column; gap: 10px; }
   .colhead { font-family: 'Sora', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 1.8px; text-transform: uppercase; color: var(--ink3); margin: 0 0 2px 4px; }
-  .colhead b { color: var(--ink); }
+  .colhead { text-align: center; margin: 0 0 2px; }
+  .pill { display: inline-block; white-space: nowrap; font: 700 11px 'Sora', sans-serif; letter-spacing: 1.4px; text-transform: uppercase; color: var(--blue); background: #eaf1ff; border: 1px solid #d4e1fb; border-radius: 999px; padding: 5px 14px; }
+  .arrows { position: absolute; left: 0; top: 0; pointer-events: none; overflow: visible; }
+  .email .arrows { display: none; }
 
   .card { position: relative; flex: 1; display: grid; grid-template-columns: 58px 1fr; gap: 10px; align-items: center; background: var(--card); border: 1px solid var(--line); border-radius: 18px; padding: 10px 16px 10px 10px; }
   .left .card::after, .right .card::before { content: ''; position: absolute; top: 50%; width: 26px; border-top: 1.5px dashed #cdd8ea; }
@@ -105,7 +108,7 @@
 <div class="page">
   <div class="grid">
     <div class="col left">
-      <div class="colhead"><b>Learn with us</b> · ready today</div>
+      <div class="colhead"><span class="pill">Ready to use</span></div>
 
       <a class="card" href="https://www.gennoor.com/studio"><span class="n">1</span>
         {{li:MonitorPlay:blue}}
@@ -157,13 +160,12 @@
           <div class="cred"><span class="ic">{{mark:claude:22}}</span><span>Claude-certified trainers<small>Agents and everyday AI work</small></span></div>
           <div class="cred"><span class="ic">{{mi:Bot}}</span><span>An AI assistant in every lesson<small>Questions answered while you learn</small></span></div>
         </div>
-        <a class="cpn" href="https://claude.com/partners"><img src="../public/cpn/cpn-certified-horizontal.svg" alt="Claude Partner Network - Certified"><span>Gennoor is Certified in the Claude Partner Network.</span></a>
-        <p class="start"><b>Start anywhere.</b> 1 to 4 are ready today; 5 to 8 are built around your team's work.</p>
+        <div class="cpn"><img src="../public/cpn/cpn-certified-horizontal.svg" alt="Claude Partner Network - Certified"><span>Gennoor is Certified in the Claude Partner Network.</span></div>
       </div>
     </div>
 
     <div class="col right">
-      <div class="colhead"><b>Built for your team</b> · around your work</div>
+      <div class="colhead"><span class="pill">Made ready for you</span></div>
 
       <a class="card" href="https://www.gennoor.com/training"><span class="n">5</span>
         {{li:Users:lilac}}
@@ -225,5 +227,26 @@
     <span>Gennoor Tech · Mumbai, India · Train. Innovate. Build.</span>
   </div>
 </div>
+<script>
+  // The two arrows: from the top of the centre card, up, across, and down into each column's label
+  (function () {
+    var page = document.querySelector('.page'); var disc = document.querySelector('.hub .disc'); var pills = document.querySelectorAll('.colhead .pill')
+    if (!page || !disc || pills.length < 2 || document.body.classList.contains('email')) return
+    var P = page.getBoundingClientRect(), D = disc.getBoundingClientRect()
+    var ns = 'http://www.w3.org/2000/svg'
+    var svg = document.createElementNS(ns, 'svg'); svg.setAttribute('class', 'arrows'); svg.setAttribute('width', P.width); svg.setAttribute('height', P.height)
+    svg.innerHTML = '<defs><marker id="ah" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#2563eb"/></marker></defs>'
+    var x0 = D.left + D.width / 2 - P.left, y0 = D.top - P.top - 16
+    Array.prototype.forEach.call(pills, function (p, i) {
+      var R = p.getBoundingClientRect(), px = R.left + R.width / 2 - P.left, top = R.top - P.top, lane = top - 12
+      var sx = x0 + (i ? 14 : -14)
+      var path = document.createElementNS(ns, 'path')
+      path.setAttribute('d', 'M' + sx + ' ' + y0 + ' V' + lane + ' H' + px + ' V' + (top - 2))
+      path.setAttribute('fill', 'none'); path.setAttribute('stroke', '#2563eb'); path.setAttribute('stroke-width', '1.6'); path.setAttribute('stroke-linecap', 'round'); path.setAttribute('stroke-linejoin', 'round'); path.setAttribute('marker-end', 'url(#ah)')
+      svg.appendChild(path)
+    })
+    page.appendChild(svg)
+  })()
+</script>
 </body>
 </html>

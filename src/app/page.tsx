@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { pageMeta } from '@/lib/seo'
 import { siteConfig } from '@/lib/site-config'
-import { Award, BotMessageSquare, Ear, FlaskConical, ListChecks, PencilRuler, Play, Presentation, Rocket, Sparkles, Workflow } from 'lucide-react'
+import { Award, BotMessageSquare, Ear, FlaskConical, KeyRound, ListChecks, PencilRuler, Play, Presentation, Rocket, Sparkles, Workflow } from 'lucide-react'
 import { PersonJsonLd } from '@/components/JsonLd'
 import { ClaudePartnerInline } from '@/components/ClaudePartner'
 import CourseCarousel from '@/components/home/CourseCarousel'
@@ -120,6 +120,20 @@ export default async function HomePage() {
             <div className="mt-7"><Link href="/studio" className="st-pill">Open the Learning Studio</Link></div>
           </div>
           <WalkthroughVideo />
+        </div>
+      </section>
+
+      {/* ===== Complimentary access: a quiet band, not a pop-up (owner, 27 November 2026) ===== */}
+      <section className="px-4 sm:px-6 py-8 lg:py-10" aria-labelledby="complimentary">
+        <div className="mx-auto max-w-[1180px] st-card flex flex-col md:flex-row md:items-center gap-5 justify-between px-6 py-6">
+          <div className="flex gap-4 items-start">
+            <Ico icon={KeyRound} tone="blue" size={44} />
+            <div>
+              <h2 id="complimentary" className="text-xl font-bold text-gray-900">Complimentary access to the Learning Studio</h2>
+              <p className="mt-1 text-[15px] text-gray-600 max-w-2xl">Choose up to two courses and try them in full before you decide anything. We email you a code for each course.</p>
+            </div>
+          </div>
+          <Link href="/complimentary-access" className="st-pill st-ghost whitespace-nowrap self-start md:self-center">Request access</Link>
         </div>
       </section>
 

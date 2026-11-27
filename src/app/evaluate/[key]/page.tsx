@@ -1,4 +1,5 @@
 import { pageMeta } from '@/lib/seo'
+import { courseChoices } from '@/lib/complimentary'
 import EvaluateForm, { type EvaluatePrefill } from '@/components/evaluate/EvaluateForm'
 import { universityByFormKey } from '@/lib/crm/universities-store'
 import { FORM_KEY } from '@/lib/crm/universities-types'
@@ -21,5 +22,5 @@ export default async function EvaluateForUniversity({ params }: { params: Promis
     if (u) prefill = { key, institution: u.name, place: [u.country, u.city].filter(Boolean).join(', '), department: u.department }
   }
   // An unknown key shows the general form: nothing tells a stranger which keys exist.
-  return <EvaluateForm prefill={prefill} />
+  return <EvaluateForm prefill={prefill} courses={await courseChoices().catch(() => [])} />
 }

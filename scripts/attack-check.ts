@@ -231,6 +231,11 @@ async function main() {
   is('a list of recipients is a list of addresses, nothing else', [cleanEmails(['A@X.EDU', 'a@x.edu']), cleanEmails(['a@x.edu\nbcc: b@y.com']), cleanEmails(['a@x.edu, b@y.com']), cleanEmails(['<a@x.edu>']), cleanEmails('a@x.edu')], [['a@x.edu'], null, null, null, null])
   is('the browser cannot write the history of sent emails, the replies, the form key or the id', Object.keys((cleanUniPatch({ id: 'GEN-001', emails: [{}], replies: [{}], sendingSince: 'x', activities: [], wave: 1, formKey: 'abc', formAnswers: [{}], callLink: 'https://evil.example', notes: 'n' }) as any).patch), ['notes'])
 
+  const { cleanRequest, pickCourses, verifyDecision } = await import('../src/lib/complimentary')
+  is('a complimentary request takes only real courses, two at most', [pickCourses(['ai-103', '../x', 'ai-103', 'ai-500', 'agent-ops'], ['ai-103', 'ai-500', 'agent-ops'])], [['ai-103', 'ai-500']])
+  is('a complimentary request refuses a list in place of an address', cleanRequest({ name: 'n', email: 'a@x.edu, b@y.com', org: 'o', courses: ['ai-103'] }, ['ai-103']).ok, false)
+  is('a decision link that was not signed by us decides nothing', [verifyDecision('CA-0123456789ab', 'approve', String(Date.now() + 9e6), 'f'.repeat(40)).ok, verifyDecision('../x', 'approve', '1', 'x').ok, verifyDecision('CA-0123456789ab', 'delete', '1', 'x').ok], [false, false, false])
+
   console.log(bad ? `\n${bad} WRONG` : '\nALL OK')
   process.exit(bad ? 1 : 0)
 }

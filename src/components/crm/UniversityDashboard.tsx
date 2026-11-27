@@ -1,11 +1,12 @@
 'use client'
 
-import { useMemo } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import Link from 'next/link'
 import { ArrowRight, CalendarDays, ClipboardCheck, Mail, MessageSquareReply, Timer, Trophy } from 'lucide-react'
 import { campaignStats } from '@/lib/crm/universities-stats'
 import { UNI_STAGES, UNI_STAGE_LABELS, type University } from '@/lib/crm/universities-types'
 import { STAGE_DOT } from './university-shared'
+import { api } from './shared'
 
 /**
  * How the whole campaign is moving, on one page: the funnel from the first email to the partnership, who needs a
@@ -140,6 +141,7 @@ export default function UniversityDashboard({ unis, unmatched }: { unis: Univers
           </ul>
         </section>
       </div>
+      <EvaluationCodes />
     </div>
   )
 }
@@ -149,5 +151,48 @@ function Cells({ g }: { g: { total: number; emailed: number; replied: number; ev
     <>
       {[g.total, g.emailed, g.replied, g.evaluating, g.partner].map((n, i) => <td key={i} className="py-1.5 text-right tabular-nums text-gray-900">{n}</td>)}
     </>
+  )
+}
+
+interface CodeRow { code: string; institution: string; uni: string; createdAt: string; expiresAt: string; active: boolean; learners: Array<{ email: string; course: string; since: string; done: number; total: number; percent: number }> }
+interface CodeData { codes: CodeRow[]; totals: { issued: number; used: number; enrolments: number; started: number; completed: number } }
+
+/** The evaluation codes: how many were given, used, and how far the people who used them have got. */
+function EvaluationCodes() {
+  const [d, setD] = useState<CodeData | null>(null)
+  const [error, setError] = useState('')
+  useEffect(() => { api<CodeData>('/api/admin/universities/coupons', { cache: 'no-store' }).then(setD).catch((e) => setError(e.message)) }, [])
+  const tiles = d ? [['codes given', d.totals.issued], ['codes used', d.totals.used], ['course enrolments', d.totals.enrolments], ['started', d.totals.started], ['completed', d.totals.completed]] as const : []
+  return (
+    <section className="rounded-xl border border-gray-200 bg-surface p-4">
+      <h2 className="text-sm font-semibold text-gray-900">Evaluation codes and learners</h2>
+      <p className="text-xs text-gray-500">Two codes are made when a university submits the form, and sent with "Access is ready". Progress is read from the Learning Studio.</p>
+      {error && <p className="mt-2 text-sm text-red-700">{error}</p>}
+      {!d && !error && <p className="mt-3 text-sm text-gray-500">Reading the codes…</p>}
+      {d && (
+        <>
+          <div className="mt-3 grid grid-cols-2 sm:grid-cols-5 gap-2">
+            {tiles.map(([label, n]) => <div key={label} className="rounded-lg border border-gray-200 px-3 py-2"><div className="text-xl font-bold text-gray-900 tabular-nums">{n}</div><div className="text-xs text-gray-500">{label}</div></div>)}
+          </div>
+          {d.codes.length === 0 ? <p className="mt-3 text-sm text-gray-600">No code has been made yet. The first comes with the first form answer.</p> : (
+            <div className="mt-3 overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead><tr className="text-left text-xs text-gray-500 border-b border-gray-200"><th className="py-2 pr-3 font-medium">Code</th><th className="py-2 pr-3 font-medium">University</th><th className="py-2 pr-3 font-medium">Who used it</th><th className="py-2 font-medium">Progress</th></tr></thead>
+                <tbody>
+                  {d.codes.map((c) => (c.learners.length ? c.learners : [null]).map((l, i) => (
+                    <tr key={`${c.code}-${i}`} className="border-b border-gray-100 last:border-0 align-top">
+                      <td className="py-2 pr-3 font-mono text-xs text-gray-900">{i === 0 ? c.code : ''}</td>
+                      <td className="py-2 pr-3 text-gray-900">{i === 0 ? (c.uni ? <Link href={`/crm/universities/${c.uni}`} className="hover:text-primary-700">{c.institution}</Link> : c.institution) : ''}</td>
+                      <td className="py-2 pr-3 text-gray-700">{l ? <>{l.email}<span className="block text-xs text-gray-500">{l.course}</span></> : <span className="text-gray-500">Not used yet</span>}</td>
+                      <td className="py-2 min-w-[140px]">{l && <><span className="block h-2 rounded bg-gray-100 overflow-hidden"><span className="block h-full bg-primary-500" style={{ width: `${l.percent}%` }} /></span><span className="text-xs text-gray-500">{l.done} of {l.total || '?'} lessons · {l.percent}%</span></>}</td>
+                    </tr>
+                  )))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </>
+      )}
+    </section>
   )
 }
