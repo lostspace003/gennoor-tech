@@ -6,7 +6,7 @@ import { TIER_LINE } from '@/components/ClaudePartner'
 import { UNI_AREAS, UNI_WALKTHROUGH } from '@/lib/crm/universities-types'
 import CoursePicker, { type PickerCourse } from '@/components/CoursePicker'
 
-export interface EvaluatePrefill { key: string; institution: string; place: string; department: string }
+export interface EvaluatePrefill { key: string; institution: string; place: string; department: string; audience?: 'academic' | 'business' }
 
 type Rep = { name: string; title: string; email: string }
 const emptyRep: Rep = { name: '', title: '', email: '' }
@@ -23,6 +23,7 @@ const label = 'block text-sm font-medium text-gray-900 mb-1.5'
 
 /** The university evaluation form: the page a university's own link opens. Its answer goes to /api/universities/evaluate. */
 export default function EvaluateForm({ prefill, courses }: { prefill: EvaluatePrefill | null; courses: PickerCourse[] }) {
+  const biz = prefill?.audience === 'business'
   const [institution, setInstitution] = useState(prefill?.institution || '')
   const [place, setPlace] = useState(prefill?.place || '')
   const [department, setDepartment] = useState(prefill?.department || '')
@@ -71,14 +72,14 @@ export default function EvaluateForm({ prefill, courses }: { prefill: EvaluatePr
         <div className="mt-6 lg:mt-8 grid gap-6 lg:gap-8 lg:grid-cols-[340px_1fr] items-start">
           <aside className="lg:sticky lg:top-8">
             <p className="text-xs font-semibold tracking-[0.14em] uppercase text-primary-600">Gennoor Learning Studio</p>
-            <h1 className="mt-2 text-[26px] sm:text-[30px] leading-tight font-bold text-gray-900">Complimentary course evaluation for universities</h1>
+            <h1 className="mt-2 text-[26px] sm:text-[30px] leading-tight font-bold text-gray-900">Complimentary course evaluation for {biz ? 'your organisation' : 'universities'}</h1>
             <p className="mt-3 text-[15px] leading-relaxed text-gray-600">
-              Before any partnership conversation, your faculty can judge our training for themselves. Choose the courses you would like to review and we will give full access.
+              Before any partnership conversation, your {biz ? 'team' : 'faculty'} can judge our training for themselves. Choose the courses you would like to review and we will give full access.
             </p>
             <ul className="mt-5 space-y-3.5">
               {[
                 { icon: BookOpen, title: 'Full access to the courses you choose', body: 'From the Certifications & Projects section of the Learning Studio.' },
-                { icon: Users, title: 'For up to two representatives', body: 'Faculty or academic staff of your institution.' },
+                { icon: Users, title: 'For up to two representatives', body: biz ? 'People from your team, such as learning, practice or programme leaders.' : 'Faculty or academic staff of your institution.' },
                 { icon: Clock, title: 'Sign-in details within 24 hours', body: 'Sent by email to the address you give.' },
                 { icon: GraduationCap, title: 'Microsoft Certified and Claude-certified trainers', body: 'The team behind every course in the Learning Studio.' },
               ].map(({ icon: Icon, title, body }) => (
@@ -104,9 +105,9 @@ export default function EvaluateForm({ prefill, courses }: { prefill: EvaluatePr
               </div>
             ) : (
               <form onSubmit={submit} noValidate={false}>
-                <Section n={1} title="Your institution" hint={prefill ? 'We have filled in what we know. Please correct anything that is wrong.' : undefined}>
+                <Section n={1} title={biz ? 'Your organisation' : 'Your institution'} hint={prefill ? 'We have filled in what we know. Please correct anything that is wrong.' : undefined}>
                   <div className="grid gap-4 sm:grid-cols-2">
-                    <div className="sm:col-span-2"><label className={label} htmlFor="institution">University or college</label><input id="institution" required maxLength={160} value={institution} onChange={(e) => setInstitution(e.target.value)} className={field} /></div>
+                    <div className="sm:col-span-2"><label className={label} htmlFor="institution">{biz ? 'Organisation' : 'University or college'}</label><input id="institution" required maxLength={160} value={institution} onChange={(e) => setInstitution(e.target.value)} className={field} /></div>
                     <div><label className={label} htmlFor="place">Country and city</label><input id="place" required maxLength={120} value={place} onChange={(e) => setPlace(e.target.value)} className={field} /></div>
                     <div><label className={label} htmlFor="department">Department, school or center</label><input id="department" required maxLength={160} value={department} onChange={(e) => setDepartment(e.target.value)} placeholder="e.g. Computer Science" className={field} /></div>
                   </div>
@@ -119,7 +120,7 @@ export default function EvaluateForm({ prefill, courses }: { prefill: EvaluatePr
                       <div className="grid gap-4 sm:grid-cols-2">
                         <div><label className={label} htmlFor={`rep${i}-name`}>Full name</label><input id={`rep${i}-name`} required={!i} maxLength={120} value={r.name} onChange={(e) => setRep(i, 'name', e.target.value)} className={field} /></div>
                         <div><label className={label} htmlFor={`rep${i}-title`}>Designation</label><input id={`rep${i}-title`} required={!i} maxLength={120} value={r.title} onChange={(e) => setRep(i, 'title', e.target.value)} placeholder="e.g. Associate Professor" className={field} /></div>
-                        <div className="sm:col-span-2"><label className={label} htmlFor={`rep${i}-email`}>Official institutional email</label><input id={`rep${i}-email`} type="email" required={!i} maxLength={254} value={r.email} onChange={(e) => setRep(i, 'email', e.target.value)} className={field} /></div>
+                        <div className="sm:col-span-2"><label className={label} htmlFor={`rep${i}-email`}>{biz ? 'Official work email' : 'Official institutional email'}</label><input id={`rep${i}-email`} type="email" required={!i} maxLength={254} value={r.email} onChange={(e) => setRep(i, 'email', e.target.value)} className={field} /></div>
                       </div>
                     </fieldset>
                   ))}
@@ -129,7 +130,7 @@ export default function EvaluateForm({ prefill, courses }: { prefill: EvaluatePr
                   <CoursePicker courses={courses} value={courses_} onChange={setCourses} fieldClass={field} />
                 </Section>
 
-                <Section n={4} title="What else interests your university" hint="Optional. It helps us prepare the conversation.">
+                <Section n={4} title={biz ? 'What else interests your organisation' : 'What else interests your university'} hint="Optional. It helps us prepare the conversation.">
                   <label className={label} htmlFor="area">Area of interest</label>
                   <select id="area" value={areas[0] || ''} onChange={(e) => setAreas(e.target.value ? [e.target.value] : [])} className={field}>
                     <option value="">Choose one (optional)</option>

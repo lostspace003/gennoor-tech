@@ -8,6 +8,7 @@ import {
   CAMPAIGN_FROM, UNI_COURSES, UNI_STAGES, UNI_STAGE_HINTS, UNI_STAGE_LABELS, waitingForAnswer, whyNotReady,
   type University, type UniStage, type UniFormAnswer,
 } from '@/lib/crm/universities-types'
+import { entryPath, type Campaign } from '@/data/partnership-campaigns'
 import { CPN_BADGE_URL, CPN_LINE } from '@/lib/crm/universities-email'
 import { COUNTRY_NOTES } from '@/data/university-markets'
 import { teamMember } from '@/lib/crm/team'
@@ -26,7 +27,10 @@ import { Hint, api, formatDateTime, timeAgo } from './shared'
 type Tab = 'dashboard' | 'universities' | 'answers' | 'emails' | 'setup'
 interface Hour { used: number; limit: number }
 
-export default function UniversitiesView() {
+const cap = (t: string) => t.charAt(0).toUpperCase() + t.slice(1)
+
+export default function UniversitiesView({ campaign }: { campaign: Campaign }) {
+  const One = cap(campaign.one), Many = cap(campaign.many)
   const { notify, userEmail } = useCrm()
   const router = useRouter()
   const [who, setWho] = useState<'' | 'mine' | 'free'>('')
@@ -44,21 +48,21 @@ export default function UniversitiesView() {
 
   const load = useCallback(async () => {
     try {
-      const d = await api<{ universities: University[]; unmatched: UniFormAnswer[]; hour: Hour }>('/api/admin/universities', { cache: 'no-store' })
+      const d = await api<{ universities: University[]; unmatched: UniFormAnswer[]; hour: Hour }>(`/api/admin/universities?c=${campaign.key}`, { cache: 'no-store' })
       setUnis(d.universities); setUnmatched(d.unmatched || []); setHour(d.hour); setError('')
     } catch (e: any) { setError(e.message) }
-  }, [])
+  }, [campaign.key])
 
   /** Has it gone, and did anyone write back? Asked when the page opens and when "Check now" is pressed. */
   const check = useCallback(async (loud: boolean) => {
     setChecking(true)
     try {
-      const r = await api<{ confirmed: number; failed: number; replies: number; note: string }>('/api/admin/universities/check', { method: 'POST', body: '{}' })
+      const r = await api<{ confirmed: number; failed: number; replies: number; note: string }>('/api/admin/universities/check', { method: 'POST', body: JSON.stringify({ campaign: campaign.key }) })
       setMailNote(r.note)
       if (r.confirmed || r.failed || r.replies) await load()
       if (loud) notify(r.replies ? `${r.replies} new repl${r.replies === 1 ? 'y' : 'ies'}` : 'Nothing new')
     } catch (e: any) { if (loud) notify(e.message, true) } finally { setChecking(false) }
-  }, [load, notify])
+  }, [load, notify, campaign.key])
 
   useEffect(() => { load().then(() => check(false)) }, [load, check])
   // While the page is open, look again every five minutes
@@ -81,14 +85,14 @@ export default function UniversitiesView() {
 
 
   if (error && !unis) return <div className="p-6"><p className="rounded-lg bg-red-50 text-red-700 text-sm px-3 py-2">{error}</p></div>
-  if (!unis) return <p className="p-6 text-sm text-gray-500">Reading the universities…</p>
+  if (!unis) return <p className="p-6 text-sm text-gray-500">Reading…</p>
 
   return (
     <div className="p-4 sm:p-6 max-w-7xl">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
-          <h1 className="text-xl font-bold text-gray-900 flex items-center gap-2"><GraduationCap className="w-5 h-5 text-primary-600" />University partnerships</h1>
-          <p className="mt-1 text-sm text-gray-600 max-w-2xl">27 universities in 21 countries, from the first email to the partnership. Every email goes through Outlook from {CAMPAIGN_FROM} with Jalal and Yusuf in copy. Nothing goes by itself: you read it and press Send.</p>
+          <h1 className="text-xl font-bold text-gray-900 flex items-center gap-2"><GraduationCap className="w-5 h-5 text-primary-600" />{campaign.label}</h1>
+          <p className="mt-1 text-sm text-gray-600 max-w-2xl">{all.length} {campaign.many}. {campaign.blurb} Every email goes through Outlook from {CAMPAIGN_FROM} with Jalal and Yusuf in copy. Nothing goes by itself: you read it and press Send.</p>
         </div>
         <div className="flex items-center gap-2">
           <span className="text-xs text-gray-500" title="The CRM shares one allowance of emails an hour with the whole site">{hour.used} of {hour.limit} emails this hour</span>
@@ -100,7 +104,7 @@ export default function UniversitiesView() {
       {mailNote && <p className="mt-3 rounded-lg bg-amber-50 text-amber-800 text-sm px-3 py-2">{mailNote}</p>}
 
       {/* Where every university stands, in one row. Pressing one filters the list; pressing it again shows all. */}
-      <div className="mt-4 flex flex-wrap gap-2" role="group" aria-label="Universities at each stage">
+      <div className="mt-4 flex flex-wrap gap-2" role="group" aria-label={`${Many} at each stage`}>
         {UNI_STAGES.map((s) => {
           const on = stage === s
           return (
@@ -114,17 +118,17 @@ export default function UniversitiesView() {
           )
         })}
       </div>
-      {unmatched.length > 0 && <p className="mt-3 text-sm text-amber-800 font-medium">{unmatched.length} form answer{unmatched.length === 1 ? '' : 's'} came through the general link. <button type="button" onClick={() => setTab('answers')} className="underline">Put {unmatched.length === 1 ? 'it' : 'them'} on {unmatched.length === 1 ? 'its university' : 'their universities'}</button>.</p>}
-      {waiting > 0 && <p className="mt-3 text-sm text-red-700 font-medium">{waiting} universit{waiting === 1 ? 'y has' : 'ies have'} written back and {waiting === 1 ? 'is' : 'are'} waiting for your answer.</p>}
+      {unmatched.length > 0 && <p className="mt-3 text-sm text-amber-800 font-medium">{unmatched.length} form answer{unmatched.length === 1 ? '' : 's'} came through the general link. <button type="button" onClick={() => setTab('answers')} className="underline">Put {unmatched.length === 1 ? 'it' : 'them'} where {unmatched.length === 1 ? 'it belongs' : 'they belong'}</button>.</p>}
+      {waiting > 0 && <p className="mt-3 text-sm text-red-700 font-medium">{waiting} {waiting === 1 ? campaign.one : campaign.many} {waiting === 1 ? 'has' : 'have'} written back and {waiting === 1 ? 'is' : 'are'} waiting for your answer.</p>}
 
       <div className="mt-5 flex gap-1 border-b border-gray-200 overflow-x-auto" role="tablist">
-        {([['dashboard', 'Dashboard'], ['universities', 'Universities'], ['answers', `Form answers${answerCount ? ` (${answerCount})` : ''}`], ['emails', 'Emails'], ['setup', 'Setup']] as Array<[Tab, string]>).map(([k, label]) => (
+        {([['dashboard', 'Dashboard'], ['universities', Many], ['answers', `Form answers${answerCount ? ` (${answerCount})` : ''}`], ['emails', 'Emails'], ['setup', 'Setup']] as Array<[Tab, string]>).map(([k, label]) => (
           <button key={k} type="button" role="tab" aria-selected={tab === k} onClick={() => setTab(k)}
             className={`px-3.5 py-2 text-sm font-medium whitespace-nowrap -mb-px border-b-2 ${tab === k ? 'border-primary-600 text-primary-700' : 'border-transparent text-gray-600 hover:text-gray-900'}`}>{label}</button>
         ))}
       </div>
 
-      {tab === 'dashboard' && <UniversityDashboard unis={all} unmatched={unmatched.length} />}
+      {tab === 'dashboard' && <UniversityDashboard unis={all} unmatched={unmatched.length} one={campaign.one} />}
 
       {tab === 'answers' && <AnswersTab unis={all} unmatched={unmatched} onChanged={load} />}
 
@@ -133,7 +137,7 @@ export default function UniversitiesView() {
           <div className="mt-4 flex flex-wrap items-center gap-2">
             <label className="flex items-center gap-2 rounded-lg border border-gray-200 bg-surface px-3 py-2 w-full sm:w-72">
               <Search className="w-4 h-4 text-gray-400" />
-              <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="University, country, person" aria-label="Search universities" className="w-full bg-transparent text-sm text-gray-900 outline-none placeholder:text-gray-400" />
+              <input value={q} onChange={(e) => setQ(e.target.value)} placeholder={`${One}, place, person`} aria-label={`Search ${campaign.many}`} className="w-full bg-transparent text-sm text-gray-900 outline-none placeholder:text-gray-400" />
             </label>
             <select value={region} onChange={(e) => setRegion(e.target.value)} aria-label="Region" className="rounded-lg border border-gray-200 bg-surface px-3 py-2 text-sm text-gray-900">
               <option value="">Every region</option>
@@ -155,7 +159,7 @@ export default function UniversitiesView() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="text-left text-xs text-gray-500 border-b border-gray-200">
-                  <th className="px-4 py-2.5 font-medium">University</th>
+                  <th className="px-4 py-2.5 font-medium">{One}</th>
                   <th className="px-4 py-2.5 font-medium">Main contact</th>
                   <th className="px-4 py-2.5 font-medium">Worked by</th>
                   <th className="px-4 py-2.5 font-medium">Stage</th>
@@ -167,9 +171,9 @@ export default function UniversitiesView() {
                 {shown.map((u) => {
                   const w = emailWord(u)
                   return (
-                    <tr key={u.id} onClick={() => router.push(`/crm/universities/${u.id}`)} className="border-b border-gray-100 last:border-0 hover:bg-gray-50 cursor-pointer align-top">
+                    <tr key={u.id} onClick={() => router.push(entryPath(u.id))} className="border-b border-gray-100 last:border-0 hover:bg-gray-50 cursor-pointer align-top">
                       <td className="px-4 py-2.5 max-w-[280px]">
-                        <Link href={`/crm/universities/${u.id}`} onClick={(e) => e.stopPropagation()} className="font-medium text-gray-900 hover:text-primary-700">{u.name}</Link>
+                        <Link href={entryPath(u.id)} onClick={(e) => e.stopPropagation()} className="font-medium text-gray-900 hover:text-primary-700">{u.name}</Link>
                         <div className="text-xs text-gray-500">{u.country}{u.city ? ` · ${u.city}` : ''} · <span className={u.wave === 1 ? 'text-primary-700 font-medium' : ''}>Wave {u.wave}</span></div>
                       </td>
                       <td className="px-4 py-2.5 max-w-[240px]">
@@ -183,7 +187,7 @@ export default function UniversitiesView() {
                     </tr>
                   )
                 })}
-                {!shown.length && <tr><td colSpan={6} className="px-4 py-8 text-center text-gray-500">No university matches.</td></tr>}
+                {!shown.length && <tr><td colSpan={6} className="px-4 py-8 text-center text-gray-500">Nothing matches.</td></tr>}
               </tbody>
             </table>
           </div>
@@ -195,7 +199,7 @@ export default function UniversitiesView() {
           <table className="w-full text-sm">
             <thead>
               <tr className="text-left text-xs text-gray-500 border-b border-gray-200">
-                <th className="px-4 py-2.5 font-medium">University</th>
+                <th className="px-4 py-2.5 font-medium">{One}</th>
                 <th className="px-4 py-2.5 font-medium">To</th>
                 <th className="px-4 py-2.5 font-medium">Subject</th>
                 <th className="px-4 py-2.5 font-medium">State</th>
@@ -212,7 +216,7 @@ export default function UniversitiesView() {
                     <td className="px-4 py-2.5 max-w-[220px] text-xs text-gray-700 break-words">{u.draft.to.join(', ') || <span className="text-gray-400">no address yet</span>}</td>
                     <td className="px-4 py-2.5 max-w-[320px] text-gray-700"><span className="line-clamp-2">{u.draft.subject}</span>{why && !u.emails.length && <span className="block text-xs text-amber-700 mt-0.5">{why}</span>}</td>
                     <td className="px-4 py-2.5 whitespace-nowrap"><span className={`text-[11px] font-semibold rounded-full px-2 py-0.5 ${w.tone}`}>{w.word}</span></td>
-                    <td className="px-4 py-2.5 text-right"><Link href={`/crm/universities/${u.id}`} className="text-primary-700 text-sm font-medium hover:underline">Open</Link></td>
+                    <td className="px-4 py-2.5 text-right"><Link href={entryPath(u.id)} className="text-primary-700 text-sm font-medium hover:underline">Open</Link></td>
                   </tr>
                 )
               })}
@@ -221,7 +225,7 @@ export default function UniversitiesView() {
         </div>
       )}
 
-      {tab === 'setup' && <SetupTab />}
+      {tab === 'setup' && <SetupTab campaign={campaign} />}
 
     </div>
   )
@@ -240,19 +244,19 @@ function AnswersTab({ unis, unmatched, onChanged }: { unis: University[]; unmatc
   ].sort((x, y) => Number(!x.u) === Number(!y.u) ? y.a.at.localeCompare(x.a.at) : Number(!y.u) - Number(!x.u))
   const attach = async (answer: string) => {
     const id = pick[answer]
-    if (!id) { notify('Choose the university first', true); return }
+    if (!id) { notify('Choose which one first', true); return }
     setBusy(answer)
-    try { await api('/api/admin/universities', { method: 'POST', body: JSON.stringify({ action: 'attach', id, answer }) }); notify('The answer is on the university now'); await onChanged() }
+    try { await api('/api/admin/universities', { method: 'POST', body: JSON.stringify({ action: 'attach', id, answer }) }); notify('The answer is on its page now'); await onChanged() }
     catch (e: any) { notify(e.message, true) } finally { setBusy('') }
   }
-  if (!rows.length) return <p className="mt-6 text-sm text-gray-600">No university has answered the form yet. An answer shows here and on the university's own page the moment it is sent.</p>
+  if (!rows.length) return <p className="mt-6 text-sm text-gray-600">Nobody has answered the form yet. An answer shows here and on its own page the moment it is sent.</p>
   return (
     <ul className="mt-4 grid gap-3 lg:grid-cols-2">
       {rows.map(({ a, u }) => (
         <li key={a.id} className={`rounded-xl border bg-surface p-4 ${u ? 'border-gray-200' : 'border-amber-300'}`}>
           <div className="flex flex-wrap items-start justify-between gap-2">
             <div className="min-w-0">
-              {u ? <Link href={`/crm/universities/${u.id}?tab=evaluation`} className="font-semibold text-gray-900 hover:text-primary-700">{u.name}</Link> : <span className="font-semibold text-gray-900">{a.institution}</span>}
+              {u ? <Link href={`${entryPath(u.id)}?tab=evaluation`} className="font-semibold text-gray-900 hover:text-primary-700">{u.name}</Link> : <span className="font-semibold text-gray-900">{a.institution}</span>}
               <p className="text-xs text-gray-500">{formatDateTime(a.at)} · {u ? 'through its own link' : 'through the general link'}</p>
             </div>
             {u && <span className={`text-[11px] font-semibold rounded-full px-2 py-0.5 ${STAGE_PILL[u.stage]}`}>{UNI_STAGE_LABELS[u.stage]}</span>}
@@ -260,8 +264,8 @@ function AnswersTab({ unis, unmatched, onChanged }: { unis: University[]; unmatc
           <AnswerBody a={a} />
           {!u && (
             <div className="mt-3 flex flex-wrap gap-2">
-              <select value={pick[a.id] || ''} onChange={(e) => setPick((p) => ({ ...p, [a.id]: e.target.value }))} aria-label="The university this answer belongs to" className="min-w-0 flex-1 rounded-lg border border-gray-300 bg-raised px-3 py-1.5 text-sm text-gray-900">
-                <option value="">Which university is it?</option>
+              <select value={pick[a.id] || ''} onChange={(e) => setPick((p) => ({ ...p, [a.id]: e.target.value }))} aria-label="Where this answer belongs" className="min-w-0 flex-1 rounded-lg border border-gray-300 bg-raised px-3 py-1.5 text-sm text-gray-900">
+                <option value="">Which one is it?</option>
                 {unis.map((x) => <option key={x.id} value={x.id}>{x.name}</option>)}
               </select>
               <button type="button" onClick={() => attach(a.id)} disabled={busy === a.id} className="rounded-lg bg-primary-600 hover:bg-primary-500 text-white text-sm font-semibold px-3 py-1.5 disabled:opacity-50">Put it there</button>
@@ -273,32 +277,32 @@ function AnswersTab({ unis, unmatched, onChanged }: { unis: University[]; unmatc
   )
 }
 
-function SetupTab() {
+function SetupTab({ campaign }: { campaign: Campaign }) {
   const { notify } = useCrm()
   const general = 'https://www.gennoor.com/evaluate'
   const copy = async () => { try { await navigator.clipboard.writeText(general); notify('The general link is copied') } catch { notify(general) } }
-  const countries = COUNTRY_NOTES.filter((c) => c.country !== 'Total Global')
+  const countries = campaign.key === 'universities' ? COUNTRY_NOTES.filter((c) => c.country !== 'Total Global') : []
   return (
     <div className="mt-4 grid lg:grid-cols-2 gap-4">
       <section className="rounded-xl border border-gray-200 bg-surface p-4">
         <h2 className="text-sm font-semibold text-gray-900">The evaluation form</h2>
-        <p className="mt-1 text-sm text-gray-600">Our own page on gennoor.com, in the Gennoor look. Every university has its own link to it, put into its emails by itself: the form opens with the university's name filled in, and the answer lands on its page here, with the courses on its evaluation. You are told by email at admin@, with Jalal and Yusuf in copy.</p>
-        <p className="mt-2 text-sm text-gray-600">The general link is for anyone else (a colleague the email was forwarded to). Its answers wait under Form answers until you say which university they belong to.</p>
+        <p className="mt-1 text-sm text-gray-600">Our own page on gennoor.com, in the Gennoor look. Every {campaign.one} has its own link to it, put into its emails by itself: the form opens with its name filled in, and the answer lands on its page here, with the courses on its evaluation. You are told by email at admin@, with Jalal and Yusuf in copy.</p>
+        <p className="mt-2 text-sm text-gray-600">The general link is for anyone else (a colleague the email was forwarded to). Its answers wait under Form answers until you say which {campaign.one} they belong to.</p>
         <div className="mt-3 flex flex-wrap gap-2">
           <a href="/evaluate" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 rounded-lg border border-gray-300 bg-raised px-3 py-1.5 text-sm font-medium text-gray-900 hover:border-gray-400"><ExternalLink className="w-4 h-4" />Open the form</a>
           <button type="button" onClick={copy} className="inline-flex items-center gap-1.5 rounded-lg border border-gray-300 bg-raised px-3 py-1.5 text-sm font-medium text-gray-900 hover:border-gray-400"><Copy className="w-4 h-4" />Copy the general link</button>
-          <a href="/api/admin/universities/export" className="inline-flex items-center gap-1.5 rounded-lg border border-gray-300 bg-raised px-3 py-1.5 text-sm font-medium text-gray-900 hover:border-gray-400"><FileSpreadsheet className="w-4 h-4" />Everything in Excel</a>
+          <a href={`/api/admin/universities/export?c=${campaign.key}`} className="inline-flex items-center gap-1.5 rounded-lg border border-gray-300 bg-raised px-3 py-1.5 text-sm font-medium text-gray-900 hover:border-gray-400"><FileSpreadsheet className="w-4 h-4" />Everything in Excel</a>
         </div>
       </section>
 
       <section className="rounded-xl border border-gray-200 bg-surface p-4">
-        <h2 className="text-sm font-semibold text-gray-900">How a university is closed, step by step</h2>
+        <h2 className="text-sm font-semibold text-gray-900">How a {campaign.one} is closed, step by step</h2>
         <ol className="mt-2 space-y-2.5 text-sm text-gray-600">
           {[
-            ['Email', 'Open the university, read the email, press Send. It goes through Outlook from admin@gennoor.com, with Jalal and Yusuf in copy, and carries the university\'s own form link. No answer after five days: start from "Follow-up".'],
-            ['Reply', 'When someone writes back, the university turns to Replied and shows at the top. Answer from Outlook, then press "No reply needed".'],
-            ['Evaluation', 'They choose courses in the form, and their answer fills in the evaluation by itself. Give their faculty access in the Learning Studio, put the date on the evaluation, and send "Access is ready" within 24 hours.'],
-            ['Debrief call', 'Five to seven days later, send "Ask for the call", then book it from the university\'s Overview: it makes the Teams meeting and invites everyone.'],
+            ['Email', 'Open the {campaign.one}, read the email, press Send. It goes through Outlook from admin@gennoor.com, with Jalal and Yusuf in copy, and carries its own form link. No answer after five days: start from "Follow-up".'],
+            ['Reply', 'When someone writes back, it turns to Replied and shows at the top. Answer from Outlook, then press "No reply needed".'],
+            ['Evaluation', 'They choose courses in the form, and their answer fills in the evaluation by itself. Give them access in the Learning Studio, put the date on the evaluation, and send "Access is ready" within 24 hours.'],
+            ['Debrief call', 'Five to seven days later, send "Ask for the call", then book it from its Overview: it makes the Teams meeting and invites everyone.'],
             ['Pilot', 'A student cohort pilot, or a white-label LMS sandbox.'],
             ['Partner or closed', 'Set the stage. Closing asks for a reason, so it is remembered.'],
           ].map(([t, d], i) => (
@@ -308,7 +312,7 @@ function SetupTab() {
       </section>
 
       <section className="rounded-xl border border-gray-200 bg-surface p-4">
-        <h2 className="text-sm font-semibold text-gray-900">The courses a university may evaluate</h2>
+        <h2 className="text-sm font-semibold text-gray-900">The courses they may evaluate</h2>
         <ul className="mt-2 divide-y divide-gray-100 text-sm">
           {UNI_COURSES.map((c) => (
             <li key={c.id} className="py-1.5 flex justify-between gap-3"><span className="text-gray-900">{c.title}</span><span className="text-xs text-gray-500 whitespace-nowrap">{c.track} · {c.level} · {c.scope}</span></li>
@@ -316,7 +320,7 @@ function SetupTab() {
         </ul>
       </section>
 
-      <section className="rounded-xl border border-gray-200 bg-surface p-4">
+      {countries.length > 0 && <section className="rounded-xl border border-gray-200 bg-surface p-4">
         <h2 className="text-sm font-semibold text-gray-900">Markets</h2>
         <div className="mt-2 max-h-72 overflow-y-auto">
           <table className="w-full text-sm">
@@ -331,7 +335,7 @@ function SetupTab() {
             </tbody>
           </table>
         </div>
-      </section>
+      </section>}
     </div>
   )
 }

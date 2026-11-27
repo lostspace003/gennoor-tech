@@ -9,6 +9,8 @@ const FORM_TOKEN = '{{FORM_URL}}'
 
 export const INTRO = 'I lead Gennoor Tech, a team of Microsoft Certified Trainers and Claude-certified trainers. We help universities add hands-on AI courses to their certification and employability tracks.'
 export const OFFER = `Before any commercial conversation, we would like your faculty to judge the training for themselves. Up to two representatives get complimentary full access to the courses they choose, here: ${FORM_TOKEN}`
+export const INTRO_BUSINESS = 'I lead Gennoor Tech, a team of Microsoft Certified Trainers and Claude-certified trainers. We help teams learn AI by doing, with hands-on courses built around the work they already do.'
+export const OFFER_BUSINESS = `Before any commercial conversation, we would like your team to judge the training for themselves. Up to two people get complimentary full access to the courses they choose, here: ${FORM_TOKEN}`
 export const SIGN = 'Warm regards,\nJalal Khan | Founder, Gennoor Tech | admin@gennoor.com'
 const FALLBACK_QUESTION = 'Would you or a colleague be open to a brief 20-minute call next week?'
 
@@ -42,7 +44,7 @@ function sentences(p: string): string[] {
  * The toolkit's email made short. `body` is the toolkit's (or the master's) text. What is about the university is kept
  * word for word; what was about us is replaced by INTRO and the blocks; the question they are asked is kept.
  */
-export function shortFirstEmail(body: string, id = ''): string {
+export function shortFirstEmail(body: string, id = '', audience: 'academic' | 'business' = 'academic'): string {
   const own = OWN[id] || {}
   const paras = body.replace(/\r\n?/g, '\n').split(/\n{2,}/).map((p) => p.trim()).filter(Boolean)
   const greeting = /^dear\b/i.test(paras[0] || '') ? paras.shift() as string : 'Dear colleagues,'
@@ -61,5 +63,6 @@ export function shortFirstEmail(body: string, id = ''): string {
     }
     if (hook.length) break
   }
-  return [greeting, own.hook || hook.join(' ') || '[One sentence about their work]', INTRO, OFFER, own.ask || question, SIGN].join('\n\n')
+  const biz = audience === 'business'
+  return [greeting, own.hook || hook.join(' ') || '[One sentence about their work]', biz ? INTRO_BUSINESS : INTRO, biz ? OFFER_BUSINESS : OFFER, own.ask || question, SIGN].join('\n\n')
 }

@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server'
+import { campaignByKey, campaignOfId, type CampaignKey } from '@/data/partnership-campaigns'
 import { requireCampaignUser } from '@/lib/crm/universities-access'
 import { getUniversities, mutateUniversities, note } from '@/lib/crm/universities-store'
 import { CAMPAIGN_CC, cleanEmails, oneLineText, UNI_STAGE_LABELS } from '@/lib/crm/universities-types'
@@ -8,7 +9,7 @@ import { createTeamsMeeting, graphConfigured } from '@/lib/crm/graph'
 // and Jalal and Yusuf invited. Microsoft sends the invitations. The browser sends which university, when, how long and
 // whom; every address is checked again here, and the university's own stage and date are set by this address only.
 
-const idOk = (v: unknown): v is string => typeof v === 'string' && /^GEN-\d{3}$/.test(v)
+const idOk = (v: unknown): v is string => campaignOfId(v) !== null
 const DAY_MS = 86_400_000
 
 /** A Teams link is kept only when it is one: read as a link, https, on Microsoft's Teams host. */
@@ -31,9 +32,10 @@ export async function POST(request: Request) {
     if (typeof day !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(day)) return NextResponse.json({ error: 'The day of the call is not a date.' }, { status: 400 })
     const length = [20, 30, 45, 60].includes(Number(minutes)) ? Number(minutes) : 30
     const people = cleanEmails(attendees, 8)
-    if (!people || !people.length) return NextResponse.json({ error: 'Choose at least one person at the university to invite.' }, { status: 400 })
+    if (!people || !people.length) return NextResponse.json({ error: 'Choose at least one person to invite.' }, { status: 400 })
 
-    const doc = await getUniversities()
+    const campaign = campaignOfId(id) as NonNullable<ReturnType<typeof campaignOfId>>
+    const doc = await getUniversities(campaign.key)
     const u = doc.universities.find((x) => x.id === id)
     if (!u) return NextResponse.json({ error: 'That university is not in the list' }, { status: 404 })
 
@@ -43,7 +45,7 @@ export async function POST(request: Request) {
       attendees: [...new Set([...people, ...CAMPAIGN_CC])].map((email) => ({ email })),
       start: new Date(at).toISOString(),
       durationMinutes: length,
-      agenda: '<p>A short call to hear what your faculty thought of the courses, and to talk about what would suit your students.</p><p>Jalal Khan, Gennoor Tech</p>',
+      agenda: `<p>A short call to hear what your ${campaign.audience === 'business' ? 'team' : 'faculty'} thought of the courses, and to talk about what would suit your ${campaign.audience === 'business' ? 'people' : 'students'}.</p><p>Jalal Khan, Gennoor Tech</p>`,
     })
     const link = teamsLink(meeting.joinUrl)
 
@@ -58,7 +60,7 @@ export async function POST(request: Request) {
       }
       note(x, user.email, 'call', `Teams call booked for ${day}, ${length} minutes, with ${people.join(', ')}`)
       return x
-    })
+    }, campaign.key)
     return NextResponse.json({ university: saved, message: `The Teams call is booked for ${day}. Invitations went to ${people.join(', ')} and to Jalal and Yusuf.` })
   } catch (error: any) {
     console.error('University meeting error:', String(error?.message || error).slice(0, 200))

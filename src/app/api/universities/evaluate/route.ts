@@ -4,7 +4,8 @@ import { rateLimit, clientIp } from '@/lib/rate-limit'
 import { escapeHtml } from '@/lib/escape-html'
 import { emailDetails, emailShell } from '@/lib/crm/email-theme'
 import { graphConfigured, sendFromOutlook } from '@/lib/crm/graph'
-import { mutateUniversities, note } from '@/lib/crm/universities-store'
+import { mutateUniversities, note, universityByFormKey } from '@/lib/crm/universities-store'
+import { type CampaignKey } from '@/data/partnership-campaigns'
 import { accessRows, codesFor, courseChoices } from '@/lib/complimentary'
 import {
   CAMPAIGN_CC, CAMPAIGN_FROM, FORM_KEY, UNI_AREAS, UNI_COURSES, UNI_WALKTHROUGH,
@@ -41,6 +42,9 @@ export async function POST(request: Request) {
     // Two evaluation codes, made before the answer is kept, so the answer names them (owner, 27 November 2026)
     answer.coupons = await codesFor(answer.courses, answer.reps.length, `${EVALUATION_NOTE} · ${answer.institution.slice(0, 80)} · ${key ? 'own link' : 'general link'}`).catch((e) => { console.error('Evaluation codes failed:', String(e?.message || e).slice(0, 160)); return {} })
 
+    // Which campaign the link belongs to is found from its key, never from anything typed
+    const owner = key ? await universityByFormKey(key).catch(() => null) : null
+    const campaign: CampaignKey = owner?.campaign || 'universities'
     const uni = await mutateUniversities((doc) => {
       const u = key ? doc.universities.find((x) => x.formKey === key) : undefined
       if (!u) {
@@ -51,10 +55,10 @@ export async function POST(request: Request) {
       applyFormAnswer(u, answer)
       note(u, 'form', 'form', `${answer.reps[0].name} answered the evaluation form: ${answer.courses.length} course${answer.courses.length === 1 ? '' : 's'}`, now)
       return { id: u.id, name: u.name }
-    })
+    }, campaign)
 
     if (graphConfigured()) {
-      await tellTheTeam(answer, uni).catch((e) => console.error('Evaluation form email failed:', String(e?.message || e).slice(0, 160)))
+      await tellTheTeam(answer, uni, campaign).catch((e) => console.error('Evaluation form email failed:', String(e?.message || e).slice(0, 160)))
       const sent = await accessIsReady(answer, live).then(() => true).catch((e) => { console.error('Access email failed:', String(e?.message || e).slice(0, 160)); return false })
       if (uni) await mutateUniversities((doc) => {
         const u = doc.universities.find((x) => x.id === uni.id)
@@ -66,7 +70,7 @@ export async function POST(request: Request) {
           if (u.stage === 'new' || u.stage === 'emailed' || u.stage === 'replied') u.stage = 'evaluating'
         }
         note(u, 'form', 'email', sent ? `Access is ready, sent with codes ${Object.values(answer.coupons || {}).join(' and ')}` : 'The access email could not be sent: send it from the Email tab', at)
-      })
+      }, campaign)
     }
     return NextResponse.json({ success: true })
   } catch (error) {
@@ -77,11 +81,11 @@ export async function POST(request: Request) {
 
 const courseTitle = (id: string) => UNI_COURSES.find((c) => c.id === id)?.title || id
 
-function tellTheTeam(a: UniFormAnswer, uni: { id: string; name: string } | null) {
-  const crm = uni ? `https://www.gennoor.com/crm/universities/${uni.id}` : 'https://www.gennoor.com/crm/universities'
+function tellTheTeam(a: UniFormAnswer, uni: { id: string; name: string } | null, campaign: CampaignKey) {
+  const crm = uni ? `https://www.gennoor.com/crm/partnerships/${campaign}/${uni.id}` : `https://www.gennoor.com/crm/partnerships/${campaign}`
   const html = emailShell(
     `<h2 style="margin:0 0 8px;font-size:20px;color:#0f172a">${uni ? `${escapeHtml(uni.name)} answered the evaluation form` : 'An answer came through the general form link'}</h2>
-     <p style="margin:0 0 4px;color:#475569">${uni ? 'It is on the university\'s page in the CRM, and its courses are on the evaluation.' : 'It is in the CRM under Universities, Setup, waiting to be put on its university.'} <a href="${crm}" style="color:#2563EB">Open the CRM</a></p>
+     <p style="margin:0 0 4px;color:#475569">${uni ? 'It is on the university\'s page in the CRM, and its courses are on the evaluation.' : 'It is in the CRM under Partnerships, Setup, waiting to be put on its entry.'} <a href="${crm}" style="color:#2563EB">Open the CRM</a></p>
      ${emailDetails('The answer', [
        ['University', a.institution], ['Country and city', a.place], ['Department', a.department],
        ['Representative', `${a.reps[0].name}, ${a.reps[0].title} (${a.reps[0].email})`],

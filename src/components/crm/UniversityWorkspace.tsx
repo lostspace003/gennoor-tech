@@ -9,6 +9,7 @@ import {
   type University, type UniStage,
 } from '@/lib/crm/universities-types'
 import { nextStep, daysSinceFirstEmail } from '@/lib/crm/universities-stats'
+import { campaignOfId, entryPath, type Campaign } from '@/data/partnership-campaigns'
 import { campaignEmailHtml, campaignEmailPage } from '@/lib/crm/universities-email'
 import { teamMember } from '@/lib/crm/team'
 import { CRM_USERS } from '@/lib/crm/users'
@@ -32,24 +33,26 @@ export default function UniversityWorkspace({ id }: { id: string }) {
   const { notify, ask, userEmail, isManager } = useCrm()
   const search = useSearchParams()
   const asked = search.get('tab')
+  // Which campaign this is comes from the id's three letters (GEN, PUN, ENT ...), never from anywhere else
+  const campaign = campaignOfId(id) as Campaign
   const [unis, setUnis] = useState<University[] | null>(null)
   const [error, setError] = useState('')
   const [tab, setTab] = useState<PanelTab>(isTab(asked) ? asked : 'email')
 
   const load = useCallback(async () => {
     try {
-      const d = await api<{ universities: University[] }>('/api/admin/universities', { cache: 'no-store' })
+      const d = await api<{ universities: University[] }>(`/api/admin/universities?c=${campaign.key}`, { cache: 'no-store' })
       setUnis(d.universities); setError('')
     } catch (e: any) { setError(e.message) }
-  }, [])
+  }, [campaign.key])
   useEffect(() => { load() }, [load])
 
   if (error && !unis) return <div className="p-6"><p className="rounded-lg bg-red-50 text-red-700 text-sm px-3 py-2">{error}</p></div>
-  if (!unis) return <p className="p-6 text-sm text-gray-500">Reading the university…</p>
+  if (!unis) return <p className="p-6 text-sm text-gray-500">Reading…</p>
   const list = [...unis].sort((a, b) => a.wave - b.wave || a.id.localeCompare(b.id))
   const at = list.findIndex((x) => x.id === id)
   const u = list[at]
-  if (!u) return <div className="p-6"><p className="text-sm text-gray-700">That university is not in the list.</p><Link href="/crm/universities" className="text-primary-700 text-sm font-medium hover:underline">Back to the universities</Link></div>
+  if (!u) return <div className="p-6"><p className="text-sm text-gray-700">That one is not in the list.</p><Link href={`/crm/partnerships/${campaign.key}`} className="text-primary-700 text-sm font-medium hover:underline">Back to the list</Link></div>
   const prev = list[at - 1], next = list[at + 1]
   const step = nextStep(u)
   const days = daysSinceFirstEmail(u)
@@ -88,11 +91,11 @@ export default function UniversityWorkspace({ id }: { id: string }) {
   return (
     <div className="p-4 sm:p-6 max-w-4xl">
       <div className="flex items-center justify-between gap-3 text-sm">
-        <Link href="/crm/universities" className="inline-flex items-center gap-1 text-primary-700 font-medium hover:underline"><ArrowLeft className="w-4 h-4" />All universities</Link>
+        <Link href={`/crm/partnerships/${campaign.key}`} className="inline-flex items-center gap-1 text-primary-700 font-medium hover:underline"><ArrowLeft className="w-4 h-4" />All {campaign.many}</Link>
         <span className="flex items-center gap-1">
-          {prev ? <Link href={`/crm/universities/${prev.id}`} title={prev.name} className="p-1.5 rounded-lg hover:bg-gray-50" aria-label={`Previous: ${prev.name}`}><ArrowLeft className="w-4 h-4 text-gray-600" /></Link> : null}
+          {prev ? <Link href={entryPath(prev.id)} title={prev.name} className="p-1.5 rounded-lg hover:bg-gray-50" aria-label={`Previous: ${prev.name}`}><ArrowLeft className="w-4 h-4 text-gray-600" /></Link> : null}
           <span className="text-xs text-gray-500">{at + 1} of {list.length}</span>
-          {next ? <Link href={`/crm/universities/${next.id}`} title={next.name} className="p-1.5 rounded-lg hover:bg-gray-50" aria-label={`Next: ${next.name}`}><ArrowRight className="w-4 h-4 text-gray-600" /></Link> : null}
+          {next ? <Link href={entryPath(next.id)} title={next.name} className="p-1.5 rounded-lg hover:bg-gray-50" aria-label={`Next: ${next.name}`}><ArrowRight className="w-4 h-4 text-gray-600" /></Link> : null}
         </span>
       </div>
 
@@ -152,7 +155,7 @@ export default function UniversityWorkspace({ id }: { id: string }) {
       </div>
 
       <div className="mt-4 rounded-xl border border-gray-200 bg-surface p-4 sm:p-5">
-        {tab === 'email' && <EmailTab key={u.updatedAt} u={u} patch={patch} onSent={load} ask={ask} notify={notify} />}
+        {tab === 'email' && <EmailTab audience={campaign.audience} key={u.updatedAt} u={u} patch={patch} onSent={load} ask={ask} notify={notify} />}
         {tab === 'overview' && <OverviewTab u={u} patch={patch} replace={replace} ask={ask} notify={notify} />}
         {tab === 'contacts' && <ContactsTab u={u} patch={patch} setTab={setTab} />}
         {tab === 'evaluation' && <EvaluationTab u={u} patch={patch} />}
@@ -169,7 +172,7 @@ export default function UniversityWorkspace({ id }: { id: string }) {
 
 type Patcher = (p: Record<string, unknown>, done?: string) => Promise<boolean>
 
-function EmailTab({ u, patch, onSent, ask, notify }: { u: University; patch: Patcher; onSent: () => Promise<void>; ask: ReturnType<typeof useCrm>['ask']; notify: (m: string, e?: boolean) => void }) {
+function EmailTab({ audience, u, patch, onSent, ask, notify }: { audience: Campaign['audience']; u: University; patch: Patcher; onSent: () => Promise<void>; ask: ReturnType<typeof useCrm>['ask']; notify: (m: string, e?: boolean) => void }) {
   const [subject, setSubject] = useState(u.draft.subject)
   const [body, setBody] = useState(u.draft.body)
   const [to, setTo] = useState(u.draft.to.join(', '))
@@ -183,11 +186,11 @@ function EmailTab({ u, patch, onSent, ask, notify }: { u: University; patch: Pat
   const gone = u.emails.some((e) => e.status === 'sent')
   const shownBody = withForm(body, formUrl)
   const signer = teamMember('jalalkhan@gennoor.com')
-  const emailHtml = () => campaignEmailHtml(shownBody, { name: signer.name, email: signer.email, phones: signer.phones }, formUrl)
+  const emailHtml = () => campaignEmailHtml(shownBody, { name: signer.name, email: signer.email, phones: signer.phones }, formUrl, audience)
 
   /** A template is put into the editor; nothing is saved or sent until a person does it. */
   const applyTemplate = async (id: TemplateId) => {
-    const t = templateEmail(id, u)
+    const t = templateEmail(id, u, audience)
     if (body.trim() && body !== u.draft.body) {
       const ok = await ask({ title: 'Replace what is in the editor?', text: 'The words you have changed and not saved will be replaced by the template.', confirm: 'Replace' })
       if (ok === null) return

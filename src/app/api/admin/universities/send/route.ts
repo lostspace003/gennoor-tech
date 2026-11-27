@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server'
+import { campaignByKey, campaignOfId, type CampaignKey } from '@/data/partnership-campaigns'
 import { requireCampaignUser } from '@/lib/crm/universities-access'
 import { getUniversities, mutateUniversities, note, sentThisHour } from '@/lib/crm/universities-store'
 import { CAMPAIGN_CC, CAMPAIGN_FROM, formLinkOf, oneLineText, whyNotReady, withForm, type UniEmail } from '@/lib/crm/universities-types'
@@ -20,9 +21,10 @@ export async function POST(request: Request) {
 
   try {
     const { id, again } = await request.json()
-    if (typeof id !== 'string' || !/^GEN-\d{3}$/.test(id)) return NextResponse.json({ error: 'Which university?' }, { status: 400 })
+    const campaign = campaignOfId(id)
+    if (!campaign) return NextResponse.json({ error: 'Which one?' }, { status: 400 })
 
-    const doc = await getUniversities()
+    const doc = await getUniversities(campaign.key)
     const u = doc.universities.find((x) => x.id === id)
     if (!u) return NextResponse.json({ error: 'That university is not in the list' }, { status: 404 })
 
@@ -34,7 +36,7 @@ export async function POST(request: Request) {
     if (gone && again !== true) {
       return NextResponse.json({ error: 'An email to this university has already gone. Use "Send another" if you mean to write again.', already: true }, { status: 409 })
     }
-    const hour = await sentThisHour(doc.universities)
+    const hour = await sentThisHour(doc.universities, campaign.key)
     if (hour.used >= hour.limit) return NextResponse.json({ error: `The limit of ${hour.limit} emails an hour has been reached for the CRM. Try again a little later.` }, { status: 429 })
 
     // Hold this university while the email is being sent, so a second press cannot send it again.
@@ -44,7 +46,7 @@ export async function POST(request: Request) {
       if (x.sendingSince && Date.now() - Date.parse(x.sendingSince) < SENDING_HOLD_MS) return false
       x.sendingSince = new Date().toISOString()
       return true
-    })
+    }, campaign.key)
     if (!held) return NextResponse.json({ error: 'This email is already being sent. Wait a moment and look again.' }, { status: 409 })
 
     const to = u.draft.to
@@ -53,7 +55,7 @@ export async function POST(request: Request) {
     const subject = oneLineText(withForm(u.draft.subject, formUrl), 200)
     const text = withForm(u.draft.body, formUrl)
     const signer = teamMember(SIGNER)
-    const html = campaignEmailHtml(text, { name: signer.name, email: signer.email, phones: signer.phones }, formUrl)
+    const html = campaignEmailHtml(text, { name: signer.name, email: signer.email, phones: signer.phones }, formUrl, campaign.audience)
 
     // Through Outlook (owner, 27 November 2026): the email sits in admin@'s Sent Items and a reply threads under it.
     let result: { success: true } | { success: false; error: string }
@@ -82,7 +84,7 @@ export async function POST(request: Request) {
       if (ok && x.stage === 'new') x.stage = 'emailed'
       x.sendingSince = undefined
       note(x, user.email, 'email', ok ? `Email sent: ${subject}` : `Email FAILED: ${subject}`, now)
-    })
+    }, campaign.key)
 
     if (!result.success) return NextResponse.json({ error: result.error }, { status: 502 })
     return NextResponse.json({ success: true, done: true, message: `Sent from Outlook (${CAMPAIGN_FROM}) to ${to.join(', ')}, with ${cc.join(' and ')} in copy` })

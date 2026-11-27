@@ -52,5 +52,5 @@ const answer = (uni: string, institution: string): UniFormAnswer => ({ id: uni ?
 applyFormAnswer(by('GEN-001'), answer('GEN-001', 'Prince Sultan University'))
 const unmatched = [{ ...answer('', 'Example Institute of Technology'), reps: [{ name: 'Sam Example', title: 'Head of Digital Learning', email: 'sam@eit.example' }] }]
 
-writeFileSync(out, JSON.stringify({ '/api/admin/universities': { universities: unis, unmatched, hour: { used: 11, limit: 60 } } }))
+writeFileSync(out, JSON.stringify({ '/api/admin/universities': { universities: unis, unmatched, hour: { used: 11, limit: 60 } }, '/api/admin/universities/coupons': { codes: [], totals: { issued: 0, used: 0, enrolments: 0, started: 0, completed: 0 } } }))
 console.log(`written: ${out}`)

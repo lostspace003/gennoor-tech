@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server'
+import { campaignByKey, campaignOfId, type CampaignKey } from '@/data/partnership-campaigns'
 import * as XLSX from 'xlsx'
 import { requireCampaignUser } from '@/lib/crm/universities-access'
 import { getUniversities } from '@/lib/crm/universities-store'
@@ -14,11 +15,13 @@ const safe = (v: unknown): string => {
 }
 const day = (iso: string) => (iso ? iso.slice(0, 10) : '')
 
-export async function GET() {
+export async function GET(request: Request) {
   const user = await requireCampaignUser()
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   try {
-    const { universities } = await getUniversities()
+    const campaign = campaignByKey(new URL(request.url).searchParams.get('c') || 'universities')
+    if (!campaign) return NextResponse.json({ error: 'Which campaign?' }, { status: 400 })
+    const { universities } = await getUniversities(campaign.key)
     const courseName = (id: string) => UNI_COURSES.find((c) => c.id === id)?.title || id
 
     const unis = [
@@ -48,7 +51,7 @@ export async function GET() {
     return new NextResponse(new Uint8Array(buffer), {
       headers: {
         'Content-Type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-        'Content-Disposition': `attachment; filename="gennoor-university-partnership-${new Date().toISOString().slice(0, 10)}.xlsx"`,
+        'Content-Disposition': `attachment; filename="gennoor-${campaign.key}-partnership-${new Date().toISOString().slice(0, 10)}.xlsx"`,
         'Cache-Control': 'no-store',
       },
     })

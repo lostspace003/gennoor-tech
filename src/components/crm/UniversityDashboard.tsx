@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { ArrowRight, CalendarDays, ClipboardCheck, Mail, MessageSquareReply, Timer, Trophy } from 'lucide-react'
 import { campaignStats } from '@/lib/crm/universities-stats'
 import { UNI_STAGES, UNI_STAGE_LABELS, type University } from '@/lib/crm/universities-types'
+import { entryPath } from '@/data/partnership-campaigns'
 import { STAGE_DOT } from './university-shared'
 import { api } from './shared'
 
@@ -17,7 +18,7 @@ import { api } from './shared'
 
 const dayWord = (iso: string) => new Date(`${iso}T00:00:00Z`).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', timeZone: 'UTC' })
 
-export default function UniversityDashboard({ unis, unmatched }: { unis: University[]; unmatched: number }) {
+export default function UniversityDashboard({ unis, unmatched, one = 'university' }: { unis: University[]; unmatched: number; one?: string }) {
   const s = useMemo(() => campaignStats(unis, Date.now(), unmatched), [unis, unmatched])
   const top = Math.max(1, s.funnel[0].count)
   const maxDay = Math.max(1, ...s.perDay.map((d) => d.sent))
@@ -26,7 +27,7 @@ export default function UniversityDashboard({ unis, unmatched }: { unis: Univers
   const tiles = [
     { Icon: Mail, label: 'emails sent', value: s.emailsSent, note: s.failed ? `${s.failed} did not go` : `${s.readyToSend} ready to send` },
     { Icon: MessageSquareReply, label: 'reply rate', value: `${s.replyRate}%`, note: `${s.replied} of ${s.funnel[1].count} emailed` },
-    { Icon: ClipboardCheck, label: 'form answers', value: s.formAnswers, note: s.unmatched ? `${s.unmatched} to put on a university` : 'courses chosen in the form' },
+    { Icon: ClipboardCheck, label: 'form answers', value: s.formAnswers, note: s.unmatched ? `${s.unmatched} to put on its ${one}` : 'courses chosen in the form' },
     { Icon: Timer, label: 'days to a first reply', value: s.medianReplyDays === null ? '–' : String(s.medianReplyDays), note: s.medianReplyDays === null ? 'no reply yet' : 'the middle one' },
     { Icon: CalendarDays, label: 'calls booked', value: s.funnel[4].count, note: s.upcomingCalls.length ? `${s.upcomingCalls.length} still to come` : 'none coming up' },
     { Icon: Trophy, label: 'partners', value: s.stages.partner, note: `${s.stages.closed} closed` },
@@ -48,7 +49,7 @@ export default function UniversityDashboard({ unis, unmatched }: { unis: Univers
       <div className="grid lg:grid-cols-3 gap-4">
         <section className="lg:col-span-2 rounded-xl border border-gray-200 bg-surface p-4">
           <h2 className="text-sm font-semibold text-gray-900">From the first email to a partnership</h2>
-          <p className="text-xs text-gray-500">How far each university has ever got, whatever it is doing now.</p>
+          <p className="text-xs text-gray-500">How far each {one} has ever got, whatever it is doing now.</p>
           <ol className="mt-3 space-y-2">
             {s.funnel.map((f, i) => {
               const prev = i > 0 ? s.funnel[i - 1].count : 0
@@ -85,7 +86,7 @@ export default function UniversityDashboard({ unis, unmatched }: { unis: Univers
           <ul className="mt-2 divide-y divide-gray-100">
             {s.attention.slice(0, 10).map((a) => (
               <li key={a.id}>
-                <Link href={`/crm/universities/${a.id}?tab=${a.tab}`} className="flex items-start justify-between gap-3 py-2 group">
+                <Link href={`${entryPath(a.id)}?tab=${a.tab}`} className="flex items-start justify-between gap-3 py-2 group">
                   <span className="min-w-0"><span className="block text-sm font-medium text-gray-900 truncate">{a.name}</span><span className="block text-xs text-gray-600">{a.text}</span></span>
                   <ArrowRight className="w-4 h-4 mt-1 shrink-0 text-gray-400 group-hover:text-primary-600" />
                 </Link>
@@ -131,7 +132,7 @@ export default function UniversityDashboard({ unis, unmatched }: { unis: Univers
           {s.upcomingCalls.length === 0 && <p className="mt-2 text-sm text-gray-500">No call is booked.</p>}
           <ul className="mt-2 divide-y divide-gray-100">
             {s.upcomingCalls.map((c) => (
-              <li key={c.id}><Link href={`/crm/universities/${c.id}?tab=overview`} className="flex justify-between gap-3 py-2 text-sm hover:text-primary-700"><span className="text-gray-900 truncate">{c.name}</span><span className="text-gray-500 whitespace-nowrap">{dayWord(c.on)}</span></Link></li>
+              <li key={c.id}><Link href={`${entryPath(c.id)}?tab=overview`} className="flex justify-between gap-3 py-2 text-sm hover:text-primary-700"><span className="text-gray-900 truncate">{c.name}</span><span className="text-gray-500 whitespace-nowrap">{dayWord(c.on)}</span></Link></li>
             ))}
           </ul>
           <h2 className="mt-5 text-sm font-semibold text-gray-900">Courses they chose to evaluate</h2>
@@ -166,7 +167,7 @@ function EvaluationCodes() {
   return (
     <section className="rounded-xl border border-gray-200 bg-surface p-4">
       <h2 className="text-sm font-semibold text-gray-900">Evaluation codes and learners</h2>
-      <p className="text-xs text-gray-500">Two codes are made when a university submits the form, and sent with "Access is ready". Progress is read from the Learning Studio.</p>
+      <p className="text-xs text-gray-500">Two codes are made when someone submits the form, and sent with "Access is ready". Progress is read from the Learning Studio.</p>
       {error && <p className="mt-2 text-sm text-red-700">{error}</p>}
       {!d && !error && <p className="mt-3 text-sm text-gray-500">Reading the codes…</p>}
       {d && (
@@ -182,7 +183,7 @@ function EvaluationCodes() {
                   {d.codes.map((c) => (c.learners.length ? c.learners : [null]).map((l, i) => (
                     <tr key={`${c.code}-${i}`} className="border-b border-gray-100 last:border-0 align-top">
                       <td className="py-2 pr-3 font-mono text-xs text-gray-900">{i === 0 ? c.code : ''}</td>
-                      <td className="py-2 pr-3 text-gray-900">{i === 0 ? (c.uni ? <Link href={`/crm/universities/${c.uni}`} className="hover:text-primary-700">{c.institution}</Link> : c.institution) : ''}</td>
+                      <td className="py-2 pr-3 text-gray-900">{i === 0 ? (c.uni ? <Link href={entryPath(c.uni)} className="hover:text-primary-700">{c.institution}</Link> : c.institution) : ''}</td>
                       <td className="py-2 pr-3 text-gray-700">{l ? <>{l.email}<span className="block text-xs text-gray-500">{l.course}</span></> : <span className="text-gray-500">Not used yet</span>}</td>
                       <td className="py-2 min-w-[140px]">{l && <><span className="block h-2 rounded bg-gray-100 overflow-hidden"><span className="block h-full bg-primary-500" style={{ width: `${l.percent}%` }} /></span><span className="text-xs text-gray-500">{l.done} of {l.total || '?'} lessons · {l.percent}%</span></>}</td>
                     </tr>

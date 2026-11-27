@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server'
+import { campaignByKey, campaignOfId, type CampaignKey } from '@/data/partnership-campaigns'
 import { requireCampaignUser } from '@/lib/crm/universities-access'
 import { getUniversities, mutateUniversities, note } from '@/lib/crm/universities-store'
 import { replyOwner, type UniReply } from '@/lib/crm/universities-types'
@@ -11,11 +12,14 @@ import { emailSendState } from '@/lib/email-service'
 
 const MAX_ASKS = 6 // Azure allows the whole site about 200 questions an hour (docs/CRM.md, section 6)
 
-export async function POST() {
+export async function POST(request: Request) {
   const user = await requireCampaignUser()
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   try {
-    const doc = await getUniversities()
+    const body = await request.json().catch(() => ({}))
+    const campaign = campaignByKey(body?.campaign || 'universities')
+    if (!campaign) return NextResponse.json({ error: 'Which campaign?' }, { status: 400 })
+    const doc = await getUniversities(campaign.key)
     const anySent = doc.universities.some((u) => u.emails.some((e) => e.status === 'sent'))
     if (!anySent) return NextResponse.json({ confirmed: 0, failed: 0, replies: 0, note: '' })
 
@@ -69,7 +73,7 @@ export async function POST() {
         replies++
       }
       return { confirmed, failed, replies }
-    })
+    }, campaign.key)
     return NextResponse.json({ ...result, note: unread ? 'Some mailboxes could not be read just now, so a reply may be missing. Check again in a few minutes.' : '' })
   } catch (error) {
     console.error('University check error:', error)
