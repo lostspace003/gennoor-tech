@@ -30,7 +30,7 @@ const STEPS = 24 // two frames a dot
 const ground = `data:image/png;base64,${readFileSync(PNG).toString('base64')}`
 function frame(t) {
   // t from 0 to 1 travels the ring once; each dot swells as the wave passes, and the wave is soft (three dots wide)
-  const dots = ARC.map((p, i) => {
+  const dots = t < 0 ? '' : ARC.map((p, i) => {
     const d = Math.min(Math.abs(t * ARC.length - i), ARC.length - Math.abs(t * ARC.length - i))
     const s = Math.max(0, 1 - d / 1.6)
     if (!s) return ''
@@ -66,5 +66,5 @@ try {
 writeFileSync(path.join(WORK, 'list.txt'), list.join('\n'))
 // Half size is what an email shows (600 wide); twice that keeps it sharp on a phone, so the full 1200 is kept
 execFileSync(FFMPEG, ['-y', '-loglevel', 'error', '-f', 'concat', '-safe', '0', '-i', path.join(WORK, 'list.txt'), '-fps_mode', 'vfr',
-  '-vf', 'split[a][b];[a]palettegen=max_colors=64:stats_mode=diff[p];[b][p]paletteuse=dither=bayer:bayer_scale=4:diff_mode=rectangle', '-loop', '0', OUT])
+  '-vf', 'split[a][b];[a]palettegen=max_colors=64:stats_mode=diff[p];[b][p]paletteuse=dither=bayer:bayer_scale=4', '-gifflags', '-offsetting-transdiff', '-loop', '0', OUT])
 console.log(`public/email/header.gif  ${(statSync(OUT).size / 1024).toFixed(0)} KB`)
