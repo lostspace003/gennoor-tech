@@ -121,7 +121,7 @@ async function main() {
   ok(a.w.revisions === 2 && a.w.submits.length === 1, 'needs two revisions: both are done, then approved')
   a = auto(); a.w.genVerdict = 'revise'; a.w.reviews = ['revise', 'revise']
   await blogAutoTick(a.deps)
-  ok(a.w.revisions === 2 && a.w.submits.length === 0 && a.store.s.days['2026-11-02'].runs[0].status === 'held' && a.w.alerts.some(x => /held/.test(x)), 'still failing after two revisions: held for you, not published, you are emailed')
+  ok(a.w.revisions === 2 && a.w.submits.length === 1 && a.store.s.days['2026-11-02'].runs[0].status === 'submitted' && !a.w.alerts.some(x => /held/.test(x)), 'still questioned after two revisions: published all the same, and nobody is emailed (owner, 27 November 2026)')
 
   // "They can do posting automatically and also same for blog post" (owner, 20 November 2026): the last look
   let asked = 0
@@ -133,11 +133,11 @@ async function main() {
   a = auto(); a.w.genVerdict = 'revise'; a.w.reviews = ['revise', 'revise']
   a.deps.lastLook = async () => ({ ok: false, notes: ['"our client Acme": a customer of ours is named'] })
   await blogAutoTick(a.deps)
-  ok(a.w.submits.length === 0 && a.store.s.days['2026-11-02'].runs[0].status === 'held' && /customer of ours/.test(a.store.s.days['2026-11-02'].runs[0].reason || '') && a.w.alerts.some(x => /held/.test(x)), 'the last look finds a rule broken: held, the rule is the reason, and you are emailed')
+  ok(a.w.revisions === 3 && a.w.submits.length === 1 && a.store.s.log.some(l => /rewritten once more to fix/.test(l.msg) && /customer of ours/.test(l.msg)) && !a.w.alerts.some(x => /held/.test(x)), 'the last look finds a rule broken: one more rewrite aimed at it, then published, nobody emailed')
   a = auto(); a.w.genVerdict = 'revise'; a.w.reviews = ['revise', 'revise']
   a.deps.lastLook = async () => { throw new Error('400 the model refused') }
   await blogAutoTick(a.deps)
-  ok(a.w.submits.length === 0 && a.store.s.days['2026-11-02'].runs[0].status === 'held', 'the last look cannot be asked: held, as it always was')
+  ok(a.w.submits.length === 1 && a.store.s.days['2026-11-02'].runs[0].status === 'submitted', 'the last look cannot be asked: published all the same')
   a = auto(); a.w.genVerdict = 'revise'; a.w.reviews = ['revise', 'revise']; a.w.text = 'The election outcome will reshape every AI roadmap. '.repeat(30)
   a.deps.lastLook = async () => ({ ok: true, notes: [] })
   await blogAutoTick(a.deps)

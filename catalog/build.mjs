@@ -20,6 +20,7 @@ const puppeteer = require('puppeteer-core')
 const React = require('react')
 const { renderToStaticMarkup } = require('react-dom/server')
 const icons = require('lucide-react')
+const { lineIcon, brandMark } = await import('../scripts/email-art/line-icons.mjs')
 const CHROME = process.env.CHROME || 'C:/Program Files/Google/Chrome/Application/chrome.exe'
 
 // The Gennoor mark, as in scripts/email-art/logo.mjs and src/components/GennoorLogo.tsx
@@ -30,15 +31,18 @@ const LOGO = `<svg class="logo" xmlns="http://www.w3.org/2000/svg" viewBox="8 10
 <text x="128" y="62" font-family="'Plus Jakarta Sans'" font-size="32" font-weight="800" letter-spacing="0.2"><tspan fill="${C.name}">Ge</tspan><tspan fill="${C.ring}">nn</tspan><tspan fill="${C.gold}">oo</tspan><tspan fill="${C.ring}">r</tspan><tspan fill="${C.tech}"> Tech</tspan></text>
 <text x="129.5" y="84" font-family="'Sora'" font-size="10.4" font-weight="600" fill="${C.tag}" letter-spacing="3.1">TRAIN. INNOVATE. BUILD.</text></svg>`
 
+/** A small line icon in the text (its colour and weight come from the page's CSS, svg.mi). */
 function icon(name) {
   const I = icons[name]
   if (!I) throw new Error(`There is no lucide icon called ${name}`)
-  return renderToStaticMarkup(React.createElement(I, { className: 'i', strokeWidth: 1.9 }))
+  return renderToStaticMarkup(React.createElement(I, { className: 'mi' }))
 }
 
 const cpn = readFileSync(path.join(ROOT, 'public', 'cpn', 'cpn-certified-horizontal.svg'))
 const html = readFileSync(path.join(HERE, 'catalogue.html'), 'utf8')
-  .replace(/\{\{icon:(\w+)\}\}/g, (_, n) => icon(n))
+  .replace(/\{\{li:(\w+):(\w+)\}\}/g, (_, n, w) => lineIcon(n, { wash: w }))
+  .replace(/\{\{mi:(\w+)\}\}/g, (_, n) => icon(n))
+  .replace(/\{\{mark:(microsoft|claude)(?::(\d+))?\}\}/g, (_, m, s) => brandMark(m, s ? Number(s) : 13))
   .replace('{{logo}}', LOGO)
   .replace('../public/cpn/cpn-certified-horizontal.svg', `data:image/svg+xml;base64,${cpn.toString('base64')}`)
 

@@ -60,6 +60,13 @@ The skills are in `.claude/skills/`. They are plain Markdown: any tool can read 
    stays on the live site until it is deleted on the server too. The rules, each with what happened, are in
    `docs/SECURITY.md`; `npx tsx scripts/attack-check.ts` must end with ALL OK.
 
+9. **Two scheduled runs a day, nothing more** (owner, 27 November 2026). Everything on a schedule is in
+   `.github/workflows/scheduled.yml`: 10:30 and 19:30 India time. Do not add another scheduled workflow; add a step there.
+   The site's own 15-minute heartbeat (`src/instrumentation.ts`) keeps posts on their times in between. LinkedIn: two
+   posts a day, published without asking. The daily blog publishes what it writes; nothing waits for an email.
+   **The look of what we send** is drawn line icons (`scripts/email-art/line-icons.mjs`), one ink and one blue, the
+   Microsoft and Claude marks where they belong, few words, and the gently moving logo band (`header-motion.mjs`).
+
 ## Commands
 
 ```bash

@@ -19,7 +19,7 @@
 | Honest web fallback + voice rules | `src/app/api/gennoorcare/route.ts` | Live |
 | Adaptive cards | route + `GennoorCare.tsx` | Live |
 | Academy audio boost to 200% | `ChapterAudioControls.tsx` | Live |
-| Monthly re-index (site + leads) | `.github/workflows/site-index.yml` | Scheduled |
+| Monthly re-index (site + leads) | `.github/workflows/scheduled.yml` (morning, 1st of the month) | Scheduled |
 
 **Infrastructure:** 2 vCPU / 4 GiB, min 1 replica, on the pre-existing `cae-gennoor-career` Container Apps environment. Indexes persist to blob (`vector-indexes`), restored on boot. Shared-secret auth on every endpoint.
 
@@ -154,7 +154,7 @@ The duplicate plan (`gennoor-plan-iuya`) hosted only `safar-anbiya.gennoor.com`,
 
 ## 9. Operations
 
-- **Monthly re-index:** `.github/workflows/site-index.yml`, 1st of each month 08:00 IST. Rebuilds the site index, then re-syncs CRM lead vectors. Both authenticate with `CRM_CRON_SECRET`.
+- **Monthly re-index:** the morning run of `.github/workflows/scheduled.yml` on the 1st of each month, 10:30 IST. Rebuilds the site index, then re-syncs CRM lead vectors. Both authenticate with `CRM_CRON_SECRET`.
 - **Manual re-index:** `POST /api/admin/site-index` (manager session or cron secret).
 - **Lead vectors:** `POST /api/admin/leads/vector-sync` (`?full=1` after any model change).
 - **Service health:** `GET /health` on the container — reports loaded models and per-namespace vector counts.

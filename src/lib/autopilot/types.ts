@@ -47,11 +47,11 @@ export const DEFAULT_CONFIG: Config = {
   enabled: true,
   mode: 'auto',
   tz: 'Asia/Kolkata',
-  // Chosen for the audience: India's morning commute and the Gulf morning, lunch, end of the workday plus Europe's
-  // afternoon, and late evening India time = US East Coast morning.
-  weekdaySlots: [{ time: '08:30', kind: 'post' }, { time: '12:30', kind: 'poll' }, { time: '17:30', kind: 'post' }, { time: '20:30', kind: 'post' }],
-  // Weekends: later start, more to read and save.
-  weekendSlots: [{ time: '09:30', kind: 'post' }, { time: '12:30', kind: 'poll' }, { time: '17:00', kind: 'post' }, { time: '20:00', kind: 'post' }],
+  // Two posts a day, published without asking (owner, 27 November 2026: "I'm okay with 2 LinkedIn posts ... not
+  // required to ask for an approval"). India's morning commute and the Gulf morning; the end of the workday plus Europe.
+  weekdaySlots: [{ time: '08:30', kind: 'post' }, { time: '17:30', kind: 'post' }],
+  // Weekends: a later start.
+  weekendSlots: [{ time: '09:30', kind: 'post' }, { time: '17:00', kind: 'post' }],
   targets: { organization: true, member: true },
   staggerMinutes: 45,
   profileMode: 'reshare',

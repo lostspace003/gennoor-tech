@@ -63,7 +63,7 @@ export default function EvaluateForm({ prefill }: { prefill: EvaluatePrefill | n
       <div className="mx-auto max-w-[1080px] px-4 sm:px-6 py-6 lg:py-10">
         <a href="https://gennoor.com" className="block overflow-hidden rounded-2xl border border-gray-200 bg-raised">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/email/header.png" alt="Gennoor Tech: Train. Innovate. Build." width={1200} height={256} className="block w-full h-auto" />
+          <img src="/email/header.gif" alt="Gennoor Tech: Train. Innovate. Build." width={1200} height={256} className="block w-full h-auto" />
         </a>
 
         <div className="mt-6 lg:mt-8 grid gap-6 lg:gap-8 lg:grid-cols-[340px_1fr] items-start">

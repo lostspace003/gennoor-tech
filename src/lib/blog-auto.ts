@@ -168,18 +168,19 @@ export async function blogAutoTick(d: AutoDeps, opts: { force?: boolean } = {}):
           await d.save(s)
         }
         if (!passed) {
-          // "They can do posting automatically and also same for blog post" (owner, 20 November 2026). An article the
-          // reviewer still questions is held only when publishing it would break a rule that matters. A remark about
-          // style lets it go out; what the reviewer still asked for stays in the log on the Blog page.
+          // "Blogs should be automated rather than asking me over an email. Nothing should be skipped" (owner, 27
+          // November 2026). An article the reviewer still questions after its revisions is published as written; what
+          // the reviewer still asked for stays in the log on the Blog page, and nobody is emailed.
           const asked = run.notes
+          // A rule the last look says is broken (a customer named, a price) gets one more rewrite aimed at exactly that
           const look = d.lastLook ? await withRetry(() => d.lastLook!(run.draftId!, asked), { tries: 2, baseMs: 4000, sleep: d.sleep, retryable: isTransient }).catch(() => null) : null
-          if (!look?.ok) {
-            const why = look?.notes.length ? look.notes : asked
-            await hold(`it did not pass review after ${run.revisions} revision${run.revisions === 1 ? '' : 's'}: ${why.slice(0, 2).join(' | ').slice(0, 250)}`)
-            return out
+          if (look && !look.ok && look.notes.length) {
+            await withRetry(() => d.revise(run.draftId!, look.notes), { tries: 2, baseMs: 5000, sleep: d.sleep, retryable: isTransient }).catch(() => null)
+            run.revisions++
+            s.log.push({ at: iso(now), msg: `"${run.topic?.title}" was rewritten once more to fix: ${look.notes.slice(0, 2).join(' | ').slice(0, 200)}` }); s.log = s.log.slice(-100)
           }
-          out.push(`run ${run.n}: the reviewer still asked for changes of style; no rule is broken, so it is published`)
-          s.log.push({ at: iso(now), msg: `"${run.topic?.title}" is published as written: after ${run.revisions} revisions the reviewer still asked for "${asked.slice(0, 2).join(' | ').slice(0, 200)}", and no rule is broken` }); s.log = s.log.slice(-100)
+          out.push(`run ${run.n}: the reviewer still asked for changes after ${run.revisions} revisions; published as written`)
+          s.log.push({ at: iso(now), msg: `"${run.topic?.title}" is published as written: after ${run.revisions} revisions the reviewer still asked for "${asked.slice(0, 2).join(' | ').slice(0, 200)}"` }); s.log = s.log.slice(-100)
         }
         run.step = 'submit'
         await d.save(s)
@@ -190,8 +191,13 @@ export async function blogAutoTick(d: AutoDeps, opts: { force?: boolean } = {}):
         const body = await d.text(run.draftId)
         const hit = mentionsAvoided(body, await d.avoidKeywords())
         if (hit) { await hold(`it mentions "${hit}", which is on the never-post list`); return out }
+        // An article that talks about its own drafting gets one more rewrite to take those words out; then it goes, either way
         const leak = selfTalk(body)
-        if (leak) { await hold(`it talks about its own drafting ("${leak.slice(0, 140)}")`); return out }
+        if (leak) {
+          await withRetry(() => d.revise(run.draftId!, [`Remove every sentence and heading that talks about the article itself, its drafts, its sources or its review (found: "${leak.slice(0, 160)}"). Join the text around it; do not explain what was removed.`]), { tries: 2, baseMs: 5000, sleep: d.sleep, retryable: isTransient }).catch(() => null)
+          const still = selfTalk(await d.text(run.draftId))
+          if (still) { s.log.push({ at: iso(now), msg: `"${run.topic?.title}" still mentions its own drafting ("${still.slice(0, 100)}") and is published as written` }); s.log = s.log.slice(-100) }
+        }
         await d.submit(run.draftId, { autoMerge: cfg.autoMerge, shareToLinkedIn: cfg.shareToLinkedIn })
         run.status = 'submitted'; run.reason = undefined; run.at = iso(d.now())
         s.history.push({ at: iso(now), title: run.topic?.title || '', format: run.topic?.format }); s.history = s.history.slice(-200)

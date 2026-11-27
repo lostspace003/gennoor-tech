@@ -245,12 +245,12 @@ sent. Never open them with real leads in a script.
 
 ## 12. The evening report
 
-One email a day, at 22:15 India time, to Yusuf and Jalal with a copy to admin: what happened today
+One email a day, at 19:30 India time (the evening run of `.github/workflows/scheduled.yml`, owner 27 November 2026: two runs a day), to Yusuf and Jalal with a copy to admin: what happened today
 (emails sent and by whom, emails that did not go, replies, new leads, where every lead stands, AI Weekend
 registrations, payments, website enquiries, learners), with an Excel file of the detail, one tab for each part.
 
 - The counting is ordinary code in `src/lib/daily-report.ts`; no model writes or counts anything.
-- `/api/admin/daily-report` is called by `.github/workflows/daily-report.yml` with the cron secret.
+- `/api/admin/daily-report` is called by the evening run of `.github/workflows/scheduled.yml` with the cron secret.
   `?dry=1` answers with the numbers and sends nothing; `?day=YYYY-MM-DD` is another day.
 - Who gets it: the settings `DAILY_REPORT_TO` and `DAILY_REPORT_CC`, or the two lines at the top of the route.
 - `npx tsx scripts/daily-report-check.ts <folder>` makes the report from made-up people and writes the

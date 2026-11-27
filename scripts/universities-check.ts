@@ -77,7 +77,7 @@ is('every first email has the one line on who we are', all.every((u) => u.draft.
 is('every first-wave email has its own opening, nothing left to write', firsts.every((u) => !unfilled(u.draft.body).length), true)
 is('every email ends with a question and the short sign-off', all.every((u) => /\?\n\nWarm regards,\nJalal Khan \| Founder, Gennoor Tech \| admin@gennoor\.com$/.test(u.draft.body)), true)
 is('a first email is six paragraphs at most', all.every((u) => u.draft.body.split(/\n{2,}/).length <= 6), true)
-is('the courses are seven labelled cards, each once', [...new Set(UNI_COURSES.map((c) => c.code))].every((code) => html.split(`>${code}</td>`).length - 1 === 1), true)
+is('the courses are seven labelled cards, each once', [...new Set(UNI_COURSES.map((c) => c.code))].every((code) => html.split(`>${code}</span>`).length - 1 === 1), true)
 is('the credentials come once, the Claude line once', [html.split('Microsoft Certified Trainers</strong>').length - 1, html.split(CPN_LINE).length - 1], [1, 1])
 
 part('5. What a person may change')

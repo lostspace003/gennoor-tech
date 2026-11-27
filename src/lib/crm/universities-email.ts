@@ -1,4 +1,4 @@
-import { emailButton, emailShell, emailSteps } from './email-theme'
+import { emailButton, emailShell } from './email-theme'
 import { escapeHtml } from '@/lib/escape-html'
 import { INTRO } from '@/data/university-email-copy'
 import { UNI_COURSES, claudeCardAfter } from './universities-types'
@@ -48,45 +48,54 @@ export function campaignEmailHtml(text: string, signer: { name: string; email: s
 const FONT = "'Segoe UI',Arial,sans-serif"
 const label = (t: string) => `<p style="margin:26px 0 12px;font-family:${FONT};font-size:12px;font-weight:700;letter-spacing:1.5px;color:#64748b;text-transform:uppercase">${t}</p>`
 
-/** Colours of a course's family: certification prep blue, projects violet, AI for every role green. */
-const TRACK: Record<string, { ink: string; wash: string; line: string; name: string }> = {
-  'Certification Prep': { ink: '#1d4ed8', wash: '#eef4ff', line: '#d6e4ff', name: 'Certification prep' },
-  Project: { ink: '#6d28d9', wash: '#f4f0ff', line: '#e4dbff', name: 'Hands-on projects' },
-  'Use Case': { ink: '#047857', wash: '#ecfdf5', line: '#cdeedd', name: 'AI for every role' },
+/** The drawn line icons of our emails (scripts/email-art/icons-png.mjs): one calm line on one soft wash. */
+const ICON = (name: string) => `${SITE}/email/line/${name}.png`
+const iconCell = (name: string, size = 44) => `<img src="${ICON(name)}" width="${size}" height="${size}" alt="" style="display:block;border:0"/>`
+const COURSE_ICON: Record<string, string> = {
+  'ai-103': 'course-ai-103', 'ai-500': 'course-ai-500', 'agents-business': 'course-agents', 'fabric-realtime': 'course-fabric',
+  'ai-foundations': 'course-foundations', 'ai-governance': 'course-governance', 'ai-strategy': 'course-strategy',
 }
+const TRACK_NAME: Record<string, string> = { 'Certification Prep': 'Certification prep', Project: 'Hands-on projects', 'Use Case': 'AI for every role' }
+const INK = '#1b2540'
+const INK3 = '#6b7790'
 
 /** Who we are, as three short lines with a mark each: what a reader takes in at a glance. */
 function credentialsHtml(): string {
   const rows = [
-    ['#1d4ed8', '#eef4ff', 'MCT', 'Microsoft Certified Trainers', 'Our team teaches Microsoft\'s official Azure, AI and Fabric curriculum.'],
-    ['#b45309', '#fff7ed', 'AI', 'Claude-certified trainers', 'Certified on Anthropic\'s Claude, for agents and everyday AI work.'],
-    ['#047857', '#ecfdf5', 'LMS', 'An AI-assisted Learning Studio', 'An AI assistant in every lesson. Available white-label for your university.'],
+    ['microsoft', 'Microsoft Certified Trainers', 'Microsoft\'s official Azure, AI, Copilot and Fabric curriculum.'],
+    ['claude', 'Claude-certified trainers', 'Certified on Anthropic\'s Claude, for agents and everyday AI work.'],
+    ['assistant', 'An AI-assisted Learning Studio', 'An AI assistant in every lesson. Available white-label for your university.'],
   ]
-  return `<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="margin:4px 0 14px">${rows.map(([ink, wash, mark, title, line]) => `<tr>
-    <td width="52" valign="top" style="padding:6px 0"><table role="presentation" cellpadding="0" cellspacing="0" border="0"><tr><td width="40" height="40" align="center" valign="middle" bgcolor="${wash}" style="background:${wash};border-radius:10px;font-family:${FONT};font-size:11px;font-weight:800;color:${ink}">${mark}</td></tr></table></td>
-    <td valign="top" style="padding:7px 0 7px 4px;font-family:${FONT};font-size:14.5px;line-height:1.5;color:#475569"><strong style="color:#0f172a;font-size:15px">${title}</strong><br/>${line}</td>
+  return `<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="margin:6px 0 16px">${rows.map(([icon, title, line]) => `<tr>
+    <td width="56" valign="middle" style="padding:5px 0">${iconCell(icon)}</td>
+    <td valign="middle" style="padding:5px 0 5px 6px;font-family:${FONT};font-size:14px;line-height:1.5;color:${INK3}"><strong style="color:${INK};font-size:15px">${title}</strong><br/>${line}</td>
   </tr>`).join('')}</table>`
 }
 
-/** The courses, grouped by family, each with its label tile, its name, one line on why, and its size. */
+/** The courses, grouped by family: a drawn icon, the name and its code, one line on why, and its size. */
 function coursesHtml(): string {
-  const groups = Object.keys(TRACK).map((track) => ({ track, list: UNI_COURSES.filter((c) => c.track === track) }))
-  const cards = groups.map(({ track, list }) => {
-    const t = TRACK[track]
-    return `<p style="margin:16px 0 8px;font-family:${FONT};font-size:13px;font-weight:700;color:${t.ink}">${t.name}</p>` + list.map((c) => `<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="margin:0 0 8px;border:1px solid ${t.line};border-radius:12px"><tr>
-      <td width="78" valign="top" style="padding:14px 0 14px 14px"><table role="presentation" cellpadding="0" cellspacing="0" border="0"><tr><td width="64" height="40" align="center" valign="middle" bgcolor="${t.wash}" style="background:${t.wash};border-radius:9px;font-family:${FONT};font-size:11px;font-weight:800;letter-spacing:0.4px;color:${t.ink}">${escapeHtml(c.code)}</td></tr></table></td>
-      <td valign="top" style="padding:13px 16px 13px 10px;font-family:${FONT}"><strong style="display:block;font-size:15px;line-height:1.4;color:#0f172a">${escapeHtml(c.title.replace(/^AI-\d+:\s*/, ''))}</strong><span style="display:block;margin-top:3px;font-size:14px;line-height:1.5;color:#475569">${escapeHtml(c.why)}</span><span style="display:block;margin-top:5px;font-size:12.5px;color:#64748b">${c.level} · ${c.scope.replace(/\s*\((.+)\)/, ' · $1')}</span></td>
+  const tracks = Object.keys(TRACK_NAME)
+  const cards = tracks.map((track) => {
+    const list = UNI_COURSES.filter((c) => c.track === track)
+    return `<p style="margin:16px 0 6px;font-family:${FONT};font-size:12px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:${INK3}">${TRACK_NAME[track]}</p>` + list.map((c) => `<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="margin:0 0 8px;border:1px solid #e6ebf3;border-radius:14px"><tr>
+      <td width="64" valign="top" style="padding:12px 0 12px 12px">${iconCell(COURSE_ICON[c.id] || 'course-ai-103')}</td>
+      <td valign="top" style="padding:12px 16px 12px 8px;font-family:${FONT}"><strong style="display:block;font-size:15px;line-height:1.35;color:${INK}">${escapeHtml(c.title.replace(/^AI-\d+:\s*/, ''))}</strong><span style="display:block;margin-top:3px;font-size:14px;line-height:1.5;color:#3b4760">${escapeHtml(c.why)}</span><span style="display:block;margin-top:6px;font-size:12px;color:${INK3}"><span style="display:inline-block;padding:1px 7px;border-radius:6px;background:#f1f4f9;color:#3b4760;font-weight:700;letter-spacing:0.3px">${escapeHtml(c.code)}</span>&nbsp; ${c.level} · ${c.scope.replace(/\s*\((.+)\)/, ' · $1')}</span></td>
     </tr></table>`).join('')
   }).join('')
-  return label('What your faculty can evaluate') + `<p style="margin:0 0 4px;font-family:${FONT};font-size:14.5px;line-height:1.6;color:#475569"><strong style="color:#0f172a">Why now:</strong> employers increasingly ask graduates for hands-on AI skills. Every course is built the same way: watch, practise, build, prove.</p>` + cards
+  return label('What your faculty can evaluate') + `<p style="margin:0 0 4px;font-family:${FONT};font-size:14.5px;line-height:1.6;color:#3b4760"><strong style="color:${INK}">Why now:</strong> employers increasingly ask graduates for hands-on AI skills. Every course is built the same way: watch, practise, build, prove.</p>` + cards
 }
 
+/** How the evaluation works: three steps, each with its drawn icon. */
 function evaluationStepsHtml(): string {
-  return emailSteps([
-    { title: 'Choose the courses', body: 'A short form, about two minutes.' },
-    { title: 'Full access within 24 hours', body: 'For up to two faculty or academic representatives.' },
-    { title: 'A 20-minute debrief', body: 'Tell us what your faculty think. No obligation.' },
-  ], 'How the evaluation works')
+  const steps = [
+    ['step-choose', 'Choose the courses', 'A short form, about two minutes.'],
+    ['step-access', 'Full access within 24 hours', 'For up to two faculty or academic representatives.'],
+    ['step-debrief', 'A 20-minute debrief', 'Tell us what your faculty think. No obligation.'],
+  ]
+  return label('How the evaluation works') + `<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">${steps.map(([icon, title, line]) => `<tr>
+    <td width="56" valign="middle" style="padding:5px 0">${iconCell(icon)}</td>
+    <td valign="middle" style="padding:5px 0 5px 6px;font-family:${FONT};font-size:14px;line-height:1.5;color:${INK3}"><strong style="color:${INK};font-size:15px">${title}</strong><br/>${line}</td>
+  </tr>`).join('')}</table>`
 }
 
 // The reading look of a campaign email (owner, 27 November 2026: "justified ... more easier to see on the eyes"):
