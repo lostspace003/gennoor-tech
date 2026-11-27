@@ -51,7 +51,9 @@ const at = (zone, y, mo, d, h, mi = 0, s = 0) => {
   return guess
 }
 const clock = (ms, zone) => { const p = parts(ms, zone); return `${String(p.h).padStart(2, '0')}:${String(p.mi).padStart(2, '0')}${p.s ? `:${String(p.s).padStart(2, '0')}` : ''}` }
-const expected = (ms, zone) => { const h = parts(ms, zone).h; return h >= DAY_FROM && h < DAY_UNTIL ? 'light' : 'dark' }
+// Since 27 November 2026 the public site is light at every hour unless the visitor chooses dark (owner: "default view
+// on website should always be light theme"). A choice of dark still lasts until the next ${FROM} or ${UNTIL}.
+const expected = () => 'light'
 const CLASS = { light: 'day', dark: 'stage' }
 const wait = (ms) => new Promise((r) => setTimeout(r, ms))
 
@@ -154,7 +156,7 @@ try {
     ok(!problem, `${clock(moment, zone)} in ${zone}: ${want}`, problem)
     await c.close()
   }
-  ok(seen.size === 2, 'that moment is day in some of those places and night in others')
+  ok(seen.size === 1 && seen.has('light'), 'that moment is light in every one of those places')
 
   console.log('\nThe edges of the day (India)')
   const Z = 'Asia/Kolkata'
@@ -167,7 +169,7 @@ try {
     ok(!problem, `${clock(now, Z)}: ${want}`, problem)
     await c.close()
   }
-  ok(expected(at(Z, 2026, 11, 14, DAY_FROM - 1, 59, 30), Z) === 'dark' && expected(at(Z, 2026, 11, 14, DAY_FROM), Z) === 'light' && expected(at(Z, 2026, 11, 14, DAY_UNTIL - 1, 59, 30), Z) === 'light' && expected(at(Z, 2026, 11, 14, DAY_UNTIL), Z) === 'dark', 'the four edges are: dark, light, light, dark')
+  ok([DAY_FROM - 1, DAY_FROM, DAY_UNTIL - 1, DAY_UNTIL].every((h) => expected(at(Z, 2026, 11, 14, h), Z) === 'light'), 'the four old edges are all light now')
 
   console.log('\nA choice made with the switch')
   {
@@ -203,15 +205,15 @@ try {
     await press(p, 'Light')
     ok(await until(p, 'light'), 'at 21:00 the visitor presses Light: the page turns light')
     s = await state(p)
-    ok(s.choice === `light|${at(Z, 2026, 11, 15, DAY_FROM)}`, `the choice is kept until ${FROM} the next morning`, `kept as ${s.choice}`)
+    ok(s.choice === null, 'light is what every visitor sees anyway, so nothing is kept', `kept as ${s.choice}`)
     await p.close()
     p = await open(c, { zone: Z, now: at(Z, 2026, 11, 15, 2) })
     problem = steady(await state(p), 'light')
     ok(!problem, 'a page at 02:00 that night: still light, from its first instant', problem)
     await p.close()
     p = await open(c, { zone: Z, now: at(Z, 2026, 11, 15, 19) })
-    problem = steady(await state(p), 'dark')
-    ok(!problem, 'the next evening at 19:00: dark again', problem)
+    problem = steady(await state(p), 'light')
+    ok(!problem, 'the next evening at 19:00: light, as at every hour', problem)
     await c.close()
   }
 
@@ -220,8 +222,8 @@ try {
     const c = await browser.createBrowserContext()
     const p = await open(c, { zone: Z, now: at(Z, 2026, 11, 14, 22), stored: { [OLD_KEY]: 'light' } })
     const s = await state(p)
-    const problem = steady(s, 'dark')
-    ok(!problem, 'an old "light" at 22:00 does not make the page light', problem)
+    const problem = steady(s, 'light')
+    ok(!problem, 'at 22:00 with an old "light" kept: light, as at every hour', problem)
     ok(s.oldChoice === null, 'and the old choice is removed', `still there: ${s.oldChoice}`)
     await c.close()
     const c2 = await browser.createBrowserContext()
@@ -270,26 +272,26 @@ try {
     const order = async (page) => (await state(page)).looks.map((l) => l.look).join(' then ')
     let c = await browser.createBrowserContext()
     let p = await open(c, { zone: Z, now: at(Z, 2026, 11, 14, DAY_UNTIL - 1, 59, 50), ticking: true })
-    const turned = await until(p, 'dark', 40_000)
+    const turned = await until(p, 'dark', 20_000)
     let seenOrder = await order(p)
-    ok(turned && seenOrder === 'day then stage', `opened ten seconds before ${UNTIL}: light, then dark by itself when the clock passes ${UNTIL}, with no reload`, `the page showed ${seenOrder}`)
-    ok((await state(p)).lit === 'dark', 'and the switch follows')
+    ok(!turned && seenOrder === 'day', `opened ten seconds before ${UNTIL}: still light after the clock passes ${UNTIL}`, `the page showed ${seenOrder}`)
+    ok((await state(p)).lit === 'light', 'and the switch shows Light')
     await c.close()
     c = await browser.createBrowserContext()
     p = await open(c, { zone: Z, now: at(Z, 2026, 11, 14, DAY_FROM - 1, 59, 50), ticking: true })
     const lit = await until(p, 'light', 40_000)
     seenOrder = await order(p)
-    ok(lit && seenOrder === 'stage then day', `opened ten seconds before ${FROM}: dark, then light by itself when the clock passes ${FROM}`, `the page showed ${seenOrder}`)
+    ok(lit && seenOrder === 'day', `opened ten seconds before ${FROM}: light from the start`, `the page showed ${seenOrder}`)
     await c.close()
     c = await browser.createBrowserContext()
     p = await open(c, { zone: Z, now: at(Z, 2026, 11, 14, 12) })
     await p.evaluate((ms) => { window.__setNow(ms); document.dispatchEvent(new Event('visibilitychange')) }, at(Z, 2026, 11, 14, 20))
-    ok(await until(p, 'dark'), 'left open at noon and looked at again at 20:00: dark')
+    ok(await until(p, 'light'), 'left open at noon and looked at again at 20:00: still light')
     // a choice made in another tab of the same browser
     const other = await open(c, { zone: Z, now: at(Z, 2026, 11, 14, 20) })
-    await press(other, 'Light')
-    ok(await until(other, 'light'), 'in a second tab the visitor presses Light')
-    ok(await until(p, 'light'), 'the first tab follows that choice without a reload')
+    await press(other, 'Dark')
+    ok(await until(other, 'dark'), 'in a second tab the visitor presses Dark')
+    ok(await until(p, 'dark'), 'the first tab follows that choice without a reload')
     await c.close()
   }
 

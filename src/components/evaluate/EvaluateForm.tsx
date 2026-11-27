@@ -29,6 +29,7 @@ export default function EvaluateForm({ prefill, courses }: { prefill: EvaluatePr
   const [reps, setReps] = useState<Rep[]>([{ ...emptyRep }, { ...emptyRep }])
   const [courses_, setCourses] = useState<string[]>([])
   const [areas, setAreas] = useState<string[]>([])
+  const [other, setOther] = useState('')
   const [walkthrough, setWalkthrough] = useState('')
   const [notes, setNotes] = useState('')
   const [website, setWebsite] = useState('')
@@ -48,7 +49,7 @@ export default function EvaluateForm({ prefill, courses }: { prefill: EvaluatePr
       const res = await fetch('/api/universities/evaluate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ key: prefill?.key || '', institution, place, department, reps, courses: courses_, areas, walkthrough, notes, website }),
+        body: JSON.stringify({ key: prefill?.key || '', institution, place, department, reps, courses: courses_, areas: areas.filter((a) => a !== 'other'), walkthrough, notes: areas[0] === 'other' && other.trim() ? `Other interest: ${other.trim()}${notes.trim() ? `\n\n${notes}` : ''}` : notes, website }),
       })
       const data = await res.json().catch(() => ({}))
       if (!res.ok) { setError(data.error || 'Your answer could not be sent. Please try again.'); return }
@@ -129,13 +130,16 @@ export default function EvaluateForm({ prefill, courses }: { prefill: EvaluatePr
                 </Section>
 
                 <Section n={4} title="What else interests your university" hint="Optional. It helps us prepare the conversation.">
-                  <div className="space-y-2">
-                    {UNI_AREAS.map((a) => (
-                      <label key={a.id} className="flex cursor-pointer items-start gap-3 rounded-lg px-1 py-1.5 text-sm text-gray-900">
-                        <input type="checkbox" checked={areas.includes(a.id)} onChange={() => toggle(areas, setAreas, a.id)} className="mt-0.5 h-4 w-4 shrink-0 accent-primary-600" />{a.label}
-                      </label>
-                    ))}
-                  </div>
+                  <label className={label} htmlFor="area">Area of interest</label>
+                  <select id="area" value={areas[0] || ''} onChange={(e) => setAreas(e.target.value ? [e.target.value] : [])} className={field}>
+                    <option value="">Choose one (optional)</option>
+                    {UNI_AREAS.map((a) => <option key={a.id} value={a.id}>{a.label}</option>)}
+                    <option value="other">Other</option>
+                  </select>
+                  {areas[0] === 'other' && (
+                    <div className="mt-3"><label className={label} htmlFor="area-other">Tell us what interests you</label>
+                      <textarea id="area-other" rows={3} maxLength={500} value={other} onChange={(e) => setOther(e.target.value)} className={field} /></div>
+                  )}
                   <p className="mt-5 mb-2 text-sm font-semibold text-gray-900">After reviewing, would you like a short walkthrough?</p>
                   <div className="space-y-2">
                     {UNI_WALKTHROUGH.map((w) => (
