@@ -3,6 +3,7 @@
 
 import type { EmailRecord } from './types'
 import { shortFirstEmail } from '@/data/university-email-copy'
+import type { Audience } from '@/data/partnership-campaigns'
 
 /** Where a university stands. One axis, like the leads' steps, but its own: this campaign is closed end to end here. */
 export type UniStage = 'new' | 'emailed' | 'replied' | 'evaluating' | 'call' | 'partner' | 'closed'
@@ -323,7 +324,8 @@ export function draftFromMaster(u: Pick<SeedUniversity, 'name' | 'department' | 
   const short = u.name.replace(/\s*\([^)]*\)\s*$/, '')
   const swap = (t: string) => t
     .replace('[Title & Last Name]', name || '[Title & Last Name]')
-    .replace(/\[University Name\]/g, short)
+    .replace(/\[(?:University|Institution|Organization|Organisation|College) Name\]/g, short)
+    .replace('[Name]', name || '[Name]')
     .replace(/\[Department Name\]/g, u.department || '[Department Name]')
     .replace('[Insert Google Form Link]', FORM_TOKEN)
   const to = [primary?.email, ...u.contacts.filter((c) => c !== primary && /^primary/i.test(c.order)).map((c) => c.email)].filter((e): e is string => !!e && isEmail(e))
@@ -332,19 +334,19 @@ export function draftFromMaster(u: Pick<SeedUniversity, 'name' | 'department' | 
 }
 
 /** The first email of a university in its short form (src/data/university-email-copy.ts), its copy list without Jalal and Yusuf. */
-export function shortDraft(s: SeedUniversity, master: MasterEmail): UniDraft {
+export function shortDraft(s: SeedUniversity, master: MasterEmail, audience: Audience = 'academic'): UniDraft {
   const d = s.draft ? { ...s.draft, cc: s.draft.cc.filter((e) => !CAMPAIGN_CC.includes(e)) } : draftFromMaster(s, master)
-  return { ...d, body: shortFirstEmail(d.body, s.id) }
+  return { ...d, body: shortFirstEmail(d.body, s.id, audience) }
 }
 
 /** Turns the seed into a stored university. */
-export function universityFromSeed(s: SeedUniversity, master: MasterEmail, now = new Date().toISOString()): University {
+export function universityFromSeed(s: SeedUniversity, master: MasterEmail, now = new Date().toISOString(), audience: Audience = 'academic'): University {
   const { draft, ...rest } = s
   return {
     ...rest,
     wave: s.priority === 'High' ? 1 : 2,
     stage: 'new',
-    draft: shortDraft(s, master),
+    draft: shortDraft(s, master, audience),
     emails: [], replies: [], formAnswers: [], evaluation: null, callOn: '', notes: '', closedReason: '', activities: [], updatedAt: now,
   }
 }

@@ -1,17 +1,22 @@
 import { NextResponse } from 'next/server'
+import { campaignByKey, campaignOfId, type CampaignKey } from '@/data/partnership-campaigns'
 import { requireCampaignUser } from '@/lib/crm/universities-access'
 import { getUniversities, mutateUniversities, note, sentThisHour } from '@/lib/crm/universities-store'
 import { applyFormAnswer, cleanUniPatch, UNI_STAGE_LABELS } from '@/lib/crm/universities-types'
 import { CRM_USERS } from '@/lib/crm/access'
 
-const idOk = (v: unknown): v is string => typeof v === 'string' && /^GEN-\d{3}$/.test(v)
+const idOk = (v: unknown): v is string => campaignOfId(v) !== null
+const keyOf = (id: string) => (campaignOfId(id) as { key: CampaignKey }).key
 
-export async function GET() {
+export async function GET(request: Request) {
   const user = await requireCampaignUser()
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   try {
-    const doc = await getUniversities()
-    return NextResponse.json({ universities: doc.universities, unmatched: doc.unmatched, hour: await sentThisHour(doc.universities) })
+    // Which campaign: one of ours by its key, never a name that came in
+    const campaign = campaignByKey(new URL(request.url).searchParams.get('c') || 'universities')
+    if (!campaign) return NextResponse.json({ error: 'Which campaign?' }, { status: 400 })
+    const doc = await getUniversities(campaign.key)
+    return NextResponse.json({ universities: doc.universities, unmatched: doc.unmatched, hour: await sentThisHour(doc.universities, campaign.key) })
   } catch (error) {
     console.error('Universities read error:', error)
     return NextResponse.json({ error: 'The universities could not be read' }, { status: 500 })
@@ -42,7 +47,7 @@ export async function PATCH(request: Request) {
       if (p.closedReason !== undefined) u.closedReason = p.closedReason
       u.updatedAt = new Date().toISOString()
       return u
-    })
+    }, keyOf(id))
     if (!found) return NextResponse.json({ error: 'That university is not in the list' }, { status: 404 })
     return NextResponse.json({ university: found })
   } catch (error) {
@@ -83,7 +88,7 @@ export async function POST(request: Request) {
           note(u, user.email, 'owner', `Given to ${to.split('@')[0]}`)
         }
         return { university: u }
-      })
+      }, keyOf(id))
       if ('error' in result) return NextResponse.json({ error: result.error }, { status: result.status })
       return NextResponse.json({ university: result.university })
     }
@@ -97,7 +102,7 @@ export async function POST(request: Request) {
         applyFormAnswer(u, { ...a, uni: u.id })
         note(u, user.email, 'form', `Form answer from ${a.reps[0]?.name || a.institution} put on this university: ${a.courses.length} course${a.courses.length === 1 ? '' : 's'}`)
         return u
-      })
+      }, keyOf(id))
       if (!done) return NextResponse.json({ error: 'That answer or university is no longer there' }, { status: 404 })
       return NextResponse.json({ university: done })
     }
@@ -107,7 +112,7 @@ export async function POST(request: Request) {
       for (const r of u.replies) r.handled = true
       note(u, user.email, 'reply', 'Marked: no reply needed')
       return u
-    })
+    }, keyOf(id))
     if (!found) return NextResponse.json({ error: 'That university is not in the list' }, { status: 404 })
     return NextResponse.json({ university: found })
   } catch (error) {

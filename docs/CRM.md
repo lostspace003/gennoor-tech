@@ -327,6 +327,31 @@ everything for ours"), its answers in the CRM, and that people can pick a univer
   give access, ask for the debrief call, record the outcome) and holds who works it, its email, overview (with "Book the
   Teams call"), contacts, evaluation (the form's answers, the seven courses, two representatives, the dates) and activity.
 
+### One tab, seven campaigns (28 November 2026)
+
+The owner gave six more toolkits (folder `New-Partnerships`) and asked for "everything under a single tab ... multiple
+sub-tabs": the University Partnership Toolkit and the new ones, side by side.
+
+- **Where:** CRM, **Partnerships** (`/crm/partnerships`), one sub-tab for each campaign (`/crm/partnerships/<key>`), one
+  page for each entry (`/crm/partnerships/<key>/<id>`). The old `/crm/universities` addresses redirect.
+- **The campaigns** are listed once, in `src/data/partnership-campaigns.ts`: Global universities (`GEN-`), India
+  universities (`IND-`), Mumbai colleges (`MUM-`), Pune colleges (`PUN-`), Enterprise (`ENT-`), Mid-size corporates
+  (`MID-`) and Government skilling (`GOV-`). Every one is the same engine as above; the three letters of an id say which
+  campaign it belongs to, so an id alone finds its campaign. A key that arrives from outside is only ever read through
+  `campaignByKey`, an id through `campaignOfId` (docs/SECURITY.md).
+- **Storage:** one file for each, in `crm-data`: `universities.json` for the first, `partnerships-<key>.json` for the
+  others. A campaign's file is made from its seed the first time its sub-tab is opened, never again.
+- **The seeds** (`src/data/partnerships/<key>.ts`) are made from the toolkits by `python -I scripts/build-partnership-seeds.py`
+  (workbook for the organisations and contacts, the email console for each first email). Only a campaign's first
+  opening reads them; after that the stored file is the truth, so running the script again changes nothing already opened.
+- **Colleges and universities** (`audience: 'academic'`) speak of faculty and students; **companies and programmes**
+  (`'business'`) of a team. The first email, the email's blocks, the follow-up emails, the meeting invitation and the
+  evaluation form follow it. The form's link finds its campaign from the key (`universityByFormKey` looks through all of them).
+- **The hour's limit** is shared by the leads and every campaign (`sentThisHour`).
+- A first email whose opening sentence the toolkit only described ("Highlight GENNOOR's ...") keeps a square-bracket
+  sentence to write, and will not go until it is written; most of the Enterprise entries have only a supplier portal or
+  LinkedIn, no address, and wait for one under To.
+
 ### The evaluation form (our own page)
 
 - **`/evaluate/<key>`**, one link for each university, made from a 24-character key the store gives it

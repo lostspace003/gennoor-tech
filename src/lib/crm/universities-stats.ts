@@ -50,7 +50,7 @@ export function nextStep(u: University, now = Date.now()): NextStep | null {
       : { text: `Faculty are evaluating (day ${d}). Ask for a call in a few days.`, tab: 'evaluation', urgent: false }
   }
   if (u.stage === 'call') {
-    if (!u.callOn) return { text: 'Put the date of the call on the university.', tab: 'overview', urgent: false }
+    if (!u.callOn) return { text: 'Put the date of the call on this page.', tab: 'overview', urgent: false }
     return Date.parse(`${u.callOn}T23:59:59`) < now
       ? { text: 'The call date has passed. Note how it went, and move it to Partner or Closed.', tab: 'overview', urgent: true }
       : { text: `Call on ${u.callOn}.`, tab: 'overview', urgent: false }

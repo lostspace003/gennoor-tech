@@ -13,6 +13,15 @@ import { campaignStats, nextStep } from '../src/lib/crm/universities-stats'
 import { campaignEmailHtml, campaignEmailPage, CPN_LINE } from '../src/lib/crm/universities-email'
 import { templateEmail } from '../src/data/university-templates'
 import { INTRO } from '../src/data/university-email-copy'
+import { CAMPAIGNS, campaignOfId } from '../src/data/partnership-campaigns'
+import { whyNotReady, FORM_TOKEN, isEmail } from '../src/lib/crm/universities-types'
+import * as indU from '../src/data/partnerships/india-universities'
+import * as mumC from '../src/data/partnerships/mumbai-colleges'
+import * as punC from '../src/data/partnerships/pune-colleges'
+import * as entE from '../src/data/partnerships/enterprise'
+import * as midC from '../src/data/partnerships/mid-size-corporates'
+import * as govS from '../src/data/partnerships/government-skilling'
+const SEEDS: Record<string, { SEED: any[]; MASTER: any }> = { 'india-universities': indU, 'mumbai-colleges': mumC, 'pune-colleges': punC, enterprise: entE, 'mid-size-corporates': midC, 'government-skilling': govS }
 
 let bad = 0
 const is = (what: string, got: unknown, want: unknown) => {
@@ -165,5 +174,19 @@ is('the name and the university are put in', [made.body.startsWith('Dear Dr. Exa
 is('it goes to the primary contact', made.to, ['ada@muu.example'])
 void DAY
 
+part('11. The other campaigns (New-Partnerships)')
+for (const c of CAMPAIGNS.filter((x) => x.key !== 'universities')) {
+  const m = SEEDS[c.key]
+  const entries = (m.SEED as any[]).map((x) => ({ ...universityFromSeed(x, m.MASTER, '2026-11-27T00:00:00Z', c.audience), formKey: KEY }))
+  is(`${c.label}: ${entries.length} entries, every id unique and on its own three letters`, entries.length > 0 && new Set(entries.map((e) => e.id)).size === entries.length && entries.every((e) => campaignOfId(e.id)?.key === c.key), true)
+  is(`${c.label}: every address on an email is an address`, entries.every((e) => e.draft.to.every(isEmail) && e.draft.cc.every(isEmail)), true)
+  is(`${c.label}: every first email carries the form's link`, entries.every((e) => e.draft.body.includes(FORM_TOKEN)), true)
+  const ready = entries.filter((e) => !whyNotReady(e)).length
+  console.log(`     ${ready} of ${entries.length} are ready to send as they stand; the rest wait for an address or a sentence`)
+  const html = campaignEmailHtml(entries[0].draft.body, { name: 'Jalal Khan', email: 'jalalkhan@gennoor.com' }, FORM, c.audience)
+  is(`${c.label}: the email speaks to ${c.audience === 'business' ? 'a team, not faculty' : 'faculty'}`, c.audience === 'business' ? html.includes('your team') && !html.includes('faculty') : html.includes('faculty'), true)
+}
+
 console.log(bad ? `\n${bad} WRONG` : '\nALL OK')
 process.exit(bad ? 1 : 0)
+

@@ -2,6 +2,7 @@ import { pageMeta } from '@/lib/seo'
 import { courseChoices } from '@/lib/complimentary'
 import EvaluateForm, { type EvaluatePrefill } from '@/components/evaluate/EvaluateForm'
 import { universityByFormKey } from '@/lib/crm/universities-store'
+import { campaignByKey } from '@/data/partnership-campaigns'
 import { FORM_KEY } from '@/lib/crm/universities-types'
 
 export const dynamic = 'force-dynamic'
@@ -19,7 +20,7 @@ export default async function EvaluateForUniversity({ params }: { params: Promis
   let prefill: EvaluatePrefill | null = null
   if (FORM_KEY.test(key)) {
     const u = await universityByFormKey(key).catch(() => null)
-    if (u) prefill = { key, institution: u.name, place: [u.country, u.city].filter(Boolean).join(', '), department: u.department }
+    if (u) prefill = { key, institution: u.name, place: [u.country, u.city].filter(Boolean).join(', '), department: u.department, audience: campaignByKey(u.campaign)?.audience }
   }
   // An unknown key shows the general form: nothing tells a stranger which keys exist.
   return <EvaluateForm prefill={prefill} courses={await courseChoices().catch(() => [])} />

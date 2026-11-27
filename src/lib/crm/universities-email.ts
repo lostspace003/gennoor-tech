@@ -1,6 +1,7 @@
 import { emailButton, emailShell } from './email-theme'
 import { escapeHtml } from '@/lib/escape-html'
-import { INTRO } from '@/data/university-email-copy'
+import { INTRO, INTRO_BUSINESS } from '@/data/university-email-copy'
+import type { Audience } from '@/data/partnership-campaigns'
 import { UNI_COURSES, claudeCardAfter } from './universities-types'
 
 // The email of the University Partnership campaign, in the site's own email look (./email-theme.ts). The words are
@@ -27,14 +28,15 @@ export function partnerCardHtml(): string {
  * "Choose your courses" button under the paragraph that holds the form's link, the usual light top and foot.
  * `formUrl` is the university's own link, made by `formLinkOf`. The CRM's preview and "Open as a page" draw this same HTML.
  */
-export function campaignEmailHtml(text: string, signer: { name: string; email: string; phones?: string[] }, formUrl = ''): string {
+export function campaignEmailHtml(text: string, signer: { name: string; email: string; phones?: string[] }, formUrl = '', audience: Audience = 'academic'): string {
+  const biz = audience === 'business'
   const paragraphs = text.split(/\n{2,}/)
-  const introAt = paragraphs.findIndex((p) => p.trim() === INTRO)
+  const introAt = paragraphs.findIndex((p) => p.trim() === INTRO || p.trim() === INTRO_BUSINESS)
   const at = introAt >= 0 ? introAt : claudeCardAfter(text)
   const formAt = formUrl ? paragraphs.findIndex((p) => p.includes(formUrl)) : -1
   const body = paragraphs.map((p, i) => paragraphHtml(p, i, paragraphs.length, formUrl)
-    + (i === at ? (i === introAt ? credentialsHtml() : '') + partnerCardHtml() : '')
-    + (i === formAt ? `${coursesHtml()}${evaluationStepsHtml()}${emailButton('Choose your courses', escapeHtml(formUrl))}<div style="height:22px;line-height:22px;font-size:0">&nbsp;</div>` : '')).join('')
+    + (i === at ? (i === introAt ? credentialsHtml(biz) : '') + partnerCardHtml() : '')
+    + (i === formAt ? `${coursesHtml(biz)}${evaluationStepsHtml(biz)}${emailButton('Choose your courses', escapeHtml(formUrl))}<div style="height:22px;line-height:22px;font-size:0">&nbsp;</div>` : '')).join('')
   // Justified from tablet width up only: on a phone it opens gaps between words (docs/DESIGN.md, st-justify)
   const phones = '<style>@media only screen and (max-width:520px){.gj{text-align:left!important}}</style>'
   return phones + emailShell(body, {
@@ -60,11 +62,11 @@ const INK = '#1b2540'
 const INK3 = '#6b7790'
 
 /** Who we are, as three short lines with a mark each: what a reader takes in at a glance. */
-function credentialsHtml(): string {
+function credentialsHtml(biz = false): string {
   const rows = [
     ['microsoft', 'Microsoft Certified Trainers', 'Microsoft\'s official Azure, AI, Copilot and Fabric curriculum.'],
     ['claude', 'Claude-certified trainers', 'Certified on Anthropic\'s Claude, for agents and everyday AI work.'],
-    ['assistant', 'An AI-assisted Learning Studio', 'An AI assistant in every lesson. Available white-label for your university.'],
+    ['assistant', 'An AI-assisted Learning Studio', 'An AI assistant in every lesson. Available white-label for your ' + (biz ? 'organisation' : 'university') + '.'],
   ]
   return `<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="margin:6px 0 16px">${rows.map(([icon, title, line]) => `<tr>
     <td width="56" valign="middle" style="padding:5px 0">${iconCell(icon)}</td>
@@ -73,7 +75,7 @@ function credentialsHtml(): string {
 }
 
 /** The courses, grouped by family: a drawn icon, the name and its code, one line on why, and its size. */
-function coursesHtml(): string {
+function coursesHtml(biz = false): string {
   const tracks = Object.keys(TRACK_NAME)
   const cards = tracks.map((track) => {
     const list = UNI_COURSES.filter((c) => c.track === track)
@@ -82,15 +84,15 @@ function coursesHtml(): string {
       <td valign="top" style="padding:12px 16px 12px 8px;font-family:${FONT}"><a href="${SITE}/studio/${encodeURIComponent(c.slug)}" style="display:block;font-size:15px;line-height:1.35;color:${INK};font-weight:700;text-decoration:none">${escapeHtml(c.title.replace(/^AI-\d+:\s*/, ''))} &rsaquo;</a><span style="display:block;margin-top:3px;font-size:14px;line-height:1.5;color:#3b4760">${escapeHtml(c.why)}</span><span style="display:block;margin-top:6px;font-size:12px;color:${INK3}"><span style="display:inline-block;padding:1px 7px;border-radius:6px;background:#f1f4f9;color:#3b4760;font-weight:700;letter-spacing:0.3px">${escapeHtml(c.code)}</span>&nbsp; ${c.level} · ${c.scope.replace(/\s*\((.+)\)/, ' · $1')}</span></td>
     </tr></table>`).join('')
   }).join('')
-  return label('What your faculty can evaluate') + `<p style="margin:0 0 4px;font-family:${FONT};font-size:14.5px;line-height:1.6;color:#3b4760"><strong style="color:${INK}">Why now:</strong> employers increasingly ask graduates for hands-on AI skills. Every course is built the same way: watch, practise, build, prove.</p>` + cards
+  return label(biz ? 'What your team can evaluate' : 'What your faculty can evaluate') + `<p style="margin:0 0 4px;font-family:${FONT};font-size:14.5px;line-height:1.6;color:#3b4760"><strong style="color:${INK}">Why now:</strong> ' + (biz ? 'teams that practise AI on real work move faster than teams that only watch it.' : 'employers increasingly ask graduates for hands-on AI skills.') + ' Every course is built the same way: watch, practise, build, prove.</p>` + cards
 }
 
 /** How the evaluation works: three steps, each with its drawn icon. */
-function evaluationStepsHtml(): string {
+function evaluationStepsHtml(biz = false): string {
   const steps = [
     ['step-choose', 'Choose the courses', 'A short form, about two minutes.'],
-    ['step-access', 'Full access within 24 hours', 'For up to two faculty or academic representatives.'],
-    ['step-debrief', 'A 20-minute debrief', 'Tell us what your faculty think. No obligation.'],
+    ['step-access', 'Full access within 24 hours', biz ? 'For up to two people from your team.' : 'For up to two faculty or academic representatives.'],
+    ['step-debrief', 'A 20-minute debrief', biz ? 'Tell us what your team thinks. No obligation.' : 'Tell us what your faculty think. No obligation.'],
   ]
   return label('How the evaluation works') + `<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">${steps.map(([icon, title, line]) => `<tr>
     <td width="56" valign="middle" style="padding:5px 0">${iconCell(icon)}</td>
