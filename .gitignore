@@ -122,3 +122,6 @@ rzp-webhook-secret.txt
 # Python leaves compiled copies beside the agent service; they are made again on every run
 __pycache__/
 *.pyc
+
+# The owner's university toolkit: its data is in src/data, the folder itself is not part of the site
+/GENNOOR_University_Partnership_Toolkit/

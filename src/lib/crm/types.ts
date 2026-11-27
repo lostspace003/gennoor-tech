@@ -83,9 +83,9 @@ export interface EmailRecord {
   step?: string
   /** The email service's own number for this send, so the CRM can ask it later what became of the email. */
   op?: string
-  /** When the email was confirmed as gone: the email service finished it, or our own copy of it arrived. */
+  /** When the email was confirmed as gone: the email service finished it, our own copy of it arrived, or Outlook took it. */
   confirmedAt?: string
-  confirmedBy?: 'service' | 'copy'
+  confirmedBy?: 'service' | 'copy' | 'outlook'
   /** Why it failed, when the email service refused it or gave up on it later. */
   error?: string
   /** Set when this was an email of the AI Weekend campaign (lib/weekend-emails.ts): which email, for which weekend ("2026-11"). */

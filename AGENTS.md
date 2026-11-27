@@ -77,6 +77,7 @@ npx tsx scripts/autopilot-check.ts                     # the autopilot: what it 
 npx tsx scripts/crm-check.ts                           # the CRM: what a reply does, the Today lists, the hourly limit, has an email really gone (made-up leads)
 npx tsx scripts/daily-report-check.ts <folder>         # the evening report from made-up people: the numbers, the email and the Excel file to look at
 npx tsx scripts/customers-check.ts                     # paid customers: one row a person, their lead marked, the series stopped once (made-up people)
+npx tsx scripts/universities-check.ts                   # the university partnership campaign: the toolkit's data, the email, replies, next steps, the dashboard's numbers (made-up mail, nothing sent)
 npx tsx scripts/newsletter-check.ts                    # new posts by email: which Thursday, which posts, who, never twice, the confirm link (made-up posts and people)
 npx tsx scripts/attack-check.ts                        # the attacks that once worked, on made-up data: a learner's record, document names, the chatbot's links, an article's HTML (no network)
 node scripts/email-art/logo.mjs --look <folder>        # draws the logo at the top of every email, in the brand's own lettering

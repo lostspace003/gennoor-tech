@@ -216,6 +216,14 @@ async function main() {
   is('a link in an article is https, ours, or nothing', ['https://x.example/a', '/training', '#part-2', 'mailto:admin@gennoor.com', 'http://x.example', '//x.example', 'javascript:alert(1)', 'mailto:a@x.example'].map((u) => articleHref(u)?.href ?? null),
     ['https://x.example/a', '/training', '#part-2', 'mailto:admin@gennoor.com', null, null, null, null])
 
+  // ───────────────────────────────────────── 6. the university campaign ─────────────────────────────────────────
+  part('6. The university campaign takes nothing it was not offered')
+  const { safeFormUrl, cleanEmails, cleanUniPatch } = await import('../src/lib/crm/universities-types')
+  is('a form link is read as a link and judged by its host', ['https://docs.google.com/forms/d/e/x/viewform', 'https://forms.gle/abc', 'https://docs.google.com.evil.example/forms', '//docs.google.com/x', 'http://docs.google.com/x', 'javascript:alert(1)', 'https://user:pw@docs.google.com/x', 'https://evil.example/?u=docs.google.com'].map(safeFormUrl),
+    ['https://docs.google.com/forms/d/e/x/viewform', 'https://forms.gle/abc', '', '', '', '', '', ''])
+  is('a list of recipients is a list of addresses, nothing else', [cleanEmails(['A@X.EDU', 'a@x.edu']), cleanEmails(['a@x.edu\nbcc: b@y.com']), cleanEmails(['a@x.edu, b@y.com']), cleanEmails(['<a@x.edu>']), cleanEmails('a@x.edu')], [['a@x.edu'], null, null, null, null])
+  is('the browser cannot write the history of sent emails, the replies or the id', Object.keys((cleanUniPatch({ id: 'GEN-001', emails: [{}], replies: [{}], sendingSince: 'x', activities: [], wave: 1, notes: 'n' }) as any).patch), ['notes'])
+
   console.log(bad ? `\n${bad} WRONG` : '\nALL OK')
   process.exit(bad ? 1 : 0)
 }

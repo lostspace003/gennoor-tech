@@ -7,13 +7,14 @@ import { SessionProvider, useSession, signOut } from 'next-auth/react'
 import {
   Users, Inbox, Calendar, FolderOpen, Mail, MessageSquare, Phone,
   LogOut, RefreshCw, Menu, X, AlertCircle, Zap, UsersRound, MessageCircle,
-  PanelLeftClose, PanelLeftOpen, ChevronDown, BadgeCheck,
+  PanelLeftClose, PanelLeftOpen, ChevronDown, BadgeCheck, GraduationCap,
 } from 'lucide-react'
 import { CrmProvider, useCrm } from '@/components/crm/CrmContext'
 import RouteProgress from '@/components/portal/RouteProgress'
 import BusyPointer from '@/components/BusyPointer'
 import AdminThemeSwitch from '@/components/admin/AdminThemeSwitch'
 import { needsAnswer } from '@/lib/crm/replies'
+import { isAdminUser } from '@/lib/crm/users'
 
 // The everyday screens, in the order the work happens. The rest sit under "More".
 const NAV = [
@@ -23,12 +24,13 @@ const NAV = [
   { href: '/crm/scheduler', label: 'Meetings', icon: Calendar },
   { href: '/crm/emails', label: 'Emails', icon: Mail },
   { href: '/crm/customers', label: 'Paid customers', icon: BadgeCheck },
+  { href: '/crm/universities', label: 'Universities', icon: GraduationCap, adminOnly: true },
   { href: '/crm/playbook', label: 'Call guide', icon: Phone },
   { href: '/crm/enquiries', label: 'Website enquiries', icon: MessageSquare, more: true },
   { href: '/crm/documents', label: 'Files', icon: FolderOpen, more: true },
   { href: '/crm/team', label: 'Team', icon: UsersRound, managerOnly: true, more: true },
   { href: '/crm/botlog', label: 'GennoorCare', icon: MessageCircle, managerOnly: true, more: true },
-] as Array<{ href: string; label: string; icon: any; managerOnly?: boolean; more?: boolean }>
+] as Array<{ href: string; label: string; icon: any; managerOnly?: boolean; adminOnly?: boolean; more?: boolean }>
 
 // Same idiom as the site rail: the hamburger collapses the sidebar to an icon
 // rail on desktop (choice remembered) and opens the drawer on mobile.
@@ -73,7 +75,7 @@ function AuthGate({ children }: { children: React.ReactNode }) {
 function Frame({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
   const { data: session } = useSession()
-  const { leads, loading, loadError, reload, notify, isAdmin, isManager, userEmail } = useCrm()
+  const { leads, loading, loadError, reload, notify, isAdmin, isManager, userEmail, realEmail } = useCrm()
   const [drawerOpen, setDrawerOpen] = useState(false)
   const [collapsed, setCollapsed] = useState(false)
   const [moreOpen, setMoreOpen] = useState(false)
@@ -112,7 +114,7 @@ function Frame({ children }: { children: React.ReactNode }) {
         />
       </Link>
       <nav className={`flex-1 py-2.5 overflow-y-auto overflow-x-visible ${rail ? 'px-1.5' : 'px-2.5'}`}>
-        {NAV.filter((item) => (!item.managerOnly || isManager) && (rail || !item.more || moreOpen || pathname?.startsWith(item.href))).map((item) => {
+        {NAV.filter((item) => (!item.managerOnly || isManager) && (!item.adminOnly || isAdminUser(realEmail)) && (rail || !item.more || moreOpen || pathname?.startsWith(item.href))).map((item) => {
           const isActive = pathname?.startsWith(item.href)
           const badge =
             item.href === '/crm/leads' ? leads.filter((l) => !l.dumped).length :

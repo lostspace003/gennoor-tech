@@ -297,3 +297,45 @@ everything off lets them book with nothing to pay.
   on the Payments page, the AI Weekend list and the evening report. Someone who took a seat with a full code is
   listed with the paid customers, with the amount 0: they are attending, so they get no promotional email.
 - `npx tsx scripts/crm-flow-test.ts` checks what a code is good for and what it takes off.
+
+## 15. University partnerships
+
+The owner (27 November 2026) gave the "Global University Partnership Toolkit" (27 universities in 21 countries, 55
+contacts, a first email for each, an evaluation form) and asked for all of it inside the CRM "as a separate tab ...
+only for this lead, end to end we will close", each university managed on its own, and "a full dashboard for all of
+them to see how it's moving and all analytics".
+
+- **Where:** CRM, "Universities" (`/crm/universities`), then one page for each university (`/crm/universities/GEN-001`).
+  Only the people on `ADMIN_USERS` open it, in the menu and in every address (`requireCampaignUser`).
+- **Apart from the leads.** The store is its own file, `crm-data/universities.json` (`src/lib/crm/universities-store.ts`),
+  filled from the toolkit the first time the page opens (`src/data/university-partnership.ts`) and never filled again.
+  Nothing here is on Today, in the email series, the Replies page or the evening report, and no lead is made.
+- **Its own stages** (`UNI_STAGES`): New, Emailed, Replied, Evaluating, Call booked, Partner, Closed. A reply moves New or
+  Emailed to Replied. A machine never moves a university further or closes it. Closing asks for a reason.
+- **The page is four tabs:** Dashboard (`UniversityDashboard`: the funnel, who needs a person now, emails by day, waves and
+  regions, calls to come, courses chosen; every number comes from `campaignStats` in `universities-stats.ts`, the same
+  that the list uses), Universities (the list), Emails (one row each: ready, sent, replied) and Setup (the form's link,
+  the toolkit's Google Form script and banner, the Excel file, the six steps).
+- **One university's page** says the one thing to do next (`nextStep`: send, write again after five days, answer a reply,
+  give access, ask for the debrief call, record the outcome) and holds its email, overview, contacts, evaluation (the
+  seven courses, two representatives, the dates) and activity.
+- **The email.** Sent through Outlook from `admin@gennoor.com` (`sendFromOutlook` in `graph.ts`, owner 27 November 2026), so it sits in that mailbox's Sent Items and a reply threads under it; with `jalalkhan@` and `yusufchaudhary@` always in copy (`CAMPAIGN_CC`), signed
+  as Jalal. What goes out is what is saved on the university, read by the server (`send/route.ts`): the browser sends
+  only which university. It is refused while a square-bracket sentence is still to be written (the second wave's
+  "[Insert 1-sentence ...]"), while the form's link is missing, while an email to that university has already gone (unless
+  the person chose "Send another"), and past the hour's limit (`sentThisHour`: leads and universities share the 60).
+  Pressing twice cannot send twice: the university is held for two minutes while the email goes.
+- **Has it gone, did they write back?** `check/route.ts`, when the page opens, every five minutes while it is open and on
+  "Check replies": an Outlook send counts as gone when Outlook takes it, so nothing is asked about it; it reads the team mailboxes for
+  mail from a university's addresses (`replyOwner`: the sender, or the same mail domain, never a free webmail domain, never
+  mail from before our first email, never an automatic reply).
+- **What the emails say about Gennoor (owner, 27 November 2026).** Where Claude is first named, the Claude Partner Network
+  badge and the line "Gennoor is Certified in the Claude Partner Network." sit on their cream card
+  (`partnerCardHtml`), word for word, never recoloured. The work for King Saud University, Taibah University, MCIT Saudi
+  Arabia, the Government of Bahrain, Bank of Tanzania, Microsoft ANZ and Tech Mahindra is Jalal's own ("I have personally
+  delivered ...", never "Gennoor delivered"). Through Gennoor, only EY, on Agentic AI for Power Platform, Agentic AI for
+  Copilot Studio and Claude Cowork for business professionals. No "Certified Services Partner" and no "APAC".
+- `npx tsx scripts/universities-check.ts` checks all of it on the toolkit's own data and made-up mail; `attack-check.ts`
+  part 6 tries the form link, the recipients and the fields a browser may write.
+- Never send a university an email to try something. The toolkit's own folder (`GENNOOR_University_Partnership_Toolkit/`)
+  is not part of the site and is not committed.
