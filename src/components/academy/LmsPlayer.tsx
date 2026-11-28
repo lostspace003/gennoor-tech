@@ -134,7 +134,7 @@ export default function LmsPlayer({
   const bundle = (() => {
     for (const sec of course.sections) for (const it of sec.items) {
       if (it.type !== 'lecture') continue
-      const r = it.resources.find(x => /complete course files\.zip$/i.test(x.name))
+      const r = it.resources.find(x => /(complete course files|all course materials)\.zip$/i.test(x.name))
       if (r) return { itemId: it.id, name: r.name }
     }
     return null
