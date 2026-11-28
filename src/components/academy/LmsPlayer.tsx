@@ -130,6 +130,27 @@ export default function LmsPlayer({
     }
   }
 
+  // The one zip with every file of the course, attached to a lecture as "<CODE> - Complete course files.zip".
+  const bundle = (() => {
+    for (const sec of course.sections) for (const it of sec.items) {
+      if (it.type !== 'lecture') continue
+      const r = it.resources.find(x => /complete course files\.zip$/i.test(x.name))
+      if (r) return { itemId: it.id, name: r.name }
+    }
+    return null
+  })()
+  const downloadBundle = async () => {
+    if (!bundle) return
+    setDocBusy(bundle.name)
+    try {
+      const r = await fetch(`/api/lms/resource?slug=${course.slug}&item=${bundle.itemId}&name=${encodeURIComponent(bundle.name)}`, { cache: 'no-store' })
+      if (!r.ok) return
+      window.location.href = (await r.json()).url
+    } finally {
+      setDocBusy('')
+    }
+  }
+
   const downloadDoc = async (name: string) => {
     const r = await fetch(`/api/lms/resource?slug=${course.slug}&item=${item.id}&name=${encodeURIComponent(name)}&download=1`, { cache: 'no-store' })
     if (!r.ok) return
@@ -356,6 +377,22 @@ export default function LmsPlayer({
                     <button type="button" onClick={() => setShowCongrats(true)} className="mt-3 text-[13px] font-semibold text-primary-600 hover:underline">Watch your congratulations video</button>
                   )}
                 </div>
+                {bundle && (
+                  <div className="px-5 py-4 border-b border-gray-100">
+                    <button
+                      type="button"
+                      onClick={downloadBundle}
+                      className="w-full flex items-center gap-3 text-left px-3.5 py-3 rounded-xl border border-gray-200 hover:border-primary-400 hover:bg-primary-50/40 active:scale-[.99] transition duration-200"
+                    >
+                      <span className="w-9 h-9 rounded-lg flex items-center justify-center shrink-0 bg-amber-50 text-amber-600"><Download className="w-[18px] h-[18px]" /></span>
+                      <span className="min-w-0 flex-1">
+                        <span className="block text-[13.5px] font-semibold text-gray-900 leading-snug">Download all course files</span>
+                        <span className="block text-[12px] text-gray-400 mt-0.5">One zip with every guide, document and starter file</span>
+                      </span>
+                      {docBusy === bundle.name && <Loader2 className="w-4 h-4 animate-spin text-gray-400" />}
+                    </button>
+                  </div>
+                )}
                 {course.sections.map((s, si) => {
                   const sectionDone = s.items.filter(i => doneMap[i.id]).length
                   const secTime = s.items.reduce((a, i) => a + (i.type === 'lecture' ? i.durationSec || 0 : 0), 0)
