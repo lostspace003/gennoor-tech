@@ -44,6 +44,20 @@ export interface BlogPost extends BlogPostMeta {
 
 export const blogPostsMeta: BlogPostMeta[] = [
   {
+    slug: 'openai-perplexity-metric-ai-procurement',
+    title: 'OpenAI’s Perplexity Score Could Change How Firms Buy AI',
+    excerpt: 'Learn why OpenAI’s argument for perplexity, a score that shows how well a model predicts text, could shift AI buying from reactive decisions to more planned reviews of timing, fit, and readiness.',
+    tldr: 'OpenAI argues that perplexity, a score for how well a model predicts the next piece of text, still tracks important model progress. For managers, that matters because AI buying may become more planned and less driven by sudden launches or polished demos. The practical response is to define business thresholds first, review vendors in a regular cycle, and separate improvements in the underlying model from improvements in product design and workflow.',
+    author: 'Gennoor Tech',
+    date: '2026-11-28',
+    readTime: '11 min read',
+    category: 'AI Strategy',
+    tags: ['AI Strategy', 'AI Procurement', 'Model Selection', 'Enterprise AI', 'AI Planning', 'AI Evaluation', 'AI Governance'],
+    hashtags: ['#OpenAI', '#Perplexity', '#AIProcurement', '#AIStrategy', '#AIGovernance'],
+    coverColor: '#2F3A2E',
+    icon: '📊',
+  },
+  {
     slug: 'chatgpt-for-sales-pilot-one-team',
     title: 'ChatGPT for Sales Pilot: How to Test It Safely on One Team',
     excerpt: 'Learn how to pilot ChatGPT for Sales on one team with clear workflows, limited app connections, admin controls, and simple checks for quality, time saved, and access risk.',
@@ -1151,6 +1165,7 @@ export function getRelatedPostsMeta(currentSlug: string, limit: number = 3): Blo
 
 // Load full blog post content on demand (only for individual post pages)
 const contentImports: Record<string, () => Promise<{ post: BlogPost }>> = {
+  'openai-perplexity-metric-ai-procurement': () => import('./content/openai-perplexity-metric-ai-procurement'),
   'chatgpt-for-sales-pilot-one-team': () => import('./content/chatgpt-for-sales-pilot-one-team'),
   'mcp-security-checklist-enterprises-live-tool-access': () => import('./content/mcp-security-checklist-enterprises-live-tool-access'),
   'mcp-agents-tool-layer-hallucinations-failure-wall': () => import('./content/mcp-agents-tool-layer-hallucinations-failure-wall'),
