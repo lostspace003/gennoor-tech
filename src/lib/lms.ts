@@ -196,7 +196,7 @@ export function isLabFilesZip(name: string): boolean {
 
 /** The one zip with every file of a course: "<CODE> - Complete course files.zip". */
 export function isCourseBundleZip(name: string): boolean {
-  return /complete course files\.zip$/i.test(name)
+  return /(complete course files|all course materials)\.zip$/i.test(name)
 }
 
 // ---------------------------------------------------------------- storage
